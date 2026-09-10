@@ -12,7 +12,7 @@
     (function() {
       try {
         var expectedVersion = '2026.3.20';
-        var baseBuildTime = 1789034947394;
+        var baseBuildTime = 1789035424665;
         var cachedBundle = localStorage.getItem('voyage_finance_cached_bundle');
         var cachedVersion = localStorage.getItem('voyage_finance_cached_version');
         var cachedTime = parseInt(localStorage.getItem('voyage_finance_cached_time') || '0', 10);
@@ -1711,7 +1711,7 @@ alter publication supabase_realtime add table finance_store;</pre>
 
 
   <!-- Toast Notification Container -->
-                                                                              <!-- Direct Mobile Camera Input -->
+                                                                                  <!-- Direct Mobile Camera Input -->
   <input type="file" id="mobileCameraInput" accept="image/*" capture="environment" class="hidden" onchange="handleReceiptImageUpload(event)">
   <!-- Batch Photo Multi-select Input -->
   <input type="file" id="batchReceiptFileInput" accept="image/*" multiple class="hidden" onchange="handleBatchReceiptUpload(event)">
@@ -3763,12 +3763,6 @@ function initData() {
     ];
   }
 
-  // Load OCR Settings
-  const storedOcr = localStorage.getItem('finance_ocr_settings');
-  if (storedOcr) {
-    try {
-      ocrSettings = Object.assign(ocrSettings, JSON.parse(storedOcr));
-    } catch (e) {}
   // Load OCR Settings (100% Local Offline In-Browser Engine)
   const storedOcr = localStorage.getItem('finance_ocr_settings');
   if (storedOcr) {
