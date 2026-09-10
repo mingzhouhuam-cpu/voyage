@@ -190,7 +190,7 @@
   </header>
 
   <!-- Main Content Container -->
-  <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6">
+  <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 pb-28 md:pb-6">
 
     <!-- 1. DASHBOARD VIEW -->
     <div id="view-dashboard" class="space-y-6">
@@ -322,8 +322,7 @@
       <!-- Quick Summary Tables & Recent Transactions -->
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <!-- Recent Incomes -->
-              <!-- Income Table (Desktop/Tablet) -->
-      <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden hidden md:block">
+        <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
           <div class="p-5 border-b border-slate-100 flex items-center justify-between">
             <div class="flex items-center space-x-2">
               <span class="w-2.5 h-2.5 rounded-full bg-emerald-500"></span>
@@ -337,8 +336,7 @@
         </div>
 
         <!-- Recent Expenses -->
-              <!-- Income Table (Desktop/Tablet) -->
-      <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden hidden md:block">
+        <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
           <div class="p-5 border-b border-slate-100 flex items-center justify-between">
             <div class="flex items-center space-x-2">
               <span class="w-2.5 h-2.5 rounded-full bg-rose-500"></span>
@@ -622,6 +620,11 @@
             </tbody>
           </table>
         </div>
+      </div>
+
+      <!-- Mobile Expense Cards (< 768px) -->
+      <div id="expenseCardList" class="space-y-3 md:hidden">
+        <!-- Rendered dynamically by JS -->
       </div>
     </div>
 
@@ -1109,7 +1112,7 @@ alter publication supabase_realtime add table finance_store;</pre>
 
 
   <!-- Toast Notification Container -->
-                    <!-- Direct Mobile Camera Input -->
+                      <!-- Direct Mobile Camera Input -->
   <input type="file" id="mobileCameraInput" accept="image/*" capture="environment" class="hidden" onchange="handleReceiptImageUpload(event)">
 
   <!-- Mobile Bottom Navigation Bar (Visible only on mobile devices < 768px) -->
@@ -5018,6 +5021,8 @@ window.addEventListener('DOMContentLoaded', () => {
   initData();
   populateDropdowns();
   renderDashboard();
+  renderIncomeTable();
+  renderExpenseTable();
 
   // Filter input listeners
   const filterInputs = [
