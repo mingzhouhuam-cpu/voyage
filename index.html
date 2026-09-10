@@ -11,8 +11,8 @@
   <script id="voyage-ota-bootloader">
     (function() {
       try {
-        var expectedVersion = '2026.3.26';
-        var baseBuildTime = 1789049168870;
+        var expectedVersion = '2026.3.30';
+        var baseBuildTime = 1789050798680;
         var cachedBundle = localStorage.getItem('voyage_finance_cached_bundle');
         var cachedVersion = localStorage.getItem('voyage_finance_cached_version');
         var cachedTime = parseInt(localStorage.getItem('voyage_finance_cached_time') || '0', 10);
@@ -518,6 +518,7 @@
                 <th class="px-3 py-3">入账账户</th>
                 <th class="px-3 py-3">自动匹配科目</th>
                 <th class="px-3 py-3">自动匹配对象 (学生/商家)</th>
+                <th class="px-3 py-3">交费归属月份</th>
                 <th class="px-3 py-3">摘要 / 备注</th>
                 <th class="px-3 py-3 text-center">对账状态</th>
               </tr>
@@ -592,7 +593,7 @@
                 <th class="px-4 py-3">收款账户</th>
                 <th class="px-4 py-3 text-right">金额 (RM)</th>
                 <th class="px-4 py-3">交款人 / 客户</th>
-                <th class="px-4 py-3">浜よ垂褰掑睘鏈堜唤</th>
+                <th class="px-4 py-3">交费归属月份</th>
                 <th class="px-4 py-3">备注说明</th>
                 <th class="px-4 py-3">单号</th>
                 <th class="px-4 py-3 text-center">操作</th>
@@ -1294,49 +1295,60 @@
             <div id="incomePayerArrearsHint" class="hidden p-2.5 rounded-lg text-xs transition-all"></div>
           </div>
         </div>
-        <!-- Fee Target Month Selector & Quick Buttons -->
-        <div class="p-3 bg-indigo-50/50 rounded-xl border border-indigo-100 space-y-2.5">
-          <div class="flex items-center justify-between">
-            <label class="block font-bold text-slate-700 text-xs flex items-center space-x-1.5">
-              <span>📅 交费归属月份 (住宿费交哪个月)</span>
-              <span class="text-[10px] font-normal text-indigo-600">※精准对账与欠费销账</span>
-            </label>
-            <span id="incomeFeeMonthNotice" class="text-[11px] text-indigo-700 font-medium"></span>
-          </div>
-
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
-            <div>
-              <select id="incomeFeeMonth" onchange="handleFeeMonthChange(this.value)" class="w-full px-3 py-2 bg-white border border-indigo-200 text-slate-800 rounded-lg focus:ring-2 focus:ring-indigo-500 text-xs font-semibold shadow-sm">
-                <option value="">-- 非周期性款项 (不指定特定月份) --</option>
-                <option value="2026-01">2026年 1月份 (Jan)</option>
-                <option value="2026-02">2026年 2月份 (Feb)</option>
-                <option value="2026-03">2026年 3月份 (Mar)</option>
-                <option value="2026-04">2026年 4月份 (Apr)</option>
-                <option value="2026-05">2026年 5月份 (May)</option>
-                <option value="2026-06">2026年 6月份 (Jun)</option>
-                <option value="2026-07">2026年 7月份 (Jul)</option>
-                <option value="2026-08">2026年 8月份 (Aug)</option>
-                <option value="2026-09">2026年 9月份 (Sep)</option>
-                <option value="2026-10">2026年 10月份 (Oct)</option>
-                <option value="2026-11">2026年 11月份 (Nov)</option>
-                <option value="2026-12">2026年 12月份 (Dec)</option>
-                <option value="__CUSTOM__">✍️ 【手动输入/多月合并 (如 1月+2月)】</option>
-              </select>
+        <!-- Fee Target Month Selector & Multi-Month Interactive Grid -->
+        <div class="p-3.5 bg-gradient-to-br from-indigo-50/70 via-blue-50/40 to-slate-50 rounded-xl border border-indigo-200/80 shadow-2xs space-y-3">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-1.5">
+            <div class="flex items-center space-x-2">
+              <span class="text-base">📅</span>
+              <div>
+                <label class="block font-bold text-slate-800 text-xs">
+                  交费归属月份 (支持单选或多选合并)
+                </label>
+                <div class="text-[10px] text-slate-500">
+                  可同时选择一个或多个月份 · 实时显示学生历史已缴/欠费状态
+                </div>
+              </div>
             </div>
-            <div>
-              <input type="text" id="incomeCustomFeeMonth" placeholder="例如：2026-01, 2026-02" class="w-full px-3 py-2 bg-white border border-indigo-200 rounded-lg text-xs hidden focus:ring-2 focus:ring-indigo-500 shadow-sm">
+            <!-- Quick Action Tools -->
+            <div class="flex items-center space-x-1.5 text-[11px] self-end sm:self-auto">
+              <button type="button" onclick="selectEarliestUnpaidFeeMonth()" class="px-2 py-0.5 rounded-md bg-indigo-100/80 hover:bg-indigo-200 text-indigo-700 font-semibold transition cursor-pointer" title="自动选中该学生最早未缴的月份">
+                ⚡ 选首个欠费月
+              </button>
+              <button type="button" onclick="clearIncomeFeeMonth()" class="px-2 py-0.5 rounded-md bg-slate-200/70 hover:bg-slate-300 text-slate-600 font-medium transition cursor-pointer">
+                清空选择
+              </button>
             </div>
           </div>
 
-          <!-- Quick Month Selection Pills (1月 ~ 12月) -->
+          <!-- Selection Summary Bar -->
+          <div id="feeMonthSelectionSummary" class="p-2 rounded-lg bg-white border border-indigo-100 flex flex-wrap items-center justify-between text-xs gap-2 shadow-2xs">
+            <div class="flex items-center space-x-1.5 flex-wrap">
+              <span class="text-slate-400 font-medium">当前选中:</span>
+              <span id="feeMonthSelectionText" class="font-bold text-slate-400">未指定归属月份（非周期性款项）</span>
+            </div>
+            <div id="feeMonthAmountSuggestion" class="text-[11px] text-emerald-600 font-semibold hidden">
+              <!-- Auto fee calculation hint: e.g. 建议金额 RM 960 (2个月) -->
+            </div>
+          </div>
+
+          <!-- 12 Months Interactive Grid (1月 ~ 12月) -->
           <div>
-            <div class="text-[10px] text-slate-500 mb-1 flex items-center justify-between">
-              <span>快捷点选归属月份：</span>
-              <span class="text-indigo-600 font-medium cursor-pointer hover:underline text-[10px]" onclick="clearIncomeFeeMonth()">清除月份</span>
+            <div class="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-2" id="feeMonthGrid">
+              <!-- Dynamically rendered 12 cards with Paid/Unpaid/Selected states -->
             </div>
-            <div class="grid grid-cols-6 sm:grid-cols-12 gap-1" id="feeMonthPills">
-              <!-- Rendered dynamically by JS with paid/unpaid indicators -->
-            </div>
+          </div>
+
+          <!-- Previous Payment Notice / Warning for selected months -->
+          <div id="feeMonthWarningNotice" class="hidden text-xs p-2.5 rounded-lg bg-amber-50 border border-amber-200 text-amber-800 space-y-0.5">
+          </div>
+
+          <!-- Hidden storage for form submission + Optional Custom Month Input -->
+          <input type="hidden" id="incomeFeeMonth" value="">
+          <div class="flex items-center justify-between pt-1 border-t border-indigo-100/60 text-[11px]">
+            <button type="button" onclick="toggleCustomFeeMonthInput()" class="text-indigo-600 hover:text-indigo-800 font-medium flex items-center space-x-1 cursor-pointer">
+              <span>✍️ 自定义输入其他特殊月份或跨年账目</span>
+            </button>
+            <input type="text" id="incomeCustomFeeMonth" oninput="handleCustomFeeMonthInput(this.value)" placeholder="如：2026-08, 2026-09" class="hidden px-2.5 py-1 bg-white border border-indigo-200 rounded-lg text-xs w-48 focus:ring-1 focus:ring-indigo-500">
           </div>
         </div>
 
@@ -2192,11 +2204,11 @@ alter publication supabase_realtime add table finance_store;</pre>
 
     <!-- Quick Month Selector Modal -->
   <div id="quickMonthModal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
-    <div class="bg-white rounded-2xl max-w-md w-full p-5 shadow-2xl border border-slate-100 space-y-4">
+    <div class="bg-white rounded-2xl max-w-lg w-full p-5 shadow-2xl border border-slate-100 space-y-4">
       <div class="flex items-center justify-between border-b border-slate-100 pb-3">
         <div>
           <h4 class="text-sm font-bold text-slate-900 flex items-center space-x-1.5">
-            <span>📅 快速修改交费归属月份</span>
+            <span>📅 快速设定交费归属月份 (支持单选/多选)</span>
           </h4>
           <p id="quickMonthPayerInfo" class="text-xs text-slate-500 mt-0.5"></p>
         </div>
@@ -2204,15 +2216,25 @@ alter publication supabase_realtime add table finance_store;</pre>
       </div>
       <input type="hidden" id="quickMonthIncomeId">
       <div class="space-y-3">
-        <p class="text-xs text-slate-600 font-medium">点击下方月份，即刻将此笔收入绑定为该月的住宿费：</p>
+        <div class="flex items-center justify-between text-xs text-slate-600 font-medium">
+          <span>点击下方月份可点选/多选（已缴月份显示绿标）：</span>
+          <button type="button" onclick="quickMonthSelection.clear(); const qId = document.getElementById('quickMonthIncomeId').value; const item = appData.incomes.find(i=>i.id===qId); if (item) renderQuickMonthGrid(item);" class="text-[11px] text-slate-400 hover:text-slate-600 underline cursor-pointer">
+            清空已选
+          </button>
+        </div>
         <div class="grid grid-cols-3 sm:grid-cols-4 gap-2" id="quickMonthButtonGrid">
           <!-- 1月 ~ 12月 buttons -->
         </div>
-        <div class="pt-2 border-t border-slate-100 flex items-center justify-between">
-          <button type="button" onclick="applyQuickMonth('')" class="px-3 py-1.5 text-xs text-slate-600 hover:text-slate-800 bg-slate-100 hover:bg-slate-200 rounded-lg font-medium transition cursor-pointer">
-            设为非周期性款项 (清除)
-          </button>
-          <button type="button" onclick="const qId = document.getElementById('quickMonthIncomeId').value; closeModal('quickMonthModal'); editIncome(qId);" class="px-3 py-1.5 text-xs text-indigo-600 hover:bg-indigo-50 rounded-lg font-bold transition cursor-pointer">
+        <div class="pt-3 border-t border-slate-100 flex items-center justify-between gap-2">
+          <div class="flex items-center space-x-2">
+            <button type="button" onclick="saveQuickMonthModal()" class="px-4 py-2 text-xs text-white bg-indigo-600 hover:bg-indigo-700 rounded-xl font-bold shadow-md transition cursor-pointer">
+              ✓ 保存选中月份
+            </button>
+            <button type="button" onclick="quickMonthSelection.clear(); saveQuickMonthModal();" class="px-3 py-2 text-xs text-slate-600 hover:text-slate-800 bg-slate-100 hover:bg-slate-200 rounded-xl font-medium transition cursor-pointer">
+              设为非周期性款项
+            </button>
+          </div>
+          <button type="button" onclick="const qId = document.getElementById('quickMonthIncomeId').value; closeModal('quickMonthModal'); editIncome(qId);" class="px-2.5 py-1.5 text-xs text-indigo-600 hover:bg-indigo-50 rounded-lg font-bold transition cursor-pointer">
             完整编辑表单 →
           </button>
         </div>
@@ -2228,6 +2250,11 @@ alter publication supabase_realtime add table finance_store;</pre>
   <footer class="bg-white border-t border-slate-200 py-4 text-center text-xs text-slate-400">
     2026 财务收支记账管理系统 · Web版（支持银行流水 PDF 智能自动入账 & 单据 OCR）
   </footer>
+
+
+
+
+
 
 
 
@@ -2282,7 +2309,7 @@ let ocrSettings = {
 };
 
 // Application Version and OTA Release Timestamp
-window.VOYAGE_APP_VERSION = '2026.3.26';
+window.VOYAGE_APP_VERSION = '2026.3.30';
 window.VOYAGE_APP_BUILD_TIME = Date.now();
 
 // ==========================================
@@ -3061,7 +3088,7 @@ async function publishCurrentAppToCloud() {
     // Update baseTime and build time inside the bundle
     rawHtml = rawHtml.replace(/var baseTime = \d+;/, `var baseTime = ${newTimestamp};`);
     rawHtml = rawHtml.replace(/window\.VOYAGE_APP_BUILD_TIME = \d+;/, `window.VOYAGE_APP_BUILD_TIME = ${newTimestamp};`);
-    rawHtml = rawHtml.replace(/window\.VOYAGE_APP_VERSION = '[^']+';/, `window.VOYAGE_APP_VERSION = '${newVersion}';`);
+    rawHtml = rawHtml.replace(/window\.VOYAGE_APP_VERSION = '[^']+';/, `window.VOYAGE_APP_VERSION = '2026.3.30';`);
 
     const payload = {
       id: 'voyage_finance_app_release',
@@ -3997,6 +4024,7 @@ function openModal(modalId) {
 
   const today = new Date().toISOString().split('T')[0];
   if (modalId === 'incomeModal') {
+    if (typeof renderFeeMonthSelector === 'function') renderFeeMonthSelector('', '', '');
     document.getElementById('incomeModalTitle').textContent = '记一笔收入';
     document.getElementById('incomeFormId').value = '';
     document.getElementById('incomeDate').value = today;
@@ -4311,26 +4339,11 @@ function editIncome(id) {
 
   // Populate Fee Month
   const targetFeeMonth = item.feeMonth || (typeof getIncomeFeeMonth === 'function' ? getIncomeFeeMonth(item) : '') || '';
-  const feeMonthSelect = document.getElementById('incomeFeeMonth');
-  const customFeeMonth = document.getElementById('incomeCustomFeeMonth');
-  if (feeMonthSelect) {
-    if (Array.from(feeMonthSelect.options).some(o => o.value === targetFeeMonth)) {
-      feeMonthSelect.value = targetFeeMonth;
-      if (customFeeMonth) customFeeMonth.classList.add('hidden');
-    } else if (targetFeeMonth) {
-      feeMonthSelect.value = '__CUSTOM__';
-      if (customFeeMonth) {
-        customFeeMonth.classList.remove('hidden');
-        customFeeMonth.value = targetFeeMonth;
-      }
-    } else {
-      feeMonthSelect.value = '';
-      if (customFeeMonth) customFeeMonth.classList.add('hidden');
-    }
-    if (typeof renderFeeMonthPills === 'function') {
-      renderFeeMonthPills(targetFeeMonth, item.counterparty || '');
-    }
+  if (typeof renderFeeMonthSelector === 'function') {
+    renderFeeMonthSelector(targetFeeMonth, item.counterparty || '', item.id);
   }
+  const customFeeMonth = document.getElementById('incomeCustomFeeMonth');
+  if (customFeeMonth) customFeeMonth.value = targetFeeMonth;
 
   if (typeof populatePayerDropdown === 'function') populatePayerDropdown();
   const payerSelect = document.getElementById('incomePayerSelect');
@@ -4787,6 +4800,13 @@ async function parseStatementPdfFile(file) {
 // 2. Official Monthly Current Account Statements (Penyataan Bulanan: DD-MM-YYYY, Description, Cheque No, Withdrawals, Deposits, Balance)
 // ==========================================
 
+// ==========================================
+// HONG LEONG BANK STATEMENT & TRANSACTION DETAILS PARSER (V2026.3.26)
+// Supports:
+// 1. Transaction Details Reports (Online Banking Export: DD/MM/YYYY HH:mm:ss, Remarks, Sender/Receiver, Recipient Ref, Other Payment Details, Credit/Debit)
+// 2. Official Monthly Current Account Statements (Penyataan Bulanan: DD-MM-YYYY, Description, Cheque No, Withdrawals, Deposits, Balance)
+// ==========================================
+
 const LEARNED_STUDENT_RULES = [
   // 15 Boarding Students & Known Parents / Aliases
   { pattern: /HUAI\s*DERK|HUAIDERK|HUAI\s*D\b/i, name: 'HUAIDERK', fee: 480 },
@@ -5049,43 +5069,78 @@ function extractTransactionsFromStatementItems(items) {
     const combinedDescription = [remarksText, senderText, recipientRefText, otherDetailsText].filter(Boolean).join(' ');
 
     // Determine deposit vs withdrawal from numberItems
-    if (numberItems.length === 1) {
-      const num = numberItems[0];
-      if (num.x >= 600 && num.x <= 685) {
-        deposit = num.val;
-      } else if (num.x >= 530 && num.x < 600) {
-        withdrawal = num.val;
-      } else {
-        // Fallback: check keywords
-        if (/Transfer|Deposit|Credit|fr CA to CA/i.test(combinedDescription)) deposit = num.val;
-        else withdrawal = num.val;
-      }
-    } else if (numberItems.length >= 2) {
-      numberItems.sort((a, b) => a.x - b.x);
-      // Rightmost number is typically Balance
-      const rightmost = numberItems[numberItems.length - 1];
-      balance = rightmost.val;
-
-      // The transaction amount item
-      const transItem = numberItems.find(n => n !== rightmost);
-      if (transItem) {
-        if (transItem.x >= 600 && transItem.x <= 685) {
-          deposit = transItem.val;
-        } else if (transItem.x >= 530 && transItem.x < 600) {
-          withdrawal = transItem.val;
-        } else if (runningBalance > 0 && balance > runningBalance) {
-          deposit = transItem.val;
-        } else if (runningBalance > 0 && balance < runningBalance) {
-          withdrawal = transItem.val;
-        } else if (/Transfer|Deposit|fr CA to CA/i.test(combinedDescription)) {
-          deposit = transItem.val;
-        } else {
-          withdrawal = transItem.val;
-        }
+    // Pre-check student matching and transfer keywords
+    let matchedStudent = null;
+    for (const rule of LEARNED_STUDENT_RULES) {
+      if (rule.pattern.test(combinedDescription)) {
+        matchedStudent = rule;
+        break;
       }
     }
 
-    if (balance > 0) runningBalance = balance;
+    // Determine deposit vs withdrawal
+    numberItems.sort((a, b) => a.x - b.x);
+    let transItem = null;
+    if (numberItems.length >= 2) {
+      const rightmost = numberItems[numberItems.length - 1];
+      balance = rightmost.val;
+      transItem = numberItems.find(n => n !== rightmost);
+    } else if (numberItems.length === 1) {
+      transItem = numberItems[0];
+    }
+
+    const isStudentFeeAmount = transItem && (Math.abs(transItem.val - 480) < 0.01 || Math.abs(transItem.val - 960) < 0.01 || Math.abs(transItem.val - 1440) < 0.01 || Math.abs(transItem.val - 1920) < 0.01);
+    const hasDepositKeywords = /Instant Transfer|Fund Trf|Credit|CDM Deposit|Deposit|fr CA to CA|DuitNow|IBG/i.test(combinedDescription);
+    const hasWithdrawalKeywords = /Cheque|Debit|Payment to|Charges|Fee|Withdrawal|Tax/i.test(combinedDescription);
+
+    // Layer 1: Mathematical Balance Difference (The Ultimate Source of Truth)
+    let determinedByBalance = false;
+    if (runningBalance > 0 && balance > 0) {
+      const balanceDiff = Math.round((balance - runningBalance) * 100) / 100;
+      if (balanceDiff > 0.01) {
+        deposit = transItem ? transItem.val : balanceDiff;
+        withdrawal = 0;
+        determinedByBalance = true;
+      } else if (balanceDiff < -0.01) {
+        withdrawal = transItem ? transItem.val : Math.abs(balanceDiff);
+        deposit = 0;
+        determinedByBalance = true;
+      }
+    }
+
+    // Layer 2: Boarding Student Identification
+    if (!determinedByBalance && matchedStudent && isStudentFeeAmount) {
+      deposit = transItem ? transItem.val : matchedStudent.fee;
+      withdrawal = 0;
+    }
+    // Layer 3: Transfer keywords
+    else if (!determinedByBalance && hasDepositKeywords && !hasWithdrawalKeywords) {
+      deposit = transItem ? transItem.val : (numberItems[0] ? numberItems[0].val : 0);
+      withdrawal = 0;
+    } else if (!determinedByBalance && hasWithdrawalKeywords && !hasDepositKeywords) {
+      withdrawal = transItem ? transItem.val : (numberItems[0] ? numberItems[0].val : 0);
+      deposit = 0;
+    }
+    // Layer 4: Coordinate-based fallback (Debit ~ 450-530, Credit ~ 530-685)
+    else if (!determinedByBalance && transItem) {
+      if (transItem.x >= 530 && transItem.x <= 685) {
+        deposit = transItem.val;
+      } else if (transItem.x >= 450 && transItem.x < 530) {
+        withdrawal = transItem.val;
+      } else if (hasDepositKeywords) {
+        deposit = transItem.val;
+      } else {
+        withdrawal = transItem.val;
+      }
+    }
+
+    if (balance > 0) {
+      runningBalance = balance;
+    } else if (deposit > 0 && runningBalance > 0) {
+      runningBalance = Math.round((runningBalance + deposit) * 100) / 100;
+    } else if (withdrawal > 0 && runningBalance > 0) {
+      runningBalance = Math.round((runningBalance - withdrawal) * 100) / 100;
+    }
 
     const isDeposit = deposit > 0;
     const amount = isDeposit ? deposit : withdrawal;
@@ -5095,11 +5150,12 @@ function extractTransactionsFromStatementItems(items) {
     else totalWith += withdrawal;
 
     // Advanced Classification for Boarding Students & Fee Months
-    let matchedStudent = null;
-    for (const rule of LEARNED_STUDENT_RULES) {
-      if (rule.pattern.test(combinedDescription)) {
-        matchedStudent = rule;
-        break;
+    if (!matchedStudent) {
+      for (const rule of LEARNED_STUDENT_RULES) {
+        if (rule.pattern.test(combinedDescription)) {
+          matchedStudent = rule;
+          break;
+        }
       }
     }
 
@@ -5342,7 +5398,7 @@ function renderParsedStatementTable() {
           : `<span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-semibold bg-rose-100 text-rose-800">出账 (Debit)</span>`}
       </td>
       <td class="px-3 py-3 whitespace-nowrap text-right font-black ${t.type === 'income' ? 'text-emerald-600' : 'text-rose-600'}">
-        RM ${formatMoney(t.amount)}
+        ${formatMoney(t.amount)}
       </td>
       <td class="px-3 py-3 whitespace-nowrap">
         <select onchange="updateStatementRowField('${t.id}', 'account', this.value)" class="text-xs px-2 py-1 bg-white border border-slate-200 rounded font-semibold text-slate-800 shadow-2xs">
@@ -8238,11 +8294,13 @@ function handleSelectPayer(name) {
     renderFeeMonthPills('', name);
   }
 
+  if (typeof refreshFeeMonthSelectorForPayer === 'function') refreshFeeMonthSelectorForPayer(name);
   updatePayerArrearsHint(name);
 }
 
 // Dynamic Arrears Hint in Modal
 function updatePayerArrearsHint(name) {
+  if (typeof refreshFeeMonthSelectorForPayer === 'function') refreshFeeMonthSelectorForPayer();
   const hintEl = document.getElementById('incomePayerArrearsHint');
   if (!hintEl) return;
 
@@ -8313,13 +8371,537 @@ window.copyAllArrearsSummary = copyAllArrearsSummary;
 window.printArrearsReport = printArrearsReport;
 window.getIncomeFeeMonth = getIncomeFeeMonth;
 window.formatFeeMonthDisplay = formatFeeMonthDisplay;
-window.renderFeeMonthPills = renderFeeMonthPills;
-window.handleFeeMonthChange = handleFeeMonthChange;
-window.setIncomeFeeMonth = setIncomeFeeMonth;
-window.clearIncomeFeeMonth = clearIncomeFeeMonth;
-window.quickEditIncomeMonth = quickEditIncomeMonth;
-window.applyQuickMonth = applyQuickMonth;
+if (typeof renderFeeMonthPills !== 'undefined') window.renderFeeMonthPills = renderFeeMonthPills;
+if (typeof handleFeeMonthChange !== 'undefined') window.handleFeeMonthChange = handleFeeMonthChange;
+if (typeof setIncomeFeeMonth !== 'undefined') window.setIncomeFeeMonth = setIncomeFeeMonth;
+if (typeof clearIncomeFeeMonth !== 'undefined') window.clearIncomeFeeMonth = clearIncomeFeeMonth;
+if (typeof quickEditIncomeMonth !== 'undefined') window.quickEditIncomeMonth = quickEditIncomeMonth;
+if (typeof applyQuickMonth !== 'undefined') window.applyQuickMonth = applyQuickMonth;
 
+
+// ==========================================
+// INTERACTIVE MULTI-MONTH SELECTOR ENGINE
+// Supports: Single/Multi-Month Selection + Prior Payment History Display
+// ==========================================
+
+var currentFeeMonthSelection = new Set();
+var currentModalStudentName = '';
+var currentEditingIncomeId = '';
+var quickMonthSelection = new Set();
+
+// Helper: Parse any feeMonth string into array of normalized 'YYYY-MM'
+function parseFeeMonthList(feeMonthStr) {
+  if (!feeMonthStr) return [];
+  const str = String(feeMonthStr).trim();
+  const list = [];
+  
+  // 1. Matches like 2026-01, 2026/01
+  const m1 = str.match(/2026[-/](0?[1-9]|1[0-2])\b/g);
+  if (m1) {
+    m1.forEach(m => {
+      const parts = m.split(/[-/]/);
+      const norm = `2026-${String(parts[1]).padStart(2, '0')}`;
+      if (!list.includes(norm)) list.push(norm);
+    });
+  }
+
+  // 2. Matches like 1月, 2月份, 12月
+  const m2 = str.match(/(0?[1-9]|1[0-2])\s*月份?/g);
+  if (m2) {
+    m2.forEach(c => {
+      const num = parseInt(c.replace(/月份?/, ''), 10);
+      if (num >= 1 && num <= 12) {
+        const norm = `2026-${String(num).padStart(2, '0')}`;
+        if (!list.includes(norm)) list.push(norm);
+      }
+    });
+  }
+
+  return list;
+}
+
+// Get detailed payment history for each month (1~12) for a given student
+function getStudentMonthPaymentDetails(studentName, excludeIncomeId = '') {
+  const result = {};
+  for (let m = 1; m <= 12; m++) {
+    result[m] = {
+      isPaid: false,
+      paidAmount: 0,
+      incomes: []
+    };
+  }
+
+  if (!studentName || !studentName.trim() || !window.appData || !window.appData.incomes) {
+    return result;
+  }
+
+  const sUpper = studentName.trim().toUpperCase();
+  const student = (typeof DEFAULT_BOARDING_STUDENTS !== 'undefined' ? DEFAULT_BOARDING_STUDENTS : []).find(s => 
+    s.name.toUpperCase().includes(sUpper) || 
+    s.aliases.some(al => sUpper.includes(al.toUpperCase()) || al.toUpperCase().includes(sUpper))
+  );
+
+  // Match all income records for this student
+  const matched = (window.appData.incomes || []).filter(inc => {
+    if (excludeIncomeId && inc.id === excludeIncomeId) return false;
+    const text = `${inc.counterparty || ''} ${inc.remark || ''}`.toUpperCase();
+    if (student) {
+      return student.aliases.some(al => text.includes(al.toUpperCase()));
+    }
+    return text.includes(sUpper);
+  });
+
+  // 1. Check matched incomes for explicit feeMonth
+  matched.forEach(inc => {
+    const rawMonth = inc.feeMonth || (typeof getIncomeFeeMonth === 'function' ? getIncomeFeeMonth(inc) : '');
+    const months = parseFeeMonthList(rawMonth);
+    const amt = Number(inc.amount) || 0;
+
+    if (months.length > 0) {
+      const perMonthAmt = Math.round((amt / months.length) * 100) / 100;
+      months.forEach(mStr => {
+        const mNum = parseInt(mStr.slice(-2), 10);
+        if (mNum >= 1 && mNum <= 12) {
+          result[mNum].isPaid = true;
+          result[mNum].paidAmount += perMonthAmt;
+          result[mNum].incomes.push({
+            id: inc.id,
+            date: inc.date,
+            amount: amt,
+            remark: inc.remark || ''
+          });
+        }
+      });
+    }
+  });
+
+  // 2. Check remarks for month keywords (JAN, FEB, etc.) if not already marked
+  matched.forEach(inc => {
+    const rem = (inc.remark || '').toUpperCase();
+    const amt = Number(inc.amount) || 0;
+    const checkMonth = (mNum, regex) => {
+      if (regex.test(rem) && !result[mNum].isPaid) {
+        result[mNum].isPaid = true;
+        result[mNum].paidAmount = amt;
+        result[mNum].incomes.push({
+          id: inc.id,
+          date: inc.date,
+          amount: amt,
+          remark: inc.remark || ''
+        });
+      }
+    };
+    checkMonth(1, /JAN|2026[-/]0?1\b|1月/i);
+    checkMonth(2, /FEB|2026[-/]0?2\b|2月/i);
+    checkMonth(3, /MAR|2026[-/]0?3\b|3月/i);
+    checkMonth(4, /APR|2026[-/]0?4\b|4月/i);
+    checkMonth(5, /MAY|2026[-/]0?5\b|5月/i);
+    checkMonth(6, /JUN|2026[-/]0?6\b|6月/i);
+    checkMonth(7, /JUL|2026[-/]0?7\b|7月/i);
+    checkMonth(8, /AUG|2608|2026[-/]0?8\b|8月/i);
+    checkMonth(9, /SEP|2026[-/]0?9\b|9月/i);
+    checkMonth(10, /OCT|2026[-/]10\b|10月/i);
+    checkMonth(11, /NOV|2026[-/]11\b|11月/i);
+    checkMonth(12, /DEC|2026[-/]12\b|12月/i);
+  });
+
+  // 3. Sequential fill based on total paid amount if any months are still unassigned
+  if (student) {
+    const monthlyFee = student.count * (typeof arrearsMonthlyFeePerPerson !== 'undefined' ? arrearsMonthlyFeePerPerson : 480);
+    const totalPaid = matched.reduce((sum, inc) => sum + (Number(inc.amount) || 0), 0);
+    const numMonthsPaid = Math.floor(totalPaid / (monthlyFee || 480));
+    let curAssigned = 0;
+    for (let m = 1; m <= 12; m++) {
+      if (result[m].isPaid) curAssigned++;
+    }
+    if (curAssigned < numMonthsPaid) {
+      for (let m = 1; m <= 12; m++) {
+        if (!result[m].isPaid && curAssigned < numMonthsPaid) {
+          result[m].isPaid = true;
+          result[m].paidAmount = monthlyFee || 480;
+          curAssigned++;
+        }
+      }
+    }
+  }
+
+  return result;
+}
+
+// Render the 12-month interactive grid in Income Modal
+function renderFeeMonthSelector(initialSelection = '', studentName = '', excludeIncomeId = '') {
+  currentModalStudentName = studentName || '';
+  currentEditingIncomeId = excludeIncomeId || '';
+
+  const parsedList = parseFeeMonthList(initialSelection);
+  currentFeeMonthSelection = new Set(parsedList);
+
+  const gridContainer = document.getElementById('feeMonthGrid');
+  if (!gridContainer) return;
+
+  const paidDetails = getStudentMonthPaymentDetails(currentModalStudentName, currentEditingIncomeId);
+  const cutoff = (typeof arrearsCutoffMonth !== 'undefined') ? arrearsCutoffMonth : 9;
+
+  const monthConfigs = [
+    { num: 1, zh: '1月', en: 'Jan', code: '2026-01' },
+    { num: 2, zh: '2月', en: 'Feb', code: '2026-02' },
+    { num: 3, zh: '3月', en: 'Mar', code: '2026-03' },
+    { num: 4, zh: '4月', en: 'Apr', code: '2026-04' },
+    { num: 5, zh: '5月', en: 'May', code: '2026-05' },
+    { num: 6, zh: '6月', en: 'Jun', code: '2026-06' },
+    { num: 7, zh: '7月', en: 'Jul', code: '2026-07' },
+    { num: 8, zh: '8月', en: 'Aug', code: '2026-08' },
+    { num: 9, zh: '9月', en: 'Sep', code: '2026-09' },
+    { num: 10, zh: '10月', en: 'Oct', code: '2026-10' },
+    { num: 11, zh: '11月', en: 'Nov', code: '2026-11' },
+    { num: 12, zh: '12月', en: 'Dec', code: '2026-12' }
+  ];
+
+  gridContainer.innerHTML = monthConfigs.map(m => {
+    const isSelected = currentFeeMonthSelection.has(m.code);
+    const detail = paidDetails[m.num];
+    const isPaid = detail.isPaid;
+    const isArrears = !isPaid && m.num <= cutoff;
+
+    let cardBg = 'bg-white';
+    let borderColor = 'border-slate-200';
+    let statusBadge = '';
+    let subText = '';
+
+    if (isSelected) {
+      cardBg = 'bg-indigo-50/90 text-indigo-900 shadow-md ring-2 ring-indigo-500';
+      borderColor = 'border-indigo-500';
+      statusBadge = `<span class="px-1.5 py-0.5 rounded text-[10px] font-bold bg-indigo-600 text-white shadow-xs">✓ 选中</span>`;
+    } else if (isPaid) {
+      cardBg = 'bg-emerald-50/70 text-emerald-950 hover:bg-emerald-100/60';
+      borderColor = 'border-emerald-300';
+      statusBadge = `<span class="px-1.5 py-0.5 rounded text-[10px] font-bold bg-emerald-100 text-emerald-800 border border-emerald-300">✅ 已缴</span>`;
+    } else if (isArrears) {
+      cardBg = 'bg-rose-50/70 text-rose-950 hover:bg-rose-100/60';
+      borderColor = 'border-rose-300';
+      statusBadge = `<span class="px-1.5 py-0.5 rounded text-[10px] font-bold bg-rose-100 text-rose-800 border border-rose-300 animate-pulse">⚠️ 待缴 (欠费)</span>`;
+    } else {
+      cardBg = 'bg-slate-50 text-slate-700 hover:bg-slate-100';
+      borderColor = 'border-slate-200';
+      statusBadge = `<span class="px-1.5 py-0.5 rounded text-[10px] font-medium bg-slate-200 text-slate-600">⭕ 待缴</span>`;
+    }
+
+    if (isPaid) {
+      const pAmt = typeof formatMoney === 'function' ? formatMoney(detail.paidAmount) : `RM ${detail.paidAmount}`;
+      subText = `<div class="text-[10px] text-emerald-700 font-mono font-medium">${pAmt}</div>`;
+      if (detail.incomes.length > 0 && detail.incomes[0].date) {
+        subText += `<div class="text-[9px] text-slate-400 truncate">${detail.incomes[0].date.slice(5)}</div>`;
+      }
+    } else if (isArrears) {
+      subText = `<div class="text-[10px] text-rose-600 font-bold">截止期应缴</div>`;
+    } else {
+      subText = `<div class="text-[10px] text-slate-400 font-normal">待缴纳</div>`;
+    }
+
+    return `
+      <div 
+        onclick="toggleFeeMonthSelection('${m.code}')" 
+        class="cursor-pointer select-none rounded-xl border p-2 transition-all flex flex-col justify-between items-center text-center relative ${cardBg} ${borderColor}"
+        title="${m.zh} (点击切换选中/取消)"
+      >
+        <div class="flex items-center justify-between w-full mb-1">
+          <span class="text-xs font-black tracking-tight">${m.zh}</span>
+          <span class="text-[10px] text-slate-400 uppercase font-mono">${m.en}</span>
+        </div>
+        <div class="my-0.5 w-full flex justify-center">
+          ${statusBadge}
+        </div>
+        <div class="mt-1 w-full flex flex-col items-center">
+          ${subText}
+        </div>
+      </div>
+    `;
+  }).join('');
+
+  updateFeeMonthSummaryAndInput();
+}
+
+// Toggle month in selection set
+function toggleFeeMonthSelection(mStr) {
+  if (currentFeeMonthSelection.has(mStr)) {
+    currentFeeMonthSelection.delete(mStr);
+  } else {
+    currentFeeMonthSelection.add(mStr);
+  }
+  renderFeeMonthSelector(Array.from(currentFeeMonthSelection).join(', '), currentModalStudentName, currentEditingIncomeId);
+}
+
+// 1-Click select earliest unpaid month
+function selectEarliestUnpaidFeeMonth() {
+  const paidDetails = getStudentMonthPaymentDetails(currentModalStudentName, currentEditingIncomeId);
+  for (let m = 1; m <= 12; m++) {
+    if (!paidDetails[m].isPaid) {
+      const code = `2026-${String(m).padStart(2, '0')}`;
+      currentFeeMonthSelection.clear();
+      currentFeeMonthSelection.add(code);
+      renderFeeMonthSelector(Array.from(currentFeeMonthSelection).join(', '), currentModalStudentName, currentEditingIncomeId);
+      if (typeof showToast === 'function') {
+        showToast(`已为您智能选中最早未缴月份：2026年${m}月`);
+      }
+      return;
+    }
+  }
+  if (typeof showToast === 'function') {
+    showToast('该学生本年度1~12月住宿费已全部缴清！');
+  }
+}
+
+// Clear fee month selection
+function clearIncomeFeeMonth() {
+  currentFeeMonthSelection.clear();
+  renderFeeMonthSelector('', currentModalStudentName, currentEditingIncomeId);
+  const customInput = document.getElementById('incomeCustomFeeMonth');
+  if (customInput) customInput.value = '';
+}
+
+// Update summary text, hidden input, warning banner, and auto-suggest amount
+function updateFeeMonthSummaryAndInput() {
+  const hiddenInput = document.getElementById('incomeFeeMonth');
+  const summaryEl = document.getElementById('feeMonthSelectionSummary');
+  const warningNotice = document.getElementById('feeMonthWarningNotice');
+  const amountHint = document.getElementById('feeMonthAmountHint');
+  const amountInput = document.getElementById('incomeAmount');
+
+  const sortedList = Array.from(currentFeeMonthSelection).sort();
+  const joinedStr = sortedList.join(', ');
+
+  if (hiddenInput) {
+    hiddenInput.value = joinedStr;
+  }
+
+  // Summary display
+  if (summaryEl) {
+    if (sortedList.length === 0) {
+      summaryEl.innerHTML = `
+        <span class="text-slate-400">未选择归属月份（保存为<b>非周期性/其他款项</b>）</span>
+      `;
+    } else {
+      const displayNames = sortedList.map(s => {
+        const num = parseInt(s.slice(-2), 10);
+        return `${num}月`;
+      }).join(' + ');
+
+      const count = sortedList.length;
+      summaryEl.innerHTML = `
+        <span class="font-bold text-indigo-700">2026年 ${displayNames}</span>
+        <span class="ml-2 text-xs bg-indigo-100 text-indigo-800 font-bold px-2 py-0.5 rounded-full">已选 ${count} 个月</span>
+      `;
+    }
+  }
+
+  // Fee calculation helper: RM 480 per month
+  const monthlyRate = (typeof arrearsMonthlyFeePerPerson !== 'undefined') ? arrearsMonthlyFeePerPerson : 480;
+  const suggestedFee = sortedList.length * monthlyRate;
+
+  if (amountHint) {
+    if (sortedList.length > 0) {
+      const formattedRate = typeof formatMoney === 'function' ? formatMoney(suggestedFee) : `RM ${suggestedFee}`;
+      amountHint.textContent = `（按每个月 RM ${monthlyRate} 推荐金额：${formattedRate}）`;
+      amountHint.classList.remove('hidden');
+    } else {
+      amountHint.classList.add('hidden');
+    }
+  }
+
+  // If amount input is empty or 0, suggest auto-filling
+  if (amountInput && (!amountInput.value || Number(amountInput.value) === 0) && suggestedFee > 0) {
+    amountInput.value = suggestedFee;
+  }
+
+  // Warning banner for already paid months
+  if (warningNotice) {
+    const paidDetails = getStudentMonthPaymentDetails(currentModalStudentName, currentEditingIncomeId);
+    const conflicts = [];
+    currentFeeMonthSelection.forEach(mStr => {
+      const mNum = parseInt(mStr.slice(-2), 10);
+      if (paidDetails[mNum] && paidDetails[mNum].isPaid) {
+        const pAmt = typeof formatMoney === 'function' ? formatMoney(paidDetails[mNum].paidAmount) : `RM ${paidDetails[mNum].paidAmount}`;
+        conflicts.push(`${mNum}月份 (此前已缴 ${pAmt})`);
+      }
+    });
+
+    if (conflicts.length > 0) {
+      warningNotice.classList.remove('hidden');
+      warningNotice.innerHTML = `⚠️ <b>提示：</b>您选中的 <b>${conflicts.join('、')}</b> 此前已有入账记录，请确认是否为补缴差额或重复入账。`;
+    } else {
+      warningNotice.classList.add('hidden');
+      warningNotice.innerHTML = '';
+    }
+  }
+}
+
+// Toggle custom input field (for advanced formats like 2025 or special quarters)
+function toggleCustomFeeMonthInput() {
+  const container = document.getElementById('feeMonthInputContainer');
+  if (!container) return;
+  const isHidden = container.classList.contains('hidden');
+  if (isHidden) {
+    container.classList.remove('hidden');
+    const customInput = document.getElementById('incomeCustomFeeMonth');
+    if (customInput && !customInput.value) {
+      customInput.value = Array.from(currentFeeMonthSelection).sort().join(', ');
+    }
+  } else {
+    container.classList.add('hidden');
+  }
+}
+
+// Handle changes in custom input field
+function handleCustomFeeMonthInput(val) {
+  const hiddenInput = document.getElementById('incomeFeeMonth');
+  if (hiddenInput) hiddenInput.value = val;
+  const parsed = parseFeeMonthList(val);
+  currentFeeMonthSelection = new Set(parsed);
+  renderFeeMonthSelector(val, currentModalStudentName, currentEditingIncomeId);
+}
+
+// Re-render when payer/counterparty changes in incomeModal
+function refreshFeeMonthSelectorForPayer() {
+  const payerInput = document.getElementById('incomePayer');
+  const payerName = payerInput ? payerInput.value : '';
+  const currentSelected = Array.from(currentFeeMonthSelection).join(', ');
+  renderFeeMonthSelector(currentSelected, payerName, currentEditingIncomeId);
+}
+
+// Quick Month Modal Enhanced Multi-Month Picker
+// ==========================================
+function quickEditIncomeMonth(incomeId, event) {
+  if (event) {
+    event.stopPropagation();
+    event.preventDefault();
+  }
+  const item = (appData.incomes || []).find(i => i.id === incomeId);
+  if (!item) return;
+
+  const modal = document.getElementById('quickMonthModal');
+  if (!modal) return;
+
+  document.getElementById('quickMonthIncomeId').value = incomeId;
+  const currentMonths = parseFeeMonthList(item.feeMonth || (typeof getIncomeFeeMonth === 'function' ? getIncomeFeeMonth(item) : ''));
+  quickMonthSelection = new Set(currentMonths);
+
+  renderQuickMonthGrid(item);
+  modal.classList.remove('hidden');
+}
+
+function renderQuickMonthGrid(item) {
+  const infoEl = document.getElementById('quickMonthPayerInfo');
+  if (infoEl) {
+    const disp = Array.from(quickMonthSelection).sort().map(m => parseInt(m.slice(-2), 10) + '月').join(' + ') || '未指定';
+    const formattedAmt = typeof formatMoney === 'function' ? formatMoney(item.amount) : `RM ${item.amount}`;
+    infoEl.innerHTML = `
+      交款人: <span class="font-bold text-slate-800">${item.counterparty || '未填写'}</span> | 
+      金额: <span class="font-bold text-emerald-600">${formattedAmt}</span> | 
+      选中: <span class="font-bold text-indigo-700">${disp}</span>
+    `;
+  }
+
+  const grid = document.getElementById('quickMonthButtonGrid');
+  if (!grid) return;
+
+  const paymentDetails = getStudentMonthPaymentDetails(item.counterparty || '', item.id);
+  const cutoff = (typeof arrearsCutoffMonth !== 'undefined') ? arrearsCutoffMonth : 9;
+  const monthNames = [
+    { num: 1, zh: '1月', en: 'Jan' },
+    { num: 2, zh: '2月', en: 'Feb' },
+    { num: 3, zh: '3月', en: 'Mar' },
+    { num: 4, zh: '4月', en: 'Apr' },
+    { num: 5, zh: '5月', en: 'May' },
+    { num: 6, zh: '6月', en: 'Jun' },
+    { num: 7, zh: '7月', en: 'Jul' },
+    { num: 8, zh: '8月', en: 'Aug' },
+    { num: 9, zh: '9月', en: 'Sep' },
+    { num: 10, zh: '10月', en: 'Oct' },
+    { num: 11, zh: '11月', en: 'Nov' },
+    { num: 12, zh: '12月', en: 'Dec' }
+  ];
+
+  grid.innerHTML = monthNames.map(m => {
+    const mStr = `2026-${String(m.num).padStart(2, '0')}`;
+    const isSelected = quickMonthSelection.has(mStr);
+    const detail = paymentDetails[m.num];
+    const isPaid = detail.isPaid;
+    const isArrears = !isPaid && m.num <= cutoff;
+
+    let btnClass = '';
+    let badgeText = '';
+
+    if (isSelected) {
+      btnClass = 'bg-indigo-600 text-white border-indigo-600 shadow-md ring-2 ring-indigo-300 font-bold';
+      badgeText = isPaid ? '已缴月(选中)' : '选中';
+    } else if (isPaid) {
+      btnClass = 'bg-emerald-50 text-emerald-800 border-emerald-300 hover:bg-emerald-100 font-medium';
+      badgeText = '✅已缴';
+    } else if (isArrears) {
+      btnClass = 'bg-rose-50 text-rose-800 border-rose-300 hover:bg-rose-100 font-bold';
+      badgeText = '⚠️欠费';
+    } else {
+      btnClass = 'bg-white text-slate-700 border-slate-200 hover:bg-slate-50';
+      badgeText = '待缴';
+    }
+
+    return `
+      <button type="button" onclick="toggleQuickMonthItem('${mStr}')" class="p-2 rounded-xl border text-center transition cursor-pointer flex flex-col items-center justify-between ${btnClass}">
+        <div class="flex items-center justify-between w-full px-0.5">
+          <span class="text-xs font-black">${m.zh}</span>
+          <span class="text-[10px] ${isSelected ? 'text-white' : 'text-slate-400'}">${isSelected ? '✓' : ''}</span>
+        </div>
+        <div class="text-[9px] mt-1 opacity-90">${badgeText}</div>
+      </button>
+    `;
+  }).join('');
+}
+
+function toggleQuickMonthItem(mStr) {
+  if (quickMonthSelection.has(mStr)) {
+    quickMonthSelection.delete(mStr);
+  } else {
+    quickMonthSelection.add(mStr);
+  }
+  const incomeId = document.getElementById('quickMonthIncomeId').value;
+  const item = (appData.incomes || []).find(i => i.id === incomeId);
+  if (item) renderQuickMonthGrid(item);
+}
+
+function saveQuickMonthModal() {
+  const incomeId = document.getElementById('quickMonthIncomeId').value;
+  const item = (appData.incomes || []).find(i => i.id === incomeId);
+  if (!item) return;
+
+  const sortedMonths = Array.from(quickMonthSelection).sort();
+  item.feeMonth = sortedMonths.join(', ');
+  saveData();
+  closeModal('quickMonthModal');
+  showToast(`已成功将交费月份更新为：${item.feeMonth ? formatFeeMonthDisplay(item.feeMonth) : '非周期性款项'}`);
+
+  renderIncomeTable();
+  if (typeof renderArrearsTracker === 'function') renderArrearsTracker();
+  if (typeof updateArrearsBadge === 'function') updateArrearsBadge();
+
+  if (typeof supabaseClient !== 'undefined' && supabaseClient) {
+    pushToCloud(false);
+  }
+}
+
+// Window Exports
+window.renderFeeMonthSelector = renderFeeMonthSelector;
+window.toggleFeeMonthSelection = toggleFeeMonthSelection;
+window.selectEarliestUnpaidFeeMonth = selectEarliestUnpaidFeeMonth;
+window.clearIncomeFeeMonth = clearIncomeFeeMonth;
+window.toggleCustomFeeMonthInput = toggleCustomFeeMonthInput;
+window.handleCustomFeeMonthInput = handleCustomFeeMonthInput;
+window.refreshFeeMonthSelectorForPayer = refreshFeeMonthSelectorForPayer;
+window.getStudentMonthPaymentDetails = getStudentMonthPaymentDetails;
+window.parseFeeMonthList = parseFeeMonthList;
+window.quickEditIncomeMonth = quickEditIncomeMonth;
+window.renderQuickMonthGrid = renderQuickMonthGrid;
+window.toggleQuickMonthItem = toggleQuickMonthItem;
+window.saveQuickMonthModal = saveQuickMonthModal;
   </script>
 </body>
 </html>
