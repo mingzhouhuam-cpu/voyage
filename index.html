@@ -11,8 +11,8 @@
   <script id="voyage-ota-bootloader">
     (function() {
       try {
-        var expectedVersion = '2026.3.36';
-        var baseBuildTime = 1789055348159;
+        var expectedVersion = '2026.3.37';
+        var baseBuildTime = 1789056272805;
         var cachedBundle = localStorage.getItem('voyage_finance_cached_bundle');
         var cachedVersion = localStorage.getItem('voyage_finance_cached_version');
         var cachedTime = parseInt(localStorage.getItem('voyage_finance_cached_time') || '0', 10);
@@ -1202,6 +1202,201 @@
               </div>
             </div>
 
+              </h4>
+              <ul id="expenseCatList" class="divide-y divide-slate-100 text-xs text-slate-600 bg-slate-50 p-3 rounded-xl border border-slate-200">
+                <!-- Rendered by JS -->
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 6. SETTINGS & DATA TOOLS VIEW -->
+    <div id="view-settings" class="space-y-6 hidden">
+      <div class="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm max-w-3xl space-y-6">
+        <div>
+          <div class="flex items-center justify-between">
+            <div>
+              <h3 class="text-lg font-bold text-slate-900 mb-1">单据识别与 100% 纯本地离线计算引擎</h3>
+              <p class="text-xs text-slate-500">已完全移除外部云端 API 依赖。单据图片完全由您的浏览器在本地离线处理，财务数据零上云，绝对安全隐私。</p>
+            </div>
+            <div class="hidden sm:flex items-center space-x-2 bg-amber-50 border border-amber-200 px-3 py-1.5 rounded-xl text-xs">
+              <span class="text-amber-800">当前引擎：</span>
+              <span id="currentOcrEngineName" class="font-bold text-amber-900">⚡ 纯本地离线 OCR (中/英/马三语 + 画质增强)</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Pure Local In-Browser OCR Panel -->
+        <div class="space-y-4">
+          <div id="ocrModeCard_local" class="p-5 rounded-2xl bg-white border-2 border-amber-300 ring-2 ring-amber-500/20 transition-all shadow-sm space-y-4 relative">
+            <div class="flex flex-col sm:flex-row sm:items-start justify-between gap-3">
+              <div class="flex items-start space-x-3.5">
+                <div class="w-11 h-11 rounded-2xl bg-gradient-to-tr from-amber-500 to-orange-500 text-white flex items-center justify-center text-2xl shadow-md shadow-amber-500/25 flex-shrink-0">
+                  ⚡
+                </div>
+                <div>
+                  <div class="flex items-center space-x-2">
+                    <h4 class="text-sm font-bold text-slate-900">纯本地离线 OCR 识单引擎 (纯浏览器计算 · 隐私无忧)</h4>
+                    <span id="ocrModeBadge_local" class="text-[10px] bg-emerald-100 text-emerald-900 border border-emerald-300 px-2 py-0.5 rounded-full font-bold">● 100% 本地运行中</span>
+                  </div>
+                  <p class="text-xs text-slate-600 mt-1.5 leading-relaxed">
+                    <b>零网络上传 · 零外部 API · 无需 API 密钥</b>。所有文字提取均在您手机或电脑本地 WebAssembly 内存中极速完成。
+                    已内置针对<b>马来西亚收据、发票及公用事业账单（TNB 电费、水务、油站、商超小票）</b>的专属特征匹配库，自动排查保证金（Cagaran）及过往欠款干扰。
+                  </p>
+                </div>
+              </div>
+              <div class="flex items-center space-x-2 flex-shrink-0 ml-14 sm:ml-0">
+                <button type="button" onclick="testLocalOcrEngine()" class="px-4 py-2 bg-amber-600 hover:bg-amber-700 text-white rounded-xl text-xs font-bold shadow-sm transition flex items-center space-x-1.5 active:scale-95">
+                  <span>⚡</span>
+                  <span>检测本地引擎就绪</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- Preprocessing & Accuracy Enhancements -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
+              <div class="p-3 bg-amber-50/70 border border-amber-200/70 rounded-xl space-y-1 text-xs">
+                <div class="flex items-center space-x-1.5 font-bold text-amber-900">
+                  <span>🎨</span>
+                  <span>HTML5 动态画质增强流水线</span>
+                </div>
+                <p class="text-[11px] text-amber-800 leading-relaxed">
+                  内置智能自适应灰度化、局部对比度动态拉伸与文字锐化卷积算法，自动消除拍照阴影，使微弱热敏小票字迹清晰易读。
+                </p>
+              </div>
+
+              <div class="p-3 bg-blue-50/70 border border-blue-200/70 rounded-xl space-y-1 text-xs">
+                <div class="flex items-center space-x-1.5 font-bold text-blue-900">
+                  <span>🇲🇾</span>
+                  <span>马来西亚账单与小票容错规则</span>
+                </div>
+                <p class="text-[11px] text-blue-800 leading-relaxed">
+                  专为 TNB、Lembaga Air、Indah Water、Shell、MR D.I.Y.、99 Speedmart 设计的多层金额权重评分体系，支持跨行金额抓取与 OCR 混淆字符纠错。
+                </p>
+              </div>
+            </div>
+
+            <!-- Language Support Tags -->
+            <div class="p-3 bg-slate-50 border border-slate-200/80 rounded-xl flex flex-wrap items-center justify-between gap-2 text-xs">
+              <div class="flex items-center space-x-2 text-slate-700 font-medium">
+                <span>🌐 多语言模型：</span>
+                <span class="bg-white px-2 py-0.5 rounded border border-slate-200 text-slate-800 font-semibold">🇨🇳 简体中文 (chi_sim)</span>
+                <span class="bg-white px-2 py-0.5 rounded border border-slate-200 text-slate-800 font-semibold">🇬🇧 英文 (eng)</span>
+                <span class="bg-white px-2 py-0.5 rounded border border-slate-200 text-slate-800 font-semibold">🇲🇾 马来文 (msa)</span>
+              </div>
+              <span class="text-[11px] text-emerald-700 font-bold flex items-center space-x-1">
+                <span>✓</span>
+                <span>已启用浏览器离线高速缓存</span>
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <div class="pt-4 border-t border-slate-100">
+          <h4 class="text-sm font-bold text-slate-800 mb-3">系统数据安全与备份恢复</h4>
+          <div class="space-y-4">
+                                                    <!-- Supabase Cloud Dynamic Hot-Update (OTA) Engine Card -->
+        <div class="p-5 rounded-2xl bg-gradient-to-br from-indigo-50/90 via-blue-50/50 to-purple-50/40 border border-indigo-200 space-y-4 shadow-sm mb-6">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <div class="flex items-start space-x-3">
+              <div class="w-10 h-10 rounded-xl bg-indigo-600 text-white flex items-center justify-center font-bold text-lg shadow-md shadow-indigo-600/20 flex-shrink-0">
+                🚀
+              </div>
+              <div>
+                <div class="flex items-center space-x-2">
+                  <h4 class="text-sm font-bold text-slate-900">全网云端动态热更新中心 (OTA 无需重发文件)</h4>
+                  <span class="px-2 py-0.5 text-[10px] font-bold bg-indigo-100 text-indigo-700 rounded-full">实时发布</span>
+                </div>
+                <p class="text-xs text-slate-500 mt-0.5">任何一台电脑对本网页做出了修改或升级，一键发布到云端，全网其他电脑与手机在下次打开或刷新时，将自动载入最新系统，无需反复重发 HTML 文件！</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-2">
+            <div class="p-3 bg-white rounded-xl border border-slate-200/80 shadow-2xs">
+              <div class="text-[11px] text-slate-400 font-medium">当前运行版本</div>
+              <div id="localReleaseVersion" class="text-sm font-bold text-slate-800 mt-0.5">v2026.3.22</div>
+            </div>
+            <div class="p-3 bg-white rounded-xl border border-slate-200/80 shadow-2xs">
+              <div class="text-[11px] text-slate-400 font-medium">云端最新版本</div>
+              <div id="cloudReleaseVersion" class="text-sm font-bold text-indigo-600 mt-0.5">检查中...</div>
+            </div>
+            <div class="p-3 bg-white rounded-xl border border-slate-200/80 shadow-2xs">
+              <div class="text-[11px] text-slate-400 font-medium">云端发布时间</div>
+              <div id="cloudReleaseTime" class="text-xs font-semibold text-slate-600 mt-1 truncate">-</div>
+            </div>
+          </div>
+
+          <div class="flex flex-wrap items-center gap-2.5 pt-1">
+            <button type="button" onclick="checkForCloudAppUpdates(true)" class="inline-flex items-center px-3.5 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg text-xs font-semibold shadow-sm transition-all focus:outline-none ring-2 ring-indigo-500/20">
+              <svg class="w-3.5 h-3.5 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+              <span>检查并载入云端最新版</span>
+            </button>
+            <button type="button" onclick="publishCurrentAppToCloud()" class="inline-flex items-center px-3.5 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-xs font-semibold shadow-sm transition-all focus:outline-none ring-2 ring-emerald-500/20">
+              <svg class="w-3.5 h-3.5 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path></svg>
+              <span>一键发布当前网页为全网最新版</span>
+            </button>
+            <button type="button" onclick="clearHotUpdateCache()" class="inline-flex items-center px-3 py-2 border border-slate-300 hover:bg-white text-slate-600 rounded-lg text-xs font-medium transition-all">
+              <span>🧹 清除本地热更新缓存</span>
+            </button>
+          </div>
+        </div>
+
+
+        <!-- Supabase Cloud Sync Card -->
+        <div class="p-5 rounded-xl bg-gradient-to-br from-emerald-50/70 to-teal-50/50 border border-emerald-200 space-y-4 shadow-sm mb-6">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <div class="flex items-start space-x-3">
+              <div class="w-9 h-9 rounded-xl bg-emerald-600 text-white flex items-center justify-center font-bold text-base shadow-md shadow-emerald-600/20 flex-shrink-0">
+                ☁️
+              </div>
+              <div>
+                <h4 class="text-sm font-bold text-slate-900">多电脑实时云同步 (Supabase 免费云库)</h4>
+                <p class="text-xs text-slate-500 mt-0.5">在办公室电脑记账，家中电脑与手机无需手动导出，秒级全自动实时更新！</p>
+              </div>
+            </div>
+            <button onclick="openCloudSyncModal()" class="inline-flex items-center justify-center px-3.5 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-xs font-semibold shadow-sm transition-all focus:outline-none ring-2 ring-emerald-500/20">
+              <svg class="w-3.5 h-3.5 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+              <span>配置云同步参数</span>
+            </button>
+          </div>
+          <div class="flex flex-wrap items-center justify-between text-xs pt-3 border-t border-emerald-200/60 text-slate-600 gap-2">
+            <div>
+              云端同步状态：<span id="settingsCloudStatus" class="font-semibold text-slate-800">🟡 离线模式 (仅保存在本机)</span>
+            </div>
+            <div id="settingsCloudLastSync" class="text-slate-400 text-[11px]">
+              暂无云端同步记录
+            </div>
+          </div>
+        </div>
+
+        <!-- Backup -->
+            <div class="p-4 rounded-xl bg-slate-50 border border-slate-200 flex items-center justify-between">
+              <div>
+                <h4 class="text-xs font-semibold text-slate-800">导出数据备份 (JSON)</h4>
+                <p class="text-[11px] text-slate-500">将全部收入、支出、单据图片与设置完整打包备份。</p>
+              </div>
+              <button onclick="exportCompleteDataJSON()" class="px-4 py-2 bg-slate-800 hover:bg-slate-900 text-white rounded-lg text-xs font-medium transition-all shadow-sm">
+                立即导出备份
+              </button>
+            </div>
+
+            <!-- Restore -->
+            <div class="p-4 rounded-xl bg-slate-50 border border-slate-200 flex items-center justify-between">
+              <div>
+                <h4 class="text-xs font-semibold text-slate-800">从文件导入恢复 (JSON)</h4>
+                <p class="text-[11px] text-slate-500">选择您之前导出的备份文件，一键恢复全部账目数据。</p>
+              </div>
+              <div>
+                <input type="file" id="importJsonInput" accept=".json" class="hidden" onchange="handleImportJSON(event)">
+                <button onclick="document.getElementById('importJsonInput').click()" class="px-4 py-2 border border-slate-300 text-slate-700 hover:bg-slate-100 rounded-lg text-xs font-medium transition-all">
+                  选择备份文件
+                </button>
+              </div>
+            </div>
+
           </div>
         </div>
 
@@ -1243,6 +1438,7 @@
             </select>
           </div>
         </div>
+
         <div>
           <div class="flex items-center justify-between mb-1">
             <label class="block font-medium text-slate-700">交款人 / 客户名称 *</label>
@@ -1254,22 +1450,22 @@
             <select id="incomePayerSelect" onchange="handleSelectPayer(this.value)" class="w-full px-3 py-2 bg-emerald-50/60 border border-emerald-300 text-slate-800 rounded-lg focus:ring-2 focus:ring-emerald-500 text-xs font-semibold">
               <option value="">-- 点击选择交款人（15位住宿生 / 常用交款人） --</option>
               <optgroup label="🏠 住宿学生（每月 RM480）">
-                <option value="HONG YE & KAI YE">HONG YE & KAI YE (两兄弟合并 · RM960/月)</option>
-                <option value="HONG YE">HONG YE (宏业 · RM480/月)</option>
-                <option value="KAI YE">KAI YE (凯业 · RM480/月)</option>
-                <option value="LEE YAN CHENG">LEE YAN CHENG</option>
-                <option value="KAIHAO">KAIHAO</option>
-                <option value="LEE JU YAN">LEE JU YAN</option>
-                <option value="CHUA MING ZHE">CHUA MING ZHE</option>
-                <option value="ONG SHI SHUI">ONG SHI SHUI</option>
-                <option value="ENG WEI ZHI">ENG WEI ZHI</option>
-                <option value="WONG E FULL">WONG E FULL</option>
-                <option value="HUAIDERK">HUAIDERK</option>
-                <option value="GOH JYJE SHAN">GOH JYJE SHAN</option>
-                <option value="TAN JIAN FONG">TAN JIAN FONG</option>
-                <option value="LEE JI CHUEN">LEE JI CHUEN</option>
-                <option value="CHIA KAI JIE">CHIA KAI JIE</option>
-                <option value="ZHI XIAO">ZHI XIAO</option>
+                <option value="HONG YE & KAI YE">邹宏业 & 邹楷业 (HONG YE & KAI YE · 两兄弟合并 RM960/月)</option>
+                <option value="LEE YAN CHENG">李晏丞 (LEE YAN CHENG)</option>
+                <option value="KAIHAO">蔡凯皓 (KAIHAO)</option>
+                <option value="LEE JU YAN">李居彦 (LEE JU YAN)</option>
+                <option value="CHUA MING ZHE">蔡旻哲 (CHUA MING ZHE)</option>
+                <option value="ONG SHI SHUI">翁诗岁 (ONG SHI SHUI)</option>
+                <option value="ENG WEI ZHI">黄炜智 (ENG WEI ZHI)</option>
+                <option value="WONG E FULL">黄益富 (WONG E FULL)</option>
+                <option value="HUAIDERK">陈怀德 (HUAIDERK)</option>
+                <option value="GOH JYJE SHAN">吴劼善 (GOH JYJE SHAN)</option>
+                <option value="TAN JIAN FONG">陈剑锋 (TAN JIAN FONG)</option>
+                <option value="LEE JI CHUEN">吕梓铨 (LEE JI CHUEN)</option>
+                <option value="CHIA KAI JIE">谢凯捷 (CHIA KAI JIE)</option>
+                <option value="ZHI XIAO">侯智逍 (ZHI XIAO)</option>
+                <option value="HONG YE">邹宏业 (HONG YE · 单独 RM480/月)</option>
+                <option value="KAI YE">邹楷业 (KAI YE · 单独 RM480/月)</option>
               </optgroup>
               <optgroup id="incomeOtherPayersOptgroup" label="👥 历史其他交款人">
                 <!-- Populated dynamically -->
@@ -2273,6 +2469,9 @@ alter publication supabase_realtime add table finance_store;</pre>
 
 
 
+
+
+
   <!-- Scripts -->
   <script>
 const INITIAL_FINANCE_DATA = {"incomes":[{"id":"INC-03084750","date":"2026-09-08","amount":480,"remark":"2026年9月 住宿费 (TAN JIAN FONG · 付款人: Tan Jian Fong)","account":"Hong Leong","category":"住宿费","feeMonth":"","invoiceNo":"","receiptNo":"","counterparty":"TAN JIAN FONG"},{"id":"INC-03084715","date":"2026-09-07","amount":480,"remark":"2026年9月 住宿费 (ENG WEI ZHI · 付款人: ENG WEE HOSTEL ZHI 2609)","account":"Hong Leong","category":"住宿费","feeMonth":"2026-09","invoiceNo":"","receiptNo":"","counterparty":"ENG WEI ZHI"},{"id":"INC-03084698","date":"2026-09-07","amount":480,"remark":"2026年9月 住宿费 (WONG E FULL · 付款人: WongEFull Fund transfer S3X Sept26)","account":"Hong Leong","category":"住宿费","feeMonth":"2026-09","invoiceNo":"","receiptNo":"","counterparty":"WONG E FULL"},{"id":"INC-03084669","date":"2026-09-06","amount":480,"remark":"2026年9月 住宿费 (HUAIDERK · 付款人: SEPT HUAI DERK)","account":"Hong Leong","category":"住宿费","feeMonth":"2026-09","invoiceNo":"","receiptNo":"","counterparty":"HUAIDERK"},{"id":"INC-63668868","date":"2026-09-05","amount":480,"remark":"sept ","account":"Hong Leong","category":"销售收入","invoiceNo":"","receiptNo":"","counterparty":"LEE YAN CHENG"},{"id":"INC-63668898","date":"2026-09-01","amount":960,"remark":"Instant Transfer at KLM Kaihao","account":"Hong Leong","category":"销售收入","invoiceNo":"","receiptNo":"","counterparty":"KAI HAO"},{"id":"INC-63668821","date":"2026-08-28","amount":480,"remark":"Sept","account":"Hong Leong","category":"销售收入","invoiceNo":"","receiptNo":"","counterparty":"LEE JU YAN"},{"id":"INC-63668860","date":"2026-08-24","amount":480,"remark":"August ","account":"Hong Leong","category":"销售收入","invoiceNo":"","receiptNo":"","counterparty":"CHUA MING ZHE"},{"id":"INC-63668814","date":"2026-08-22","amount":1440,"remark":"JUN","account":"Hong Leong","category":"销售收入","invoiceNo":"","receiptNo":"","counterparty":"ONG SHI SHUI"},{"id":"INC-63668834","date":"2026-08-09","amount":480,"remark":"HOSTEL 2608","account":"Hong Leong","category":"销售收入","invoiceNo":"","receiptNo":"","counterparty":"ENG WEE ZHI"},{"id":"INC-63668875","date":"2026-08-07","amount":480,"remark":"Aug26","account":"Hong Leong","category":"销售收入","invoiceNo":"","receiptNo":"","counterparty":"WONG E FULL"},{"id":"INC-63668886","date":"2026-08-06","amount":480,"remark":"AUGUST ","account":"Hong Leong","category":"销售收入","invoiceNo":"","receiptNo":"","counterparty":"HUAI DERK"},{"id":"INC-49721123","date":"2026-08-05","amount":480,"remark":"Aug26","account":"Hong Leong","category":"销售收入","invoiceNo":"","receiptNo":"","counterparty":"GOH JYJE SHAN"},{"id":"INC-49721147","date":"2026-08-04","amount":480,"remark":"AUG26","account":"Hong Leong","category":"销售收入","invoiceNo":"","receiptNo":"","counterparty":"LEE YAN CHENG"},{"id":"INC-49721145","date":"2026-08-04","amount":480,"remark":"Aug","account":"Hong Leong","category":"销售收入","invoiceNo":"","receiptNo":"","counterparty":"LEE JU YAN"},{"id":"INC-49721142","date":"2026-08-03","amount":480,"remark":"Aug 26","account":"Hong Leong","category":"销售收入","invoiceNo":"","receiptNo":"","counterparty":"TAN JIAN FONG"},{"id":"INC-49721176","date":"2026-07-08","amount":960,"remark":"Deposit","account":"Hong Leong","category":"销售收入","invoiceNo":"","receiptNo":"","counterparty":"HONG YE \u0026 KAI YE"},{"id":"INC-49721159","date":"2026-07-08","amount":480,"remark":"HOSTEL 2607","account":"Hong Leong","category":"销售收入","invoiceNo":"","receiptNo":"","counterparty":"ENG WEE ZHI"},{"id":"INC-49721184","date":"2026-07-07","amount":480,"remark":"Instant Transfer at KLM Tan Ji","account":"Hong Leong","category":"销售收入","invoiceNo":"","receiptNo":"","counterparty":"TAN JIAN FONG"},{"id":"INC-49721138","date":"2026-07-07","amount":480,"remark":"Jul26","account":"Hong Leong","category":"销售收入","invoiceNo":"","receiptNo":"","counterparty":"WONG E FULL"},{"id":"INC-66518721","date":"2026-07-05","amount":480,"remark":"Jul26","account":"Hong Leong","category":"销售收入","invoiceNo":"","receiptNo":"","counterparty":"GOH JYJE SHAN"},{"id":"INC-66518775","date":"2026-07-03","amount":480,"remark":"JULY ","account":"Hong Leong","category":"销售收入","invoiceNo":"","receiptNo":"","counterparty":"LEE YAN CHENG"},{"id":"INC-66518734","date":"2026-07-02","amount":480,"remark":"JUL ","account":"Hong Leong","category":"销售收入","invoiceNo":"","receiptNo":"","counterparty":"HUAI DERK"},{"id":"INC-66518787","date":"2026-06-30","amount":960,"remark":"Instant Transfer at KLM Kaihao","account":"Hong Leong","category":"销售收入","invoiceNo":"","receiptNo":"","counterparty":"KAI HAO"},{"id":"INC-66518770","date":"2026-06-30","amount":480,"remark":"Jul","account":"Hong Leong","category":"销售收入","invoiceNo":"","receiptNo":"","counterparty":"LEE JU YAN"},{"id":"INC-66518723","date":"2026-06-26","amount":480,"remark":"June","account":"Hong Leong","category":"销售收入","invoiceNo":"","receiptNo":"","counterparty":"CHUA MING ZHE"},{"id":"INC-66518742","date":"2026-06-13","amount":480,"remark":"Instant Transfer at KLM TAN JI","account":"Hong Leong","category":"销售收入","invoiceNo":"","receiptNo":"","counterparty":"TAN JIAN FONG"},{"id":"INC-66518767","date":"2026-06-09","amount":1920,"remark":"HONG YIP/KAI YIP","account":"Hong Leong","category":"销售收入","invoiceNo":"","receiptNo":"","counterparty":"HONG YIP/KAI YIP"},{"id":"INC-66518786","date":"2026-06-07","amount":480,"remark":"JUN 2026","account":"Hong Leong","category":"销售收入","invoiceNo":"","receiptNo":"","counterparty":"ENG WEE ZHI"},{"id":"INC-66518731","date":"2026-06-07","amount":480,"remark":"June26","account":"Hong Leong","category":"销售收入","invoiceNo":"","receiptNo":"","counterparty":"WONG E FULL"},{"id":"INC-73878417","date":"2026-06-04","amount":480,"remark":"Instant Transfer at KLM LEE YA","account":"Hong Leong","category":"销售收入","invoiceNo":"","receiptNo":"","counterparty":"LEE YAN CHENG"},{"id":"INC-73878461","date":"2026-06-02","amount":480,"remark":"Instant Transfer at KLM HUAI D","account":"Hong Leong","category":"销售收入","invoiceNo":"","receiptNo":"","counterparty":"HUAI DERK"},{"id":"INC-73878383","date":"2026-06-01","amount":480,"remark":"Jun26","account":"Hong Leong","category":"销售收入","invoiceNo":"","receiptNo":"","counterparty":"GOH JYJE SHAN"},{"id":"INC-0054","date":"2026-05-28","amount":480,"remark":"JUNE","account":"Hong Leong","category":"销售收入","invoiceNo":"","receiptNo":"","counterparty":"LEE JU YAN"},{"id":"INC-0053","date":"2026-05-27","amount":480,"remark":"MAY","account":"Hong Leong","category":"销售收入","invoiceNo":"","receiptNo":"","counterparty":"LEE JI CHUEN"},{"id":"INC-0052","date":"2026-05-26","amount":480,"remark":"MAY","account":"Hong Leong","category":"销售收入","invoiceNo":"","receiptNo":"","counterparty":"CHUA MING ZHE"},{"id":"INC-0051","date":"2026-05-20","amount":1920,"remark":"FEB+MAR+APRIL+MAY","account":"Hong Leong","category":"销售收入","invoiceNo":"","receiptNo":"","counterparty":"CHIA KAI JIE"},{"id":"INC-0050","date":"2026-05-10","amount":2400,"remark":"JAN+FEB+MAR+APRIL+MAY","account":"Hong Leong","category":"销售收入","invoiceNo":"","receiptNo":"","counterparty":"ZHI XIAO"},{"id":"INC-0049","date":"2026-05-09","amount":480,"remark":"MAY","account":"Hong Leong","category":"销售收入","invoiceNo":"","receiptNo":"","counterparty":"ENG WEI ZHI"},{"id":"INC-0048","date":"2026-05-07","amount":480,"remark":"MAY","account":"Hong Leong","category":"销售收入","invoiceNo":"","receiptNo":"","counterparty":"TAN JIAN FONG"},{"id":"INC-0046","date":"2026-05-06","amount":480,"remark":"MAY","account":"Hong Leong","category":"销售收入","invoiceNo":"","receiptNo":"","counterparty":"LEE YAN CHENG"},{"id":"INC-0047","date":"2026-05-06","amount":480,"remark":"MAY","account":"Hong Leong","category":"销售收入","invoiceNo":"","receiptNo":"","counterparty":"HUAI DERK"},{"id":"INC-0045","date":"2026-05-04","amount":480,"remark":"MAY","account":"Hong Leong","category":"销售收入","invoiceNo":"","receiptNo":"","counterparty":"WONG E FULL"},{"id":"INC-0044","date":"2026-05-03","amount":480,"remark":"MAY","account":"Hong Leong","category":"销售收入","invoiceNo":"","receiptNo":"","counterparty":"GOH JYJE SHAN"},{"id":"INC-0042","date":"2026-05-02","amount":960,"remark":"APRIL+MAY","account":"Hong Leong","category":"销售收入","invoiceNo":"","receiptNo":"","counterparty":"KAI HAO"},{"id":"INC-0043","date":"2026-05-02","amount":480,"remark":"APRIL","account":"Hong Leong","category":"销售收入","invoiceNo":"","receiptNo":"","counterparty":"ONG SHI SHUI"},{"id":"INC-0041","date":"2026-04-30","amount":480,"remark":"MAY","account":"Hong Leong","category":"销售收入","invoiceNo":"","receiptNo":"","counterparty":"LEE JU YAN"},{"id":"INC-0040","date":"2026-04-28","amount":480,"remark":"APRIL","account":"Hong Leong","category":"销售收入","invoiceNo":"","receiptNo":"","counterparty":"CHUA MING ZHE"},{"id":"INC-0039","date":"2026-04-21","amount":1920,"remark":"MAR+APRIL","account":"Hong Leong","category":"销售收入","invoiceNo":"","receiptNo":"","counterparty":"HONG YIP/KAI YIP"},{"id":"INC-0038","date":"2026-04-17","amount":480,"remark":"APRIL","account":"Hong Leong","category":"销售收入","invoiceNo":"","receiptNo":"","counterparty":"TAN JIAN FONG"},{"id":"INC-0037","date":"2026-04-11","amount":480,"remark":"APRIL","account":"Hong Leong","category":"销售收入","invoiceNo":"","receiptNo":"","counterparty":"LEE JI CHUEN"},{"id":"INC-0036","date":"2026-04-10","amount":480,"remark":"APRIL","account":"Hong Leong","category":"销售收入","invoiceNo":"","receiptNo":"","counterparty":"ENG WEI ZHI"},{"id":"INC-0035","date":"2026-04-06","amount":480,"remark":"APRIL","account":"Hong Leong","category":"销售收入","invoiceNo":"","receiptNo":"","counterparty":"LEE YAN CHENG"},{"id":"INC-0034","date":"2026-04-04","amount":480,"remark":"APRIL","account":"Hong Leong","category":"销售收入","invoiceNo":"","receiptNo":"","counterparty":"WONG E FULL"},{"id":"INC-0033","date":"2026-04-02","amount":960,"remark":"MAR+APRIL","account":"Hong Leong","category":"销售收入","invoiceNo":"","receiptNo":"","counterparty":"GOH JYJE SHAN"},{"id":"INC-0032","date":"2026-04-01","amount":480,"remark":"APRIL","account":"Hong Leong","category":"销售收入","invoiceNo":"","receiptNo":"","counterparty":"HUAI DERK"},{"id":"INC-0029","date":"2026-03-31","amount":480,"remark":"APRIL","account":"Hong Leong","category":"销售收入","invoiceNo":"","receiptNo":"","counterparty":"LEE JU YAN"},{"id":"INC-0030","date":"2026-03-31","amount":480,"remark":"MARCH","account":"Hong Leong","category":"销售收入","invoiceNo":"","receiptNo":"","counterparty":"CHUA MING ZHE"},{"id":"INC-0031","date":"2026-03-31","amount":960,"remark":"MARCH","account":"Hong Leong","category":"销售收入","invoiceNo":"","receiptNo":"","counterparty":"ONG SHI SHUI"},{"id":"INC-0028","date":"2026-03-19","amount":960,"remark":"FEB+MAR","account":"Hong Leong","category":"销售收入","invoiceNo":"","receiptNo":"","counterparty":"KAI HAO"},{"id":"INC-0027","date":"2026-03-12","amount":40,"remark":"","account":"Hong Leong","category":"销售收入","invoiceNo":"","receiptNo":"","counterparty":""},{"id":"INC-0024","date":"2026-03-06","amount":40,"remark":"","account":"Hong Leong","category":"销售收入","invoiceNo":"","receiptNo":"","counterparty":"TAN ZE LUN"},{"id":"INC-0025","date":"2026-03-06","amount":480,"remark":"","account":"Hong Leong","category":"销售收入","invoiceNo":"","receiptNo":"","counterparty":"WONG E FULL"},{"id":"INC-0026","date":"2026-03-06","amount":40,"remark":"","account":"Hong Leong","category":"销售收入","invoiceNo":"","receiptNo":"","counterparty":""},{"id":"INC-0023","date":"2026-03-05","amount":480,"remark":"MARCH","account":"Hong Leong","category":"销售收入","invoiceNo":"","receiptNo":"","counterparty":"HUAI DERK"},{"id":"INC-0020","date":"2026-03-04","amount":1920,"remark":"DEPOSIT+JAN+FEB+MAR","account":"Hong Leong","category":"销售收入","invoiceNo":"","receiptNo":"","counterparty":"LEE JI CHUEN"},{"id":"INC-0021","date":"2026-03-04","amount":480,"remark":"MARCH","account":"Hong Leong","category":"销售收入","invoiceNo":"","receiptNo":"","counterparty":"LEE YAN CHENG"},{"id":"INC-0022","date":"2026-03-04","amount":480,"remark":"MARCH","account":"Hong Leong","category":"销售收入","invoiceNo":"","receiptNo":"","counterparty":"ENG WEI ZHI"},{"id":"INC-0019","date":"2026-03-03","amount":1440,"remark":"JAN+FEB+MAR","account":"Hong Leong","category":"销售收入","invoiceNo":"","receiptNo":"","counterparty":"TAN JIAN FONG"},{"id":"INC-0018","date":"2026-03-02","amount":480,"remark":"MARCH","account":"Hong Leong","category":"销售收入","invoiceNo":"","receiptNo":"","counterparty":"LEE JU YAN"},{"id":"INC-0017","date":"2026-02-24","amount":1920,"remark":"JAN+FEB","account":"Hong Leong","category":"销售收入","invoiceNo":"","receiptNo":"","counterparty":"HONG YIP/KAI YIP"},{"id":"INC-0016","date":"2026-02-15","amount":480,"remark":"FEB","account":"Hong Leong","category":"销售收入","invoiceNo":"","receiptNo":"","counterparty":"CHUA MING ZHE"},{"id":"INC-0015","date":"2026-02-14","amount":480,"remark":"FEB","account":"Hong Leong","category":"销售收入","invoiceNo":"","receiptNo":"","counterparty":"WONG E FULL"},{"id":"INC-0014","date":"2026-02-09","amount":480,"remark":"FEB","account":"Hong Leong","category":"销售收入","invoiceNo":"","receiptNo":"","counterparty":"HUAI DERK"},{"id":"INC-0013","date":"2026-02-04","amount":960,"remark":"JAN+FEB","account":"Hong Leong","category":"销售收入","feeMonth":"2026-01, 2026-02","invoiceNo":"","receiptNo":"","counterparty":"ONG SHI SHUI"},{"id":"INC-0010","date":"2026-02-03","amount":480,"remark":"2026-02-01","account":"Hong Leong","category":"销售收入","feeMonth":"2026-02","invoiceNo":"","receiptNo":"","counterparty":"LEE YAN CHENG"},{"id":"INC-0011","date":"2026-02-03","amount":480,"remark":"2026-02-01","account":"Hong Leong","category":"销售收入","feeMonth":"2026-02","invoiceNo":"","receiptNo":"","counterparty":"GOH JYJE SHAN"},{"id":"INC-0012","date":"2026-02-03","amount":960,"remark":"JAN+FEB","account":"Hong Leong","category":"销售收入","feeMonth":"2026-01","invoiceNo":"","receiptNo":"","counterparty":"ENG WEI ZHI"},{"id":"INC-0009","date":"2026-01-31","amount":480,"remark":"2026-01-01","account":"Hong Leong","category":"销售收入","feeMonth":"2026-01","invoiceNo":"","receiptNo":"","counterparty":"KAI HAO"},{"id":"INC-0008","date":"2026-01-30","amount":480,"remark":"2026-02-01","account":"Hong Leong","category":"销售收入","feeMonth":"2026-02","invoiceNo":"","receiptNo":"","counterparty":"LEE JU YAN"},{"id":"INC-0007","date":"2026-01-26","amount":480,"remark":"2026-01-01","account":"Hong Leong","category":"销售收入","invoiceNo":"","receiptNo":"","counterparty":"CHUA MING ZHE"},{"id":"INC-0006","date":"2026-01-19","amount":480,"remark":"2026-01-01","account":"Hong Leong","category":"销售收入","feeMonth":"2026-01","invoiceNo":"","receiptNo":"","counterparty":"WONG E FULL"},{"id":"INC-0005","date":"2026-01-18","amount":960,"remark":"2026/1 + DEPOSIT","account":"Hong Leong","category":"销售收入","feeMonth":"2026-01","invoiceNo":"","receiptNo":"","counterparty":"CHIA KAI JIE"},{"id":"INC-0004","date":"2026-01-12","amount":960,"remark":"2026/1 + DEPOSIT","account":"Hong Leong","category":"销售收入","feeMonth":"2026-01","invoiceNo":"","receiptNo":"","counterparty":"GOH JYJE SHAN"},{"id":"INC-0003","date":"2026-01-11","amount":480,"remark":"2026-01-01","account":"Hong Leong","category":"销售收入","feeMonth":"2026-01","invoiceNo":"","receiptNo":"","counterparty":"LEE JU YAN"},{"id":"INC-0002","date":"2026-01-08","amount":480,"remark":"2026-01-01","account":"Hong Leong","category":"销售收入","feeMonth":"2026-01","invoiceNo":"","receiptNo":"","counterparty":"HUAI DERK"},{"id":"INC-0001","date":"2026-01-05","amount":480,"remark":"2026-01-01","account":"Hong Leong","category":"销售收入","feeMonth":"2026-01","invoiceNo":"","receiptNo":"","counterparty":"LEE YAN CHENG"}],"accounts":[{"name":"Hong Leong","initial":492.15,"accountNo":"15200056062"},{"name":"MING ZHOU","initial":0,"accountNo":""},{"name":"PART LEAM","initial":0,"accountNo":""},{"name":"KEE THUANG","initial":0,"accountNo":""},{"name":"CASH","initial":0,"accountNo":""}],"expenses":[{"id":"EXP-7192660","date":"2026-07-19","item":"单据日常支出","time":null,"amount":26.6,"remark":"petron 单据日常支出","account":"PART LEAM","category":"原材料","counterparty":"petron","receiptImage":""},{"id":"EXP-FIX-2026-09-KEETHUANG","date":"2026-09-01","item":"9月汽油津贴","amount":100,"remark":null,"account":"KEE THUANG","category":"汽油津贴","counterparty":"KEE THUANG","receiptImage":""},{"id":"EXP-FIX-2026-09-PARTLEAM","date":"2026-09-01","item":"9月汽油津贴","amount":150,"remark":null,"account":"PART LEAM","category":"汽油津贴","counterparty":"PART LEAM","receiptImage":""},{"id":"EXP-FIX-2026-09-MAXIS","date":"2026-09-01","item":"MAXIS HOME FIBRE (2026-09)","amount":106,"remark":null,"account":"MING ZHOU","category":"水电费","counterparty":"MAXIS","receiptImage":""},{"id":"EXP-FIX-2026-09-COWAYMALAYSIASDNBHD","date":"2026-09-01","item":"COWAY-2026-09","amount":118,"remark":null,"account":"PART LEAM","category":"水电费","counterparty":"COWAY(MALAYSIA) SDN BHD","receiptImage":""},{"id":"EXP-03360910","date":"2026-08-11","item":"TNB 电费","amount":850.1,"remark":"006968511746","account":"MING ZHOU","category":"水电费","counterparty":"TENAGA NASIONAL BERHAD","receiptImage":""},{"id":"EXP-109483","date":"2026-08-02","item":"洗碗液","time":"","amount":10.09,"remark":"","account":"PART LEAM","category":"原材料","counterparty":"lotus","receiptImage":""},{"id":"EXP-FIX-2026-08-PARTLEAM","date":"2026-08-01","item":"8月汽油津贴","amount":150,"remark":null,"account":"PART LEAM","category":"汽油津贴","counterparty":"PART LEAM","receiptImage":""},{"id":"EXP-FIX-2026-08-KEETHUANG","date":"2026-08-01","item":"8月汽油津贴","amount":100,"remark":null,"account":"KEE THUANG","category":"汽油津贴","counterparty":"KEE THUANG","receiptImage":""},{"id":"EXP-FIX-2026-08-MAXIS","date":"2026-08-01","item":"MAXIS HOME FIBRE (2026-08)","amount":106,"remark":null,"account":"MING ZHOU","category":"水电费","counterparty":"MAXIS","receiptImage":""},{"id":"EXP-FIX-2026-08-COWAYMALAYSIASDNBHD","date":"2026-08-01","item":"COWAY-2026-08","amount":118,"remark":null,"account":"PART LEAM","category":"水电费","counterparty":"COWAY(MALAYSIA) SDN BHD","receiptImage":""},{"id":"EXP-841015","date":"2026-07-15","item":"Bil Air","amount":156,"remark":"880299","account":"MING ZHOU","category":"水电费","counterparty":"Lembaga Air Perak","receiptImage":""},{"id":"EXP-05762195","date":"2026-07-12","item":"TNB 电费","amount":863.15,"remark":"006968511746","account":"MING ZHOU","category":"水电费","counterparty":"TENAGA NASIONAL BERHAD","receiptImage":""},{"id":"EXP-FIX-2026-07-COWAYMALAYSIASDNBHD","date":"2026-07-01","item":"COWAY-2026-07","amount":118,"remark":null,"account":"PART LEAM","category":"水电费","counterparty":"COWAY(MALAYSIA) SDN BHD","receiptImage":""},{"id":"EXP-FIX-2026-07-PARTLEAM","date":"2026-07-01","item":"7月汽油津贴","amount":150,"remark":null,"account":"PART LEAM","category":"汽油津贴","counterparty":"PART LEAM","receiptImage":""},{"id":"EXP-FIX-2026-07-KEETHUANG","date":"2026-07-01","item":"7月汽油津贴","amount":100,"remark":null,"account":"KEE THUANG","category":"汽油津贴","counterparty":"KEE THUANG","receiptImage":""},{"id":"EXP-FIX-2026-07-MAXIS","date":"2026-07-01","item":"MAXIS HOME FIBRE (2026-07)","amount":106,"remark":null,"account":"MING ZHOU","category":"水电费","counterparty":"MAXIS","receiptImage":""},{"id":"EXP-FIX-2026-06-KEETHUANG","date":"2026-06-01","item":"6月汽油津贴","amount":100,"remark":null,"account":"KEE THUANG","category":"汽油津贴","counterparty":"KEE THUANG","receiptImage":""},{"id":"EXP-FIX-2026-06-PARTLEAM","date":"2026-06-01","item":"6月汽油津贴","amount":150,"remark":null,"account":"PART LEAM","category":"汽油津贴","counterparty":"PART LEAM","receiptImage":""},{"id":"EXP-FIX-2026-06-COWAYMALAYSIASDNBHD","date":"2026-06-01","item":"COWAY-2026-06","amount":118,"remark":null,"account":"PART LEAM","category":"水电费","counterparty":"COWAY(MALAYSIA) SDN BHD","receiptImage":""},{"id":"EXP-FIX-2026-06-MAXIS","date":"2026-06-01","item":"MAXIS HOME FIBRE (2026-06)","amount":106,"remark":null,"account":"MING ZHOU","category":"水电费","counterparty":"MAXIS","receiptImage":""},{"id":"EXP-0053","date":"2026-05-28","item":"PARTNER CLAIM","amount":7000,"remark":"","account":"Hong Leong","category":"提现","counterparty":"HUAM MING ZHOU"},{"id":"EXP-0054","date":"2026-05-28","item":"PARTNER CLAIM","amount":7000,"remark":"","account":"Hong Leong","category":"提现","counterparty":"LOR PART LEAM"},{"id":"EXP-0052","date":"2026-05-28","item":"RENTAL FEE JAN-MAY","amount":2500,"remark":"","account":"Hong Leong","category":"房租","counterparty":"NG SU EIN"},{"id":"EXP-0055","date":"2026-05-28","item":"PARTNER CLAIM","amount":7000,"remark":"","account":"Hong Leong","category":"提现","counterparty":"HENG KEE THUANG"},{"id":"EXP-0051","date":"2026-05-19","item":"Water Bill","amount":201.9,"remark":"803582","account":"Hong Leong","category":"水电费","counterparty":"LEMBAGA AIR PERAK"},{"id":"EXP-0045","date":"2026-05-12","item":"Bil Elektrik","amount":866.3,"remark":"6947037589","account":"Hong Leong","category":"水电费","counterparty":"Tenaga Nasional"},{"id":"EXP-0044","date":"2026-05-03","item":"WAXCO DIY AIRCOND CLEANER","amount":21.9,"remark":"T1R000318306","account":"Hong Leong","category":"原材料","counterparty":"MR DIY"},{"id":"EXP-0043","date":"2026-05-01","item":"5月汽油津贴","amount":100,"remark":"","account":"Hong Leong","category":"汽油津贴","counterparty":"KEE THUANG"},{"id":"EXP-FIX-2026-05-MAXIS","date":"2026-05-01","item":"MAXIS HOME FIBRE (2026-05)","amount":106,"remark":null,"account":"MING ZHOU","category":"水电费","counterparty":"MAXIS","receiptImage":""},{"id":"EXP-0041","date":"2026-05-01","item":"COWAY-MAY","amount":118,"remark":"","account":"Hong Leong","category":"水电费","counterparty":"COWAY(MALAYSIA) SDN BHD"},{"id":"EXP-0042","date":"2026-05-01","item":"5月汽油津贴","amount":150,"remark":"","account":"Hong Leong","category":"汽油津贴","counterparty":"PART LEAM"},{"id":"EXP-0040","date":"2026-04-26","item":"垃圾袋","amount":37,"remark":"T3R000343393","account":"Hong Leong","category":"原材料","counterparty":"MR DIY"},{"id":"EXP-0048","date":"2026-04-23","item":"杂货","amount":49.96,"remark":"","account":"Hong Leong","category":"差旅费用","counterparty":"","receiptImage":""},{"id":"EXP-0049","date":"2026-04-23","item":"","amount":172.6,"remark":"","account":"Hong Leong","category":"差旅费用","counterparty":""},{"id":"EXP-0050","date":"2026-04-23","item":"","amount":17.6,"remark":"","account":"Hong Leong","category":"差旅费用","counterparty":""},{"id":"EXP-0039","date":"2026-04-22","item":"蚊油，垃圾袋","amount":23.7,"remark":"182721297/103/T0045","account":"Hong Leong","category":"原材料","counterparty":"99 SPEEDMART"},{"id":"EXP-0038","date":"2026-04-21","item":"AIRCOND REPAIR","amount":510,"remark":"0972","account":"Hong Leong","category":"原材料","counterparty":"ONG AIRCOND\u0026 REPAIR"},{"id":"EXP-0037","date":"2026-04-17","item":"杂物","amount":38.7,"remark":"T1R000330005","account":"Hong Leong","category":"原材料","counterparty":"MR DIY"},{"id":"EXP-0036","date":"2026-04-12","item":"Bil Elektrik","amount":586.95,"remark":"6938793825","account":"Hong Leong","category":"水电费","counterparty":"Tenaga Nasional"},{"id":"EXP-0035","date":"2026-04-04","item":"GAS","amount":26.6,"remark":"12819049","account":"Hong Leong","category":"原材料","counterparty":"SNA SMART ENTERPRISE"},{"id":"EXP-0034","date":"2026-04-01","item":"4月汽油津贴","amount":100,"remark":"","account":"Hong Leong","category":"汽油津贴","counterparty":"KEE THUANG"},{"id":"EXP-0032","date":"2026-04-01","item":"COWAY-APRIL","amount":118,"remark":"","account":"Hong Leong","category":"水电费","counterparty":"COWAY(MALAYSIA) SDN BHD"},{"id":"EXP-FIX-2026-04-MAXIS","date":"2026-04-01","item":"MAXIS HOME FIBRE (2026-04)","amount":106,"remark":null,"account":"MING ZHOU","category":"水电费","counterparty":"MAXIS","receiptImage":""},{"id":"EXP-0033","date":"2026-04-01","item":"4月汽油津贴","amount":150,"remark":"","account":"Hong Leong","category":"汽油津贴","counterparty":"PART LEAM"},{"id":"EXP-0046","date":"2026-03-16","item":"Water Bill","amount":171.3,"remark":"725749","account":"Hong Leong","category":"水电费","counterparty":"LEMBAGA AIR PERAK"},{"id":"EXP-0031","date":"2026-03-12","item":"Bil Elektrik","amount":567,"remark":"6930390713","account":"Hong Leong","category":"水电费","counterparty":"Tenaga Nasional"},{"id":"EXP-0030","date":"2026-03-11","item":"plumbing","amount":4900,"remark":"","account":"Hong Leong","category":"原材料","counterparty":""},{"id":"EXP-0029","date":"2026-03-10","item":"割门","amount":10,"remark":"","account":"Hong Leong","category":"原材料","counterparty":""},{"id":"EXP-0047","date":"2026-03-03","item":"GAS","amount":26.6,"remark":"","account":"Hong Leong","category":"原材料","counterparty":""},{"id":"EXP-0028","date":"2026-03-01","item":"3月汽油津贴","amount":100,"remark":"","account":"Hong Leong","category":"汽油津贴","counterparty":"KEE THUANG"},{"id":"EXP-FIX-2026-03-MAXIS","date":"2026-03-01","item":"MAXIS HOME FIBRE (2026-03)","amount":106,"remark":null,"account":"MING ZHOU","category":"水电费","counterparty":"MAXIS","receiptImage":""},{"id":"EXP-0026","date":"2026-03-01","item":"COWAY-MAR","amount":118,"remark":"","account":"Hong Leong","category":"水电费","counterparty":"COWAY(MALAYSIA) SDN BHD"},{"id":"EXP-0027","date":"2026-03-01","item":"3月汽油津贴","amount":150,"remark":"","account":"Hong Leong","category":"汽油津贴","counterparty":"PART LEAM"},{"id":"EXP-0025","date":"2026-02-12","item":"素食","amount":96,"remark":"231750","account":"Hong Leong","category":"差旅费用","counterparty":""},{"id":"EXP-0024","date":"2026-02-12","item":"聚餐","amount":623,"remark":"","account":"Hong Leong","category":"差旅费用","counterparty":"Kedai Makanan Laut Ju Fu"},{"id":"EXP-0023","date":"2026-02-11","item":"梯子","amount":199,"remark":"","account":"Hong Leong","category":"原材料","counterparty":"MR DIY"},{"id":"EXP-0022","date":"2026-02-10","item":"Bil Elektrik","amount":556.35,"remark":"6923211800","account":"Hong Leong","category":"水电费","counterparty":"Tenaga Nasional"},{"id":"EXP-0021","date":"2026-02-08","item":"桌子","amount":230.9,"remark":"260124TQHW41CK","account":"Hong Leong","category":"原材料","counterparty":"SEVENWOOD TECHNOLOGY PLT"},{"id":"EXP-0020","date":"2026-02-06","item":"防水漆","amount":40,"remark":"","account":"Hong Leong","category":"原材料","counterparty":"WANG SENG HARDWARE TRADING"},{"id":"EXP-0019","date":"2026-02-05","item":"WATER SQUEEGEE+BROOM HANDLE","amount":9.1,"remark":"","account":"Hong Leong","category":"原材料","counterparty":"MR DIY"},{"id":"EXP-0015","date":"2026-02-01","item":"COWAY-FEB","amount":118,"remark":"","account":"Hong Leong","category":"水电费","counterparty":"COWAY(MALAYSIA) SDN BHD"},{"id":"EXP-0018","date":"2026-02-01","item":"2月汽油津贴","amount":100,"remark":"","account":"Hong Leong","category":"汽油津贴","counterparty":"KEE THUANG"},{"id":"EXP-0017","date":"2026-02-01","item":"FEB-MAXIS HOME FIBRE","amount":106,"remark":"","account":"Hong Leong","category":"水电费","counterparty":""},{"id":"EXP-0016","date":"2026-02-01","item":"2月汽油津贴","amount":150,"remark":"","account":"Hong Leong","category":"汽油津贴","counterparty":"PART LEAM"},{"id":"EXP-0014","date":"2026-01-22","item":"GARBAG BAG+BASIN TOOLS","amount":33.6,"remark":"","account":"Hong Leong","category":"原材料","counterparty":"MR DIY"},{"id":"EXP-0013","date":"2026-01-22","item":"LAUNDRY BASKET","amount":9.9,"remark":"LSOS02-1685196","account":"Hong Leong","category":"原材料","counterparty":"LIMA SEN SDN BHD"},{"id":"EXP-0012","date":"2026-01-16","item":"Water Bill","amount":91.5,"remark":"647291","account":"Hong Leong","category":"水电费","counterparty":"LEMBAGA AIR PERAK"},{"id":"EXP-0009","date":"2026-01-11","item":"垃圾袋+消毒","amount":23.4,"remark":"T1R000308066","account":"Hong Leong","category":"原材料","counterparty":"MR DIY"},{"id":"EXP-0011","date":"2026-01-11","item":"3M SCOTCH BRITE TOUCH","amount":5.9,"remark":"182721196/102/T0489","account":"Hong Leong","category":"原材料","counterparty":"99 SPEEDMART"},{"id":"EXP-0010","date":"2026-01-11","item":"拖把","amount":39.8,"remark":"T1BSP04202601110026","account":"Hong Leong","category":"原材料","counterparty":"TF VALUE MART"},{"id":"EXP-0005","date":"2026-01-10","item":"Bil Elektrik","amount":72.25,"remark":"6916660401","account":"Hong Leong","category":"水电费","counterparty":"Tenaga Nasional"},{"id":"EXP-0008","date":"2026-01-10","item":"NYLON BROOM+FLOOR CLEANER","amount":43.2,"remark":"T3R000305382","account":"Hong Leong","category":"原材料","counterparty":"MR DIY"},{"id":"EXP-0007","date":"2026-01-10","item":"CYLINDER LOCK","amount":41,"remark":"T2R000598025","account":"Hong Leong","category":"原材料","counterparty":"MR DIY"},{"id":"EXP-0006","date":"2026-01-10","item":"漆","amount":113,"remark":"CS-301277","account":"Hong Leong","category":"原材料","counterparty":"WANG SENG HARDWARE TRADING"},{"id":"EXP-0001","date":"2026-01-01","item":"COWAY-JAN","amount":118,"remark":"","account":"Hong Leong","category":"水电费","counterparty":"COWAY(MALAYSIA) SDN BHD"},{"id":"EXP-0003","date":"2026-01-01","item":"JAN-MAXIS HOME FIBRE","amount":106,"remark":"","account":"Hong Leong","category":"水电费","counterparty":""},{"id":"EXP-0004","date":"2026-01-01","item":"1月汽油津贴","amount":100,"remark":"","account":"Hong Leong","category":"汽油津贴","counterparty":"KEE THUANG"},{"id":"EXP-0002","date":"2026-01-01","item":"1月汽油津贴","amount":150,"remark":"","account":"Hong Leong","category":"汽油津贴","counterparty":"PART LEAM"}],"updatedAt":1789053867988,"ocrSettings":{"mode":"local","geminiApiKey":"","localLanguages":"chi_sim+eng+msa"},"initialBalance":492.15,"incomeCategories":["销售收入","理财收益","营运资金"],"expenseCategories":["原材料","差旅费用","房租","职工工资","管理费用","水电费","财务成本","汽油津贴","提现"]};
@@ -2318,7 +2517,7 @@ let ocrSettings = {
 };
 
 // Application Version and OTA Release Timestamp
-window.VOYAGE_APP_VERSION = '2026.3.36';
+window.VOYAGE_APP_VERSION = '2026.3.37';
 window.VOYAGE_APP_BUILD_TIME = Date.now();
 
 // ==========================================
@@ -3115,7 +3314,7 @@ async function publishCurrentAppToCloud() {
     // Update baseTime and build time inside the bundle
     rawHtml = rawHtml.replace(/var baseTime = \d+;/, `var baseTime = ${newTimestamp};`);
     rawHtml = rawHtml.replace(/window\.VOYAGE_APP_BUILD_TIME = \d+;/, `window.VOYAGE_APP_BUILD_TIME = ${newTimestamp};`);
-    rawHtml = rawHtml.replace(/window\.VOYAGE_APP_VERSION = '[^']+';/, `window.VOYAGE_APP_VERSION = '2026.3.32';`);
+    rawHtml = rawHtml.replace(/window\.VOYAGE_APP_VERSION = '[^']+';/, `window.VOYAGE_APP_VERSION = '2026.3.37';`);
 
     const payload = {
       id: 'voyage_finance_app_release',
@@ -4835,45 +5034,48 @@ async function parseStatementPdfFile(file) {
 // ==========================================
 
 const LEARNED_STUDENT_RULES = [
-  // 15 Boarding Students & Known Parents / Aliases
-  { pattern: /HUAI\s*DERK|HUAIDERK|HUAI\s*D\b/i, name: 'HUAIDERK', fee: 480 },
-  { pattern: /CHONG\s*MEI\s*KOON/i, name: 'HUAIDERK', fee: 480 }, // Parent of HUAI DERK
+  // 15 Boarding Students (Chinese & English Patterns) & Known Parents
+  { pattern: /陈怀德|HUAI\s*DERK|HUAIDERK|HUAI\s*D\b/i, zhName: '陈怀德', name: 'HUAIDERK', fee: 480 },
+  { pattern: /CHONG\s*MEI\s*KOON/i, zhName: '陈怀德', name: 'HUAIDERK', fee: 480 }, // Parent of HUAI DERK
 
-  { pattern: /WONG\s*E\s*FULL|WongEFull|\bE\s*FULL\b/i, name: 'WONG E FULL', fee: 480 },
-  { pattern: /RAINBOW\s*ZONE\s*VENTURES/i, name: 'WONG E FULL', fee: 480 }, // Business / Parent of WONG E FULL
+  { pattern: /黄益富|WONG\s*E\s*FULL|WongEFull|\bE\s*FULL\b|黄益福/i, zhName: '黄益富', name: 'WONG E FULL', fee: 480 },
+  { pattern: /RAINBOW\s*ZONE\s*VENTURES/i, zhName: '黄益富', name: 'WONG E FULL', fee: 480 }, // Business / Parent of WONG E FULL
 
-  { pattern: /ENG\s*WE[EI]\s*ZHI|WEI\s*ZHI/i, name: 'ENG WEI ZHI', fee: 480 },
-  { pattern: /TEE\s*LEK\s*TING/i, name: 'ENG WEI ZHI', fee: 480 }, // Parent of ENG WEI ZHI
+  { pattern: /黄炜智|ENG\s*WE[EI]\s*ZHI|WEI\s*ZHI|黄伟智/i, zhName: '黄炜智', name: 'ENG WEI ZHI', fee: 480 },
+  { pattern: /TEE\s*LEK\s*TING/i, zhName: '黄炜智', name: 'ENG WEI ZHI', fee: 480 }, // Parent of ENG WEI ZHI
 
-  { pattern: /TAN\s*JIAN\s*FONG|Tan\s*Jian\s*Fong|\bJIAN\s*FONG\b/i, name: 'TAN JIAN FONG', fee: 480 },
-  { pattern: /WONG\s*MEI\s*NGUK/i, name: 'TAN JIAN FONG', fee: 480 }, // Parent of TAN JIAN FONG
+  { pattern: /陈剑锋|TAN\s*JIAN\s*FONG|Tan\s*Jian\s*Fong|\bJIAN\s*FONG\b/i, zhName: '陈剑锋', name: 'TAN JIAN FONG', fee: 480 },
+  { pattern: /WONG\s*MEI\s*NGUK/i, zhName: '陈剑锋', name: 'TAN JIAN FONG', fee: 480 }, // Parent of TAN JIAN FONG
 
-  { pattern: /LEE\s*YAN\s*CHENG|LEE\s*YAN\b/i, name: 'LEE YAN CHENG', fee: 480 },
-  { pattern: /LIM\s*YEE\s*LING/i, name: 'LEE YAN CHENG', fee: 480 }, // Parent of LEE YAN CHENG
+  { pattern: /李晏丞|LEE\s*YAN\s*CHENG|LEE\s*YAN\b/i, zhName: '李晏丞', name: 'LEE YAN CHENG', fee: 480 },
+  { pattern: /LIM\s*YEE\s*LING/i, zhName: '李晏丞', name: 'LEE YAN CHENG', fee: 480 }, // Parent of LEE YAN CHENG
 
-  { pattern: /KAI\s*HAO|Kaihao|\bKAIHAO\b/i, name: 'KAIHAO', fee: 480 },
-  { pattern: /CHUA\s*HEE\s*SIANG/i, name: 'KAIHAO', fee: 480 }, // Parent of KAIHAO
+  { pattern: /蔡凯皓|KAI\s*HAO|Kaihao|\bKAIHAO\b/i, zhName: '蔡凯皓', name: 'KAIHAO', fee: 480 },
+  { pattern: /CHUA\s*HEE\s*SIANG/i, zhName: '蔡凯皓', name: 'KAIHAO', fee: 480 }, // Parent of KAIHAO
 
-  { pattern: /LEE\s*JU\s*YAN|\bJU\s*YAN\b/i, name: 'LEE JU YAN', fee: 480 },
-  { pattern: /WONG\s*PIK\s*WOON/i, name: 'LEE JU YAN', fee: 480 }, // Parent of LEE JU YAN
+  { pattern: /李居彦|LEE\s*JU\s*YAN|\bJU\s*YAN\b/i, zhName: '李居彦', name: 'LEE JU YAN', fee: 480 },
+  { pattern: /WONG\s*PIK\s*WOON/i, zhName: '李居彦', name: 'LEE JU YAN', fee: 480 }, // Parent of LEE JU YAN
 
-  { pattern: /CHUA\s*MI[NN]G\s*ZHE|MI[NN]G\s*ZHE/i, name: 'CHUA MING ZHE', fee: 480 },
+  { pattern: /蔡旻哲|CHUA\s*MI[NN]G\s*ZHE|MI[NN]G\s*ZHE/i, zhName: '蔡旻哲', name: 'CHUA MING ZHE', fee: 480 },
 
-  { pattern: /ONG\s*SHI\s*SHUI|SHI\s*SHUI/i, name: 'ONG SHI SHUI', fee: 480 },
+  { pattern: /翁诗岁|ONG\s*SHI\s*SHUI|SHI\s*SHUI/i, zhName: '翁诗岁', name: 'ONG SHI SHUI', fee: 480 },
+  { pattern: /BEH\s*SIEW\s*SIEW/i, zhName: '翁诗岁', name: 'ONG SHI SHUI', fee: 480 },
 
-  { pattern: /GOH\s*JYJE\s*SHAN|GohJyieShann|JYJE\s*SHAN/i, name: 'GOH JYJE SHAN', fee: 480 },
-  { pattern: /TAN\s*HOOI\s*P|GOH\s*HOCK\s*G/i, name: 'GOH JYJE SHAN', fee: 480 }, // Parents of GOH JYJE SHAN
+  { pattern: /吴劼善|GOH\s*JYJE\s*SHAN|GohJyieShann|JYJE\s*SHAN/i, zhName: '吴劼善', name: 'GOH JYJE SHAN', fee: 480 },
+  { pattern: /TAN\s*HOOI\s*P|GOH\s*HOCK\s*G/i, zhName: '吴劼善', name: 'GOH JYJE SHAN', fee: 480 }, // Parents of GOH JYJE SHAN
 
-  { pattern: /LEE\s*JI\s*CHUEN|JI\s*CHUEN/i, name: 'LEE JI CHUEN', fee: 480 },
+  { pattern: /吕梓铨|LEE\s*JI\s*CHUEN|JI\s*CHUEN|吕子铨/i, zhName: '吕梓铨', name: 'LEE JI CHUEN', fee: 480 },
+  { pattern: /LEE\s*YENG\s*MAN/i, zhName: '吕梓铨', name: 'LEE JI CHUEN', fee: 480 },
 
-  { pattern: /CHIA\s*KAI\s*JIE|\bKAI\s*JIE\b/i, name: 'CHIA KAI JIE', fee: 480 },
+  { pattern: /谢凯捷|CHIA\s*KAI\s*JIE|\bKAI\s*JIE\b/i, zhName: '谢凯捷', name: 'CHIA KAI JIE', fee: 480 },
 
-  { pattern: /ZHI\s*XIAO|How\s*Zhi\s*Xiao/i, name: 'ZHI XIAO', fee: 480 },
+  { pattern: /侯智逍|ZHI\s*XIAO|How\s*Zhi\s*Xiao|侯智宵/i, zhName: '侯智逍', name: 'ZHI XIAO', fee: 480 },
+  { pattern: /CHONG\s*CHEE\s*YENG/i, zhName: '侯智逍', name: 'ZHI XIAO', fee: 480 },
 
-  // Brothers: HONG YE & KAI YE (RM 960)
-  { pattern: /HONG\s*Y[EI]P?.*KAI\s*Y[EI]P?|KAI\s*Y[EI]P?.*HONG\s*Y[EI]P?/i, name: 'HONG YE & KAI YE', fee: 960 },
-  { pattern: /HONG\s*Y[EI]P?\b/i, name: 'HONG YE', fee: 480 },
-  { pattern: /KAI\s*Y[EI]P?\b/i, name: 'KAI YE', fee: 480 }
+  // Brothers: 邹宏业 & 邹楷业 (RM 960)
+  { pattern: /邹宏业.*邹楷业|邹楷业.*邹宏业|HONG\s*Y[EI]P?.*KAI\s*Y[EI]P?|KAI\s*Y[EI]P?.*HONG\s*Y[EI]P?/i, zhName: '邹宏业 & 邹楷业', name: 'HONG YE & KAI YE', fee: 960 },
+  { pattern: /邹宏业|HONG\s*Y[EI]P?\b/i, zhName: '邹宏业', name: 'HONG YE', fee: 480 },
+  { pattern: /邹楷业|KAI\s*Y[EI]P?\b/i, zhName: '邹楷业', name: 'KAI YE', fee: 480 }
 ];
 
 // Helper: Extract fee month from any free text or payment reference
@@ -7640,20 +7842,20 @@ window.handleCloudSyncPillClick = handleCloudSyncPillClick;
 // ==========================================
 
 const DEFAULT_BOARDING_STUDENTS = [
-  { id: 'LEE YAN CHENG', name: 'LEE YAN CHENG', aliases: ['LEE YAN CHENG', 'LEE YAN', 'LEE YA'], count: 1, fee: 480 },
-  { id: 'KAIHAO', name: 'KAIHAO', aliases: ['KAI HAO', 'KAIHAO'], count: 1, fee: 480 },
-  { id: 'LEE JU YAN', name: 'LEE JU YAN', aliases: ['LEE JU YAN', 'JU YAN'], count: 1, fee: 480 },
-  { id: 'CHUA MING ZHE', name: 'CHUA MING ZHE', aliases: ['CHUA MING ZHE', 'MING ZHE'], count: 1, fee: 480 },
-  { id: 'ONG SHI SHUI', name: 'ONG SHI SHUI', aliases: ['ONG SHI SHUI', 'SHI SHUI'], count: 1, fee: 480 },
-  { id: 'ENG WEI ZHI', name: 'ENG WEI ZHI', aliases: ['ENG WEI ZHI', 'ENG WEE ZHI', 'WEI ZHI'], count: 1, fee: 480 },
-  { id: 'WONG E FULL', name: 'WONG E FULL', aliases: ['WONG E FULL', 'E FULL'], count: 1, fee: 480 },
-  { id: 'HUAIDERK', name: 'HUAIDERK', aliases: ['HUAIDERK', 'HUAI DERK', 'HUAI D'], count: 1, fee: 480 },
-  { id: 'GOH JYJE SHAN', name: 'GOH JYJE SHAN', aliases: ['GOH JYJE SHAN', 'JYJE SHAN'], count: 1, fee: 480 },
-  { id: 'TAN JIAN FONG', name: 'TAN JIAN FONG', aliases: ['TAN JIAN FONG', 'JIAN FONG', 'TAN JI'], count: 1, fee: 480 },
-  { id: 'LEE JI CHUEN', name: 'LEE JI CHUEN', aliases: ['LEE JI CHUEN', 'JI CHUEN'], count: 1, fee: 480 },
-  { id: 'CHIA KAI JIE', name: 'CHIA KAI JIE', aliases: ['CHIA KAI JIE', 'KAI JIE'], count: 1, fee: 480 },
-  { id: 'ZHI XIAO', name: 'ZHI XIAO', aliases: ['ZHI XIAO'], count: 1, fee: 480 },
-  { id: 'HONG YE & KAI YE', name: 'HONG YE & KAI YE (两兄弟合并)', aliases: ['HONG YE', 'KAI YE', 'HONG YIP', 'KAI YIP'], count: 2, fee: 960, isBrothers: true, note: '两兄弟合并转账（母：RM960/月）' }
+  { id: 'LEE YAN CHENG', zhName: '李晏丞', name: 'LEE YAN CHENG', aliases: ['李晏丞', 'LEE YAN CHENG', 'LEE YAN', 'LEE YA', '晏丞', 'LIM YEE LING'], count: 1, fee: 480 },
+  { id: 'KAIHAO', zhName: '蔡凯皓', name: 'KAIHAO', aliases: ['蔡凯皓', 'KAI HAO', 'KAIHAO', '凯皓', 'CHUA HEE SIANG'], count: 1, fee: 480 },
+  { id: 'LEE JU YAN', zhName: '李居彦', name: 'LEE JU YAN', aliases: ['李居彦', 'LEE JU YAN', 'JU YAN', '居彦', 'WONG PIK WOON'], count: 1, fee: 480 },
+  { id: 'CHUA MING ZHE', zhName: '蔡旻哲', name: 'CHUA MING ZHE', aliases: ['蔡旻哲', 'CHUA MING ZHE', 'MING ZHE', '旻哲', 'CHUA MIN ZHE'], count: 1, fee: 480 },
+  { id: 'ONG SHI SHUI', zhName: '翁诗岁', name: 'ONG SHI SHUI', aliases: ['翁诗岁', 'ONG SHI SHUI', 'BEH SIEW SIEW', 'SHI SHUI', '诗岁'], count: 1, fee: 480 },
+  { id: 'ENG WEI ZHI', zhName: '黄炜智', name: 'ENG WEI ZHI', aliases: ['黄炜智', 'ENG WEI ZHI', 'ENG WEE ZHI', 'ENG WEE HOSTEL ZHI', 'WEI ZHI', '炜智', '黄伟智', 'TEE LEK TING'], count: 1, fee: 480 },
+  { id: 'WONG E FULL', zhName: '黄益富', name: 'WONG E FULL', aliases: ['黄益富', 'WONG E FULL', 'E FULL', '益富', '黄益福', 'RAINBOW ZONE VENTURES'], count: 1, fee: 480 },
+  { id: 'HUAIDERK', zhName: '陈怀德', name: 'HUAIDERK', aliases: ['陈怀德', 'HUAIDERK', 'HUAI DERK', 'HUAI D', '怀德', 'CHONG MEI KOON'], count: 1, fee: 480 },
+  { id: 'GOH JYJE SHAN', zhName: '吴劼善', name: 'GOH JYJE SHAN', aliases: ['吴劼善', 'GOH JYJE SHAN', 'GOHJYIESHANN', 'JYJE SHAN', '劼善', 'TAN HOOI P', 'GOH HOCK G'], count: 1, fee: 480 },
+  { id: 'TAN JIAN FONG', zhName: '陈剑锋', name: 'TAN JIAN FONG', aliases: ['陈剑锋', 'TAN JIAN FONG', 'JIAN FONG', 'TAN JI', '剑锋', 'WONG MEI NGUK'], count: 1, fee: 480 },
+  { id: 'LEE JI CHUEN', zhName: '吕梓铨', name: 'LEE JI CHUEN', aliases: ['吕梓铨', 'LEE JI CHUEN', 'JI CHUEN', '梓铨', '吕子铨', 'LEE YENG MAN'], count: 1, fee: 480 },
+  { id: 'CHIA KAI JIE', zhName: '谢凯捷', name: 'CHIA KAI JIE', aliases: ['谢凯捷', 'CHIA KAI JIE', 'KAI JIE', '凯捷'], count: 1, fee: 480 },
+  { id: 'ZHI XIAO', zhName: '侯智逍', name: 'ZHI XIAO', aliases: ['侯智逍', 'ZHI XIAO', 'HOW ZHI XIAO', '智逍', '侯智宵', 'CHONG CHEE YENG'], count: 1, fee: 480 },
+  { id: 'HONG YE & KAI YE', zhName: '邹宏业 & 邹楷业', name: 'HONG YE & KAI YE', aliases: ['邹宏业', '邹楷业', 'HONG YE', 'KAI YE', 'HONG YIP', 'KAI YIP', '宏业', '楷业', '邹宏业 & 邹楷业', 'HONG YE & KAI YE', 'HONG YIP/KAI YIP'], count: 2, fee: 960, isBrothers: true, note: '邹宏业 & 邹楷业 两兄弟合并转账（母：RM960/月）' }
 ];
 
 let arrearsCutoffMonth = 9;
@@ -7952,7 +8154,7 @@ function renderArrearsTracker() {
             <span class="text-2xl mt-0.5">👥</span>
             <div>
               <div class="flex items-center space-x-2">
-                <h4 class="font-bold text-slate-900 text-sm">陈宏扬 / 陈弘铭 兄弟（双人合交 RM 960/月）特别监控</h4>
+                <h4 class="font-bold text-slate-900 text-sm">邹宏业 / 邹楷业 兄弟（双人合交 RM 960/月）特别监控</h4>
                 <span class="px-2 py-0.5 rounded text-[10px] font-bold ${isOwing ? 'bg-rose-100 text-rose-800' : 'bg-emerald-100 text-emerald-800'}">
                   ${isOwing ? `当前欠费 ${formatMoney(brothersStudent.arrearsAmount)}` : '已结清'}
                 </span>
@@ -8006,7 +8208,7 @@ function renderArrearsTracker() {
     if (arrearsStatusFilter === 'paid' && s.arrearsAmount > 0) return false;
     if (arrearsSearchKeyword) {
       const kw = arrearsSearchKeyword.toLowerCase();
-      const match = s.name.toLowerCase().includes(kw) || 
+      const match = (s.zhName && s.zhName.toLowerCase().includes(kw)) || s.name.toLowerCase().includes(kw) || 
                     s.aliases.some(a => a.toLowerCase().includes(kw)) ||
                     (s.note || '').toLowerCase().includes(kw);
       if (!match) return false;
@@ -8086,7 +8288,7 @@ function renderArrearsCards(students, report) {
         <div class="flex items-start justify-between gap-2">
           <div>
             <div class="flex items-center space-x-2">
-              <h4 class="text-base font-bold text-slate-900">${st.name}</h4>
+              <h4 class="text-base font-bold text-slate-900">${st.zhName ? `${st.zhName} <span class="text-xs font-normal text-slate-500 font-mono">(${st.name})</span>` : st.name}</h4>
               ${st.isBrothers ? `<span class="px-1.5 py-0.5 rounded bg-blue-100 text-blue-800 text-[10px] font-bold">兄弟双人</span>` : ''}
             </div>
             <p class="text-xs text-slate-400 mt-0.5">标准月宿费: ${formatMoney(st.monthlyFee)} / 月</p>
@@ -8187,7 +8389,7 @@ function renderArrearsMatrix(students, report) {
     return `
       <tr class="hover:bg-slate-50 transition border-b border-slate-100">
         <td class="px-4 py-3 font-bold text-slate-900 whitespace-nowrap sticky left-0 bg-white">
-          ${st.name}
+          ${st.zhName ? `<span class="text-sm font-bold text-slate-900">${st.zhName}</span> <span class="text-xs font-normal text-slate-400">(${st.name})</span>` : st.name}
           ${st.isBrothers ? `<span class="ml-1 text-[10px] text-blue-600 bg-blue-50 px-1 py-0.5 rounded">双人</span>` : ''}
         </td>
         <td class="px-3 py-3 text-right font-black ${st.arrearsAmount > 0 ? 'text-rose-600' : 'text-emerald-600'} whitespace-nowrap">
@@ -8271,14 +8473,15 @@ function quickAddPaymentForStudent(studentName, suggestedMonth) {
 // Copy WhatsApp / WeChat Reminder for Student (Direct to Student)
 function copyStudentReminder(studentId) {
   const report = calculateStudentArrears();
-  const student = report.students.find(s => s.id === studentId || s.name === studentId);
+  const student = report.students.find(s => s.id === studentId || s.name === studentId || (s.zhName && s.zhName === studentId));
   if (!student) return;
 
   const monthNames = ['1月', '2月', '3月', '4月', '5月', '6月', '7月', '8月', '9月', '10月', '11月', '12月'];
   const unpaidStr = student.unpaidMonths.map(m => `2026年${monthNames[m - 1]}`).join('、');
+  const salutationName = student.zhName ? `${student.zhName} (${student.name})` : student.name;
 
   let text = `【Voyage 住宿费缴费温馨提醒】\n\n`;
-  text += `${student.name} 你好：\n`;
+  text += `${salutationName} 你好：\n`;
   text += `温馨提醒你查收 2026 年度的住宿费缴纳情况。\n\n`;
   text += `截至 2026年${report.cutoffMonth}月份，你当前的缴费状态如下：\n`;
   text += `📅 尚欠月份：${unpaidStr || '已结清'}\n`;
@@ -8292,7 +8495,8 @@ function copyStudentReminder(studentId) {
   text += `请核对后尽快安排转账缴费，转账后请发送水单回执以便销账。谢谢你的配合！🙏`;
 
   navigator.clipboard.writeText(text).then(() => {
-    showToast(`✅ 已复制【${student.name}】的交费提醒，可直接粘贴发送给学生！`);
+    const toastName = student.zhName ? `${student.zhName} (${student.name})` : student.name;
+    showToast(`✅ 已复制【${toastName}】的交费提醒，可直接粘贴发送给学生！`);
   }).catch(() => {
     prompt('请复制以下交费提醒：', text);
   });
@@ -8314,7 +8518,8 @@ function copyAllArrearsSummary() {
   } else {
     owingList.forEach((s, idx) => {
       const unpaid = s.unpaidMonths.map(m => monthNames[m - 1]).join('、');
-      text += `${idx + 1}. ${s.name}\n`;
+      const sName = s.zhName ? `${s.zhName} (${s.name})` : s.name;
+      text += `${idx + 1}. ${sName}\n`;
       text += `   欠费: ${formatMoney(s.arrearsAmount)} | 欠交月份: ${unpaid}\n`;
     });
   }
@@ -8359,17 +8564,24 @@ function populatePayerDropdown() {
 
   if (datalist) {
     const allNames = new Set();
-    DEFAULT_BOARDING_STUDENTS.forEach(s => allNames.add(s.name));
+    DEFAULT_BOARDING_STUDENTS.forEach(s => {
+      if (s.zhName) allNames.add(s.zhName);
+      allNames.add(s.name);
+      if (s.zhName) allNames.add(`${s.zhName} (${s.name})`);
+    });
     historyPayers.forEach(p => allNames.add(p));
     datalist.innerHTML = Array.from(allNames).map(n => `<option value="${n}"></option>`).join('');
   }
 
   if (chipsContainer) {
-    chipsContainer.innerHTML = DEFAULT_BOARDING_STUDENTS.map(s => `
-      <button type="button" onclick="handleSelectPayer('${s.name}')" class="px-2 py-0.5 bg-slate-100 hover:bg-emerald-50 hover:text-emerald-700 hover:border-emerald-300 text-slate-700 rounded-md border border-slate-200 text-[11px] font-medium transition cursor-pointer">
-        ${s.name.split(' ')[0]}
-      </button>
-    `).join('');
+    chipsContainer.innerHTML = DEFAULT_BOARDING_STUDENTS.map(s => {
+      const label = s.zhName || s.name.split(' ')[0];
+      return `
+        <button type="button" onclick="handleSelectPayer('${s.name}')" class="px-2 py-0.5 bg-slate-100 hover:bg-emerald-50 hover:text-emerald-700 hover:border-emerald-300 text-slate-700 rounded-md border border-slate-200 text-[11px] font-medium transition cursor-pointer" title="${s.zhName ? `${s.zhName} (${s.name})` : s.name}">
+          ${label}
+        </button>
+      `;
+    }).join('');
   }
 }
 
@@ -8400,7 +8612,7 @@ function handleSelectPayer(name) {
   }
 
   // Auto set amount
-  const isBrothers = name.includes('HONG YE & KAI YE') || name.includes('两兄弟');
+  const isBrothers = name.includes('HONG YE & KAI YE') || name.includes('两兄弟') || name.includes('邹宏业');
   if (amountInput && (!amountInput.value || Number(amountInput.value) === 0)) {
     amountInput.value = isBrothers ? 960 : 480;
   }
@@ -8416,8 +8628,9 @@ function handleSelectPayer(name) {
   const report = calculateStudentArrears();
   const searchUpper = name.trim().toUpperCase();
   const student = report.students.find(s => 
+    (s.zhName && (s.zhName.toUpperCase() === searchUpper || searchUpper.includes(s.zhName.toUpperCase()) || s.zhName.toUpperCase().includes(searchUpper))) ||
     s.name.toUpperCase().includes(searchUpper) || 
-    s.aliases.some(al => al.toUpperCase() === searchUpper || searchUpper.includes(al.toUpperCase()))
+    s.aliases.some(al => al.toUpperCase() === searchUpper || searchUpper.includes(al.toUpperCase()) || al.toUpperCase().includes(searchUpper))
   );
 
   if (student && student.unpaidMonths && student.unpaidMonths.length > 0) {
@@ -8448,8 +8661,9 @@ function updatePayerArrearsHint(name) {
   const report = calculateStudentArrears();
   const searchUpper = targetName.trim().toUpperCase();
   const student = report.students.find(s => 
+    (s.zhName && (s.zhName.toUpperCase() === searchUpper || searchUpper.includes(s.zhName.toUpperCase()) || s.zhName.toUpperCase().includes(searchUpper))) ||
     s.name.toUpperCase().includes(searchUpper) || 
-    s.aliases.some(al => al.toUpperCase() === searchUpper || searchUpper.includes(al.toUpperCase()))
+    s.aliases.some(al => al.toUpperCase() === searchUpper || searchUpper.includes(al.toUpperCase()) || al.toUpperCase().includes(searchUpper))
   );
 
   if (!student) {
@@ -8460,13 +8674,14 @@ function updatePayerArrearsHint(name) {
 
   hintEl.classList.remove('hidden');
   const monthNames = ['1月', '2月', '3月', '4月', '5月', '6月', '7月', '8月', '9月', '10月', '11月', '12月'];
+  const displayName = student.zhName ? `${student.zhName} (${student.name})` : student.name;
 
   if (student.arrearsAmount === 0) {
     hintEl.className = 'p-2.5 rounded-lg text-xs bg-emerald-50 border border-emerald-200 text-emerald-800 flex items-center justify-between';
     hintEl.innerHTML = `
       <div class="flex items-center space-x-1.5">
         <span>✅</span>
-        <span><b>${student.name}</b> 截至 ${report.cutoffMonth} 月份住宿费已完全结清！</span>
+        <span><b>${displayName}</b> 截至 ${report.cutoffMonth} 月份住宿费已完全结清！</span>
       </div>
       <span class="text-[11px] font-semibold text-emerald-600">已缴满 ${student.paidMonths.length} 个月</span>
     `;
@@ -8475,7 +8690,7 @@ function updatePayerArrearsHint(name) {
     hintEl.className = 'p-2.5 rounded-lg text-xs bg-rose-50 border border-rose-300 text-rose-800 space-y-1';
     hintEl.innerHTML = `
       <div class="flex items-center justify-between font-bold">
-        <span>⚠️ ${student.name} 当前累计欠费：${formatMoney(student.arrearsAmount)}</span>
+        <span>⚠️ ${displayName} 当前累计欠费：${formatMoney(student.arrearsAmount)}</span>
         <span class="text-[11px] bg-rose-200 text-rose-900 px-1.5 py-0.5 rounded">未缴 ${student.unpaidMonths.length} 个月</span>
       </div>
       <div class="text-[11px] text-rose-700 flex items-center justify-between">
@@ -8489,6 +8704,8 @@ function updatePayerArrearsHint(name) {
 }
 
 // Window Exports for Arrears Module
+window.DEFAULT_BOARDING_STUDENTS = DEFAULT_BOARDING_STUDENTS;
+window.LEARNED_STUDENT_RULES = LEARNED_STUDENT_RULES;
 window.calculateStudentArrears = calculateStudentArrears;
 window.renderArrearsTracker = renderArrearsTracker;
 window.setArrearsViewMode = setArrearsViewMode;
@@ -8599,7 +8816,7 @@ function getStudentMonthPaymentDetails(studentName, excludeIncomeId = '') {
 
   const student = studentsList.find(s => 
     s.name.toUpperCase().includes(sUpper) || 
-    s.aliases.some(al => sUpper.includes(al.toUpperCase()) || al.toUpperCase().includes(sUpper))
+    (s.zhName && (s.zhName.toUpperCase() === sUpper || sUpper.includes(s.zhName.toUpperCase()) || s.zhName.toUpperCase().includes(sUpper))) || s.aliases.some(al => sUpper.includes(al.toUpperCase()) || al.toUpperCase().includes(sUpper))
   );
 
   // Match all income records for this student
