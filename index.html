@@ -11,8 +11,8 @@
   <script id="voyage-ota-bootloader">
     (function() {
       try {
-        var expectedVersion = '2026.3.24';
-        var baseBuildTime = 1789047622366;
+        var expectedVersion = '2026.3.26';
+        var baseBuildTime = 1789049168870;
         var cachedBundle = localStorage.getItem('voyage_finance_cached_bundle');
         var cachedVersion = localStorage.getItem('voyage_finance_cached_version');
         var cachedTime = parseInt(localStorage.getItem('voyage_finance_cached_time') || '0', 10);
@@ -21,7 +21,6 @@
         if (cachedBundle) {
           var isCorrupt = (cachedBundle.indexOf('????') !== -1) || 
                           (cachedBundle.indexOf('?/span>') !== -1) ||
-                          (cachedBundle.indexOf('0\u4eba\u6b20\u8d39?') !== -1) ||
                           (cachedTime < baseBuildTime) || 
                           (cachedVersion !== expectedVersion);
           if (isCorrupt) {
@@ -431,7 +430,7 @@
 
         <!-- Dropzone -->
         <div id="statementDropZone" onclick="document.getElementById('statementPdfInput').click()" class="border-2 border-dashed border-blue-200 hover:border-blue-500 rounded-2xl p-8 text-center cursor-pointer transition-colors bg-blue-50/20 hover:bg-blue-50/50">
-          <input type="file" id="statementPdfInput" accept=".pdf" class="hidden" onchange="handleStatementPdfUpload(event)">
+          <input type="file" id="statementPdfInput" accept=".pdf,image/*,.png,.jpg,.jpeg" class="hidden" onchange="handleStatementPdfUpload(event)">
           <div class="flex flex-col items-center justify-center space-y-2">
             <div class="w-12 h-12 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center">
               <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path></svg>
@@ -593,6 +592,7 @@
                 <th class="px-4 py-3">收款账户</th>
                 <th class="px-4 py-3 text-right">金额 (RM)</th>
                 <th class="px-4 py-3">交款人 / 客户</th>
+                <th class="px-4 py-3">浜よ垂褰掑睘鏈堜唤</th>
                 <th class="px-4 py-3">备注说明</th>
                 <th class="px-4 py-3">单号</th>
                 <th class="px-4 py-3 text-center">操作</th>
@@ -1294,6 +1294,52 @@
             <div id="incomePayerArrearsHint" class="hidden p-2.5 rounded-lg text-xs transition-all"></div>
           </div>
         </div>
+        <!-- Fee Target Month Selector & Quick Buttons -->
+        <div class="p-3 bg-indigo-50/50 rounded-xl border border-indigo-100 space-y-2.5">
+          <div class="flex items-center justify-between">
+            <label class="block font-bold text-slate-700 text-xs flex items-center space-x-1.5">
+              <span>📅 交费归属月份 (住宿费交哪个月)</span>
+              <span class="text-[10px] font-normal text-indigo-600">※精准对账与欠费销账</span>
+            </label>
+            <span id="incomeFeeMonthNotice" class="text-[11px] text-indigo-700 font-medium"></span>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+            <div>
+              <select id="incomeFeeMonth" onchange="handleFeeMonthChange(this.value)" class="w-full px-3 py-2 bg-white border border-indigo-200 text-slate-800 rounded-lg focus:ring-2 focus:ring-indigo-500 text-xs font-semibold shadow-sm">
+                <option value="">-- 非周期性款项 (不指定特定月份) --</option>
+                <option value="2026-01">2026年 1月份 (Jan)</option>
+                <option value="2026-02">2026年 2月份 (Feb)</option>
+                <option value="2026-03">2026年 3月份 (Mar)</option>
+                <option value="2026-04">2026年 4月份 (Apr)</option>
+                <option value="2026-05">2026年 5月份 (May)</option>
+                <option value="2026-06">2026年 6月份 (Jun)</option>
+                <option value="2026-07">2026年 7月份 (Jul)</option>
+                <option value="2026-08">2026年 8月份 (Aug)</option>
+                <option value="2026-09">2026年 9月份 (Sep)</option>
+                <option value="2026-10">2026年 10月份 (Oct)</option>
+                <option value="2026-11">2026年 11月份 (Nov)</option>
+                <option value="2026-12">2026年 12月份 (Dec)</option>
+                <option value="__CUSTOM__">✍️ 【手动输入/多月合并 (如 1月+2月)】</option>
+              </select>
+            </div>
+            <div>
+              <input type="text" id="incomeCustomFeeMonth" placeholder="例如：2026-01, 2026-02" class="w-full px-3 py-2 bg-white border border-indigo-200 rounded-lg text-xs hidden focus:ring-2 focus:ring-indigo-500 shadow-sm">
+            </div>
+          </div>
+
+          <!-- Quick Month Selection Pills (1月 ~ 12月) -->
+          <div>
+            <div class="text-[10px] text-slate-500 mb-1 flex items-center justify-between">
+              <span>快捷点选归属月份：</span>
+              <span class="text-indigo-600 font-medium cursor-pointer hover:underline text-[10px]" onclick="clearIncomeFeeMonth()">清除月份</span>
+            </div>
+            <div class="grid grid-cols-6 sm:grid-cols-12 gap-1" id="feeMonthPills">
+              <!-- Rendered dynamically by JS with paid/unpaid indicators -->
+            </div>
+          </div>
+        </div>
+
         <div>
           <label class="block font-medium text-slate-700 mb-1">单据备注 / 摘要</label>
           <input type="text" id="incomeRemark" placeholder="例如：2026/1 + DEPOSIT" class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg focus:ring-1 focus:ring-emerald-500 focus:bg-white">
@@ -2144,6 +2190,36 @@ alter publication supabase_realtime add table finance_store;</pre>
   </div>
 
 
+    <!-- Quick Month Selector Modal -->
+  <div id="quickMonthModal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+    <div class="bg-white rounded-2xl max-w-md w-full p-5 shadow-2xl border border-slate-100 space-y-4">
+      <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+        <div>
+          <h4 class="text-sm font-bold text-slate-900 flex items-center space-x-1.5">
+            <span>📅 快速修改交费归属月份</span>
+          </h4>
+          <p id="quickMonthPayerInfo" class="text-xs text-slate-500 mt-0.5"></p>
+        </div>
+        <button onclick="closeModal('quickMonthModal')" class="text-slate-400 hover:text-slate-600 text-lg font-semibold">&times;</button>
+      </div>
+      <input type="hidden" id="quickMonthIncomeId">
+      <div class="space-y-3">
+        <p class="text-xs text-slate-600 font-medium">点击下方月份，即刻将此笔收入绑定为该月的住宿费：</p>
+        <div class="grid grid-cols-3 sm:grid-cols-4 gap-2" id="quickMonthButtonGrid">
+          <!-- 1月 ~ 12月 buttons -->
+        </div>
+        <div class="pt-2 border-t border-slate-100 flex items-center justify-between">
+          <button type="button" onclick="applyQuickMonth('')" class="px-3 py-1.5 text-xs text-slate-600 hover:text-slate-800 bg-slate-100 hover:bg-slate-200 rounded-lg font-medium transition cursor-pointer">
+            设为非周期性款项 (清除)
+          </button>
+          <button type="button" onclick="const qId = document.getElementById('quickMonthIncomeId').value; closeModal('quickMonthModal'); editIncome(qId);" class="px-3 py-1.5 text-xs text-indigo-600 hover:bg-indigo-50 rounded-lg font-bold transition cursor-pointer">
+            完整编辑表单 →
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <div id="toast" class="fixed bottom-6 right-6 bg-slate-900 text-white text-xs px-4 py-3 rounded-xl shadow-xl transform transition-all duration-300 translate-y-20 opacity-0 z-50 flex items-center space-x-2">
     <span id="toastMessage">操作成功</span>
   </div>
@@ -2152,6 +2228,8 @@ alter publication supabase_realtime add table finance_store;</pre>
   <footer class="bg-white border-t border-slate-200 py-4 text-center text-xs text-slate-400">
     2026 财务收支记账管理系统 · Web版（支持银行流水 PDF 智能自动入账 & 单据 OCR）
   </footer>
+
+
 
 
 
@@ -2204,7 +2282,7 @@ let ocrSettings = {
 };
 
 // Application Version and OTA Release Timestamp
-window.VOYAGE_APP_VERSION = '2026.3.24';
+window.VOYAGE_APP_VERSION = '2026.3.26';
 window.VOYAGE_APP_BUILD_TIME = Date.now();
 
 // ==========================================
@@ -3435,11 +3513,15 @@ function renderIncomeTable() {
     if (endDate && item.date > endDate) return false;
     if (category && item.category !== category) return false;
     if (keyword) {
+      const feeM = (typeof getIncomeFeeMonth === 'function') ? getIncomeFeeMonth(item) : (item.feeMonth || '');
+      const feeMDisplay = (typeof formatFeeMonthDisplay === 'function') ? formatFeeMonthDisplay(feeM) : feeM;
       const match = (item.counterparty || '').toLowerCase().includes(keyword) ||
                     (item.remark || '').toLowerCase().includes(keyword) ||
                     (item.account || '').toLowerCase().includes(keyword) ||
                     (item.receiptNo || '').toLowerCase().includes(keyword) ||
-                    (item.invoiceNo || '').toLowerCase().includes(keyword);
+                    (item.invoiceNo || '').toLowerCase().includes(keyword) ||
+                    feeM.toLowerCase().includes(keyword) ||
+                    feeMDisplay.toLowerCase().includes(keyword);
       if (!match) return false;
     }
     return true;
@@ -3455,67 +3537,100 @@ function renderIncomeTable() {
   const cardList = document.getElementById('incomeCardList');
 
   if (filtered.length === 0) {
-    if (tbody) tbody.innerHTML = '<tr><td colspan="8" class="text-center py-8 text-slate-400">没有找到符合条件的收入记录</td></tr>';
+    if (tbody) tbody.innerHTML = '<tr><td colspan="9" class="text-center py-8 text-slate-400">没有找到符合条件的收入记录</td></tr>';
     if (cardList) cardList.innerHTML = '<div class="bg-white rounded-2xl p-8 text-center text-xs text-slate-400 border border-slate-200">没有找到符合条件的收入记录</div>';
     return;
   }
 
   if (tbody) {
-    tbody.innerHTML = filtered.map(i => `
-      <tr class="hover:bg-slate-50 transition-colors">
-        <td class="px-4 py-3 whitespace-nowrap font-medium text-slate-800">${i.date}</td>
-        <td class="px-4 py-3 whitespace-nowrap">
-          <span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-medium bg-emerald-50 text-emerald-700 border border-emerald-200">
-            ${i.category || '销售收入'}
-          </span>
-        </td>
-        <td class="px-4 py-3 whitespace-nowrap text-slate-600">${i.account || '-'}</td>
-        <td class="px-4 py-3 whitespace-nowrap text-right font-bold text-emerald-600">${formatMoney(i.amount)}</td>
-        <td class="px-4 py-3 text-slate-800 font-medium">${i.counterparty || '-'}</td>
-        <td class="px-4 py-3 text-slate-500 max-w-xs truncate" title="${i.remark || ''}">${i.remark || '-'}</td>
-        <td class="px-4 py-3 text-slate-400 whitespace-nowrap">${[i.receiptNo, i.invoiceNo].filter(Boolean).join(' / ') || '-'}</td>
-        <td class="px-4 py-3 text-center whitespace-nowrap space-x-2">
-          <button onclick="editIncome('${i.id}')" class="text-blue-600 hover:text-blue-800 font-medium">编辑</button>
-          <button onclick="deleteIncome('${i.id}')" class="text-rose-600 hover:text-rose-800 font-medium">删除</button>
-        </td>
-      </tr>
-    `).join('');
+    tbody.innerHTML = filtered.map(i => {
+      const feeM = (typeof getIncomeFeeMonth === 'function') ? getIncomeFeeMonth(i) : (i.feeMonth || '');
+      const feeMDisplay = (typeof formatFeeMonthDisplay === 'function') ? formatFeeMonthDisplay(feeM) : feeM;
+
+      const feeMonthCol = feeM ? `
+        <button type="button" onclick="quickEditIncomeMonth('${i.id}', event)" class="inline-flex items-center px-2 py-1 rounded-lg text-xs font-bold bg-indigo-50 hover:bg-indigo-100 text-indigo-700 border border-indigo-200 hover:border-indigo-300 transition group cursor-pointer shadow-2xs" title="点击快速修改交费归属月份">
+          <span>📅 ${feeMDisplay}</span>
+          <svg class="w-3 h-3 ml-1 text-indigo-400 group-hover:text-indigo-700" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg>
+        </button>
+      ` : `
+        <button type="button" onclick="quickEditIncomeMonth('${i.id}', event)" class="inline-flex items-center px-2 py-0.5 rounded text-[11px] text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 border border-transparent hover:border-indigo-200 transition cursor-pointer" title="点击为此笔收入设定交费归属月份">
+          <span>+ 设月份</span>
+        </button>
+      `;
+
+      return `
+        <tr class="hover:bg-slate-50 transition-colors">
+          <td class="px-4 py-3 whitespace-nowrap font-medium text-slate-800">${i.date}</td>
+          <td class="px-4 py-3 whitespace-nowrap">
+            <span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-medium bg-emerald-50 text-emerald-700 border border-emerald-200">
+              ${i.category || '销售收入'}
+            </span>
+          </td>
+          <td class="px-4 py-3 whitespace-nowrap text-slate-600">${i.account || '-'}</td>
+          <td class="px-4 py-3 whitespace-nowrap text-right font-bold text-emerald-600">${formatMoney(i.amount)}</td>
+          <td class="px-4 py-3 text-slate-800 font-medium">${i.counterparty || '-'}</td>
+          <td class="px-4 py-3 whitespace-nowrap">${feeMonthCol}</td>
+          <td class="px-4 py-3 text-slate-500 max-w-xs truncate" title="${i.remark || ''}">${i.remark || '-'}</td>
+          <td class="px-4 py-3 text-slate-400 whitespace-nowrap">${[i.receiptNo, i.invoiceNo].filter(Boolean).join(' / ') || '-'}</td>
+          <td class="px-4 py-3 text-center whitespace-nowrap space-x-2">
+            <button onclick="editIncome('${i.id}')" class="text-blue-600 hover:text-blue-800 font-medium">编辑</button>
+            <button onclick="deleteIncome('${i.id}')" class="text-rose-600 hover:text-rose-800 font-medium">删除</button>
+          </td>
+        </tr>
+      `;
+    }).join('');
   }
 
   if (cardList) {
-    cardList.innerHTML = filtered.map(i => `
-      <div class="bg-white rounded-2xl p-4 border border-slate-200 shadow-sm space-y-3">
-        <div class="flex items-center justify-between">
-          <div class="flex items-center space-x-2">
-            <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-semibold bg-emerald-100 text-emerald-800">
-              ${i.category || '销售收入'}
+    cardList.innerHTML = filtered.map(i => {
+      const feeM = (typeof getIncomeFeeMonth === 'function') ? getIncomeFeeMonth(i) : (i.feeMonth || '');
+      const feeMDisplay = (typeof formatFeeMonthDisplay === 'function') ? formatFeeMonthDisplay(feeM) : feeM;
+
+      return `
+        <div class="bg-white rounded-2xl p-4 border border-slate-200 shadow-sm space-y-3">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center space-x-2">
+              <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-semibold bg-emerald-100 text-emerald-800">
+                ${i.category || '销售收入'}
+              </span>
+              <span class="text-xs text-slate-400 font-medium">${i.date}</span>
+            </div>
+            <div class="text-base font-black text-emerald-600 tracking-tight">
+              +${formatMoney(i.amount)}
+            </div>
+          </div>
+          <div class="flex items-start justify-between gap-2">
+            <div>
+              <div class="text-sm font-bold text-slate-900">${i.counterparty || '客户/交款人未填'}</div>
+              <div class="text-xs text-slate-500 mt-0.5">${i.remark || '学费/日常收入'}</div>
+            </div>
+            <span class="text-[10px] px-2 py-0.5 bg-slate-100 text-slate-600 rounded-md font-medium whitespace-nowrap">
+              ${i.account || '现金'}
             </span>
-            <span class="text-xs text-slate-400 font-medium">${i.date}</span>
           </div>
-          <div class="text-base font-black text-emerald-600 tracking-tight">
-            +${formatMoney(i.amount)}
+
+          <!-- Fee Month Badge & Quick Edit Button in Mobile Card -->
+          <div class="flex items-center justify-between text-xs py-1.5 px-3 rounded-xl bg-indigo-50/70 border border-indigo-100 text-indigo-900">
+            <span class="font-semibold flex items-center space-x-1">
+              <span>📅 交费归属月份：</span>
+              <b class="text-indigo-700 font-bold">${feeM ? feeMDisplay : '未指定月份'}</b>
+            </span>
+            <button type="button" onclick="quickEditIncomeMonth('${i.id}', event)" class="text-[11px] font-bold text-indigo-600 hover:text-indigo-800 underline">修改月份 ✏️</button>
           </div>
-        </div>
-        <div class="flex items-start justify-between gap-2">
-          <div>
-            <div class="text-sm font-bold text-slate-900">${i.counterparty || '客户/交款人未填'}</div>
-            <div class="text-xs text-slate-500 mt-0.5">${i.remark || '学费/日常收入'}</div>
-          </div>
-          <span class="text-[10px] px-2 py-0.5 bg-slate-100 text-slate-600 rounded-md font-medium whitespace-nowrap">
-            ${i.account || '现金'}
-          </span>
-        </div>
-        <div class="flex items-center justify-between pt-2 border-t border-slate-100 text-xs">
-          <span class="text-[11px] text-slate-400">${i.receiptNo ? '收据: ' + i.receiptNo : (i.invoiceNo ? '发票: ' + i.invoiceNo : '')}</span>
-          <div class="flex items-center space-x-3">
-            <button onclick="editIncome('${i.id}')" class="px-2.5 py-1 text-xs font-semibold text-blue-600 hover:bg-blue-50 rounded-lg">✏️ 编辑</button>
-            <button onclick="deleteIncome('${i.id}')" class="px-2.5 py-1 text-xs font-semibold text-rose-600 hover:bg-rose-50 rounded-lg">🗑️ 删除</button>
+
+          <div class="flex items-center justify-between pt-2 border-t border-slate-100 text-xs">
+            <span class="text-[11px] text-slate-400">${i.receiptNo ? '收据: ' + i.receiptNo : (i.invoiceNo ? '发票: ' + i.invoiceNo : '')}</span>
+            <div class="flex items-center space-x-3">
+              <button onclick="editIncome('${i.id}')" class="px-2.5 py-1 text-xs font-semibold text-blue-600 hover:bg-blue-50 rounded-lg">✏️ 编辑</button>
+              <button onclick="deleteIncome('${i.id}')" class="px-2.5 py-1 text-xs font-semibold text-rose-600 hover:bg-rose-50 rounded-lg">🗑️ 删除</button>
+            </div>
           </div>
         </div>
-      </div>
-    `).join('');
+      `;
+    }).join('');
   }
 }
+
 
 // Render Expense Table with Filters
 function renderExpenseTable() {
@@ -4126,6 +4241,13 @@ function checkIncomeFormDuplicate() {
 function saveIncomeRecord(e) {
   e.preventDefault();
   const id = document.getElementById('incomeFormId').value;
+  
+  let feeMonth = document.getElementById('incomeFeeMonth') ? document.getElementById('incomeFeeMonth').value.trim() : '';
+  const customFeeMonth = document.getElementById('incomeCustomFeeMonth') ? document.getElementById('incomeCustomFeeMonth').value.trim() : '';
+  if (feeMonth === '__CUSTOM__' && customFeeMonth) {
+    feeMonth = customFeeMonth;
+  }
+
   const record = {
     id: id || ('INC-' + Date.now().toString().slice(-6)),
     date: document.getElementById('incomeDate').value,
@@ -4133,6 +4255,7 @@ function saveIncomeRecord(e) {
     account: document.getElementById('incomeAccountSelect').value,
     amount: parseFloat(document.getElementById('incomeAmount').value) || 0,
     counterparty: document.getElementById('incomeCounterparty').value.trim(),
+    feeMonth: feeMonth,
     remark: document.getElementById('incomeRemark').value.trim(),
     receiptNo: document.getElementById('incomeReceiptNo').value.trim(),
     invoiceNo: document.getElementById('incomeInvoiceNo').value.trim()
@@ -4158,7 +4281,7 @@ function saveIncomeRecord(e) {
   closeModal('incomeModal');
   renderDashboard();
   renderIncomeTable();
-  if (typeof renderArrearsTracker === 'function' && currentTab === 'arrears') {
+  if (typeof renderArrearsTracker === 'function') {
     renderArrearsTracker();
   }
   if (typeof updateArrearsBadge === 'function') {
@@ -4186,6 +4309,29 @@ function editIncome(id) {
   document.getElementById('incomeReceiptNo').value = item.receiptNo || '';
   document.getElementById('incomeInvoiceNo').value = item.invoiceNo || '';
 
+  // Populate Fee Month
+  const targetFeeMonth = item.feeMonth || (typeof getIncomeFeeMonth === 'function' ? getIncomeFeeMonth(item) : '') || '';
+  const feeMonthSelect = document.getElementById('incomeFeeMonth');
+  const customFeeMonth = document.getElementById('incomeCustomFeeMonth');
+  if (feeMonthSelect) {
+    if (Array.from(feeMonthSelect.options).some(o => o.value === targetFeeMonth)) {
+      feeMonthSelect.value = targetFeeMonth;
+      if (customFeeMonth) customFeeMonth.classList.add('hidden');
+    } else if (targetFeeMonth) {
+      feeMonthSelect.value = '__CUSTOM__';
+      if (customFeeMonth) {
+        customFeeMonth.classList.remove('hidden');
+        customFeeMonth.value = targetFeeMonth;
+      }
+    } else {
+      feeMonthSelect.value = '';
+      if (customFeeMonth) customFeeMonth.classList.add('hidden');
+    }
+    if (typeof renderFeeMonthPills === 'function') {
+      renderFeeMonthPills(targetFeeMonth, item.counterparty || '');
+    }
+  }
+
   if (typeof populatePayerDropdown === 'function') populatePayerDropdown();
   const payerSelect = document.getElementById('incomePayerSelect');
   if (payerSelect) {
@@ -4205,7 +4351,7 @@ function editIncome(id) {
   document.getElementById('incomeModal').classList.remove('hidden');
 }
 
-// Delete Income
+
 function deleteIncome(id) {
   if (confirm('确定要删除这笔收入记录吗？')) {
     appData.incomes = appData.incomes.filter(i => i.id !== id);
@@ -4634,7 +4780,109 @@ async function parseStatementPdfFile(file) {
   }
 }
 
+// ==========================================
+// HONG LEONG BANK STATEMENT & TRANSACTION DETAILS PARSER (V2026.3.26)
+// Supports:
+// 1. Transaction Details Reports (Online Banking Export: DD/MM/YYYY HH:mm:ss, Remarks, Sender/Receiver, Recipient Ref, Other Payment Details, Credit/Debit)
+// 2. Official Monthly Current Account Statements (Penyataan Bulanan: DD-MM-YYYY, Description, Cheque No, Withdrawals, Deposits, Balance)
+// ==========================================
+
+const LEARNED_STUDENT_RULES = [
+  // 15 Boarding Students & Known Parents / Aliases
+  { pattern: /HUAI\s*DERK|HUAIDERK|HUAI\s*D\b/i, name: 'HUAIDERK', fee: 480 },
+  { pattern: /CHONG\s*MEI\s*KOON/i, name: 'HUAIDERK', fee: 480 }, // Parent of HUAI DERK
+
+  { pattern: /WONG\s*E\s*FULL|WongEFull|\bE\s*FULL\b/i, name: 'WONG E FULL', fee: 480 },
+  { pattern: /RAINBOW\s*ZONE\s*VENTURES/i, name: 'WONG E FULL', fee: 480 }, // Business / Parent of WONG E FULL
+
+  { pattern: /ENG\s*WE[EI]\s*ZHI|WEI\s*ZHI/i, name: 'ENG WEI ZHI', fee: 480 },
+  { pattern: /TEE\s*LEK\s*TING/i, name: 'ENG WEI ZHI', fee: 480 }, // Parent of ENG WEI ZHI
+
+  { pattern: /TAN\s*JIAN\s*FONG|Tan\s*Jian\s*Fong|\bJIAN\s*FONG\b/i, name: 'TAN JIAN FONG', fee: 480 },
+  { pattern: /WONG\s*MEI\s*NGUK/i, name: 'TAN JIAN FONG', fee: 480 }, // Parent of TAN JIAN FONG
+
+  { pattern: /LEE\s*YAN\s*CHENG|LEE\s*YAN\b/i, name: 'LEE YAN CHENG', fee: 480 },
+  { pattern: /LIM\s*YEE\s*LING/i, name: 'LEE YAN CHENG', fee: 480 }, // Parent of LEE YAN CHENG
+
+  { pattern: /KAI\s*HAO|Kaihao|\bKAIHAO\b/i, name: 'KAIHAO', fee: 480 },
+  { pattern: /CHUA\s*HEE\s*SIANG/i, name: 'KAIHAO', fee: 480 }, // Parent of KAIHAO
+
+  { pattern: /LEE\s*JU\s*YAN|\bJU\s*YAN\b/i, name: 'LEE JU YAN', fee: 480 },
+  { pattern: /WONG\s*PIK\s*WOON/i, name: 'LEE JU YAN', fee: 480 }, // Parent of LEE JU YAN
+
+  { pattern: /CHUA\s*MI[NN]G\s*ZHE|MI[NN]G\s*ZHE/i, name: 'CHUA MING ZHE', fee: 480 },
+
+  { pattern: /ONG\s*SHI\s*SHUI|SHI\s*SHUI/i, name: 'ONG SHI SHUI', fee: 480 },
+
+  { pattern: /GOH\s*JYJE\s*SHAN|GohJyieShann|JYJE\s*SHAN/i, name: 'GOH JYJE SHAN', fee: 480 },
+  { pattern: /TAN\s*HOOI\s*P|GOH\s*HOCK\s*G/i, name: 'GOH JYJE SHAN', fee: 480 }, // Parents of GOH JYJE SHAN
+
+  { pattern: /LEE\s*JI\s*CHUEN|JI\s*CHUEN/i, name: 'LEE JI CHUEN', fee: 480 },
+
+  { pattern: /CHIA\s*KAI\s*JIE|\bKAI\s*JIE\b/i, name: 'CHIA KAI JIE', fee: 480 },
+
+  { pattern: /ZHI\s*XIAO|How\s*Zhi\s*Xiao/i, name: 'ZHI XIAO', fee: 480 },
+
+  // Brothers: HONG YE & KAI YE (RM 960)
+  { pattern: /HONG\s*Y[EI]P?.*KAI\s*Y[EI]P?|KAI\s*Y[EI]P?.*HONG\s*Y[EI]P?/i, name: 'HONG YE & KAI YE', fee: 960 },
+  { pattern: /HONG\s*Y[EI]P?\b/i, name: 'HONG YE', fee: 480 },
+  { pattern: /KAI\s*Y[EI]P?\b/i, name: 'KAI YE', fee: 480 }
+];
+
+// Helper: Extract fee month from any free text or payment reference
+function parseFeeMonthFromStatementText(text, fallbackDate) {
+  if (!text) return fallbackDate ? fallbackDate.slice(0, 7) : '';
+  const upper = text.toUpperCase();
+
+  // 1. Pattern like HOSTEL 2609, 2609, 2601..2612
+  const mHostel = upper.match(/(?:HOSTEL\s*)?26(0[1-9]|1[0-2])\b/);
+  if (mHostel) {
+    return '2026-' + mHostel[1];
+  }
+
+  // 2. English month names with optional 26 or 2026 (e.g. SEPT, Sept26, S3X Sept26, JULY, Jun26)
+  const monthMap = {
+    'JAN': '01', 'FEB': '02', 'MAR': '03', 'APR': '04', 'MAY': '05', 'JUN': '06',
+    'JUL': '07', 'AUG': '08', 'SEP': '09', 'SEPT': '09', 'OCT': '10', 'NOV': '11', 'DEC': '12'
+  };
+  for (const [mName, mCode] of Object.entries(monthMap)) {
+    const reg = new RegExp('\\b' + mName + '(?:EMBER|TEMBER|UST|OBER)?(?:[-_\\s]*2[5-9]|202[5-9])?\\b', 'i');
+    if (reg.test(upper)) {
+      return '2026-' + mCode;
+    }
+  }
+
+  // 3. Explicit YYYY-MM or YYYY/MM (e.g. 2026-09 or 2026/1)
+  const mYm = upper.match(/2026[-/](0?[1-9]|1[0-2])\b/);
+  if (mYm) {
+    return '2026-' + String(mYm[1]).padStart(2, '0');
+  }
+
+  // 4. Chinese month (e.g. 9月, 10月份)
+  const mCn = upper.match(/(0?[1-9]|1[0-2])\s*月份?/);
+  if (mCn) {
+    return '2026-' + String(mCn[1]).padStart(2, '0');
+  }
+
+  // 5. Fallback to transaction date month if available
+  if (fallbackDate && fallbackDate.startsWith('2026-')) {
+    return fallbackDate.slice(0, 7);
+  }
+
+  return '';
+}
+
+// Helper: Extract bank transaction reference number
+function extractBankReferenceNo(text) {
+  if (!text) return '';
+  // e.g. 20260906MBBEMYKL010ORM20605635 or 20260907PBBEMYKL010ORB23005033
+  const m = text.match(/\b(202\d{5}[A-Z0-9]{12,25})\b/i);
+  return m ? m[1] : '';
+}
+
+// Master Statement Items Parser
 function extractTransactionsFromStatementItems(items) {
+  // Sort items: page -> y descending (top to bottom) -> x ascending (left to right)
   items.sort((a, b) => {
     if (a.page !== b.page) return a.page - b.page;
     if (Math.abs(a.y - b.y) > 3) return b.y - a.y;
@@ -4643,25 +4891,41 @@ function extractTransactionsFromStatementItems(items) {
 
   let statementPeriod = '';
   let accountNo = '15200056062';
+  let priorDayBalance = 0;
 
+  // Header inspection
   for (let i = 0; i < items.length; i++) {
     const it = items[i];
-    if (it.str.includes('Statement Period') || it.str.includes('Tempoh Penyataan')) {
-      const nextItems = items.slice(i, i + 6).map(x => x.str).join(' ');
-      const m = nextItems.match(/(\d{2}\/\d{2}\/\d{2}\s*-\s*\d{2}\/\d{2}\/\d{2})/);
+    const fullStr = it.str;
+    if (fullStr.includes('Statement Period') || fullStr.includes('Tempoh Penyataan')) {
+      const nextItems = items.slice(i, i + 8).map(x => x.str).join(' ');
+      const m = nextItems.match(/(\d{2}[/-]\d{2}[/-]\d{2,4}\s*-\s*\d{2}[/-]\d{2}[/-]\d{2,4})/);
       if (m) statementPeriod = m[1];
     }
+    if (fullStr.includes('Account Number') || fullStr.includes('Nombor Akaun')) {
+      const nextItems = items.slice(i, i + 6).map(x => x.str).join(' ');
+      const m = nextItems.match(/(\d{10,14})/);
+      if (m) accountNo = m[1];
+    }
+    if (fullStr.includes('Prior Day Balance')) {
+      const nextItems = items.slice(i, i + 6).map(x => x.str).join(' ');
+      const m = nextItems.match(/([\d,]+\.\d{2})/);
+      if (m) priorDayBalance = parseFloat(m[1].replace(/,/g, '')) || 0;
+    }
   }
-  statementMeta.period = statementPeriod;
-  statementMeta.accountNo = accountNo;
 
+  statementMeta.period = statementPeriod || '2026年对账单';
+  statementMeta.accountNo = accountNo;
+  statementMeta.priorDayBalance = priorDayBalance;
+
+  // Group items into physical lines
   const lines = [];
   let currentLine = [];
   let lastY = null;
   let lastPage = null;
 
   items.forEach(it => {
-    if (it.str === '') return;
+    if (!it.str || it.str === '') return;
     if (lastPage !== null && (it.page !== lastPage || Math.abs(it.y - lastY) > 3.5)) {
       if (currentLine.length > 0) lines.push(currentLine);
       currentLine = [];
@@ -4672,18 +4936,29 @@ function extractTransactionsFromStatementItems(items) {
   });
   if (currentLine.length > 0) lines.push(currentLine);
 
-  const dateRegex = /^(\d{2})-(\d{2})-(\d{4})$/;
+  // Date detector matching DD/MM/YYYY or DD-MM-YYYY
+  const dateRegex = /^(\d{2})[-/](\d{2})[-/](\d{4})(?:\s+\d{2}:\d{2}(?::\d{2})?)?$/;
+  const isDateStart = (str) => {
+    const s = str.trim();
+    return /^(\d{2})[-/](\d{2})[-/](\d{4})/.test(s) || /^(\d{2})[-/](\d{2})[-/](\d{2})\b/.test(s);
+  };
+
+  // Group into transaction blocks
   const transactionBlocks = [];
   let currentBlock = null;
 
   for (const line of lines) {
-    const firstStr = line[0].str.trim();
-    if (dateRegex.test(firstStr)) {
+    if (line.length === 0) continue;
+    const firstItem = line[0];
+    const firstStr = firstItem.str.trim();
+
+    // Check if line starts a new transaction (must be near left margin x < 120 and start with date)
+    if (firstItem.x < 120 && isDateStart(firstStr)) {
       if (currentBlock) transactionBlocks.push(currentBlock);
       currentBlock = [line];
     } else if (currentBlock) {
       const lineStr = line.map(x => x.str).join(' ');
-      if (lineStr.includes('Total Withdrawals') || lineStr.includes('Total Deposits') || lineStr.includes('Closing Balance')) {
+      if (lineStr.includes('Total Withdrawals') || lineStr.includes('Total Deposits') || lineStr.includes('Closing Balance') || lineStr.includes('Disclaimer') || lineStr.includes('Page ')) {
         transactionBlocks.push(currentBlock);
         currentBlock = null;
       } else {
@@ -4696,60 +4971,121 @@ function extractTransactionsFromStatementItems(items) {
   const transactions = [];
   let totalDep = 0;
   let totalWith = 0;
+  let runningBalance = priorDayBalance;
 
   transactionBlocks.forEach((block, idx) => {
     const firstLine = block[0];
-    const dateStr = firstLine[0].str.trim();
-    const [d, m, y] = dateStr.split('-');
+    const firstStr = firstLine[0].str.trim();
+    
+    // Parse date
+    const dateMatch = firstStr.match(/^(\d{2})[-/](\d{2})[-/](\d{2,4})/);
+    if (!dateMatch) return;
+
+    let [, d, m, y] = dateMatch;
+    if (y.length === 2) y = '20' + y;
     const isoDate = `${y}-${m}-${d}`;
 
-    let allTextLines = [];
+    // Collect all items in block
+    let allTextItems = [];
     let numberItems = [];
+    let timeStr = '';
 
     block.forEach(line => {
-      line.forEach(item => {
-        const cleanNum = item.str.replace(/,/g, '');
+      line.forEach(it => {
+        const clean = it.str.trim();
+        if (!clean) return;
+
+        // Check if time (e.g. 17:49:18)
+        if (/^\d{2}:\d{2}(:\d{2})?$/.test(clean)) {
+          timeStr = clean;
+          return;
+        }
+
+        // Check if numeric amount
+        const cleanNum = clean.replace(/,/g, '');
         if (/^\d+\.\d{2}$/.test(cleanNum)) {
           numberItems.push({
             val: parseFloat(cleanNum),
-            x: item.x,
-            y: item.y,
-            raw: item.str
+            x: it.x,
+            y: it.y,
+            raw: clean
           });
-        } else if (!dateRegex.test(item.str)) {
-          allTextLines.push(item.str);
+        } else if (!isDateStart(clean)) {
+          allTextItems.push(it);
         }
       });
     });
 
-    const description = allTextLines.join(' ');
+    // Detect amount & flow direction
     let deposit = 0;
     let withdrawal = 0;
     let balance = 0;
 
+    // Separate columns based on x coordinates for Transaction Details:
+    // x approx: Remarks (70-220), ChequeNo (220-250), Sender (250-365), RecipientRef (365-455), OtherDetails (455-545), PaymentAmt (545-610), CreditAmt (610-685), Balance (685-770)
+    let remarksParts = [];
+    let senderParts = [];
+    let recipientRefParts = [];
+    let otherDetailsParts = [];
+
+    allTextItems.forEach(it => {
+      const s = it.str.trim();
+      if (s === 'NA' || s === '-') return;
+      if (it.x >= 240 && it.x < 365) {
+        senderParts.push(s);
+      } else if (it.x >= 365 && it.x < 455) {
+        recipientRefParts.push(s);
+      } else if (it.x >= 455 && it.x < 545) {
+        otherDetailsParts.push(s);
+      } else {
+        remarksParts.push(s);
+      }
+    });
+
+    const senderText = senderParts.join(' ').trim();
+    const recipientRefText = recipientRefParts.join(' ').trim();
+    const otherDetailsText = otherDetailsParts.join(' ').trim();
+    const remarksText = remarksParts.join(' ').trim();
+    const combinedDescription = [remarksText, senderText, recipientRefText, otherDetailsText].filter(Boolean).join(' ');
+
+    // Determine deposit vs withdrawal from numberItems
     if (numberItems.length === 1) {
       const num = numberItems[0];
-      if (num.x < 650) {
+      if (num.x >= 600 && num.x <= 685) {
         deposit = num.val;
-      } else if (num.x < 780) {
+      } else if (num.x >= 530 && num.x < 600) {
         withdrawal = num.val;
       } else {
-        if (/Transfer at KLM|CDM Deposit|fr CA to CA/i.test(description)) {
-          deposit = num.val;
-        } else {
-          withdrawal = num.val;
-        }
+        // Fallback: check keywords
+        if (/Transfer|Deposit|Credit|fr CA to CA/i.test(combinedDescription)) deposit = num.val;
+        else withdrawal = num.val;
       }
     } else if (numberItems.length >= 2) {
       numberItems.sort((a, b) => a.x - b.x);
-      balance = numberItems[numberItems.length - 1].val;
-      const transNum = numberItems[0];
-      if (transNum.x < 650) {
-        deposit = transNum.val;
-      } else {
-        withdrawal = transNum.val;
+      // Rightmost number is typically Balance
+      const rightmost = numberItems[numberItems.length - 1];
+      balance = rightmost.val;
+
+      // The transaction amount item
+      const transItem = numberItems.find(n => n !== rightmost);
+      if (transItem) {
+        if (transItem.x >= 600 && transItem.x <= 685) {
+          deposit = transItem.val;
+        } else if (transItem.x >= 530 && transItem.x < 600) {
+          withdrawal = transItem.val;
+        } else if (runningBalance > 0 && balance > runningBalance) {
+          deposit = transItem.val;
+        } else if (runningBalance > 0 && balance < runningBalance) {
+          withdrawal = transItem.val;
+        } else if (/Transfer|Deposit|fr CA to CA/i.test(combinedDescription)) {
+          deposit = transItem.val;
+        } else {
+          withdrawal = transItem.val;
+        }
       }
     }
+
+    if (balance > 0) runningBalance = balance;
 
     const isDeposit = deposit > 0;
     const amount = isDeposit ? deposit : withdrawal;
@@ -4758,18 +5094,72 @@ function extractTransactionsFromStatementItems(items) {
     if (isDeposit) totalDep += deposit;
     else totalWith += withdrawal;
 
-    const classified = classifyBankTransaction(isDeposit ? 'income' : 'expense', description, amount);
-    const isDuplicate = checkExistingDuplicate(isoDate, amount, isDeposit ? 'income' : 'expense', classified.counterparty);
+    // Advanced Classification for Boarding Students & Fee Months
+    let matchedStudent = null;
+    for (const rule of LEARNED_STUDENT_RULES) {
+      if (rule.pattern.test(combinedDescription)) {
+        matchedStudent = rule;
+        break;
+      }
+    }
+
+    // Determine category and counterparty
+    let category = isDeposit ? '销售收入' : '其他支出';
+    let counterparty = '';
+    let feeMonth = '';
+    let refNo = extractBankReferenceNo(combinedDescription);
+
+    if (isDeposit) {
+      if (matchedStudent) {
+        counterparty = matchedStudent.name;
+        category = '住宿费';
+      } else if (/CDM Deposit/i.test(combinedDescription)) {
+        counterparty = '现金存款机缴费';
+        category = '销售收入';
+      } else if (senderText) {
+        counterparty = senderText;
+      } else {
+        counterparty = '学费客户';
+      }
+
+      // Detect Fee Month
+      feeMonth = parseFeeMonthFromStatementText(combinedDescription, isoDate);
+    } else {
+      // Expense classification
+      const expClass = classifyBankTransaction('expense', combinedDescription, amount);
+      category = expClass.category;
+      counterparty = expClass.counterparty;
+    }
+
+    // Build clean human-friendly remark
+    let cleanRemark = '';
+    if (isDeposit && matchedStudent) {
+      const monthDisp = feeMonth ? (typeof formatFeeMonthDisplay === 'function' ? formatFeeMonthDisplay(feeMonth) : feeMonth) : '';
+      const payerNote = (senderText && senderText !== counterparty) ? ` · 付款人: ${senderText}` : '';
+      cleanRemark = `${monthDisp} 住宿费 (${counterparty}${payerNote})`.trim();
+    } else if (isDeposit) {
+      cleanRemark = [recipientRefText, otherDetailsText, remarksText.slice(0, 30)].filter(Boolean).join(' | ');
+    } else {
+      cleanRemark = combinedDescription.slice(0, 45);
+    }
+
+    const isDuplicate = checkExistingDuplicate(isoDate, amount, isDeposit ? 'income' : 'expense', counterparty);
 
     transactions.push({
       id: 'STMT-' + (idx + 1).toString().padStart(3, '0'),
       date: isoDate,
+      time: timeStr,
       type: isDeposit ? 'income' : 'expense',
       amount: amount,
-      category: classified.category,
-      counterparty: classified.counterparty,
-      remark: classified.remark || description.slice(0, 40),
-      rawDescription: description,
+      category: category,
+      counterparty: counterparty,
+      feeMonth: feeMonth,
+      refNo: refNo,
+      remark: cleanRemark || remarksText.slice(0, 40),
+      rawDescription: combinedDescription,
+      senderText: senderText,
+      recipientRef: recipientRefText,
+      otherDetails: otherDetailsText,
       isDuplicate: isDuplicate,
       selected: !isDuplicate
     });
@@ -4780,6 +5170,12 @@ function extractTransactionsFromStatementItems(items) {
 
   return transactions;
 }
+
+// Window Exports
+window.extractTransactionsFromStatementItems = extractTransactionsFromStatementItems;
+window.parseFeeMonthFromStatementText = parseFeeMonthFromStatementText;
+window.extractBankReferenceNo = extractBankReferenceNo;
+
 
 function classifyBankTransaction(flowType, description, amount) {
   if (flowType === 'income') {
@@ -4903,10 +5299,18 @@ function renderParsedStatementWorkbench() {
   updateCommitButtonCount();
 }
 
+// ==========================================
+// STATEMENT WORKBENCH & MULTI-FORMAT IMPORT ENGINE
+// Supports PDF (pdf.js) + Images/Screenshots (tesseract.js)
+// ==========================================
+
 function renderParsedStatementTable() {
   const tbody = document.getElementById('statementTableBody');
-  const onlyNew = document.getElementById('chkOnlyShowNew').checked;
-  const globalAcc = document.getElementById('statementTargetAccountSelect')?.value || (appData.accounts[0] ? appData.accounts[0].name : 'Hong Leong');
+  if (!tbody) return;
+
+  const onlyNewEl = document.getElementById('chkOnlyShowNew');
+  const onlyNew = onlyNewEl ? onlyNewEl.checked : false;
+  const globalAcc = document.getElementById('statementTargetAccountSelect')?.value || (appData.accounts && appData.accounts[0] ? appData.accounts[0].name : 'Hong Leong');
 
   const displayList = parsedStatementTransactions.filter(t => {
     if (onlyNew && t.isDuplicate) return false;
@@ -4914,27 +5318,31 @@ function renderParsedStatementTable() {
   });
 
   if (displayList.length === 0) {
-    tbody.innerHTML = '<tr><td colspan="9" class="text-center py-8 text-slate-400">没有符合筛选的流水记录</td></tr>';
+    tbody.innerHTML = '<tr><td colspan="10" class="text-center py-8 text-slate-400">没有符合筛选的流水记录</td></tr>';
     return;
   }
 
-  const accOptionsHtml = (appData.accounts || []).map(a => `<option value="${a.name}">${a.name}</option>`).join('');
-
   tbody.innerHTML = displayList.map((t, idx) => {
     if (!t.account) t.account = globalAcc;
+
+    const isStudent = t.counterparty && DEFAULT_BOARDING_STUDENTS && DEFAULT_BOARDING_STUDENTS.some(s => s.name.toUpperCase().includes(t.counterparty.toUpperCase()) || s.aliases.some(a => t.counterparty.toUpperCase().includes(a.toUpperCase())));
+
     return `
     <tr class="hover:bg-slate-50/80 transition-colors ${t.isDuplicate ? 'opacity-60 bg-slate-50/40' : ''}">
       <td class="px-3 py-3 text-center">
-        <input type="checkbox" onchange="toggleStatementRowSelection('${t.id}', this.checked)" ${t.selected ? 'checked' : ''} class="rounded text-blue-600">
+        <input type="checkbox" onchange="toggleStatementRowSelection('${t.id}', this.checked)" ${t.selected ? 'checked' : ''} class="rounded text-blue-600 cursor-pointer">
       </td>
-      <td class="px-3 py-3 whitespace-nowrap font-medium text-slate-800">${t.date}</td>
+      <td class="px-3 py-3 whitespace-nowrap font-medium text-slate-800">
+        <div>${t.date}</div>
+        ${t.time ? `<div class="text-[10px] text-slate-400">${t.time}</div>` : ''}
+      </td>
       <td class="px-3 py-3 whitespace-nowrap">
         ${t.type === 'income' 
-          ? `<span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-semibold bg-emerald-100 text-emerald-800">入账 (Deposit)</span>`
-          : `<span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-semibold bg-rose-100 text-rose-800">出账 (Withdrawal)</span>`}
+          ? `<span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-semibold bg-emerald-100 text-emerald-800">入账 (Credit)</span>`
+          : `<span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-semibold bg-rose-100 text-rose-800">出账 (Debit)</span>`}
       </td>
-      <td class="px-3 py-3 whitespace-nowrap text-right font-bold ${t.type === 'income' ? 'text-emerald-600' : 'text-rose-600'}">
-        ${formatMoney(t.amount)}
+      <td class="px-3 py-3 whitespace-nowrap text-right font-black ${t.type === 'income' ? 'text-emerald-600' : 'text-rose-600'}">
+        RM ${formatMoney(t.amount)}
       </td>
       <td class="px-3 py-3 whitespace-nowrap">
         <select onchange="updateStatementRowField('${t.id}', 'account', this.value)" class="text-xs px-2 py-1 bg-white border border-slate-200 rounded font-semibold text-slate-800 shadow-2xs">
@@ -4942,24 +5350,34 @@ function renderParsedStatementTable() {
         </select>
       </td>
       <td class="px-3 py-3 whitespace-nowrap">
-        <input type="text" value="${t.category}" onchange="updateStatementRowField('${t.id}', 'category', this.value)" class="text-xs px-2 py-1 bg-white border border-slate-200 rounded font-medium text-slate-800 w-28">
+        <input type="text" value="${t.category}" onchange="updateStatementRowField('${t.id}', 'category', this.value)" class="text-xs px-2 py-1 bg-white border border-slate-200 rounded font-semibold text-slate-800 w-24">
       </td>
       <td class="px-3 py-3">
-        <input type="text" value="${t.counterparty}" onchange="updateStatementRowField('${t.id}', 'counterparty', this.value)" class="text-xs px-2 py-1 bg-white border border-slate-200 rounded font-semibold text-slate-900 w-full max-w-[160px]">
+        <div class="space-y-0.5">
+          <input type="text" value="${t.counterparty}" onchange="updateStatementRowField('${t.id}', 'counterparty', this.value)" class="text-xs px-2 py-1 bg-white border border-slate-200 rounded font-bold text-slate-900 w-full min-w-[130px]">
+          ${t.senderText && t.senderText !== t.counterparty ? `<div class="text-[10px] text-slate-400 truncate max-w-[150px]" title="付款人: ${t.senderText}">付款人: ${t.senderText}</div>` : ''}
+        </div>
+      </td>
+      <td class="px-3 py-3 whitespace-nowrap">
+        <div class="flex items-center space-x-1">
+          <input type="text" value="${t.feeMonth || ''}" onchange="updateStatementRowField('${t.id}', 'feeMonth', this.value)" placeholder="如 2026-09" class="text-xs px-2 py-1 bg-indigo-50/70 border border-indigo-200 rounded font-bold text-indigo-700 w-24 text-center shadow-2xs">
+        </div>
       </td>
       <td class="px-3 py-3 text-slate-500 max-w-xs truncate" title="${t.rawDescription}">
-        <input type="text" value="${t.remark}" onchange="updateStatementRowField('${t.id}', 'remark', this.value)" class="text-xs px-2 py-1 bg-white border border-slate-200 rounded text-slate-600 w-full">
+        <input type="text" value="${t.remark}" onchange="updateStatementRowField('${t.id}', 'remark', this.value)" class="text-xs px-2 py-1 bg-white border border-slate-200 rounded text-slate-600 w-full min-w-[160px]">
       </td>
       <td class="px-3 py-3 text-center whitespace-nowrap">
         ${t.isDuplicate 
           ? `<span class="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-slate-200 text-slate-600" title="该记录与系统中已有账目吻合">✅ 已在系统中</span>`
-          : `<span class="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-emerald-100 text-emerald-800">✨ 待录入新记录</span>`}
+          : `<span class="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-emerald-100 text-emerald-800 font-bold">✨ 待录入新记录</span>`}
       </td>
     </tr>
   `}).join('');
 
   updateCommitButtonCount();
 }
+
+
 
 function onStatementGlobalAccountChange(newAcc) {
   if (!newAcc) return;
@@ -5019,15 +5437,17 @@ function commitStatementImport() {
   nonDuplicates.forEach(t => {
     const targetAccount = t.account || defaultGlobalAcc;
     if (t.type === 'income') {
+      const feeM = t.feeMonth || (typeof getIncomeFeeMonth === 'function' ? getIncomeFeeMonth(t) : '');
       appData.incomes.unshift({
         id: 'INC-' + Date.now().toString().slice(-6) + Math.floor(Math.random() * 90 + 10),
         date: t.date,
-        category: t.category || '销售收入',
+        category: t.category || (t.amount === 480 || t.amount === 960 ? '住宿费' : '销售收入'),
         account: targetAccount,
         amount: t.amount,
         counterparty: t.counterparty || '学费客户',
+        feeMonth: feeM,
         remark: t.remark || '银行流水对账导入',
-        receiptNo: '',
+        receiptNo: t.refNo || '',
         invoiceNo: ''
       });
       incCount++;
@@ -5053,12 +5473,135 @@ function commitStatementImport() {
   renderDashboard();
   renderIncomeTable();
   renderExpenseTable();
-  renderMonthlyReport();
-  renderAccountsAndCategories();
-  renderParsedStatementTable();
+  if (typeof renderArrearsTracker === 'function') renderArrearsTracker();
+  if (typeof updateArrearsBadge === 'function') updateArrearsBadge();
 
-  showToast(`🎉 成功批量录入 ${incCount} 笔收入、${expCount} 笔支出（入账账户：${defaultGlobalAcc}）！`);
+  if (supabaseClient) {
+    pushToCloud(false);
+  }
+
+  let msg = `✅ 成功从银行流水导入 ${incCount + expCount} 笔记录！\n· 收入入账：${incCount} 笔\n· 支出扣款：${expCount} 笔`;
+  if (skippedCount > 0) {
+    msg += `\n· 自动跳过重复账目：${skippedCount} 笔`;
+  }
+  alert(msg);
+  showToast('流水数据导入成功并已更新对账与欠费状态！');
+  renderParsedStatementTable();
 }
+
+// Unified File Upload Handler (accepts PDF or Screenshot/Image)
+async function handleStatementFileUpload(file) {
+  if (!file) return;
+
+  const statusEl = document.getElementById('statementStatus');
+  const statusText = document.getElementById('statementStatusText');
+  const progressText = document.getElementById('statementProgress');
+  const resultsCard = document.getElementById('statementResultsCard');
+
+  if (statusEl) statusEl.classList.remove('hidden');
+  if (resultsCard) resultsCard.classList.add('hidden');
+  if (statusText) statusText.textContent = '正在读取银行流水文件...';
+  if (progressText) progressText.textContent = '10%';
+
+  try {
+    const isImage = file.type.startsWith('image/') || /\.(png|jpe?g|webp|bmp)$/i.test(file.name);
+
+    if (isImage) {
+      // OCR Image Flow via Tesseract.js
+      if (typeof Tesseract === 'undefined') {
+        alert('OCR 识别组件正在加载中，请稍候重试');
+        return;
+      }
+      statusText.textContent = '正在识别银行流水截图文字 (OCR)...';
+      progressText.textContent = '35%';
+
+      const { data } = await Tesseract.recognize(file, 'eng+chi_sim', {
+        logger: m => {
+          if (m.status === 'recognizing text' && m.progress) {
+            progressText.textContent = `${Math.round(20 + m.progress * 60)}%`;
+          }
+        }
+      });
+
+      // Convert OCR text lines into simulated items with lines
+      const ocrLines = data.lines || [];
+      let allItems = [];
+      ocrLines.forEach((line, lIdx) => {
+        const words = line.words || [{ text: line.text, bbox: line.bbox }];
+        words.forEach(w => {
+          const bbox = w.bbox || { x0: 50, y0: 1000 - lIdx * 20 };
+          allItems.push({
+            str: (w.text || '').trim(),
+            x: Math.round(bbox.x0),
+            y: Math.round(bbox.y0),
+            page: 1
+          });
+        });
+      });
+
+      statusText.textContent = '正在分析流水科目、学生姓名与交费月份...';
+      progressText.textContent = '85%';
+
+      const transactions = extractTransactionsFromStatementItems(allItems);
+      parsedStatementTransactions = transactions;
+
+      statusText.textContent = '解析完成！';
+      progressText.textContent = '100%';
+      setTimeout(() => { if (statusEl) statusEl.classList.add('hidden'); }, 600);
+      renderParsedStatementWorkbench();
+    } else {
+      // PDF Flow via PDF.js
+      const arrayBuffer = await file.arrayBuffer();
+      if (typeof pdfjsLib === 'undefined') {
+        alert('PDF.js 库未加载，请检查网络连接或刷新页面重试');
+        return;
+      }
+
+      const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+      const numPages = pdf.numPages;
+
+      let allItems = [];
+      for (let pageNum = 1; pageNum <= numPages; pageNum++) {
+        if (statusText) statusText.textContent = `正在提取第 ${pageNum} / ${numPages} 页流水...`;
+        if (progressText) progressText.textContent = `${Math.round((pageNum / numPages) * 60)}%`;
+
+        const page = await pdf.getPage(pageNum);
+        const textContent = await page.getTextContent();
+        
+        textContent.items.forEach(item => {
+          allItems.push({
+            str: item.str.trim(),
+            x: Math.round(item.transform[4]),
+            y: Math.round(item.transform[5]),
+            page: pageNum
+          });
+        });
+      }
+
+      if (statusText) statusText.textContent = '正在通过智能模型对账并识别住宿学生与交费月份...';
+      progressText.textContent = '85%';
+
+      const transactions = extractTransactionsFromStatementItems(allItems);
+      parsedStatementTransactions = transactions;
+
+      if (statusText) statusText.textContent = '解析完成！';
+      if (progressText) progressText.textContent = '100%';
+      setTimeout(() => { if (statusEl) statusEl.classList.add('hidden'); }, 600);
+
+      renderParsedStatementWorkbench();
+    }
+  } catch (err) {
+    console.error('Statement parsing error', err);
+    alert('解析流水文件发生错误：' + err.message);
+    if (statusEl) statusEl.classList.add('hidden');
+  }
+}
+
+// Window Exports
+window.renderParsedStatementTable = renderParsedStatementTable;
+window.commitStatementImport = commitStatementImport;
+window.handleStatementFileUpload = handleStatementFileUpload;
+
 
 // ==========================================
 // RECEIPT IMAGE UPLOAD & OCR LOGIC
@@ -7005,7 +7548,7 @@ window.triggerRescanActiveBatchItem = triggerRescanActiveBatchItem;
 window.handleCloudSyncPillClick = handleCloudSyncPillClick;
 
 // ==========================================
-// 🏠 BOARDING STUDENT FEE & ARREARS MANAGER
+// 🏠 BOARDING STUDENT FEE & ARREARS MANAGER (V2026.3.25)
 // ==========================================
 
 const DEFAULT_BOARDING_STUDENTS = [
@@ -7031,6 +7574,63 @@ let arrearsViewMode = 'cards'; // 'cards' | 'matrix'
 let arrearsStatusFilter = 'all'; // 'all' | 'owing' | 'severe' | 'paid'
 let arrearsSearchKeyword = '';
 
+// Smart helper: Get income fee month (explicit feeMonth or smart inference)
+function getIncomeFeeMonth(income) {
+  if (!income) return '';
+  if (income.feeMonth && String(income.feeMonth).trim()) {
+    return String(income.feeMonth).trim();
+  }
+
+  // Fallback: smart inference from remark or date for student payments
+  const rem = (income.remark || '').toUpperCase();
+  const date = income.date || '';
+
+  // Check remark for explicit month mention
+  if (/JAN|2026[-/]0?1\b|1月/i.test(rem)) return '2026-01';
+  if (/FEB|2026[-/]0?2\b|2月/i.test(rem)) return '2026-02';
+  if (/MAR|2026[-/]0?3\b|3月/i.test(rem)) return '2026-03';
+  if (/APR|2026[-/]0?4\b|4月/i.test(rem)) return '2026-04';
+  if (/MAY|2026[-/]0?5\b|5月/i.test(rem)) return '2026-05';
+  if (/JUN|2026[-/]0?6\b|6月/i.test(rem)) return '2026-06';
+  if (/JUL|2026[-/]0?7\b|7月/i.test(rem)) return '2026-07';
+  if (/AUG|2608|2026[-/]0?8\b|8月/i.test(rem)) return '2026-08';
+  if (/SEP|SEPT|2026[-/]0?9\b|9月/i.test(rem)) return '2026-09';
+  if (/OCT|2026[-/]10\b|10月/i.test(rem)) return '2026-10';
+  if (/NOV|2026[-/]11\b|11月/i.test(rem)) return '2026-11';
+  if (/DEC|2026[-/]12\b|12月/i.test(rem)) return '2026-12';
+
+  // If category is 住宿费 or counterparty is a boarding student, default to month of the payment date
+  const isBoarding = (income.category === '住宿费') || 
+                     (DEFAULT_BOARDING_STUDENTS && DEFAULT_BOARDING_STUDENTS.some(st => {
+                       const text = `${income.counterparty || ''} ${income.remark || ''}`.toUpperCase();
+                       return st.aliases.some(al => text.includes(al.toUpperCase()));
+                     }));
+  if (isBoarding && date && date.startsWith('2026-')) {
+    return date.slice(0, 7);
+  }
+
+  return '';
+}
+
+// Display format helper (e.g. "2026-03" -> "2026年3月")
+function formatFeeMonthDisplay(feeMonth) {
+  if (!feeMonth) return '';
+  const monthNames = ['', '1月', '2月', '3月', '4月', '5月', '6月', '7月', '8月', '9月', '10月', '11月', '12月'];
+  
+  // Format comma or plus separated months
+  const parts = String(feeMonth).split(/[,，+]/).map(s => s.trim()).filter(Boolean);
+  if (parts.length > 1) {
+    return parts.map(p => formatFeeMonthDisplay(p)).join(' + ');
+  }
+
+  const mMatch = String(feeMonth).match(/2026[-/](\d{1,2})/);
+  if (mMatch) {
+    const num = parseInt(mMatch[1], 10);
+    if (num >= 1 && num <= 12) return `2026年${monthNames[num]}`;
+  }
+  return String(feeMonth);
+}
+
 // Core arrears calculation engine
 function calculateStudentArrears(cutoffMonth = arrearsCutoffMonth, feePerPerson = arrearsMonthlyFeePerPerson) {
   const monthNames = ['1月', '2月', '3月', '4月', '5月', '6月', '7月', '8月', '9月', '10月', '11月', '12月'];
@@ -7050,21 +7650,42 @@ function calculateStudentArrears(cutoffMonth = arrearsCutoffMonth, feePerPerson 
     const monthsPaidMap = {};
     for (let m = 1; m <= 12; m++) monthsPaidMap[m] = false;
 
-    // Check remarks for explicit month mentions
+    // Check matched incomes for explicit feeMonth or remarks
     matchedIncomes.forEach(inc => {
-      const rem = (inc.remark || '').toUpperCase();
-      if (/JAN|2026[-/]0?1\b|1月/i.test(rem)) monthsPaidMap[1] = true;
-      if (/FEB|2026[-/]0?2\b|2月/i.test(rem)) monthsPaidMap[2] = true;
-      if (/MAR|2026[-/]0?3\b|3月/i.test(rem)) monthsPaidMap[3] = true;
-      if (/APR|2026[-/]0?4\b|4月/i.test(rem)) monthsPaidMap[4] = true;
-      if (/MAY|2026[-/]0?5\b|5月/i.test(rem)) monthsPaidMap[5] = true;
-      if (/JUN|2026[-/]0?6\b|6月/i.test(rem)) monthsPaidMap[6] = true;
-      if (/JUL|2026[-/]0?7\b|7月/i.test(rem)) monthsPaidMap[7] = true;
-      if (/AUG|2026[-/]0?8\b|8月/i.test(rem)) monthsPaidMap[8] = true;
-      if (/SEP|2026[-/]0?9\b|9月/i.test(rem)) monthsPaidMap[9] = true;
-      if (/OCT|2026[-/]10\b|10月/i.test(rem)) monthsPaidMap[10] = true;
-      if (/NOV|2026[-/]11\b|11月/i.test(rem)) monthsPaidMap[11] = true;
-      if (/DEC|2026[-/]12\b|12月/i.test(rem)) monthsPaidMap[12] = true;
+      const explicitMonth = inc.feeMonth || getIncomeFeeMonth(inc);
+      let hasExplicit = false;
+      if (explicitMonth) {
+        const mMatches = explicitMonth.match(/2026[-/](\d{1,2})/g);
+        if (mMatches) {
+          mMatches.forEach(m => {
+            const num = parseInt(m.replace(/2026[-/]/, ''), 10);
+            if (num >= 1 && num <= 12) { monthsPaidMap[num] = true; hasExplicit = true; }
+          });
+        }
+        const cnMatches = explicitMonth.match(/(\d{1,2})月/g);
+        if (cnMatches) {
+          cnMatches.forEach(cStr => {
+            const num = parseInt(cStr.replace('月', ''), 10);
+            if (num >= 1 && num <= 12) { monthsPaidMap[num] = true; hasExplicit = true; }
+          });
+        }
+      }
+
+      if (!hasExplicit) {
+        const rem = (inc.remark || '').toUpperCase();
+        if (/JAN|2026[-/]0?1\b|1月/i.test(rem)) monthsPaidMap[1] = true;
+        if (/FEB|2026[-/]0?2\b|2月/i.test(rem)) monthsPaidMap[2] = true;
+        if (/MAR|2026[-/]0?3\b|3月/i.test(rem)) monthsPaidMap[3] = true;
+        if (/APR|2026[-/]0?4\b|4月/i.test(rem)) monthsPaidMap[4] = true;
+        if (/MAY|2026[-/]0?5\b|5月/i.test(rem)) monthsPaidMap[5] = true;
+        if (/JUN|2026[-/]0?6\b|6月/i.test(rem)) monthsPaidMap[6] = true;
+        if (/JUL|2026[-/]0?7\b|7月/i.test(rem)) monthsPaidMap[7] = true;
+        if (/AUG|2608|2026[-/]0?8\b|8月/i.test(rem)) monthsPaidMap[8] = true;
+        if (/SEP|2026[-/]0?9\b|9月/i.test(rem)) monthsPaidMap[9] = true;
+        if (/OCT|2026[-/]10\b|10月/i.test(rem)) monthsPaidMap[10] = true;
+        if (/NOV|2026[-/]11\b|11月/i.test(rem)) monthsPaidMap[11] = true;
+        if (/DEC|2026[-/]12\b|12月/i.test(rem)) monthsPaidMap[12] = true;
+      }
     });
 
     // Fill remaining months based on total amount paid
@@ -7124,7 +7745,6 @@ function calculateStudentArrears(cutoffMonth = arrearsCutoffMonth, feePerPerson 
   const owingStudentsCount = students.filter(s => s.arrearsAmount > 0).length;
   const severeStudentsCount = students.filter(s => s.status === 'severe').length;
   const fullyPaidCount = students.filter(s => s.arrearsAmount === 0).length;
-  const collectionRate = totalExpected > 0 ? ((totalPaid / totalExpected) * 100).toFixed(1) : '100.0';
 
   return {
     cutoffMonth,
@@ -7135,80 +7755,439 @@ function calculateStudentArrears(cutoffMonth = arrearsCutoffMonth, feePerPerson 
     totalArrears,
     owingStudentsCount,
     severeStudentsCount,
-    fullyPaidCount,
-    collectionRate
+    fullyPaidCount
   };
 }
 
-// Update badges on nav and dashboard
+// Render Top Dashboard Arrears & Nav Badges
 function updateArrearsBadge() {
-  const report = calculateStudentArrears();
-  const navBadge = document.getElementById('navArrearsBadge');
-  if (navBadge) {
-    navBadge.textContent = report.owingStudentsCount > 0 ? `${report.owingStudentsCount}人欠费` : '已结清';
-    navBadge.className = report.owingStudentsCount > 0 
-      ? 'bg-rose-500 text-white text-[10px] px-1.5 py-0.5 rounded-full font-bold shadow-sm'
-      : 'bg-emerald-500 text-white text-[10px] px-1.5 py-0.5 rounded-full font-bold shadow-sm';
-  }
+  try {
+    const report = calculateStudentArrears();
+    const navBadge = document.getElementById('navArrearsBadge');
+    if (navBadge) {
+      navBadge.textContent = `${report.owingStudentsCount}人欠费`;
+      if (report.owingStudentsCount > 0) {
+        navBadge.className = 'bg-rose-500 text-white text-[10px] px-1.5 py-0.5 rounded-full font-bold shadow-sm';
+      } else {
+        navBadge.className = 'bg-emerald-500 text-white text-[10px] px-1.5 py-0.5 rounded-full font-bold shadow-sm';
+      }
+    }
 
-  const mobileBadge = document.getElementById('mobileMoreArrearsBadge');
-  if (mobileBadge) {
-    mobileBadge.textContent = report.owingStudentsCount > 0 ? `欠费 ${formatMoney(report.totalArrears)}` : '已结清';
-  }
+    const mobileBadge = document.getElementById('mobileMoreArrearsBadge');
+    if (mobileBadge) {
+      mobileBadge.textContent = `${report.owingStudentsCount}人欠费`;
+    }
 
-  const dashCount = document.getElementById('dashArrearsCount');
-  const dashAmount = document.getElementById('dashArrearsAmount');
-  if (dashCount) dashCount.textContent = report.owingStudentsCount;
-  if (dashAmount) dashAmount.textContent = formatMoney(report.totalArrears);
+    const dashCount = document.getElementById('dashArrearsCount');
+    const dashAmount = document.getElementById('dashArrearsAmount');
+    if (dashCount) dashCount.textContent = report.owingStudentsCount;
+    if (dashAmount) dashAmount.textContent = `RM ${formatMoney(report.totalArrears)}`;
+  } catch (e) {
+    console.warn('Error updating arrears badge:', e);
+  }
 }
 
-// Populate Payer Dropdown & Chips in Income Modal
+// Render Full Arrears Tracker View
+function renderArrearsTracker() {
+  const container = document.getElementById('view-arrears');
+  if (!container) return;
+
+  const report = calculateStudentArrears();
+  const monthNames = ['1月', '2月', '3月', '4月', '5月', '6月', '7月', '8月', '9月', '10月', '11月', '12月'];
+
+  // Update KPI counters
+  const totalEl = document.getElementById('arrearsTotalAmount');
+  const countEl = document.getElementById('arrearsOwingCount');
+  const progressEl = document.getElementById('arrearsCollectionProgress');
+  const expectedEl = document.getElementById('arrearsExpectedTotal');
+  const cutoffSelect = document.getElementById('arrearsCutoffSelect');
+  const feeInput = document.getElementById('arrearsFeeInput');
+
+  if (totalEl) totalEl.textContent = `RM ${formatMoney(report.totalArrears)}`;
+  if (countEl) countEl.textContent = `${report.owingStudentsCount} 人`;
+  if (expectedEl) expectedEl.textContent = `RM ${formatMoney(report.totalExpected)}`;
+  if (progressEl) {
+    const rate = report.totalExpected > 0 ? Math.min(100, (report.totalPaid / report.totalExpected) * 100).toFixed(1) : 100;
+    progressEl.textContent = `${rate}% (实收 RM ${formatMoney(report.totalPaid)})`;
+  }
+  if (cutoffSelect) cutoffSelect.value = String(report.cutoffMonth);
+  if (feeInput) feeInput.value = report.feePerPerson;
+
+  // Filter students
+  let filtered = report.students.filter(s => {
+    if (arrearsStatusFilter === 'owing' && s.arrearsAmount === 0) return false;
+    if (arrearsStatusFilter === 'severe' && s.status !== 'severe') return false;
+    if (arrearsStatusFilter === 'paid' && s.arrearsAmount > 0) return false;
+    if (arrearsSearchKeyword) {
+      const kw = arrearsSearchKeyword.toLowerCase();
+      const match = s.name.toLowerCase().includes(kw) || 
+                    s.aliases.some(a => a.toLowerCase().includes(kw)) ||
+                    (s.note || '').toLowerCase().includes(kw);
+      if (!match) return false;
+    }
+    return true;
+  });
+
+  // Render cards container
+  const cardsContainer = document.getElementById('arrearsCardsContainer');
+  const matrixContainer = document.getElementById('arrearsMatrixContainer');
+
+  if (arrearsViewMode === 'cards') {
+    if (cardsContainer) cardsContainer.classList.remove('hidden');
+    if (matrixContainer) matrixContainer.classList.add('hidden');
+    renderArrearsCards(filtered, report);
+  } else {
+    if (cardsContainer) cardsContainer.classList.add('hidden');
+    if (matrixContainer) matrixContainer.classList.remove('hidden');
+    renderArrearsMatrix(filtered, report);
+  }
+
+  updateArrearsBadge();
+}
+
+// Render Card List
+function renderArrearsCards(students, report) {
+  const cardsContainer = document.getElementById('arrearsCardsContainer');
+  if (!cardsContainer) return;
+
+  const monthNames = ['1月', '2月', '3月', '4月', '5月', '6月', '7月', '8月', '9月', '10月', '11月', '12月'];
+
+  if (students.length === 0) {
+    cardsContainer.innerHTML = `
+      <div class="col-span-full py-12 text-center bg-white rounded-2xl border border-slate-200">
+        <span class="text-3xl">🎉</span>
+        <h4 class="text-sm font-bold text-slate-700 mt-2">太棒了，没有符合条件的欠费记录！</h4>
+        <p class="text-xs text-slate-400 mt-1">所有学生住宿费均已按期交齐或符合筛选条件。</p>
+      </div>
+    `;
+    return;
+  }
+
+  cardsContainer.innerHTML = students.map(st => {
+    const isOwing = st.arrearsAmount > 0;
+    const isSevere = st.status === 'severe';
+
+    const statusBadge = isSevere ? `
+      <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-bold bg-rose-100 text-rose-800 border border-rose-200">
+        ⚠️ 严重欠费 (${st.unpaidMonths.length}个月)
+      </span>
+    ` : isOwing ? `
+      <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-bold bg-amber-100 text-amber-800 border border-amber-200">
+        ⏳ 待补交 (${st.unpaidMonths.length}个月)
+      </span>
+    ` : `
+      <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-bold bg-emerald-100 text-emerald-800 border border-emerald-200">
+        ✅ 已结清
+      </span>
+    `;
+
+    const unpaidBadges = isOwing ? st.unpaidMonths.map(m => `
+      <span class="inline-block px-1.5 py-0.5 rounded text-[11px] font-semibold bg-rose-50 text-rose-700 border border-rose-200">
+        ${monthNames[m - 1]}
+      </span>
+    `).join(' ') : `<span class="text-xs text-slate-400">暂无欠费月份</span>`;
+
+    const paidBadges = st.paidMonths.length > 0 ? st.paidMonths.map(m => `
+      <span class="inline-block px-1.5 py-0.5 rounded text-[11px] font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">
+        ${monthNames[m - 1]}
+      </span>
+    `).join(' ') : `<span class="text-xs text-slate-400">暂无到账记录</span>`;
+
+    const firstUnpaidMonth = st.unpaidMonths.length > 0 ? st.unpaidMonths[0] : report.cutoffMonth;
+
+    return `
+      <div class="bg-white rounded-2xl p-5 border ${isSevere ? 'border-rose-300 shadow-rose-100' : isOwing ? 'border-amber-200 shadow-amber-50' : 'border-slate-200'} shadow-sm space-y-4 hover:shadow-md transition">
+        <div class="flex items-start justify-between gap-2">
+          <div>
+            <div class="flex items-center space-x-2">
+              <h4 class="text-base font-bold text-slate-900">${st.name}</h4>
+              ${st.isBrothers ? `<span class="px-1.5 py-0.5 rounded bg-blue-100 text-blue-800 text-[10px] font-bold">兄弟双人</span>` : ''}
+            </div>
+            <p class="text-xs text-slate-400 mt-0.5">标准月宿费: RM ${formatMoney(st.monthlyFee)} / 月</p>
+          </div>
+          ${statusBadge}
+        </div>
+
+        <div class="grid grid-cols-2 gap-2 p-3 rounded-xl bg-slate-50 border border-slate-100 text-xs">
+          <div>
+            <span class="text-slate-400 text-[11px]">累计欠费金额</span>
+            <div class="text-base font-black ${isOwing ? 'text-rose-600' : 'text-emerald-600'}">
+              RM ${formatMoney(st.arrearsAmount)}
+            </div>
+          </div>
+          <div>
+            <span class="text-slate-400 text-[11px]">截至当前已实缴</span>
+            <div class="text-base font-bold text-slate-800">
+              RM ${formatMoney(st.totalPaid)}
+            </div>
+          </div>
+        </div>
+
+        <div class="space-y-2 text-xs">
+          <div>
+            <span class="font-medium text-slate-600">🔴 尚欠交月份：</span>
+            <div class="mt-1 flex flex-wrap gap-1">${unpaidBadges}</div>
+          </div>
+          <div>
+            <span class="font-medium text-slate-600">🟢 已到账月份：</span>
+            <div class="mt-1 flex flex-wrap gap-1">${paidBadges}</div>
+          </div>
+        </div>
+
+        <div class="pt-3 border-t border-slate-100 flex items-center justify-between text-xs gap-2">
+          <button onclick="quickAddPaymentForStudent('${st.name}', ${firstUnpaidMonth})" class="px-3 py-1.5 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 rounded-lg font-bold border border-emerald-200 transition flex items-center space-x-1">
+            <span>➕ 记该生交费</span>
+          </button>
+          <div class="flex items-center space-x-2">
+            <button onclick="copyStudentReminder('${st.id}')" title="复制催收通知文字" class="px-2.5 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg font-medium transition">
+              💬 催费通知
+            </button>
+          </div>
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+// Render Matrix View (12 Months Table)
+function renderArrearsMatrix(students, report) {
+  const matrixContainer = document.getElementById('arrearsMatrixContainer');
+  if (!matrixContainer) return;
+
+  const monthNames = ['1月', '2月', '3月', '4月', '5月', '6月', '7月', '8月', '9月', '10月', '11月', '12月'];
+
+  let ths = monthNames.map((name, idx) => {
+    const isPastCutoff = (idx + 1) > report.cutoffMonth;
+    return `
+      <th class="px-2.5 py-3 text-center ${isPastCutoff ? 'text-slate-300' : 'text-slate-700 font-bold'}">
+        ${name}
+      </th>
+    `;
+  }).join('');
+
+  let rows = students.map(st => {
+    let tds = monthNames.map((name, idx) => {
+      const mNum = idx + 1;
+      const isPaid = st.monthsPaidMap[mNum];
+      const isPastCutoff = mNum > report.cutoffMonth;
+
+      if (isPaid) {
+        return `
+          <td class="px-2 py-2.5 text-center">
+            <span class="inline-flex items-center justify-center w-7 h-7 rounded-lg bg-emerald-100 text-emerald-800 font-bold text-xs shadow-xs" title="${st.name} ${mNum}月已交">
+              ✓
+            </span>
+          </td>
+        `;
+      } else if (!isPastCutoff) {
+        return `
+          <td class="px-2 py-2.5 text-center">
+            <button onclick="quickAddPaymentForStudent('${st.name}', ${mNum})" class="inline-flex items-center justify-center w-7 h-7 rounded-lg bg-rose-100 hover:bg-rose-200 text-rose-700 font-bold text-xs border border-rose-300 transition" title="点击记 ${st.name} ${mNum}月缴费">
+              ✕
+            </button>
+          </td>
+        `;
+      } else {
+        return `
+          <td class="px-2 py-2.5 text-center">
+            <span class="inline-flex items-center justify-center w-7 h-7 rounded-lg bg-slate-50 text-slate-300 text-xs">
+              -
+            </span>
+          </td>
+        `;
+      }
+    }).join('');
+
+    return `
+      <tr class="hover:bg-slate-50 transition border-b border-slate-100">
+        <td class="px-4 py-3 font-bold text-slate-900 whitespace-nowrap sticky left-0 bg-white">
+          ${st.name}
+          ${st.isBrothers ? `<span class="ml-1 text-[10px] text-blue-600 bg-blue-50 px-1 py-0.5 rounded">双人</span>` : ''}
+        </td>
+        <td class="px-3 py-3 text-right font-black ${st.arrearsAmount > 0 ? 'text-rose-600' : 'text-emerald-600'} whitespace-nowrap">
+          RM ${formatMoney(st.arrearsAmount)}
+        </td>
+        ${tds}
+      </tr>
+    `;
+  }).join('');
+
+  matrixContainer.innerHTML = `
+    <div class="overflow-x-auto bg-white rounded-2xl border border-slate-200 shadow-sm">
+      <table class="min-w-full text-xs text-left">
+        <thead class="bg-slate-50 border-b border-slate-200 uppercase tracking-wider">
+          <tr>
+            <th class="px-4 py-3 font-bold text-slate-700 sticky left-0 bg-slate-50">住宿学生姓名</th>
+            <th class="px-3 py-3 text-right font-bold text-slate-700">欠费金额</th>
+            ${ths}
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-slate-100">
+          ${rows}
+        </tbody>
+      </table>
+    </div>
+  `;
+}
+
+// Switch Matrix vs Cards
+function setArrearsViewMode(mode) {
+  arrearsViewMode = mode;
+  const btnCards = document.getElementById('arrearsBtnCards');
+  const btnMatrix = document.getElementById('arrearsBtnMatrix');
+  if (btnCards && btnMatrix) {
+    if (mode === 'cards') {
+      btnCards.className = 'px-3 py-1.5 rounded-lg text-xs font-bold bg-white text-slate-800 shadow-sm';
+      btnMatrix.className = 'px-3 py-1.5 rounded-lg text-xs font-semibold text-slate-500 hover:text-slate-700';
+    } else {
+      btnMatrix.className = 'px-3 py-1.5 rounded-lg text-xs font-bold bg-white text-slate-800 shadow-sm';
+      btnCards.className = 'px-3 py-1.5 rounded-lg text-xs font-semibold text-slate-500 hover:text-slate-700';
+    }
+  }
+  renderArrearsTracker();
+}
+
+// Filter status
+function setArrearsStatusFilter(status) {
+  arrearsStatusFilter = status;
+  renderArrearsTracker();
+}
+
+// Cutoff month change
+function handleArrearsCutoffChange(val) {
+  arrearsCutoffMonth = parseInt(val, 10) || 9;
+  renderArrearsTracker();
+}
+
+// Fee input change
+function handleArrearsFeeChange(val) {
+  arrearsMonthlyFeePerPerson = parseFloat(val) || 480;
+  renderArrearsTracker();
+}
+
+// Search input
+function handleArrearsSearch(val) {
+  arrearsSearchKeyword = (val || '').trim();
+  renderArrearsTracker();
+}
+
+// Quick Add Payment for Student
+function quickAddPaymentForStudent(studentName, suggestedMonth) {
+  openModal('incomeModal');
+  handleSelectPayer(studentName);
+  if (suggestedMonth) {
+    const mStr = `2026-${String(suggestedMonth).padStart(2, '0')}`;
+    setIncomeFeeMonth(mStr);
+  }
+  showToast(`已为您自动填充 ${studentName} 缴费参数！`);
+}
+
+// Copy WhatsApp / WeChat Reminder for Student
+function copyStudentReminder(studentId) {
+  const report = calculateStudentArrears();
+  const student = report.students.find(s => s.id === studentId || s.name === studentId);
+  if (!student) return;
+
+  const monthNames = ['1月', '2月', '3月', '4月', '5月', '6月', '7月', '8月', '9月', '10月', '11月', '12月'];
+  const unpaidStr = student.unpaidMonths.map(m => `2026年${monthNames[m - 1]}`).join('、');
+
+  let text = `【Voyage 住宿费缴费温馨提醒】\n\n`;
+  text += `尊敬的家长您好：\n`;
+  text += `温馨提醒您查收学生【${student.name}】的住宿费缴纳情况。\n\n`;
+  text += `截至 2026年${report.cutoffMonth}月份，学生当前缴费状态如下：\n`;
+  text += `📅 尚欠月份：${unpaidStr || '已结清'}\n`;
+  text += `💰 欠费总计：RM ${formatMoney(student.arrearsAmount)}\n`;
+  text += `（标准住宿费：RM ${formatMoney(student.monthlyFee)} / 月）\n\n`;
+
+  if (student.lastIncome) {
+    text += `🕒 最近一次到账记录：${student.lastIncome.date} (RM ${formatMoney(student.lastIncome.amount)})\n\n`;
+  }
+
+  text += `请家长核对后安排转账汇款，转账后请发送水单回执以便销账。感谢您的支持与配合！🙏`;
+
+  navigator.clipboard.writeText(text).then(() => {
+    showToast(`✅ 已复制 ${student.name} 的催费通知，可直接粘贴发送给家长！`);
+  }).catch(() => {
+    prompt('请复制以下催费通知：', text);
+  });
+}
+
+// Copy All Arrears Summary Report
+function copyAllArrearsSummary() {
+  const report = calculateStudentArrears();
+  const monthNames = ['1月', '2月', '3月', '4月', '5月', '6月', '7月', '8月', '9月', '10月', '11月', '12月'];
+
+  let text = `【Voyage 住宿生欠费总览清单 - 截至2026年${report.cutoffMonth}月】\n\n`;
+  text += `欠费总人数：${report.owingStudentsCount} 人\n`;
+  text += `欠费总金额：RM ${formatMoney(report.totalArrears)}\n`;
+  text += `----------------------------------------\n`;
+
+  const owingList = report.students.filter(s => s.arrearsAmount > 0);
+  if (owingList.length === 0) {
+    text += `🎉 目前所有学生住宿费均已结清，无欠费！\n`;
+  } else {
+    owingList.forEach((s, idx) => {
+      const unpaid = s.unpaidMonths.map(m => monthNames[m - 1]).join('、');
+      text += `${idx + 1}. ${s.name}\n`;
+      text += `   欠费: RM ${formatMoney(s.arrearsAmount)} | 欠交月份: ${unpaid}\n`;
+    });
+  }
+  text += `----------------------------------------\n`;
+  text += `生成时间：${new Date().toLocaleString()}\n`;
+
+  navigator.clipboard.writeText(text).then(() => {
+    showToast('✅ 已复制全员欠费总清单，可直接在微信/WhatsApp中粘贴！');
+  }).catch(() => {
+    prompt('请复制全员欠费清单：', text);
+  });
+}
+
+// Print Arrears Report
+function printArrearsReport() {
+  window.print();
+}
+
+// Populate Payer Dropdown in Income Modal
 function populatePayerDropdown() {
-  const payerSelect = document.getElementById('incomePayerSelect');
+  const otherOptgroup = document.getElementById('incomeOtherPayersOptgroup');
   const datalist = document.getElementById('counterpartyDatalist');
   const chipsContainer = document.getElementById('payerQuickChips');
 
-  // Collect known counterparties from historical incomes
-  const knownCounterparties = new Set();
+  // Collect historical counterparties
+  const studentNames = new Set(DEFAULT_BOARDING_STUDENTS.map(s => s.name.toUpperCase()));
+  DEFAULT_BOARDING_STUDENTS.forEach(s => s.aliases.forEach(a => studentNames.add(a.toUpperCase())));
+
+  const historyPayers = new Set();
   (appData.incomes || []).forEach(inc => {
-    if (inc.counterparty && inc.counterparty.trim()) {
-      knownCounterparties.add(inc.counterparty.trim());
+    const cp = (inc.counterparty || '').trim();
+    if (cp && !studentNames.has(cp.toUpperCase()) && !cp.includes('现金') && !cp.includes('Deposit')) {
+      historyPayers.add(cp);
     }
   });
 
-  // Populate other counterparties in dropdown
-  const otherOptgroup = document.getElementById('incomeOtherPayersOptgroup');
   if (otherOptgroup) {
-    const studentAliases = DEFAULT_BOARDING_STUDENTS.flatMap(s => s.aliases.map(a => a.toUpperCase()));
-    const otherPayers = Array.from(knownCounterparties).filter(p => !studentAliases.some(al => p.toUpperCase().includes(al)));
-    if (otherPayers.length > 0) {
-      otherOptgroup.innerHTML = otherPayers.map(p => `<option value="${p}">${p}</option>`).join('');
-    } else {
-      otherOptgroup.innerHTML = `<option value="" disabled>(暂无其他客户)</option>`;
-    }
+    otherOptgroup.innerHTML = Array.from(historyPayers).slice(0, 15).map(p => `
+      <option value="${p}">${p}</option>
+    `).join('');
   }
 
-  // Populate Datalist
   if (datalist) {
-    const allNames = new Set([
-      ...DEFAULT_BOARDING_STUDENTS.map(s => s.name),
-      ...DEFAULT_BOARDING_STUDENTS.flatMap(s => s.aliases),
-      ...Array.from(knownCounterparties)
-    ]);
+    const allNames = new Set();
+    DEFAULT_BOARDING_STUDENTS.forEach(s => allNames.add(s.name));
+    historyPayers.forEach(p => allNames.add(p));
     datalist.innerHTML = Array.from(allNames).map(n => `<option value="${n}"></option>`).join('');
   }
 
-  // Populate Quick Chips
   if (chipsContainer) {
     chipsContainer.innerHTML = DEFAULT_BOARDING_STUDENTS.map(s => `
-      <button type="button" onclick="handleSelectPayer('${s.name}')" class="px-2 py-0.5 rounded-md text-[11px] font-medium bg-slate-100 hover:bg-emerald-100 text-slate-700 hover:text-emerald-800 border border-slate-200 transition">
-        ${s.name.includes('&') ? '👥 ' + s.name.split(' ')[0] + '兄弟' : s.name.split(' ')[0]}
+      <button type="button" onclick="handleSelectPayer('${s.name}')" class="px-2 py-0.5 bg-slate-100 hover:bg-emerald-50 hover:text-emerald-700 hover:border-emerald-300 text-slate-700 rounded-md border border-slate-200 text-[11px] font-medium transition cursor-pointer">
+        ${s.name.split(' ')[0]}
       </button>
     `).join('');
   }
 }
 
-// Handle Payer Selection from Dropdown or Chip
+// Handle Select Payer in Modal
 function handleSelectPayer(name) {
   if (!name) return;
   const payerSelect = document.getElementById('incomePayerSelect');
@@ -7230,26 +8209,41 @@ function handleSelectPayer(name) {
     payerSelect.value = name;
   }
 
-  // Auto set amount if currently empty or zero
+  // Auto set amount
   const isBrothers = name.includes('HONG YE & KAI YE') || name.includes('两兄弟');
   if (amountInput && (!amountInput.value || Number(amountInput.value) === 0)) {
     amountInput.value = isBrothers ? 960 : 480;
   }
 
-  // Auto set category to '销售收入' or '学费收入' if available
+  // Auto set category
   if (catSelect) {
     const options = Array.from(catSelect.options).map(o => o.value);
     if (options.includes('销售收入')) catSelect.value = '销售收入';
-    else if (options.includes('学费收入')) catSelect.value = '学费收入';
+    else if (options.includes('住宿费')) catSelect.value = '住宿费';
+  }
+
+  // Check arrears and suggest earliest unpaid month!
+  const report = calculateStudentArrears();
+  const searchUpper = name.trim().toUpperCase();
+  const student = report.students.find(s => 
+    s.name.toUpperCase().includes(searchUpper) || 
+    s.aliases.some(al => al.toUpperCase() === searchUpper || searchUpper.includes(al.toUpperCase()))
+  );
+
+  if (student && student.unpaidMonths.length > 0) {
+    const earliestUnpaid = student.unpaidMonths[0];
+    const mStr = `2026-${String(earliestUnpaid).padStart(2, '0')}`;
+    setIncomeFeeMonth(mStr);
+  } else {
+    renderFeeMonthPills('', name);
   }
 
   updatePayerArrearsHint(name);
 }
 
-// Update Dynamic Arrears Hint in Income Modal
+// Dynamic Arrears Hint in Modal
 function updatePayerArrearsHint(name) {
   const hintEl = document.getElementById('incomePayerArrearsHint');
-  const remarkInput = document.getElementById('incomeRemark');
   if (!hintEl) return;
 
   if (!name || !name.trim()) {
@@ -7285,442 +8279,19 @@ function updatePayerArrearsHint(name) {
     `;
   } else {
     const unpaidStr = student.unpaidMonths.map(m => monthNames[m - 1]).join('、');
-    hintEl.className = 'p-2.5 rounded-lg text-xs bg-rose-50 border border-rose-300 text-rose-900 space-y-1';
+    hintEl.className = 'p-2.5 rounded-lg text-xs bg-rose-50 border border-rose-300 text-rose-800 space-y-1';
     hintEl.innerHTML = `
       <div class="flex items-center justify-between font-bold">
-        <span class="flex items-center space-x-1">
-          <span>🚨</span>
-          <span>欠费提醒：${student.name}</span>
+        <span>⚠️ ${student.name} 当前累计欠费：RM ${formatMoney(student.arrearsAmount)}</span>
+        <span class="text-[11px] bg-rose-200 text-rose-900 px-1.5 py-0.5 rounded">未缴 ${student.unpaidMonths.length} 个月</span>
+      </div>
+      <div class="text-[11px] text-rose-700 flex items-center justify-between">
+        <span>尚欠月份：<b>${unpaidStr}</b></span>
+        <span class="text-indigo-700 font-semibold cursor-pointer underline" onclick="setIncomeFeeMonth('2026-${String(student.unpaidMonths[0]).padStart(2, '0')}')">
+          一键设为【${monthNames[student.unpaidMonths[0] - 1]}】
         </span>
-        <span class="text-rose-700">累计欠缴: RM ${formatMoney(student.arrearsAmount)}</span>
-      </div>
-      <div class="text-[11px] text-rose-800">
-        尚欠月份：<span class="font-bold text-rose-600 bg-rose-100/80 px-1.5 py-0.5 rounded">${unpaidStr}</span> (共 ${student.unpaidMonths.length} 个月未交)
       </div>
     `;
-
-    // Auto suggest remark if empty
-    if (remarkInput && (!remarkInput.value || !remarkInput.value.trim())) {
-      const firstUnpaid = student.unpaidMonths[0];
-      remarkInput.value = `2026/${firstUnpaid} 住宿费`;
-    }
-  }
-}
-
-// Quick Add Payment for Student
-function quickAddPaymentForStudent(studentName, suggestedMonth) {
-  openModal('incomeModal');
-  handleSelectPayer(studentName);
-  const remarkInput = document.getElementById('incomeRemark');
-  if (remarkInput && suggestedMonth) {
-    remarkInput.value = `2026/${suggestedMonth} 住宿费`;
-  }
-  showToast(`已为您自动填充 ${studentName} 缴费参数！`);
-}
-
-// Copy WhatsApp / WeChat Reminder for Student
-function copyStudentReminder(studentId) {
-  const report = calculateStudentArrears();
-  const student = report.students.find(s => s.id === studentId || s.name === studentId);
-  if (!student) return;
-
-  const monthNames = ['1月', '2月', '3月', '4月', '5月', '6月', '7月', '8月', '9月', '10月', '11月', '12月'];
-  const unpaidStr = student.unpaidMonths.map(m => `2026年${monthNames[m - 1]}`).join('、');
-
-  let text = `【Voyage 住宿费缴费温馨提醒】\n\n`;
-  text += `尊敬的家长您好：\n`;
-  text += `温馨提醒您查收学生【${student.name}】的住宿费缴纳情况。\n\n`;
-  text += `截至 2026年${report.cutoffMonth}月份，学生当前缴费状态如下：\n`;
-  text += `📅 尚欠月份：${unpaidStr || '已结清'}\n`;
-  text += `📊 未缴月数：${student.unpaidMonths.length} 个月\n`;
-  text += `💰 欠缴金额：RM ${formatMoney(student.arrearsAmount)}\n`;
-  if (student.isBrothers) {
-    text += `（两兄弟 HONG YE 与 KAI YE 合并欠款：RM ${formatMoney(student.arrearsAmount)}，每月合计 RM 960）\n`;
-  }
-  text += `\n--------------------------\n`;
-  text += `【汇款银行账户资料】\n`;
-  text += `户名：Voyage Learning\n`;
-  text += `银行：Hong Leong Bank\n`;
-  text += `账号：15200056062\n`;
-  text += `--------------------------\n\n`;
-  text += `烦请您在转账后将汇款凭证/单据发给我们以便核对销账。非常感谢您的支持与配合！🙏`;
-
-  if (navigator.clipboard && navigator.clipboard.writeText) {
-    navigator.clipboard.writeText(text).then(() => {
-      showToast(`📋 已复制【${student.name}】催缴通知到剪贴板！`);
-    }).catch(() => {
-      prompt('请复制以下催缴文字：', text);
-    });
-  } else {
-    prompt('请复制以下催缴文字：', text);
-  }
-}
-
-// Copy All Arrears Summary Text
-function copyAllArrearsSummary() {
-  const report = calculateStudentArrears();
-  const monthNames = ['1月', '2月', '3月', '4月', '5月', '6月', '7月', '8月', '9月', '10月', '11月', '12月'];
-
-  let text = `【Voyage 2026 住宿生欠费清查汇总表】\n`;
-  text += `对账截止期：2026年${report.cutoffMonth}月 | 收费标准：RM ${report.feePerPerson}/人/月\n`;
-  text += `总应收：RM ${formatMoney(report.totalExpected)} | 已实收：RM ${formatMoney(report.totalPaid)} | 欠费总额：RM ${formatMoney(report.totalArrears)}\n`;
-  text += `欠费人数：${report.owingStudentsCount} 人 / 共 15 人 | 结清人数：${report.fullyPaidCount} 人\n\n`;
-  text += `--------------------------------------------------\n`;
-
-  report.students.forEach((s, idx) => {
-    const unpaidStr = s.unpaidMonths.length > 0 ? s.unpaidMonths.map(m => monthNames[m - 1]).join(',') : '已结清';
-    text += `${idx + 1}. ${s.name} | 已交: RM ${s.totalPaid} | 尚欠: RM ${s.arrearsAmount} | 欠月: ${unpaidStr}\n`;
-  });
-  text += `--------------------------------------------------\n`;
-
-  if (navigator.clipboard && navigator.clipboard.writeText) {
-    navigator.clipboard.writeText(text).then(() => {
-      showToast('📋 已复制全部住宿生欠费总清单到剪贴板！');
-    }).catch(() => {
-      prompt('请复制以下总清单：', text);
-    });
-  } else {
-    prompt('请复制以下总清单：', text);
-  }
-}
-
-// Print Arrears Report
-function printArrearsReport() {
-  window.print();
-}
-
-// Filter and View Mode Controllers
-function setArrearsViewMode(mode) {
-  arrearsViewMode = mode;
-  const cardsContainer = document.getElementById('arrearsCardsContainer');
-  const matrixContainer = document.getElementById('arrearsMatrixContainer');
-  const cardsBtn = document.getElementById('arrearsModeBtn-cards');
-  const matrixBtn = document.getElementById('arrearsModeBtn-matrix');
-
-  if (cardsContainer) cardsContainer.classList.toggle('hidden', mode !== 'cards');
-  if (matrixContainer) matrixContainer.classList.toggle('hidden', mode !== 'matrix');
-
-  if (cardsBtn) {
-    cardsBtn.className = mode === 'cards' 
-      ? 'px-2.5 py-1 rounded-md bg-white font-bold text-emerald-700 shadow-sm transition flex items-center space-x-1'
-      : 'px-2.5 py-1 rounded-md text-slate-600 hover:text-slate-900 transition flex items-center space-x-1';
-  }
-  if (matrixBtn) {
-    matrixBtn.className = mode === 'matrix' 
-      ? 'px-2.5 py-1 rounded-md bg-white font-bold text-emerald-700 shadow-sm transition flex items-center space-x-1'
-      : 'px-2.5 py-1 rounded-md text-slate-600 hover:text-slate-900 transition flex items-center space-x-1';
-  }
-}
-
-function setArrearsStatusFilter(filter) {
-  arrearsStatusFilter = filter;
-  ['all', 'owing', 'severe', 'paid'].forEach(f => {
-    const btn = document.getElementById(`filterArrearsBtn-${f}`);
-    if (btn) {
-      btn.className = f === filter
-        ? 'px-2.5 py-1 rounded-md bg-white font-bold text-slate-800 shadow-sm transition'
-        : 'px-2.5 py-1 rounded-md text-slate-600 hover:text-slate-900 transition';
-    }
-  });
-  renderArrearsTracker();
-}
-
-function handleArrearsCutoffChange(val) {
-  arrearsCutoffMonth = parseInt(val) || 9;
-  renderArrearsTracker();
-  updateArrearsBadge();
-}
-
-function handleArrearsFeeChange(val) {
-  arrearsMonthlyFeePerPerson = parseFloat(val) || 480;
-  renderArrearsTracker();
-  updateArrearsBadge();
-}
-
-function handleArrearsSearch(keyword) {
-  arrearsSearchKeyword = (keyword || '').trim().toUpperCase();
-  renderArrearsTracker();
-}
-
-// Main View Renderer for Arrears Tracker
-function renderArrearsTracker() {
-  const report = calculateStudentArrears(arrearsCutoffMonth, arrearsMonthlyFeePerPerson);
-  const monthNames = ['1月', '2月', '3月', '4月', '5月', '6月', '7月', '8月', '9月', '10月', '11月', '12月'];
-
-  // 1. Update KPI Cards
-  const totalOwedEl = document.getElementById('arrearsTotalOwed');
-  const owedSubEl = document.getElementById('arrearsOwedSub');
-  const countEl = document.getElementById('arrearsCountStudents');
-  const countSubEl = document.getElementById('arrearsCountSub');
-  const fullyPaidEl = document.getElementById('arrearsFullyPaidCount');
-  const rateEl = document.getElementById('arrearsCollectionRate');
-  const barEl = document.getElementById('arrearsProgressBar');
-
-  if (totalOwedEl) totalOwedEl.textContent = formatMoney(report.totalArrears);
-  if (owedSubEl) owedSubEl.textContent = `总应收 ${formatMoney(report.totalExpected)} · 已实收 ${formatMoney(report.totalPaid)}`;
-  if (countEl) countEl.textContent = `${report.owingStudentsCount} 人`;
-  if (countSubEl) countSubEl.textContent = `其中严重拖欠 (≥3月) ${report.severeStudentsCount} 人`;
-  if (fullyPaidEl) fullyPaidEl.textContent = `${report.fullyPaidCount} 人`;
-  if (rateEl) rateEl.textContent = `${report.collectionRate}%`;
-  if (barEl) barEl.style.width = `${Math.min(100, Math.max(0, report.collectionRate))}%`;
-
-  // 2. Brothers Special Callout Banner
-  const brothersBanner = document.getElementById('brothersCalloutBanner');
-  const brothersStudent = report.students.find(s => s.isBrothers);
-  if (brothersBanner && brothersStudent) {
-    const unpaidListStr = brothersStudent.unpaidMonths.map(m => monthNames[m - 1]).join('、');
-    brothersBanner.innerHTML = `
-      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-rose-200 pb-3">
-        <div class="flex items-start space-x-3">
-          <div class="w-10 h-10 rounded-2xl bg-rose-600 text-white flex items-center justify-center font-bold text-lg shadow-md shadow-rose-600/20 flex-shrink-0">
-            🚨
-          </div>
-          <div>
-            <div class="flex items-center space-x-2">
-              <h4 class="text-sm sm:text-base font-bold text-slate-900">重点关注催缴：HONG YE & KAI YE (两兄弟合并转账)</h4>
-              <span class="bg-rose-600 text-white text-[10px] px-2 py-0.5 rounded-full font-bold">欠 ${brothersStudent.unpaidMonths.length} 个月</span>
-            </div>
-            <p class="text-xs text-rose-800 mt-1 font-medium">
-              兄弟俩由妈妈合并缴纳住宿费 (RM 960/月)。自 6月9日 付款后，<span class="font-bold underline">${unpaidListStr}</span> 已连续 ${brothersStudent.unpaidMonths.length} 个月未付！
-            </p>
-          </div>
-        </div>
-        <div class="flex items-center space-x-2 self-end sm:self-center">
-          <button onclick="copyStudentReminder('${brothersStudent.id}')" class="px-3 py-1.5 bg-rose-600 hover:bg-rose-700 text-white rounded-lg text-xs font-semibold shadow-sm transition flex items-center space-x-1">
-            <span>📋</span>
-            <span>复制妈妈催缴通知</span>
-          </button>
-          <button onclick="quickAddPaymentForStudent('${brothersStudent.name}', '${brothersStudent.unpaidMonths[0] || 9}')" class="px-3 py-1.5 bg-white border border-rose-300 hover:bg-rose-50 text-rose-700 rounded-lg text-xs font-semibold transition flex items-center space-x-1">
-            <span>💰</span>
-            <span>记一笔兄弟付款 (RM 960)</span>
-          </button>
-        </div>
-      </div>
-      <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 pt-1 text-xs text-slate-700">
-        <div>应缴总额：<span class="font-bold text-slate-900">${formatMoney(brothersStudent.expectedTotal)}</span></div>
-        <div>已缴总额：<span class="font-bold text-emerald-600">${formatMoney(brothersStudent.totalPaid)}</span></div>
-        <div>每人欠费：<span class="font-bold text-rose-600">${formatMoney(brothersStudent.arrearsAmount / 2)}</span></div>
-        <div>两兄弟总欠费：<span class="font-black text-rose-700 text-sm">${formatMoney(brothersStudent.arrearsAmount)}</span></div>
-      </div>
-    `;
-  }
-
-  // 3. Filter Students for Cards View
-  let filteredStudents = report.students;
-  if (arrearsSearchKeyword) {
-    filteredStudents = filteredStudents.filter(s => 
-      s.name.toUpperCase().includes(arrearsSearchKeyword) || 
-      s.aliases.some(al => al.toUpperCase().includes(arrearsSearchKeyword))
-    );
-  }
-  if (arrearsStatusFilter === 'owing') {
-    filteredStudents = filteredStudents.filter(s => s.arrearsAmount > 0);
-  } else if (arrearsStatusFilter === 'severe') {
-    filteredStudents = filteredStudents.filter(s => s.status === 'severe');
-  } else if (arrearsStatusFilter === 'paid') {
-    filteredStudents = filteredStudents.filter(s => s.arrearsAmount === 0);
-  }
-
-  // 4. Render Cards View
-  const cardsContainer = document.getElementById('arrearsCardsContainer');
-  if (cardsContainer) {
-    if (filteredStudents.length === 0) {
-      cardsContainer.innerHTML = `
-        <div class="col-span-2 p-12 text-center text-slate-400 bg-white rounded-2xl border border-slate-200">
-          <div class="text-4xl mb-2">🔍</div>
-          <div class="text-sm font-semibold">没有找到符合条件的学生</div>
-        </div>
-      `;
-    } else {
-      cardsContainer.innerHTML = filteredStudents.map(st => {
-        let badgeColor = 'bg-emerald-100 text-emerald-800 border-emerald-200';
-        let badgeText = '🟢 已结清 (无欠费)';
-        if (st.status === 'severe') {
-          badgeColor = 'bg-rose-100 text-rose-800 border-rose-300 animate-pulse';
-          badgeText = `🔴 欠费 ${st.unpaidMonths.length} 个月 (严重)`;
-        } else if (st.status === 'owing') {
-          badgeColor = 'bg-amber-100 text-amber-800 border-amber-300';
-          badgeText = `🟡 欠费 ${st.unpaidMonths.length} 个月`;
-        }
-
-        const unpaidBadges = st.unpaidMonths.map(m => 
-          `<span class="px-1.5 py-0.5 rounded bg-rose-100 text-rose-700 font-bold border border-rose-200">${monthNames[m - 1]}</span>`
-        ).join('');
-
-        const paidBadges = st.paidMonths.map(m => 
-          `<span class="px-1.5 py-0.5 rounded bg-emerald-50 text-emerald-700 border border-emerald-200 font-medium">${monthNames[m - 1]}</span>`
-        ).join('');
-
-        const lastPayStr = st.lastIncome 
-          ? `${st.lastIncome.date} (RM ${formatMoney(st.lastIncome.amount)} · ${st.lastIncome.remark || '-'})`
-          : '暂无收款记录';
-
-        return `
-          <div class="bg-white rounded-2xl p-5 border border-slate-200 hover:border-emerald-300 hover:shadow-md transition space-y-4">
-            <!-- Header Row -->
-            <div class="flex items-start justify-between">
-              <div class="flex items-center space-x-3">
-                <div class="w-11 h-11 rounded-2xl ${st.arrearsAmount > 0 ? 'bg-gradient-to-tr from-rose-500 to-amber-500' : 'bg-gradient-to-tr from-emerald-500 to-teal-500'} text-white flex items-center justify-center font-bold text-sm shadow-sm flex-shrink-0">
-                  ${st.name.substring(0, 2)}
-                </div>
-                <div>
-                  <div class="flex items-center space-x-2">
-                    <h4 class="text-sm sm:text-base font-bold text-slate-900">${st.name}</h4>
-                    ${st.isBrothers ? '<span class="bg-indigo-100 text-indigo-800 text-[10px] px-1.5 py-0.5 rounded font-bold">两兄弟</span>' : ''}
-                  </div>
-                  <p class="text-[11px] text-slate-400">标准收费：RM ${st.monthlyFee}/月 ${st.isBrothers ? '(两人RM960)' : ''}</p>
-                </div>
-              </div>
-              <span class="text-xs px-2.5 py-1 rounded-full border font-bold ${badgeColor}">
-                ${badgeText}
-              </span>
-            </div>
-
-            <!-- Financial Metrics -->
-            <div class="grid grid-cols-3 gap-2 p-3 bg-slate-50 rounded-xl text-xs">
-              <div>
-                <span class="text-[10px] text-slate-400 block">应收总额</span>
-                <span class="font-bold text-slate-800">${formatMoney(st.expectedTotal)}</span>
-              </div>
-              <div>
-                <span class="text-[10px] text-slate-400 block">已收总额</span>
-                <span class="font-bold text-emerald-600">${formatMoney(st.totalPaid)}</span>
-              </div>
-              <div>
-                <span class="text-[10px] text-slate-400 block">当前尚欠</span>
-                <span class="font-black text-sm ${st.arrearsAmount > 0 ? 'text-rose-600' : 'text-slate-400'}">${formatMoney(st.arrearsAmount)}</span>
-              </div>
-            </div>
-
-            <!-- Unpaid Months Pills -->
-            <div class="text-xs space-y-1">
-              <div class="flex items-center justify-between text-[11px]">
-                <span class="font-semibold text-slate-600">未缴月份:</span>
-                <span class="text-slate-400">${st.unpaidMonths.length > 0 ? `共 ${st.unpaidMonths.length} 个月待缴` : '已全部缴齐'}</span>
-              </div>
-              <div class="flex flex-wrap gap-1">
-                ${unpaidBadges || '<span class="text-[11px] text-emerald-600 font-medium">截至当期已无欠缴 ✨</span>'}
-              </div>
-            </div>
-
-            <!-- Paid Months Accordion / Preview -->
-            <div class="text-xs space-y-1">
-              <span class="font-semibold text-slate-600 text-[11px]">已缴月份:</span>
-              <div class="flex flex-wrap gap-1">
-                ${paidBadges || '<span class="text-[11px] text-slate-400">暂无已缴月份</span>'}
-              </div>
-            </div>
-
-            <!-- Last Payment & Action Footer -->
-            <div class="pt-3 border-t border-slate-100 flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs">
-              <div class="text-[11px] text-slate-400 truncate" title="${lastPayStr}">
-                最后交款：<span class="text-slate-600 font-medium">${lastPayStr}</span>
-              </div>
-              <div class="flex items-center space-x-2 self-end sm:self-auto">
-                <button onclick="copyStudentReminder('${st.id}')" class="px-2.5 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg font-medium transition flex items-center space-x-1" title="复制催缴通知">
-                  <span>📋</span>
-                  <span>催缴通知</span>
-                </button>
-                <button onclick="quickAddPaymentForStudent('${st.name}', '${st.unpaidMonths[0] || report.cutoffMonth}')" class="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg font-semibold shadow-sm transition flex items-center space-x-1" title="快速补录该生住宿费">
-                  <span>💰</span>
-                  <span>记这笔款</span>
-                </button>
-              </div>
-            </div>
-          </div>
-        `;
-      }).join('');
-    }
-  }
-
-  // 5. Render 12-Month Matrix View
-  const matrixContainer = document.getElementById('arrearsMatrixContainer');
-  if (matrixContainer) {
-    let headerCells = '';
-    for (let m = 1; m <= 12; m++) {
-      const isPastOrCur = m <= report.cutoffMonth;
-      headerCells += `<th class="px-2 py-2.5 text-center text-xs font-bold ${isPastOrCur ? 'text-slate-800 bg-slate-100' : 'text-slate-400 bg-slate-50'}">${monthNames[m - 1]}</th>`;
-    }
-
-    const matrixRows = report.students.map((st, idx) => {
-      let cells = '';
-      for (let m = 1; m <= 12; m++) {
-        const isPaid = st.monthsPaidMap[m];
-        const isUnderCutoff = m <= report.cutoffMonth;
-
-        if (isPaid) {
-          cells += `<td class="px-2 py-2 text-center text-[11px] bg-emerald-50 text-emerald-800 font-semibold border-b border-slate-100" title="${monthNames[m - 1]}: 已缴 RM ${st.monthlyFee}">✓ ${st.monthlyFee}</td>`;
-        } else if (isUnderCutoff) {
-          cells += `<td class="px-2 py-2 text-center text-[11px] bg-rose-50 text-rose-700 font-bold border-b border-slate-100" title="${monthNames[m - 1]}: 欠缴 RM ${st.monthlyFee}">✗ 欠费</td>`;
-        } else {
-          cells += `<td class="px-2 py-2 text-center text-[11px] text-slate-300 border-b border-slate-100">-</td>`;
-        }
-      }
-
-      return `
-        <tr class="hover:bg-slate-50/80 transition">
-          <td class="px-3 py-2.5 text-xs font-bold text-slate-900 border-b border-slate-100 sticky left-0 bg-white z-10 whitespace-nowrap">
-            <span class="text-slate-400 mr-1.5 font-normal">${idx + 1}.</span>
-            ${st.name}
-            ${st.isBrothers ? '<span class="text-[10px] text-indigo-600 ml-1">(双人)</span>' : ''}
-          </td>
-          ${cells}
-          <td class="px-3 py-2 text-right text-xs font-bold text-emerald-600 border-b border-slate-100 whitespace-nowrap">${formatMoney(st.totalPaid)}</td>
-          <td class="px-3 py-2 text-right text-xs font-black ${st.arrearsAmount > 0 ? 'text-rose-600' : 'text-slate-400'} border-b border-slate-100 whitespace-nowrap">${formatMoney(st.arrearsAmount)}</td>
-          <td class="px-3 py-2 text-center border-b border-slate-100 whitespace-nowrap">
-            <button onclick="copyStudentReminder('${st.id}')" class="px-2 py-1 text-[11px] bg-slate-100 hover:bg-slate-200 text-slate-700 rounded font-medium mr-1">催缴</button>
-            <button onclick="quickAddPaymentForStudent('${st.name}', '${st.unpaidMonths[0] || report.cutoffMonth}')" class="px-2 py-1 text-[11px] bg-emerald-600 hover:bg-emerald-700 text-white rounded font-medium">记账</button>
-          </td>
-        </tr>
-      `;
-    }).join('');
-
-    matrixContainer.innerHTML = `
-      <div class="mb-3 flex items-center justify-between">
-        <div>
-          <h4 class="text-sm font-bold text-slate-900">全年 12 个月收缴状态矩阵总览表</h4>
-          <p class="text-xs text-slate-400">绿色 ✓ 为已缴清，红色 ✗ 为截止 ${report.cutoffMonth} 月份到期未付</p>
-        </div>
-        <div class="text-xs text-slate-500">
-          共 15 住宿生 · 截止月份：<span class="font-bold text-slate-800">${report.cutoffMonth}月</span>
-        </div>
-      </div>
-      <table class="w-full border-collapse text-left">
-        <thead>
-          <tr class="border-b border-slate-200">
-            <th class="px-3 py-2.5 text-xs font-bold text-slate-600 bg-slate-50 sticky left-0 z-10">学生姓名</th>
-            ${headerCells}
-            <th class="px-3 py-2.5 text-right text-xs font-bold text-slate-700 bg-slate-50">已缴总额</th>
-            <th class="px-3 py-2.5 text-right text-xs font-bold text-rose-700 bg-slate-50">尚欠总额</th>
-            <th class="px-3 py-2.5 text-center text-xs font-bold text-slate-700 bg-slate-50">操作</th>
-          </tr>
-        </thead>
-        <tbody>
-          ${matrixRows}
-        </tbody>
-      </table>
-    `;
-  }
-
-  // 6. Populate Unassigned Incomes Notice
-  const unassignedContainer = document.getElementById('arrearsUnassignedList');
-  if (unassignedContainer) {
-    const unassignedList = (appData.incomes || []).filter(inc => {
-      const p = (inc.counterparty || '').trim();
-      const r = (inc.remark || '').trim();
-      return !p || p.includes('现金') || p.includes('Deposit') || p.includes('学费客户');
-    }).slice(0, 5);
-
-    if (unassignedList.length > 0) {
-      unassignedContainer.innerHTML = unassignedList.map(u => `
-        <div class="flex items-center justify-between p-1.5 bg-white/80 rounded border border-blue-100">
-          <span>· ${u.date} | <b>RM ${formatMoney(u.amount)}</b> | ${u.remark || '(无备注)'} | 客户: ${u.counterparty || '未填写'}</span>
-          <button onclick="editIncome('${u.id}')" class="text-blue-600 hover:text-blue-800 font-bold underline text-[10px]">去补全姓名 →</button>
-        </div>
-      `).join('');
-    } else {
-      unassignedContainer.innerHTML = `<span class="text-slate-400">目前所有收入流水均已关联客户姓名。</span>`;
-    }
   }
 }
 
@@ -7740,6 +8311,14 @@ window.quickAddPaymentForStudent = quickAddPaymentForStudent;
 window.copyStudentReminder = copyStudentReminder;
 window.copyAllArrearsSummary = copyAllArrearsSummary;
 window.printArrearsReport = printArrearsReport;
+window.getIncomeFeeMonth = getIncomeFeeMonth;
+window.formatFeeMonthDisplay = formatFeeMonthDisplay;
+window.renderFeeMonthPills = renderFeeMonthPills;
+window.handleFeeMonthChange = handleFeeMonthChange;
+window.setIncomeFeeMonth = setIncomeFeeMonth;
+window.clearIncomeFeeMonth = clearIncomeFeeMonth;
+window.quickEditIncomeMonth = quickEditIncomeMonth;
+window.applyQuickMonth = applyQuickMonth;
 
   </script>
 </body>
