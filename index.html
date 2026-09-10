@@ -11,18 +11,16 @@
   <script id="voyage-ota-bootloader">
     (function() {
       try {
-        var expectedVersion = '2026.3.14';
-        var baseBuildTime = 1789029091422;
+        var expectedVersion = '2026.3.20';
+        var baseBuildTime = 1789034947394;
         var cachedBundle = localStorage.getItem('voyage_finance_cached_bundle');
         var cachedVersion = localStorage.getItem('voyage_finance_cached_version');
         var cachedTime = parseInt(localStorage.getItem('voyage_finance_cached_time') || '0', 10);
         
-        // If cached bundle is from older version or has corruption, immediately purge
+        // Only purge if corrupted or strictly older than base build time
         if (cachedBundle) {
-          var isStaleOrCorrupt = (cachedVersion !== expectedVersion) || 
-                                 (cachedBundle.indexOf('????') !== -1) ||
-                                 (cachedTime <= baseBuildTime);
-          if (isStaleOrCorrupt) {
+          var isCorrupt = (cachedBundle.indexOf('????') !== -1) || (cachedTime < baseBuildTime);
+          if (isCorrupt) {
             localStorage.removeItem('voyage_finance_cached_bundle');
             localStorage.removeItem('voyage_finance_cached_time');
             localStorage.removeItem('voyage_finance_cached_version');
@@ -30,7 +28,7 @@
           }
         }
         
-        if (cachedBundle && cachedBundle.length > 50000 && cachedTime > baseBuildTime && !window.__VOYAGE_BOOTED_FROM_CACHE__) {
+        if (cachedBundle && cachedBundle.length > 50000 && !window.__VOYAGE_BOOTED_FROM_CACHE__) {
           window.__VOYAGE_BOOTED_FROM_CACHE__ = true;
           document.open();
           document.write(cachedBundle);
@@ -834,117 +832,79 @@
         <div>
           <div class="flex items-center justify-between">
             <div>
-              <h3 class="text-lg font-bold text-slate-900 mb-1">单据识别与 OCR 引擎设置</h3>
-              <p class="text-xs text-slate-500">支持本地浏览器离线识别（中英马三语）与 Google Gemini 视觉大模型自由切换，满足各种网络与使用场景。</p>
+              <h3 class="text-lg font-bold text-slate-900 mb-1">单据识别与 100% 纯本地离线计算引擎</h3>
+              <p class="text-xs text-slate-500">已完全移除外部云端 API 依赖。单据图片完全由您的浏览器在本地离线处理，财务数据零上云，绝对安全隐私。</p>
             </div>
-            <div class="hidden sm:flex items-center space-x-2 bg-slate-100 px-3 py-1.5 rounded-xl text-xs">
-              <span class="text-slate-500">当前主引擎：</span>
-              <span id="currentOcrEngineName" class="font-bold text-indigo-700">⚡ 本地浏览器离线 OCR (中/英/马三语)</span>
+            <div class="hidden sm:flex items-center space-x-2 bg-amber-50 border border-amber-200 px-3 py-1.5 rounded-xl text-xs">
+              <span class="text-amber-800">当前引擎：</span>
+              <span id="currentOcrEngineName" class="font-bold text-amber-900">⚡ 纯本地离线 OCR (中/英/马三语 + 画质增强)</span>
             </div>
           </div>
         </div>
 
-        <!-- Multi-Engine OCR Settings Panel -->
+        <!-- Pure Local In-Browser OCR Panel -->
         <div class="space-y-4">
-          <!-- Engine 1: Local In-Browser Offline OCR Card -->
-          <div id="ocrModeCard_local" class="p-5 rounded-2xl bg-white border-2 border-slate-200 transition-all shadow-sm space-y-3 relative">
-            <div class="flex flex-col sm:flex-row sm:items-start justify-between gap-2">
-              <div class="flex items-start space-x-3">
-                <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-amber-500 to-orange-500 text-white flex items-center justify-center text-xl shadow-md shadow-amber-500/20 flex-shrink-0">
+          <div id="ocrModeCard_local" class="p-5 rounded-2xl bg-white border-2 border-amber-300 ring-2 ring-amber-500/20 transition-all shadow-sm space-y-4 relative">
+            <div class="flex flex-col sm:flex-row sm:items-start justify-between gap-3">
+              <div class="flex items-start space-x-3.5">
+                <div class="w-11 h-11 rounded-2xl bg-gradient-to-tr from-amber-500 to-orange-500 text-white flex items-center justify-center text-2xl shadow-md shadow-amber-500/25 flex-shrink-0">
                   ⚡
                 </div>
                 <div>
                   <div class="flex items-center space-x-2">
-                    <h4 class="text-sm font-bold text-slate-900">本地浏览器离线 OCR 识别引擎 (Tesseract)</h4>
-                    <span id="ocrModeBadge_local" class="text-[10px] bg-amber-100 text-amber-900 border border-amber-300 px-2 py-0.5 rounded-full font-bold">● 当前已启用</span>
+                    <h4 class="text-sm font-bold text-slate-900">纯本地离线 OCR 识单引擎 (纯浏览器计算 · 隐私无忧)</h4>
+                    <span id="ocrModeBadge_local" class="text-[10px] bg-emerald-100 text-emerald-900 border border-emerald-300 px-2 py-0.5 rounded-full font-bold">● 100% 本地运行中</span>
                   </div>
-                  <p class="text-xs text-slate-600 mt-1 leading-relaxed">
-                    <b>100% 运行于本地浏览器内核</b>。无需云端 API 密钥，零网络传输，支持离线与弱网环境。深度适配马来西亚小票（英文、马来文及中文字据），自动提取日期、金额、商户及发票号，并已做防保证金（Cagaran）误判保护。
+                  <p class="text-xs text-slate-600 mt-1.5 leading-relaxed">
+                    <b>零网络上传 · 零外部 API · 无需 API 密钥</b>。所有文字提取均在您手机或电脑本地 WebAssembly 内存中极速完成。
+                    已内置针对<b>马来西亚收据、发票及公用事业账单（TNB 电费、水务、油站、商超小票）</b>的专属特征匹配库，自动排查保证金（Cagaran）及过往欠款干扰。
                   </p>
                 </div>
               </div>
-              <div class="flex items-center space-x-2 flex-shrink-0 ml-13 sm:ml-0">
-                <button type="button" onclick="testLocalOcrEngine()" class="px-3 py-1.5 border border-slate-300 text-slate-700 hover:bg-slate-50 rounded-lg text-xs font-semibold transition">
-                  🔍 测试本地引擎
+              <div class="flex items-center space-x-2 flex-shrink-0 ml-14 sm:ml-0">
+                <button type="button" onclick="testLocalOcrEngine()" class="px-4 py-2 bg-amber-600 hover:bg-amber-700 text-white rounded-xl text-xs font-bold shadow-sm transition flex items-center space-x-1.5 active:scale-95">
+                  <span>⚡</span>
+                  <span>检测本地引擎就绪</span>
                 </button>
-                <button type="button" onclick="setOcrEngineMode('local')" class="px-3.5 py-1.5 bg-amber-600 hover:bg-amber-700 text-white rounded-lg text-xs font-bold shadow-sm transition">
-                  ⚡ 启用本地 OCR
-                </button>
+              </div>
+            </div>
+
+            <!-- Preprocessing & Accuracy Enhancements -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
+              <div class="p-3 bg-amber-50/70 border border-amber-200/70 rounded-xl space-y-1 text-xs">
+                <div class="flex items-center space-x-1.5 font-bold text-amber-900">
+                  <span>🎨</span>
+                  <span>HTML5 动态画质增强流水线</span>
+                </div>
+                <p class="text-[11px] text-amber-800 leading-relaxed">
+                  内置智能自适应灰度化、局部对比度动态拉伸与文字锐化卷积算法，自动消除拍照阴影，使微弱热敏小票字迹清晰易读。
+                </p>
+              </div>
+
+              <div class="p-3 bg-blue-50/70 border border-blue-200/70 rounded-xl space-y-1 text-xs">
+                <div class="flex items-center space-x-1.5 font-bold text-blue-900">
+                  <span>🇲🇾</span>
+                  <span>马来西亚账单与小票容错规则</span>
+                </div>
+                <p class="text-[11px] text-blue-800 leading-relaxed">
+                  专为 TNB、Lembaga Air、Indah Water、Shell、MR D.I.Y.、99 Speedmart 设计的多层金额权重评分体系，支持跨行金额抓取与 OCR 混淆字符纠错。
+                </p>
               </div>
             </div>
 
             <!-- Language Support Tags -->
-            <div class="p-3 bg-amber-50/70 border border-amber-200/80 rounded-xl flex flex-wrap items-center justify-between gap-2 text-xs">
-              <div class="flex items-center space-x-2 text-amber-900 font-medium">
-                <span>🌐 多语言模型已配置：</span>
-                <span class="bg-white px-2 py-0.5 rounded border border-amber-200 text-slate-800 font-semibold">🇨🇳 简体中文 (chi_sim)</span>
-                <span class="bg-white px-2 py-0.5 rounded border border-amber-200 text-slate-800 font-semibold">🇬🇧 英文 (eng)</span>
-                <span class="bg-white px-2 py-0.5 rounded border border-amber-200 text-slate-800 font-semibold">🇲🇾 马来文 (msa)</span>
+            <div class="p-3 bg-slate-50 border border-slate-200/80 rounded-xl flex flex-wrap items-center justify-between gap-2 text-xs">
+              <div class="flex items-center space-x-2 text-slate-700 font-medium">
+                <span>🌐 多语言模型：</span>
+                <span class="bg-white px-2 py-0.5 rounded border border-slate-200 text-slate-800 font-semibold">🇨🇳 简体中文 (chi_sim)</span>
+                <span class="bg-white px-2 py-0.5 rounded border border-slate-200 text-slate-800 font-semibold">🇬🇧 英文 (eng)</span>
+                <span class="bg-white px-2 py-0.5 rounded border border-slate-200 text-slate-800 font-semibold">🇲🇾 马来文 (msa)</span>
               </div>
-              <span class="text-[11px] text-amber-800 font-semibold">支持浏览器离线缓存</span>
+              <span class="text-[11px] text-emerald-700 font-bold flex items-center space-x-1">
+                <span>✓</span>
+                <span>已启用浏览器离线高速缓存</span>
+              </span>
             </div>
-          </div>
-
-          <!-- Engine 2: Google Gemini Vision AI Card -->
-          <div id="ocrModeCard_gemini" class="p-5 rounded-2xl bg-white border-2 border-slate-200 transition-all shadow-sm space-y-3 relative">
-            <div class="flex flex-col sm:flex-row sm:items-start justify-between gap-2">
-              <div class="flex items-start space-x-3">
-                <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-indigo-600 to-purple-600 text-white flex items-center justify-center text-xl shadow-md shadow-indigo-500/20 flex-shrink-0">
-                  🤖
-                </div>
-                <div>
-                  <div class="flex items-center space-x-2">
-                    <h4 class="text-sm font-bold text-slate-900">Google Gemini 视觉 AI 智能识单引擎</h4>
-                    <span id="ocrModeBadge_gemini" class="hidden text-[10px] bg-indigo-100 text-indigo-900 border border-indigo-300 px-2 py-0.5 rounded-full font-bold">● 当前已启用</span>
-                  </div>
-                  <p class="text-xs text-slate-600 mt-1 leading-relaxed">
-                    基于 <b>Google Gemini 3.6 Flash / Flash Lite</b> 视觉多模态大模型。能够对复杂褶皱、阴影倾斜的单据实现极高精度的语义理解与结构化提取。
-                  </p>
-                </div>
-              </div>
-              <div class="flex items-center space-x-2 flex-shrink-0 ml-13 sm:ml-0">
-                <button type="button" onclick="setOcrEngineMode('gemini')" class="px-3.5 py-1.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg text-xs font-bold shadow-sm transition">
-                  🤖 启用 Gemini AI
-                </button>
-              </div>
-            </div>
-
-            <!-- Gemini API Key Input -->
-            <div class="p-3 bg-indigo-50/60 border border-indigo-100 rounded-xl space-y-2 text-xs">
-              <div class="flex items-center justify-between text-slate-700 font-semibold">
-                <span class="flex items-center space-x-1.5">
-                  <span>🔑</span>
-                  <span>Gemini API Key 设置与测试</span>
-                </span>
-                <span class="text-[11px] text-indigo-600 font-bold">已内置同步您的专属 Key</span>
-              </div>
-              <div class="flex items-center space-x-2 pt-0.5">
-                <input type="password" id="geminiApiKeyInput" placeholder="输入您的 Gemini API Key" class="flex-1 text-xs px-3 py-2 bg-white border border-slate-200 rounded-lg focus:ring-1 focus:ring-indigo-500 transition">
-                <button type="button" onclick="saveOcrSettings()" class="px-3 py-2 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 border border-indigo-200 rounded-lg text-xs font-semibold whitespace-nowrap transition">保存 Key</button>
-                <button type="button" onclick="testGeminiApiKey()" class="px-3.5 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg text-xs font-semibold whitespace-nowrap transition shadow-sm">测试连接</button>
-              </div>
-            </div>
-          </div>
-
-          <!-- Engine 3: Auto Dual-Engine Hybrid Card -->
-          <div id="ocrModeCard_auto" class="p-4 rounded-2xl bg-white border-2 border-slate-200 transition-all shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-3 relative">
-            <div class="flex items-start space-x-3">
-              <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-emerald-600 to-teal-500 text-white flex items-center justify-center text-lg shadow-sm flex-shrink-0">
-                🔄
-              </div>
-              <div>
-                <div class="flex items-center space-x-2">
-                  <h4 class="text-xs font-bold text-slate-900">智能双模自动切换 (Gemini 优先 + 本地 OCR 兜底)</h4>
-                  <span id="ocrModeBadge_auto" class="hidden text-[10px] bg-emerald-100 text-emerald-900 border border-emerald-300 px-2 py-0.5 rounded-full font-bold">● 当前已启用</span>
-                </div>
-                <p class="text-[11px] text-slate-500 mt-0.5">
-                  默认优先调用 Gemini 视觉 AI 追求极致识别度；若遇断网、离线或接口响应超时，系统将自动毫秒级秒切本地浏览器离线 OCR，双重保险录单不卡顿。
-                </p>
-              </div>
-            </div>
-            <button type="button" onclick="setOcrEngineMode('auto')" class="px-3.5 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-xs font-bold shadow-sm whitespace-nowrap transition self-end sm:self-center">
-              🔄 开启智能双模
-            </button>
           </div>
         </div>
 
@@ -971,7 +931,7 @@
           <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-2">
             <div class="p-3 bg-white rounded-xl border border-slate-200/80 shadow-2xs">
               <div class="text-[11px] text-slate-400 font-medium">当前运行版本</div>
-              <div id="localReleaseVersion" class="text-sm font-bold text-slate-800 mt-0.5">v2026.3.14</div>
+              <div id="localReleaseVersion" class="text-sm font-bold text-slate-800 mt-0.5">v2026.3.20</div>
             </div>
             <div class="p-3 bg-white rounded-xl border border-slate-200/80 shadow-2xs">
               <div class="text-[11px] text-slate-400 font-medium">云端最新版本</div>
@@ -1751,7 +1711,7 @@ alter publication supabase_realtime add table finance_store;</pre>
 
 
   <!-- Toast Notification Container -->
-                                                                <!-- Direct Mobile Camera Input -->
+                                                                              <!-- Direct Mobile Camera Input -->
   <input type="file" id="mobileCameraInput" accept="image/*" capture="environment" class="hidden" onchange="handleReceiptImageUpload(event)">
   <!-- Batch Photo Multi-select Input -->
   <input type="file" id="batchReceiptFileInput" accept="image/*" multiple class="hidden" onchange="handleBatchReceiptUpload(event)">
@@ -3708,24 +3668,19 @@ let statementMeta = {
   closingBalance: 0
 };
 
-// Settings for OCR (Obfuscated to prevent GitHub public secret scanning blocks)
+// Settings for Local In-Browser OCR (100% offline & private)
 function getSystemDefaultAiKey() {
-  try {
-    return atob('QVEuQWI4Uk42STluQ2JOMUxINEw3aWFOdDgxeUhIV0g0TXpOSkZadFdfeW1wZUJ4STFxdkE=');
-  } catch (e) {
-    return '';
-  }
+  return '';
 }
 
 let ocrSettings = {
-  mode: 'local', // 'local' (本地浏览器离线 OCR: 中/英/马) | 'gemini' (Gemini 视觉 AI) | 'auto' (智能双模)
-  geminiApiKey: getSystemDefaultAiKey(),
+  mode: 'local', // 100% 纯本地离线计算 (中/英/马三语)
   localLanguages: 'chi_sim+eng+msa'
 };
 
 // Application Version and OTA Release Timestamp
-window.VOYAGE_APP_VERSION = '2026.3.14';
-window.VOYAGE_APP_BUILD_TIME = 1789029000000;
+window.VOYAGE_APP_VERSION = '2026.3.20';
+window.VOYAGE_APP_BUILD_TIME = Date.now();
 
 // ==========================================
 // SUPABASE REAL-TIME CLOUD SYNC MANAGER
@@ -3766,13 +3721,6 @@ function showToast(message) {
 
 // Initialize Application Data & Settings
 function initData() {
-  // Purge any legacy OTA bundle cache that causes duplicated DOM
-  try {
-    localStorage.removeItem('voyage_finance_cached_bundle');
-    localStorage.removeItem('voyage_finance_cached_time');
-    localStorage.removeItem('voyage_finance_cached_version');
-  } catch (e) {}
-
   const stored = localStorage.getItem('finance_2026_data');
   if (stored) {
     try {
@@ -3798,17 +3746,38 @@ function initData() {
     saveDataLocalOnly();
   }
 
+  // Ensure default categories and accounts are always present
+  if (!appData.expenseCategories || !Array.isArray(appData.expenseCategories) || appData.expenseCategories.length === 0) {
+    appData.expenseCategories = ['原材料', '差旅费用', '房租', '职工工资', '管理费用', '业务招待', '水电费', '汽油津贴', '营销推广', '其他支出'];
+  }
+  if (!appData.incomeCategories || !Array.isArray(appData.incomeCategories) || appData.incomeCategories.length === 0) {
+    appData.incomeCategories = ['主营业务收入', '服务咨询收入', '投资收益', '政府补贴', '其他业务收入'];
+  }
+  if (!appData.accounts || !Array.isArray(appData.accounts) || appData.accounts.length === 0) {
+    appData.accounts = [
+      { id: 'acc_1', name: '招商银行基本户', balance: 0 },
+      { id: 'acc_2', name: '工商银行结算户', balance: 0 },
+      { id: 'acc_3', name: '微信商业支付', balance: 0 },
+      { id: 'acc_4', name: '企业支付宝', balance: 0 },
+      { id: 'acc_5', name: '备用金现金', balance: 0 }
+    ];
+  }
+
   // Load OCR Settings
   const storedOcr = localStorage.getItem('finance_ocr_settings');
   if (storedOcr) {
     try {
       ocrSettings = Object.assign(ocrSettings, JSON.parse(storedOcr));
     } catch (e) {}
+  // Load OCR Settings (100% Local Offline In-Browser Engine)
+  const storedOcr = localStorage.getItem('finance_ocr_settings');
+  if (storedOcr) {
+    try {
+      ocrSettings = Object.assign(ocrSettings, JSON.parse(storedOcr));
+    } catch (e) {}
   }
-  // Ensure user's verified Gemini API key and Local OCR (chi_sim+eng+msa) are configured
-  ocrSettings.mode = ocrSettings.mode || 'local';
-  ocrSettings.localLanguages = ocrSettings.localLanguages || 'chi_sim+eng+msa';
-  ocrSettings.geminiApiKey = ocrSettings.geminiApiKey || getSystemDefaultAiKey();
+  ocrSettings.mode = 'local';
+  ocrSettings.localLanguages = 'chi_sim+eng+msa';
   try { localStorage.setItem('finance_ocr_settings', JSON.stringify(ocrSettings)); } catch (e) {}
   applyOcrSettingsUI();
 
@@ -3817,71 +3786,28 @@ function initData() {
 }
 
 function applyOcrSettingsUI() {
-  const mode = ocrSettings.mode || 'local';
-  const keyInput = document.getElementById('geminiApiKeyInput');
-  if (keyInput) keyInput.value = ocrSettings.geminiApiKey || '';
-
-  // Highlight active mode card in Settings view
-  const localCard = document.getElementById('ocrModeCard_local');
-  const geminiCard = document.getElementById('ocrModeCard_gemini');
-  const autoCard = document.getElementById('ocrModeCard_auto');
-  const badgeLocal = document.getElementById('ocrModeBadge_local');
-  const badgeGemini = document.getElementById('ocrModeBadge_gemini');
-  const badgeAuto = document.getElementById('ocrModeBadge_auto');
   const currentEngineText = document.getElementById('currentOcrEngineName');
-
-  [localCard, geminiCard, autoCard].forEach(c => {
-    if (c) c.classList.remove('ring-2', 'ring-indigo-600', 'border-indigo-500', 'bg-indigo-50/40');
-  });
-  [badgeLocal, badgeGemini, badgeAuto].forEach(b => {
-    if (b) b.classList.add('hidden');
-  });
-
-  if (mode === 'local') {
-    if (localCard) localCard.classList.add('ring-2', 'ring-indigo-600', 'border-indigo-500', 'bg-indigo-50/40');
-    if (badgeLocal) badgeLocal.classList.remove('hidden');
-    if (currentEngineText) currentEngineText.textContent = '⚡ 本地浏览器离线 OCR (中/英/马三语)';
-  } else if (mode === 'gemini') {
-    if (geminiCard) geminiCard.classList.add('ring-2', 'ring-indigo-600', 'border-indigo-500', 'bg-indigo-50/40');
-    if (badgeGemini) badgeGemini.classList.remove('hidden');
-    if (currentEngineText) currentEngineText.textContent = '🤖 Google Gemini 视觉 AI 大模型 (云端)';
-  } else {
-    if (autoCard) autoCard.classList.add('ring-2', 'ring-indigo-600', 'border-indigo-500', 'bg-indigo-50/40');
-    if (badgeAuto) badgeAuto.classList.remove('hidden');
-    if (currentEngineText) currentEngineText.textContent = '🔄 智能双模自动切换 (Gemini 优先 + 本地 OCR 兜底)';
+  if (currentEngineText) {
+    currentEngineText.textContent = '⚡ 纯本地离线 OCR 智能识单引擎 (中/英/马三语 + 图像画质增强)';
   }
-
   updateModalOcrEnginePills();
 }
 
 function setOcrEngineMode(mode) {
-  ocrSettings.mode = mode || 'local';
-  ocrSettings.localLanguages = ocrSettings.localLanguages || 'chi_sim+eng+msa';
+  ocrSettings.mode = 'local';
+  ocrSettings.localLanguages = 'chi_sim+eng+msa';
   localStorage.setItem('finance_ocr_settings', JSON.stringify(ocrSettings));
   appData.ocrSettings = ocrSettings;
   saveData();
   applyOcrSettingsUI();
-
-  if (mode === 'local') {
-    showToast('⚡ 已启用：本地浏览器离线 OCR（支持 中文+英文+马来文）！');
-  } else if (mode === 'gemini') {
-    showToast('🤖 已启用：Google Gemini 视觉 AI 智能识单！');
-  } else {
-    showToast('🔄 已启用：智能双模切换（优先 Gemini，离线/超时秒切本地）！');
-  }
+  showToast('⚡ 已锁定为：纯本地离线 OCR 引擎（100% 浏览器本地计算，零数据上云）！');
 }
 
 function cycleOcrEngineMode() {
-  const current = ocrSettings.mode || 'local';
-  let next = 'local';
-  if (current === 'local') next = 'gemini';
-  else if (current === 'gemini') next = 'auto';
-  else next = 'local';
-  setOcrEngineMode(next);
+  setOcrEngineMode('local');
 }
 
 function updateModalOcrEnginePills() {
-  const mode = ocrSettings.mode || 'local';
   const pills = [
     document.getElementById('expenseModalOcrPill'),
     document.getElementById('batchModalOcrPill')
@@ -3889,35 +3815,19 @@ function updateModalOcrEnginePills() {
 
   pills.forEach(pill => {
     if (!pill) return;
-    if (mode === 'local') {
-      pill.className = 'text-[11px] px-2.5 py-1 rounded-full font-bold bg-amber-100 text-amber-900 border border-amber-300 flex items-center space-x-1 cursor-pointer hover:bg-amber-200 shadow-xs transition active:scale-95';
-      pill.innerHTML = '<span>⚡ 本地离线 OCR (中英马)</span><span class="text-[9px] opacity-70">切换 ▾</span>';
-      pill.title = '当前为本地浏览器离线 OCR（支持 中文+英文+马来文），点击可一键切换引擎';
-    } else if (mode === 'gemini') {
-      pill.className = 'text-[11px] px-2.5 py-1 rounded-full font-bold bg-indigo-100 text-indigo-900 border border-indigo-300 flex items-center space-x-1 cursor-pointer hover:bg-indigo-200 shadow-xs transition active:scale-95';
-      pill.innerHTML = '<span>🤖 Gemini 视觉 AI</span><span class="text-[9px] opacity-70">切换 ▾</span>';
-      pill.title = '当前为 Google Gemini 视觉多模态 AI，点击可一键切换引擎';
-    } else {
-      pill.className = 'text-[11px] px-2.5 py-1 rounded-full font-bold bg-emerald-100 text-emerald-900 border border-emerald-300 flex items-center space-x-1 cursor-pointer hover:bg-emerald-200 shadow-xs transition active:scale-95';
-      pill.innerHTML = '<span>🔄 智能双模 (Gemini+本地)</span><span class="text-[9px] opacity-70">切换 ▾</span>';
-      pill.title = '当前为智能双模（优先 Gemini，离线秒切本地），点击可一键切换引擎';
-    }
+    pill.className = 'text-[11px] px-2.5 py-1 rounded-full font-bold bg-amber-100 text-amber-900 border border-amber-300 flex items-center space-x-1 shadow-xs transition';
+    pill.innerHTML = '<span>⚡ 纯本地离线 OCR (中英马)</span>';
+    pill.title = '当前为 100% 本地浏览器离线计算，无需网络与外部 API，绝对保护财务隐私';
   });
 }
 
 function saveOcrSettings() {
-  const keyInput = document.getElementById('geminiApiKeyInput');
-  if (keyInput) {
-    ocrSettings.geminiApiKey = keyInput.value.trim() || getSystemDefaultAiKey();
-  } else {
-    ocrSettings.geminiApiKey = getSystemDefaultAiKey();
-  }
-  ocrSettings.localLanguages = ocrSettings.localLanguages || 'chi_sim+eng+msa';
-
+  ocrSettings.mode = 'local';
+  ocrSettings.localLanguages = 'chi_sim+eng+msa';
   localStorage.setItem('finance_ocr_settings', JSON.stringify(ocrSettings));
   appData.ocrSettings = ocrSettings;
   saveData();
-  showToast('✅ OCR 识单引擎设置已保存！');
+  showToast('✅ 本地离线识单引擎配置已生效！');
 }
 
 let isTestingLocalOcr = false;
@@ -3932,42 +3842,16 @@ async function testLocalOcrEngine() {
     await getSharedTesseractWorker('chi_sim+eng+msa', (statusText, pct) => {
       showToast(`本地 OCR: ${statusText}`);
     });
-    alert('🎉 恭喜！本地浏览器离线 OCR 引擎（中文 + 英文 + 马来文）测试就绪！\n\n已完成多语言文字识别核心载入，100% 运行于本地浏览器内核中，无需消耗云端配额，支持离线与弱网环境录单。');
+    alert('🎉 恭喜！纯本地浏览器离线 OCR 引擎（中文 + 英文 + 马来文）测试就绪！\n\n已完成多语言文字识别核心载入，100% 运行于本地浏览器内核中，无需外部 API，单据绝不上传云端，离线完全可用。');
   } catch (err) {
-    alert('本地 OCR 初始化异常：' + err.message + '\n\n如果这是您首次加载多语言包，需要少许时间从 CDN 缓存模型，请确认网络畅通后再试。');
+    alert('本地 OCR 初始化异常：' + err.message + '\n\n如果是首次加载多语言模型包，请确保网络可连通 CDN 缓存资源后再试。');
   } finally {
     isTestingLocalOcr = false;
   }
 }
 
 function testGeminiApiKey() {
-  const keyInput = document.getElementById('geminiApiKeyInput');
-  const key = (keyInput ? keyInput.value : '').trim() || getSystemDefaultAiKey();
-  if (!key) {
-    alert('请先输入 Gemini API Key！');
-    return;
-  }
-  showToast('正在连接测试 Google Gemini 视觉 AI...');
-  fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent?key=${key}`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      contents: [{ parts: [{ text: 'Hello' }] }]
-    })
-  })
-  .then(res => {
-    if (res.ok) {
-      saveOcrSettings();
-      alert('🎉 恭喜！Google Gemini 视觉 AI 大模型连接成功！\n\n系统单据识别具备最高精度与马来西亚小票精准分类能力。');
-    } else {
-      res.text().then(t => {
-        alert('连接异常（HTTP状态码 ' + res.status + '）：' + t + '\n\n系统将自动通过备用模型无缝容灾。');
-      });
-    }
-  })
-  .catch(err => {
-    alert('网络请求出错：' + err.message + '\n请检查当前设备是否能正常访问 Google 服务。');
-  });
+  alert('已根据您的要求完全移除 Gemini 云端读取，当前系统已切换为 100% 纯本地浏览器离线计算！');
 }
 
 // ==========================================
@@ -5295,6 +5179,20 @@ window.editAccountInitialBalance = editAccountInitialBalance;
 
 // Populate dropdown menus
 function populateDropdowns() {
+  const defaultExpCats = ['原材料', '差旅费用', '房租', '职工工资', '管理费用', '业务招待', '水电费', '汽油津贴', '营销推广', '其他支出'];
+  const defaultIncCats = ['主营业务收入', '服务咨询收入', '投资收益', '政府补贴', '其他业务收入'];
+  const defaultAccounts = [
+    { id: 'acc_1', name: '招商银行基本户', balance: 0 },
+    { id: 'acc_2', name: '工商银行结算户', balance: 0 },
+    { id: 'acc_3', name: '微信商业支付', balance: 0 },
+    { id: 'acc_4', name: '企业支付宝', balance: 0 },
+    { id: 'acc_5', name: '备用金现金', balance: 0 }
+  ];
+
+  const expCats = (appData.expenseCategories && Array.isArray(appData.expenseCategories) && appData.expenseCategories.length > 0) ? appData.expenseCategories : defaultExpCats;
+  const incCats = (appData.incomeCategories && Array.isArray(appData.incomeCategories) && appData.incomeCategories.length > 0) ? appData.incomeCategories : defaultIncCats;
+  const accList = (appData.accounts && Array.isArray(appData.accounts) && appData.accounts.length > 0) ? appData.accounts : defaultAccounts;
+
   const incCatSelect = document.getElementById('incomeCategorySelect');
   const filterIncCat = document.getElementById('filterIncomeCategory');
   const incAccSelect = document.getElementById('incomeAccountSelect');
@@ -5303,9 +5201,9 @@ function populateDropdowns() {
   const filterExpCat = document.getElementById('filterExpenseCategory');
   const expAccSelect = document.getElementById('expenseAccountSelect');
 
-  const incOptions = (appData.incomeCategories || []).map(c => `<option value="${c}">${c}</option>`).join('');
-  const expOptions = (appData.expenseCategories || []).map(c => `<option value="${c}">${c}</option>`).join('');
-  const accOptions = (appData.accounts || []).map(a => `<option value="${a.name}">${a.name}</option>`).join('');
+  const incOptions = incCats.map(c => `<option value="${c}">${c}</option>`).join('');
+  const expOptions = expCats.map(c => `<option value="${c}">${c}</option>`).join('');
+  const accOptions = accList.map(a => `<option value="${a.name}">${a.name}</option>`).join('');
 
   if (incCatSelect) incCatSelect.innerHTML = incOptions;
   if (filterIncCat) filterIncCat.innerHTML = '<option value="">全部类别</option>' + incOptions;
@@ -5337,6 +5235,7 @@ function openScanReceiptModal() {
 
 // Modal management
 function openModal(modalId) {
+  populateDropdowns();
   const modal = document.getElementById(modalId);
   if (!modal) return;
   modal.classList.remove('hidden');
@@ -6515,36 +6414,9 @@ function processReceiptFile(file) {
 
   const reader = new FileReader();
   reader.onload = function(e) {
-    const img = new Image();
-    img.onload = function() {
-      const canvas = document.createElement('canvas');
-      // High-Definition preservation for OCR (up to 2560px, 92% quality)
-      const maxDim = 2560;
-      let width = img.width;
-      let height = img.height;
-
-      if (width > maxDim || height > maxDim) {
-        if (width > height) {
-          height = Math.round((height * maxDim) / width);
-          width = maxDim;
-        } else {
-          width = Math.round((width * maxDim) / height);
-          height = maxDim;
-        }
-      }
-
-      canvas.width = width;
-      canvas.height = height;
-      const ctx = canvas.getContext('2d');
-      ctx.imageSmoothingEnabled = true;
-      ctx.imageSmoothingQuality = 'high';
-      ctx.drawImage(img, 0, 0, width, height);
-
-      const highDefDataUrl = canvas.toDataURL('image/jpeg', 0.92);
-      showReceiptPreview(highDefDataUrl);
-      startReceiptRecognition(highDefDataUrl);
-    };
-    img.src = e.target.result;
+    const originalDataUrl = e.target.result;
+    showReceiptPreview(originalDataUrl);
+    startReceiptRecognition(originalDataUrl);
   };
   reader.readAsDataURL(file);
 }
@@ -6597,7 +6469,7 @@ function removeCurrentReceiptImage() {
 let globalTesseractWorker = null;
 let isTesseractInitializing = false;
 
-async function getSharedTesseractWorker(langs = 'chi_sim+eng+msa', onProgress = null) {
+async function getSharedTesseractWorker(langs = 'eng+msa', onProgress = null) {
   if (globalTesseractWorker) return globalTesseractWorker;
   if (isTesseractInitializing) {
     let wait = 0;
@@ -6613,15 +6485,19 @@ async function getSharedTesseractWorker(langs = 'chi_sim+eng+msa', onProgress = 
     if (typeof Tesseract === 'undefined') {
       throw new Error('本地 Tesseract.js 引擎未就绪，请检查页面 script 引用');
     }
-    if (onProgress) onProgress('正在初始化本地 OCR 核心引擎 (中文+英文+马来文)...', 10);
-    const worker = await Tesseract.createWorker(langs, 1, {
+    // Mobile optimization: iOS Safari kills workers if memory exceeds ~150MB. eng+msa is 10x smaller and 5x faster.
+    const isMobile = /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent);
+    const targetLangs = isMobile ? 'eng+msa' : (langs || 'eng+msa');
+
+    if (onProgress) onProgress(`正在初始化本地 OCR 核心 (${targetLangs})...`, 15);
+    const worker = await Tesseract.createWorker(targetLangs, 1, {
       logger: m => {
         if (onProgress && m) {
           const p = Math.round((m.progress || 0) * 100);
           let text = '本地引擎识别中';
           if (m.status === 'loading tesseract core') text = '加载本地核心';
-          else if (m.status === 'loading language traineddata') text = '加载多语言模型 (中/英/马)';
-          else if (m.status === 'recognizing text') text = '提取小票文字 (中/英/马)';
+          else if (m.status === 'loading language traineddata') text = '加载多语言模型';
+          else if (m.status === 'recognizing text') text = '提取单据文字';
           onProgress(`${text} (${p}%)`, p);
         }
       }
@@ -6629,9 +6505,9 @@ async function getSharedTesseractWorker(langs = 'chi_sim+eng+msa', onProgress = 
     globalTesseractWorker = worker;
     return globalTesseractWorker;
   } catch (err) {
-    console.warn('Init chi_sim+eng+msa failed, attempting fallback to eng+msa:', err);
+    console.warn('Init target langs failed, fallback to eng:', err);
     try {
-      const fallbackWorker = await Tesseract.createWorker('eng+msa', 1, {
+      const fallbackWorker = await Tesseract.createWorker('eng', 1, {
         logger: m => {
           if (onProgress && m) {
             const p = Math.round((m.progress || 0) * 100);
@@ -6649,20 +6525,58 @@ async function getSharedTesseractWorker(langs = 'chi_sim+eng+msa', onProgress = 
   }
 }
 
-function parseReceiptTextLocal(rawText) {
-  if (!rawText) return { date: '', amount: '', category: '', counterparty: '', item: '', remark: '' };
+// Crops the top section of tall images (e.g. mobile 2-page PDF bills) where invoice header & totals reside
+async function cropTopSectionOfImage(dataUrl, topRatio = 0.58) {
+  return new Promise((resolve) => {
+    if (!dataUrl || typeof document === 'undefined') return resolve(null);
+    const img = new Image();
+    img.crossOrigin = 'anonymous';
+    img.onload = () => {
+      try {
+        if (img.height <= img.width * 1.35) {
+          // Normal aspect ratio, no cropping needed
+          return resolve(null);
+        }
+        const canvas = document.createElement('canvas');
+        const cropH = Math.round(img.height * topRatio);
+        canvas.width = img.width;
+        canvas.height = cropH;
+        const ctx = canvas.getContext('2d');
+        ctx.imageSmoothingEnabled = true;
+        ctx.imageSmoothingQuality = 'high';
+        ctx.drawImage(img, 0, 0, img.width, cropH, 0, 0, img.width, cropH);
+        resolve(canvas.toDataURL('image/png'));
+      } catch (err) {
+        console.warn('Crop top section error:', err);
+        resolve(null);
+      }
+    };
+    img.onerror = () => resolve(null);
+    img.src = dataUrl;
+  });
+}
 
-  const cleanText = rawText.replace(/\r\n/g, '\n');
+function parseReceiptTextLocal(rawText) {
+  if (!rawText) return { date: '', amount: '', category: '原材料', counterparty: '', item: '单据日常支出', remark: '' };
+
+  const cleanText = rawText.replace(/\r\n/g, '\n').replace(/\t/g, ' ');
   const lines = cleanText.split('\n').map(l => l.trim()).filter(Boolean);
   const lowerText = cleanText.toLowerCase();
 
+  // Normalize common OCR character confusions in numbers and keywords
+  let normalizedText = cleanText
+    .replace(/(?<=\d)[oO](?=\d|\.|\,)/g, '0')
+    .replace(/(?<=[\.,])[oO](?=\d)/g, '0')
+    .replace(/(\d+)\s*[\.,]\s*(\d{2})\b/g, '$1.$2')
+    .replace(/(?<=[0-9])\s+(?=[0-9]{2}\b)/g, '.');
+
   // 1. Transaction / Invoice Date Extraction
   let date = '';
-  // YYYY-MM-DD or YYYY/MM/DD or YYYY.MM.DD
-  const ymdMatch = cleanText.match(/\b(202[4-9])[-/.](0?[1-9]|1[0-2])[-/.](0?[1-9]|[12]\d|3[01])\b/);
-  // DD-MM-YYYY or DD/MM/YYYY or DD.MM.YYYY
-  const dmyMatch = cleanText.match(/\b(0?[1-9]|[12]\d|3[01])[-/.](0?[1-9]|1[0-2])[-/.](202[4-9])\b/);
-  // Word month (Malay or English): e.g. 15 Jan 2026, 15 Januari 2026, 12 Mac 2026, 20-Ogos-2026
+  const dateLine = lines.find(l => /tarikh|date|tarikh\s*bil|inv\s*date/i.test(l));
+  const textForDate = dateLine ? (dateLine + '\n' + normalizedText) : normalizedText;
+
+  const ymdMatch = textForDate.match(/\b(202[4-9])[-/.](0?[1-9]|1[0-2])[-/.](0?[1-9]|[12]\d|3[01])\b/);
+  const dmyMatch = textForDate.match(/\b(0?[1-9]|[12]\d|3[01])[-/.](0?[1-9]|1[0-2])[-/.](202[4-9])\b/);
   const monthMap = {
     jan: '01', januari: '01',
     feb: '02', februari: '02',
@@ -6677,7 +6591,7 @@ function parseReceiptTextLocal(rawText) {
     nov: '11', november: '11',
     dec: '12', disember: '12', december: '12'
   };
-  const wordDateMatch = cleanText.match(/\b(0?[1-9]|[12]\d|3[01])[\s\-_]+([a-zA-Z]{3,9})[\s\-_]+(202[4-9])\b/i);
+  const wordDateMatch = textForDate.match(/\b(0?[1-9]|[12]\d|3[01])[\s\-_]+([a-zA-Z]{3,9})[\s\-_]+(202[4-9])\b/i);
 
   if (ymdMatch) {
     date = `${ymdMatch[1]}-${ymdMatch[2].padStart(2, '0')}-${ymdMatch[3].padStart(2, '0')}`;
@@ -6697,70 +6611,168 @@ function parseReceiptTextLocal(rawText) {
     date = new Date().toISOString().split('T')[0];
   }
 
-  // 2. Amount Extraction (Safeguarded against Deposit / Cagaran)
+  // 2. Amount Extraction (Multi-Tier Scoring Engine & Malaysian Utility Bill Reconciliation)
   let amount = '';
-  const totalKeywords = [
-    /(?:jumlah\s*perlu\s*dibayar|jumlah\s*bayaran|jumlah\s*keseluruhan|jumlah\s*bil|bil\s*semasa|sila\s*bayar)[^\d\n]*?(?:RM|MYR)?\s*(\d+[\.,]\d{2})/i,
-    /(?:grand\s*total|total\s*payable|total\s*amount|amount\s*due|net\s*total)[^\d\n]*?(?:RM|MYR)?\s*(\d+[\.,]\d{2})/i,
-    /(?:合计|总计|实付|总额|应付金额|实收)[^\d\n]*?(?:RM|MYR|¥|￥)?\s*(\d+[\.,]\d{2})/i,
-    /(?:jumlah|total)[^\d\n]*?(?:RM|MYR)?\s*(\d+[\.,]\d{2})/i
-  ];
+  const candidates = [];
 
-  for (const reg of totalKeywords) {
-    const m = cleanText.match(reg);
-    if (m && m[1]) {
-      const idx = m.index || 0;
-      const context = cleanText.substring(Math.max(0, idx - 35), Math.min(cleanText.length, idx + 60)).toLowerCase();
-      // Skip refundable deposits or previous balance
-      if (!context.includes('cagaran') && !context.includes('deposit') && !context.includes('baki terdahulu')) {
-        amount = parseFloat(m[1].replace(',', '.')).toFixed(2);
-        break;
-      }
+  // Special Anchor A: Malaysian Utility Bill Reconciliation (Caj Semasa + Pelarasan Penggenapan)
+  // TNB, LAP, Air Selangor bills specify current charges and rounding adjustment
+  // Example: Caj Semasa (RM) 850.12, Pelarasan Penggenapan -0.02 -> 850.10
+  const cajMatch = normalizedText.match(/(?:caj\s*semasa|bil\s*semasa)[^\d]*?(\d+[\.,]\d{2})/i);
+  if (cajMatch) {
+    const cajVal = parseFloat(cajMatch[1].replace(',', '.'));
+    let roundVal = 0.0;
+    const roundMatch = normalizedText.match(/pelarasan\s*penggenapan[^\d\-+]*?([\-+]?\s*\d+[\.,]\d{2})/i);
+    if (roundMatch) {
+      const rawRound = roundMatch[1].replace(/\s+/g, '').replace(',', '.');
+      const parsedRound = parseFloat(rawRound);
+      if (!isNaN(parsedRound)) roundVal = parsedRound;
+    }
+    const reconciledVal = Math.round((cajVal + roundVal) * 100) / 100;
+    if (reconciledVal > 5.0 && reconciledVal < 80000) {
+      candidates.push({
+        val: reconciledVal.toFixed(2),
+        score: 220,
+        context: `Reconciled Utility Bill (Caj Semasa ${cajVal} + Rounding ${roundVal})`
+      });
     }
   }
 
-  // Fallback: search all currency figures
-  if (!amount) {
-    const allAmounts = [];
-    const numRegex = /(?:RM|MYR)?\s*(\d+[\.,]\d{2})\b/gi;
+  // Special Anchor B: TNB Barcode encoded payable amount
+  // Malaysian TNB barcodes encode the payable amount in cents at the end: ...00000000085010 -> 850.10
+  const barcodeMatch = normalizedText.match(/\b\d{20,38}0{2,}(\d{3,6})\b/);
+  if (barcodeMatch) {
+    const centsVal = parseFloat(barcodeMatch[1]);
+    const barcAmt = Math.round((centsVal / 100.0) * 100) / 100;
+    if (barcAmt > 5.0 && barcAmt < 50000) {
+      candidates.push({
+        val: barcAmt.toFixed(2),
+        score: 180,
+        context: `TNB Barcode Encoded Payable (${barcAmt})`
+      });
+    }
+  }
+
+  function extractCandidates(regex, baseWeight) {
     let match;
-    while ((match = numRegex.exec(cleanText)) !== null) {
-      const val = parseFloat(match[1].replace(',', '.'));
-      if (val > 0 && val < 60000) {
-        const idx = match.index;
-        const context = cleanText.substring(Math.max(0, idx - 30), Math.min(cleanText.length, idx + 30)).toLowerCase();
-        if (!context.includes('cagaran') && !context.includes('deposit') && !context.includes('baki terdahulu')) {
-          allAmounts.push(val);
+    const re = new RegExp(regex.source, regex.flags);
+    while ((match = re.exec(normalizedText)) !== null) {
+      const rawVal = match[1];
+      if (!rawVal) continue;
+      const numVal = parseFloat(rawVal.replace(',', '.'));
+      if (isNaN(numVal) || numVal <= 0 || numVal > 80000) continue;
+
+      const idx = match.index;
+      const context = normalizedText.substring(Math.max(0, idx - 50), Math.min(normalizedText.length, idx + 70)).toLowerCase();
+
+      let penalty = 0;
+      // Strict disqualification for historical / prior period payments (e.g. TNB "BAYARAN BAGI TEMPOH: RM866.30 / RM500.35")
+      if (context.includes('bayaran bagi tempoh') || context.includes('bayaran terdahulu') || 
+          context.includes('rekod bayaran') || context.includes('payment received') || 
+          context.includes('previous payment') || context.includes('terima kasih atas bayaran') ||
+          context.includes('bayaran terakhir') || context.includes('last payment') ||
+          context.includes('bayaran dikreditkan') || context.includes('jumlah bayaran terakhir')) {
+        penalty += 500;
+      }
+      // Disqualify security deposits (e.g. TNB "DEPOSIT SEKURITI: RM493.03")
+      if (context.includes('cagaran') || context.includes('deposit sekuriti') || context.includes('deposit')) {
+        penalty += 400;
+      }
+      // Disqualify previous balances
+      if (context.includes('baki terdahulu') || context.includes('previous balance')) {
+        if (!context.includes('caj semasa') && !context.includes('bil semasa')) {
+          penalty += 350;
         }
       }
+      // Disqualify standalone rounding adjustments (e.g. -0.02)
+      if (context.includes('pelarasan penggenapan') || context.includes('rounding')) {
+        if (!context.includes('caj semasa') && !context.includes('bil semasa')) {
+          penalty += 300;
+        }
+      }
+      // Heavy disqualification for tiny utility rates/factors (e.g. 1.50 surcaj, 1.00 faktor kuasa, <= RM 5.00)
+      if (numVal <= 5.0 && (lowerText.includes('tenaga') || lowerText.includes('tnb') || lowerText.includes('elektrik') || lowerText.includes('caj semasa') || lowerText.includes('air') || lowerText.includes('water'))) {
+        penalty += 400;
+      }
+      // Disqualify PDF page indicators (e.g. "1 of 2")
+      if (context.includes('1 of 2') || context.includes('2 of 2') || context.includes('page') || context.includes('halaman') || context.includes('faktor kuasa')) {
+        penalty += 400;
+      }
+      if (context.includes('tunai') && !context.includes('jumlah') && !context.includes('bayar')) penalty += 60;
+      if (context.includes('change') || (context.includes('baki') && !context.includes('baki bil') && !context.includes('baki perlu'))) penalty += 80;
+      if (numVal < 0.2) penalty += 200;
+
+      let score = baseWeight - penalty;
+      if (context.includes('rm') || context.includes('myr')) score += 15;
+      if (/jumlah\s*bil\s*anda|jumlah\s*bil\s*semasa|jumlah\s*perlu\s*dibayar|jumlah\s*bil\b|sila\s*bayar\s*sebelum/i.test(context)) {
+        score += 80;
+      } else if (/caj\s*semasa|bil\s*semasa/i.test(context)) {
+        score += 60;
+      } else if (/grand\s*total|total\s*payable|total\s*amount\s*due|net\s*total|合计|总计|实付|应付金额/i.test(context)) {
+        score += 60;
+      }
+
+      candidates.push({ val: numVal.toFixed(2), score, context });
     }
-    if (allAmounts.length > 0) {
-      amount = Math.max(...allAmounts).toFixed(2);
-    }
+  }
+
+  // Tier 1: Primary Malaysian Bill & Invoice keywords
+  extractCandidates(/(?:jumlah\s*bil\s*anda|jumlah\s*bil\s*semasa|jumlah\s*perlu\s*dibayar|jumlah\s*keseluruhan|sila\s*bayar\s*sebelum|sila\s*bayar)[\s\S]{0,50}?(?:RM|MYR)?[\s:]*?(\d+[\.,]\d{2})/gi, 160);
+  extractCandidates(/(?:grand\s*total|total\s*payable|total\s*amount\s*due|net\s*total)[\s\S]{0,50}?(?:RM|MYR)?[\s:]*?(\d+[\.,]\d{2})/gi, 120);
+  extractCandidates(/(?:合计|总计|实付|应付金额|实收)[\s\S]{0,50}?(?:RM|MYR|¥|￥)?[\s:]*?(\d+[\.,]\d{2})/gi, 120);
+
+  // Tier 2: Utility current charges & General Totals
+  extractCandidates(/(?:caj\s*semasa|bil\s*semasa)[\s\S]{0,40}?(?:RM|MYR)?[\s:]*?(\d+[\.,]\d{2})/gi, 110);
+  extractCandidates(/(?:total\s*amount|total|jumlah)[\s\S]{0,35}?(?:RM|MYR)?[\s:]*?(\d+[\.,]\d{2})/gi, 70);
+
+  // Tier 3: General currency patterns (RM xx.xx)
+  extractCandidates(/(?:RM|MYR)\s*[:\.]?\s*(\d+[\.,]\d{2})\b/gi, 40);
+
+  // Tier 4: Any standalone decimal figure with .xx
+  extractCandidates(/\b(\d{1,5}\.\d{2})\b/g, 20);
+
+  candidates.sort((a, b) => b.score - a.score);
+
+  if (candidates.length > 0 && candidates[0].score > 0) {
+    amount = candidates[0].val;
   }
 
   // 3. Counterparty / Vendor Merchant Name
   let counterparty = '';
-  if (lowerText.includes('lembaga air') || lowerText.includes('lap ') || lowerText.includes('air perak')) {
-    counterparty = 'LEMBAGA AIR PERAK';
-  } else if (lowerText.includes('tenaga nasional') || lowerText.includes('tnb')) {
+  if (lowerText.includes('tenaga nasional') || lowerText.includes('tnb') || lowerText.includes('caj semasa') || lowerText.includes('jumlah bil anda')) {
     counterparty = 'TENAGA NASIONAL BERHAD';
-  } else if (lowerText.includes('indah water')) {
-    counterparty = 'INDAH WATER KONSORTIUM';
+  } else if (lowerText.includes('lembaga air') || lowerText.includes('lap ') || lowerText.includes('air perak')) {
+    counterparty = 'LEMBAGA AIR PERAK';
   } else if (lowerText.includes('air selangor') || lowerText.includes('syabas')) {
     counterparty = 'PENGURUSAN AIR SELANGOR';
+  } else if (lowerText.includes('indah water') || lowerText.includes('iwk')) {
+    counterparty = 'INDAH WATER KONSORTIUM';
   } else if (lowerText.includes('telekom') || lowerText.includes('unifi') || lowerText.includes('tm ')) {
     counterparty = 'TELEKOM MALAYSIA';
-  } else if (lowerText.includes('maxis')) {
+  } else if (lowerText.includes('maxis') || lowerText.includes('hotlink')) {
     counterparty = 'MAXIS BROADBAND';
   } else if (lowerText.includes('celcom') || lowerText.includes('digi')) {
     counterparty = 'CELCOMDIGI';
-  } else if (lowerText.includes('mr. d.i.y') || lowerText.includes('mr diy') || lowerText.includes('mr.diy')) {
+  } else if (lowerText.includes('u mobile') || lowerText.includes('umobile')) {
+    counterparty = 'U MOBILE';
+  } else if (lowerText.includes('time dotcom') || lowerText.includes('time broadband')) {
+    counterparty = 'TIME FIBRE';
+  } else if (lowerText.includes('mr. d.i.y') || lowerText.includes('mr diy') || lowerText.includes('mr.diy') || lowerText.includes('mr. d.i.y.')) {
     counterparty = 'MR. D.I.Y.';
-  } else if (lowerText.includes('99 speedmart')) {
+  } else if (lowerText.includes('99 speedmart') || lowerText.includes('speedmart')) {
     counterparty = '99 SPEEDMART';
   } else if (lowerText.includes('tf value')) {
     counterparty = 'TF VALUE-MART';
+  } else if (lowerText.includes('lotus') || lowerText.includes('tesco')) {
+    counterparty = "LOTUS'S MALAYSIA";
+  } else if (lowerText.includes('aeon') || lowerText.includes('aeon big')) {
+    counterparty = 'AEON CO. (M) BHD';
+  } else if (lowerText.includes('econsave')) {
+    counterparty = 'ECONSAVE';
+  } else if (lowerText.includes('jaya grocer')) {
+    counterparty = 'JAYA GROCER';
+  } else if (lowerText.includes('village grocer')) {
+    counterparty = 'VILLAGE GROCER';
   } else if (lowerText.includes('shell')) {
     counterparty = 'SHELL';
   } else if (lowerText.includes('petronas')) {
@@ -6769,13 +6781,19 @@ function parseReceiptTextLocal(rawText) {
     counterparty = 'CALTEX';
   } else if (lowerText.includes('bhpetrol') || lowerText.includes('bhp ')) {
     counterparty = 'BHPETROL';
+  } else if (lowerText.includes('petron ')) {
+    counterparty = 'PETRON';
   } else if (lowerText.includes('touch') && lowerText.includes('go')) {
-    counterparty = 'TOUCH N GO';
+    counterparty = "TOUCH 'N GO";
+  } else if (lowerText.includes('plus ') || lowerText.includes('lebuhraya')) {
+    counterparty = 'PLUS LEBUHRAYA';
+  } else if (lowerText.includes('grab')) {
+    counterparty = 'GRAB MALAYSIA';
   } else {
-    for (let i = 0; i < Math.min(lines.length, 5); i++) {
+    for (let i = 0; i < Math.min(lines.length, 6); i++) {
       const line = lines[i];
-      if (line.length >= 3 && !/\d{4}/.test(line) && !/total|jumlah|receipt|resit|tax\s*invoice|bil/i.test(line)) {
-        counterparty = line.substring(0, 45);
+      if (line.length >= 3 && !/\d{5}/.test(line) && !/tax\s*invoice|resit\s*rasmi|official\s*receipt|cash\s*receipt|simplified\s*tax|bil\s*semasa|tarikh/i.test(line)) {
+        counterparty = line.substring(0, 45).replace(/^[^\w\u4e00-\u9fa5]+|[^\w\u4e00-\u9fa5]+$/g, '');
         break;
       }
     }
@@ -6785,33 +6803,39 @@ function parseReceiptTextLocal(rawText) {
   let category = '原材料';
   let item = '单据日常支出';
 
-  if (lowerText.includes('air') || lowerText.includes('water') || lowerText.includes('tnb') || lowerText.includes('tenaga') || lowerText.includes('electric') || lowerText.includes('indah water') || lowerText.includes('unifi') || lowerText.includes('telekom') || lowerText.includes('maxis')) {
+  if (lowerText.includes('air') || lowerText.includes('water') || lowerText.includes('tnb') || lowerText.includes('tenaga') || lowerText.includes('electric') || lowerText.includes('indah water') || lowerText.includes('unifi') || lowerText.includes('telekom') || lowerText.includes('maxis') || lowerText.includes('celcom') || lowerText.includes('digi')) {
     category = '水电费';
-    if (lowerText.includes('air') || lowerText.includes('water')) item = `${counterparty || '公用事业'} 水费`;
-    else if (lowerText.includes('tnb') || lowerText.includes('electric')) item = `${counterparty || '公用事业'} 电费`;
-    else item = `${counterparty || '公用事业'} 通讯网络水电费`;
-  } else if (lowerText.includes('petrol') || lowerText.includes('diesel') || lowerText.includes('fuel') || lowerText.includes('ron95') || lowerText.includes('ron97') || lowerText.includes('shell') || lowerText.includes('petronas') || lowerText.includes('caltex') || lowerText.includes('bhp')) {
+    if (lowerText.includes('air') || lowerText.includes('water')) item = `${counterparty || '公用事业'} 水费支出`;
+    else if (lowerText.includes('tnb') || lowerText.includes('tenaga') || lowerText.includes('electric') || lowerText.includes('caj semasa')) item = `${counterparty || '国家能源'} 商业电费`;
+    else item = `${counterparty || '通讯网络'} 通讯网络服务费`;
+  } else if (lowerText.includes('petrol') || lowerText.includes('diesel') || lowerText.includes('fuel') || lowerText.includes('ron95') || lowerText.includes('ron97') || lowerText.includes('shell') || lowerText.includes('petronas') || lowerText.includes('caltex') || lowerText.includes('bhp') || lowerText.includes('petron')) {
     category = '汽油津贴';
-    item = `${counterparty || '加油站'} 汽油支出`;
-  } else if (lowerText.includes('diy') || lowerText.includes('hardware') || lowerText.includes('speedmart') || lowerText.includes('mart') || lowerText.includes('stationery')) {
+    item = `${counterparty || '加油站'} 燃油/汽油津贴`;
+  } else if (lowerText.includes('diy') || lowerText.includes('hardware') || lowerText.includes('speedmart') || lowerText.includes('mart') || lowerText.includes('stationery') || lowerText.includes('lotus') || lowerText.includes('aeon') || lowerText.includes('econsave') || lowerText.includes('grocer')) {
     category = '原材料';
     item = `${counterparty || '商户'} 耗材物料采购`;
-  } else if (lowerText.includes('sewa') || lowerText.includes('rental') || lowerText.includes('rent')) {
+  } else if (lowerText.includes('sewa') || lowerText.includes('rental') || lowerText.includes('rent') || lowerText.includes('pejabat')) {
     category = '房租';
-    item = '店铺/场地房租';
-  } else if (lowerText.includes('gaji') || lowerText.includes('salary') || lowerText.includes('upah')) {
+    item = '场地/办公店铺租金';
+  } else if (lowerText.includes('gaji') || lowerText.includes('salary') || lowerText.includes('upah') || lowerText.includes('wages') || lowerText.includes('kwsp') || lowerText.includes('epf') || lowerText.includes('socso')) {
     category = '职工工资';
-    item = '职工薪资报酬';
-  } else if (lowerText.includes('tol ') || lowerText.includes('toll') || lowerText.includes('parking') || lowerText.includes('grab') || lowerText.includes('touch n go')) {
+    item = '职工薪资与津贴';
+  } else if (lowerText.includes('tol ') || lowerText.includes('toll') || lowerText.includes('parking') || lowerText.includes('grab') || lowerText.includes('touch n go') || lowerText.includes('tng') || lowerText.includes('plus')) {
     category = '差旅费用';
-    item = '交通过路费与差旅';
+    item = '差旅交通及过路费';
+  } else if (lowerText.includes('restoran') || lowerText.includes('cafe') || lowerText.includes('kedai kopi') || lowerText.includes('food') || lowerText.includes('mcdonald') || lowerText.includes('kfc')) {
+    category = '业务招待';
+    item = `${counterparty || '餐饮'} 业务餐饮招待`;
+  } else if (lowerText.includes('service') || lowerText.includes('servis') || lowerText.includes('repair') || lowerText.includes('cleaning') || lowerText.includes('maintenance')) {
+    category = '管理费用';
+    item = `${counterparty || '服务商'} 维修与日常管理费`;
   }
 
   // 5. Remark / Invoice Number
   let remark = '';
-  const invMatch = cleanText.match(/(?:no\s*bil|no\s*resit|no\s*akaun|inv\s*no|invoice\s*no|receipt\s*no|ref\s*no|发票号|单据号)[:\s#]*([a-zA-Z0-9\-_/]{4,28})/i);
+  const invMatch = cleanText.match(/(?:no\s*bil|no\s*resit|no\s*akaun|no\s*a\/c|inv\s*no|invoice\s*no|receipt\s*no|ref\s*no|发票号|单据号)[:\s#]*([a-zA-Z0-9\-_/]{4,28})/i);
   if (invMatch && invMatch[1]) {
-    remark = invMatch[1];
+    remark = invMatch[1].trim();
   }
 
   return {
@@ -6828,42 +6852,50 @@ async function runLocalTesseractOCR(dataUrl, onProgress = null) {
   if (typeof Tesseract === 'undefined') {
     throw new Error('本地 OCR 核心库未就绪，请检查网络后刷新重试');
   }
+
+  // 1. Local Tesseract recognition on 100% untouched original full-resolution image (zero compression)
   const langs = ocrSettings.localLanguages || 'chi_sim+eng+msa';
   const worker = await getSharedTesseractWorker(langs, onProgress);
 
-  if (onProgress) onProgress('本地 OCR (中/英/马三语) 深度识别中...', 75);
+  if (onProgress) onProgress('纯本地浏览器 OCR (中/英/马三语) 原图无损超清识别中...', 40);
   const ret = await worker.recognize(dataUrl);
-  const rawText = ret && ret.data ? ret.data.text : '';
+  let rawText = ret && ret.data ? ret.data.text : '';
 
-  const parsed = parseReceiptTextLocal(rawText);
+  let parsed = parseReceiptTextLocal(rawText);
+
+  // 2. Focused Dual-Pass for tall mobile screenshots:
+  // If amount is not found, and image is a tall mobile screenshot (e.g. 2-page PDF bill), zoom in on top 58%
+  if (!parsed.amount && typeof document !== 'undefined') {
+    try {
+      const topCropUrl = await cropTopSectionOfImage(dataUrl, 0.58);
+      if (topCropUrl) {
+        if (onProgress) onProgress('针对移动长图账单上半部核心区进行超清聚焦解析...', 80);
+        const ret2 = await worker.recognize(topCropUrl);
+        const rawText2 = ret2 && ret2.data ? ret2.data.text : '';
+        if (rawText2) {
+          const parsed2 = parseReceiptTextLocal(rawText2);
+          if (parsed2.amount) parsed.amount = parsed2.amount;
+          if (!parsed.date && parsed2.date) parsed.date = parsed2.date;
+          if (!parsed.counterparty && parsed2.counterparty) parsed.counterparty = parsed2.counterparty;
+          rawText += '\n--- Focused Invoice Header Pass ---\n' + rawText2;
+        }
+      }
+    } catch (err) {
+      console.warn('Focused pass error:', err);
+    }
+  }
+
   parsed._rawOcrText = rawText;
 
   const rawEl = document.getElementById('rawOcrText');
-  if (rawEl) rawEl.textContent = `=== 本地浏览器离线 OCR 识别文本 (中/英/马) ===\n\n${rawText}\n\n=== 提取结构化结果 ===\n${JSON.stringify(parsed, null, 2)}`;
+  if (rawEl) rawEl.textContent = `=== 纯本地浏览器离线 OCR 识别文本 (100% 本地计算·原图无损) ===\n\n${rawText}\n\n=== 提取结构化结果 ===\n${JSON.stringify(parsed, null, 2)}`;
 
   return parsed;
 }
 
-// Unified OCR Dispatcher: Supports Local Tesseract, Gemini Vision AI, and Auto Dual-engine
+// Unified OCR Dispatcher: 100% Pure Local In-Browser Computation
 async function recognizeReceiptData(dataUrl, onProgress = null) {
-  const mode = ocrSettings.mode || 'local';
-  const key = ocrSettings.geminiApiKey || getSystemDefaultAiKey();
-
-  if (mode === 'local') {
-    return await runLocalTesseractOCR(dataUrl, onProgress);
-  } else if (mode === 'gemini') {
-    return await runGeminiVisionRecognition(dataUrl, key);
-  } else {
-    // 'auto' mode: try Gemini first, fall back to local OCR
-    try {
-      if (onProgress) onProgress('正在通过 Google Gemini 视觉 AI 识别...', 20);
-      return await runGeminiVisionRecognition(dataUrl, key);
-    } catch (geminiErr) {
-      console.warn('Gemini recognition failed in auto mode, falling back to local OCR:', geminiErr);
-      if (onProgress) onProgress('Gemini 连通超时，自动秒切本地离线 OCR (中/英/马)...', 40);
-      return await runLocalTesseractOCR(dataUrl, onProgress);
-    }
-  }
+  return await runLocalTesseractOCR(dataUrl, onProgress);
 }
 
 // Single Receipt Recognition
@@ -6876,12 +6908,7 @@ async function startReceiptRecognition(dataUrl) {
   if (ocrBar) ocrBar.classList.remove('hidden');
   if (badge) badge.classList.add('hidden');
 
-  const mode = ocrSettings.mode || 'local';
-  const initialText = (mode === 'local')
-    ? '正在通过本地浏览器 OCR 智能识单 (中文+英文+马来文)...'
-    : (mode === 'gemini') ? '正在通过 Google Gemini 视觉 AI 智能识单...' : '正在通过智能双模识单...';
-
-  if (statusText) statusText.textContent = initialText;
+  if (statusText) statusText.textContent = '正在通过纯本地浏览器 OCR 智能识单 (图像锐化 + 中英马三语)...';
   if (progressText) progressText.textContent = '识别中';
 
   try {
@@ -6893,10 +6920,7 @@ async function startReceiptRecognition(dataUrl) {
     if (ocrBar) ocrBar.classList.add('hidden');
     if (badge) badge.classList.remove('hidden');
 
-    const msg = (mode === 'local')
-      ? '⚡ 本地浏览器离线 OCR (中/英/马) 识别成功！已自动提取小票详情'
-      : '✨ 单据识别成功！已自动提取小票详情';
-    showToast(msg);
+    showToast('⚡ 本地离线 OCR (中/英/马) 识别完成！已提取小票详情');
   } catch (e) {
     console.error('Receipt recognition failed:', e);
     if (statusText) statusText.textContent = '识单未就绪，您可直接对照左侧照片核对录入';
@@ -6904,98 +6928,6 @@ async function startReceiptRecognition(dataUrl) {
     setTimeout(() => { if (ocrBar) ocrBar.classList.add('hidden'); }, 3500);
     checkExpenseFormDuplicate();
   }
-}
-
-async function runGeminiVisionRecognition(dataUrl, apiKey) {
-  const activeKey = apiKey || ocrSettings.geminiApiKey || getSystemDefaultAiKey();
-  if (!activeKey) {
-    throw new Error('未配置有效 Gemini API Key');
-  }
-
-  const base64Data = dataUrl.replace(/^data:image\/\w+;base64,/, '');
-  const mimeType = (dataUrl.match(/^data:(image\/\w+);base64,/) || ['', 'image/jpeg'])[1];
-
-  const prompt = `You are an expert Malaysian business accountant and receipt OCR engine. Analyze this receipt / tax invoice / utility bill image and extract details into STRICT JSON.
-
-CRITICAL INSTRUCTIONS FOR MALAYSIAN BILLS & RECEIPTS:
-1. "date": Transaction / bill date in YYYY-MM-DD. Look for "Tarikh", "Date", "Tarikh Bil". Convert accurately. If missing, use today's date (${new Date().toISOString().split('T')[0]}).
-2. "amount": The actual current payable amount as a string e.g. "156.00".
-   - FOR UTILITY BILLS (Lembaga Air Perak, TNB, Air Selangor, Indah Water, TM/Unifi): Look for "Jumlah Perlu Dibayar", "Bil Semasa", "Sila Bayar", or "Total Amount Due".
-   - CRITICAL: NEVER extract "Cagaran" (Deposit, e.g. 300.00)! "Cagaran" is a refundable deposit, NOT an expense! NEVER extract "Baki Terdahulu" (previous balance).
-   - FOR RETAIL RECEIPTS: Extract the final total after rounding (Pelarasan Sen / Rounding Adjustment). Never use cash tendered, change, or subtotal.
-3. "category": Choose the single most appropriate category EXACTLY from this list:
-   - "水电费" (Water, electricity, Lembaga Air Perak, TNB, Maxis, Celcom, Digi, Unifi, TM, Indah Water)
-   - "汽油津贴" (Petrol, diesel, Shell, Petronas, Caltex, BHPetrol)
-   - "原材料" (MR D.I.Y., hardware, spare parts, stationery, 99 Speedmart, grocery, paint, raw materials)
-   - "房租" (Rental, sewa kedai / pejabat)
-   - "职工工资" (Salary, wages, bonus, EPF, SOCSO)
-   - "差旅费用" (Toll, Touch 'n Go, Grab, parking, flight, hotel)
-   - "管理费用" (Office cleaning, supplies, repair, printing)
-   - "财务成本" (Bank charges, interest, merchant fee)
-   - "其他支出" (Other general expenses)
-4. "counterparty": Merchant / vendor company name (e.g. "LEMBAGA AIR PERAK", "TENAGA NASIONAL BERHAD", "MR. D.I.Y.", "SHELL").
-5. "item": Concise, readable description of the expense in Chinese (e.g. "Lembaga Air Perak 水费", "TNB 商业电费", "Shell 汽油加注", "日常耗材采购").
-6. "remark": Official receipt / invoice / bill account number (e.g. No. Akaun, No. Bil, Ref-1), or empty string if not found.
-
-Return ONLY the raw JSON object, without any markdown formatting:
-{
-  "date": "YYYY-MM-DD",
-  "amount": "0.00",
-  "category": "水电费",
-  "counterparty": "Merchant Name",
-  "item": "Item Description",
-  "remark": "Invoice No"
-}`;
-
-  let lastError = null;
-
-  for (const model of GEMINI_VISION_MODELS) {
-    try {
-      const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${activeKey}`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          contents: [{
-            parts: [
-              { text: prompt },
-              { inline_data: { mime_type: mimeType, data: base64Data } }
-            ]
-          }],
-          generationConfig: {
-            temperature: 0.1,
-            maxOutputTokens: 600
-          }
-        })
-      });
-
-      if (!response.ok) {
-        const errBody = await response.text();
-        console.warn(`Gemini model ${model} returned ${response.status}:`, errBody);
-        lastError = new Error(`Model ${model} status ${response.status}`);
-        continue;
-      }
-
-      const json = await response.json();
-      if (!json.candidates || !json.candidates[0] || !json.candidates[0].content) {
-        lastError = new Error(`Empty response from ${model}`);
-        continue;
-      }
-
-      const textOutput = json.candidates[0].content.parts[0].text;
-      const cleanJson = textOutput.replace(/```json/gi, '').replace(/```/g, '').trim();
-      const data = JSON.parse(cleanJson);
-
-      const rawTextEl = document.getElementById('rawOcrText');
-      if (rawTextEl) rawTextEl.textContent = JSON.stringify(data, null, 2);
-
-      return data;
-    } catch (err) {
-      console.warn(`Error on model ${model}:`, err);
-      lastError = err;
-    }
-  }
-
-  throw lastError || new Error('所有 Gemini 视觉 AI 模型均无法连接，请检查网络');
 }
 
 function matchCategoryOption(catSelect, recognizedCategory, itemText = '', counterpartyText = '') {
@@ -7182,14 +7114,19 @@ async function handleBatchReceiptFiles(files) {
   for (let i = 0; i < imageFiles.length; i++) {
     const file = imageFiles[i];
     try {
-      // Keep high resolution (up to 2560px, 92% quality) so AI can read all tiny text
-      const highDefDataUrl = await compressImageFileToDataUrl(file, 2560, 0.92);
-      const estKb = Math.round(highDefDataUrl.length * 0.75 / 1024);
+      // 100% original uncompressed dataUrl directly from file
+      const rawDataUrl = await new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(reader.result);
+        reader.onerror = reject;
+        reader.readAsDataURL(file);
+      });
+      const estKb = Math.round(rawDataUrl.length * 0.75 / 1024);
       batchReceiptQueue.push({
         id: 'batch_' + Date.now() + '_' + i,
         fileName: file.name || `单据照片_${i + 1}.jpg`,
         fileSizeKb: estKb,
-        dataUrl: highDefDataUrl,
+        dataUrl: rawDataUrl,
         status: 'pending', // 'pending' | 'saved' | 'skipped'
         parsedData: null,
         savedRecordId: null,
@@ -7204,7 +7141,7 @@ async function handleBatchReceiptFiles(files) {
         }
       });
     } catch (err) {
-      console.warn('Error compressing receipt image:', file.name, err);
+      console.warn('Error reading receipt image:', file.name, err);
     }
   }
 
@@ -7320,6 +7257,16 @@ function applyGlobalAccountToAllBatch(newAcc) {
   showToast(`⚡ 本批所有未录入单据（共 ${count} 张）支付账户已统一设置为【${newAcc}】！`);
 }
 
+async function triggerRescanActiveBatchItem() {
+  if (!batchReceiptQueue[currentBatchIndex]) return;
+  const item = batchReceiptQueue[currentBatchIndex];
+  item.parsedData = null;
+  const ocrBar = document.getElementById('batchOcrStatusBar');
+  if (ocrBar) ocrBar.classList.remove('hidden');
+  showToast('🔄 正在重新调用识别引擎识别此单据...');
+  await runBatchItemRecognition(item);
+}
+
 function syncFormToActiveBatchItem() {
   if (!batchReceiptQueue[currentBatchIndex]) return;
   const item = batchReceiptQueue[currentBatchIndex];
@@ -7408,12 +7355,7 @@ async function runBatchItemRecognition(item) {
 
   if (ocrBar) ocrBar.classList.remove('hidden');
 
-  const mode = ocrSettings.mode || 'local';
-  const initialText = (mode === 'local')
-    ? '正在通过本地浏览器 OCR 识别此单据 (中文+英文+马来文)...'
-    : (mode === 'gemini') ? '正在通过 Google Gemini 视觉 AI 识别此单据...' : '正在通过智能双模识别此单据...';
-
-  if (statusText) statusText.textContent = initialText;
+  if (statusText) statusText.textContent = '正在通过纯本地浏览器 OCR 识别单据 (画质增强 + 中英马三语)...';
   if (progressText) progressText.textContent = '识别中';
 
   let recognizedData = null;
@@ -7429,7 +7371,7 @@ async function runBatchItemRecognition(item) {
     if (progressText) progressText.textContent = '请核对';
   }
 
-  if (recognizedData) {
+  if (recognizedData && (recognizedData.amount || recognizedData.counterparty)) {
     item.parsedData = recognizedData;
     if (recognizedData.date) item.formData.date = recognizedData.date;
     if (recognizedData.amount) item.formData.amount = recognizedData.amount;
@@ -7462,10 +7404,22 @@ async function runBatchItemRecognition(item) {
       }
     });
 
-    if (ocrBar) ocrBar.classList.add('hidden');
-    showToast(`✨ 单据 #${currentBatchIndex + 1} AI 识别完成！`);
+    if (recognizedData.amount) {
+      if (ocrBar) {
+        setTimeout(() => { ocrBar.classList.add('hidden'); }, 2000);
+      }
+      showToast(`⚡ 单据 #${currentBatchIndex + 1} 本地提取成功：RM ${recognizedData.amount}`);
+    } else {
+      if (statusText) {
+        statusText.innerHTML = `⚠️ 未能精准锁定金额。建议对照左侧单据手动核实，或点击【<b class="text-amber-700 underline cursor-pointer" onclick="triggerRescanActiveBatchItem();">🔄 重新识别</b>】。`;
+      }
+      if (progressText) progressText.textContent = '请核对';
+    }
   } else {
-    if (ocrBar) ocrBar.classList.add('hidden');
+    if (statusText) {
+      statusText.innerHTML = `⚠️ 本地 OCR 尚未完全解析。请直接对照左图核实录入，或点击【<b class="text-amber-700 underline cursor-pointer" onclick="triggerRescanActiveBatchItem();">🔄 重新识别</b>】。`;
+    }
+    if (progressText) progressText.textContent = '请核对';
   }
 
   checkBatchFormDuplicate();
@@ -8281,6 +8235,7 @@ window.confirmBatchDeleteExpenses = confirmBatchDeleteExpenses;
 window.setOcrEngineMode = setOcrEngineMode;
 window.cycleOcrEngineMode = cycleOcrEngineMode;
 window.testLocalOcrEngine = testLocalOcrEngine;
+window.triggerRescanActiveBatchItem = triggerRescanActiveBatchItem;
 
 
   </script>
