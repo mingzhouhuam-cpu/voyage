@@ -215,6 +215,10 @@
           <span>🛒 支出明细</span>
           <span id="navExpenseBadge" class="bg-rose-100 text-rose-800 text-xs px-2 py-0.5 rounded-full font-semibold">0</span>
         </button>
+                <button onclick="switchTab('arrears')" id="tab-arrears" class="tab-link text-slate-500 hover:text-slate-700 py-3 px-1 border-b-2 border-transparent font-medium flex items-center space-x-1.5 relative">
+          <span>馃彔 浣忓娆犺垂娓呮煡</span>
+          <span id="navArrearsBadge" class="bg-rose-500 text-white text-[10px] px-1.5 py-0.5 rounded-full font-bold shadow-sm">0浜烘瑺璐?/span>
+        </button>
         <button onclick="switchTab('monthly')" id="tab-monthly" class="tab-link text-slate-500 hover:text-slate-700 py-3 px-1 border-b-2 border-transparent font-medium flex items-center space-x-2">
           <span>📅 月度收支统计</span>
         </button>
@@ -233,6 +237,19 @@
 
     <!-- 1. DASHBOARD VIEW -->
     <div id="view-dashboard" class="space-y-6">
+      <!-- Boarding Fees Arrears Alert Banner -->
+      <div onclick="switchTab('arrears')" class="cursor-pointer p-3.5 rounded-xl bg-gradient-to-r from-rose-50 via-amber-50 to-orange-50 border border-rose-200 hover:border-rose-300 transition shadow-sm flex items-center justify-between">
+        <div class="flex items-center space-x-2.5">
+          <span class="text-xl">馃彔</span>
+          <div class="text-xs">
+            <span class="font-bold text-slate-900">浣忓璐规敹缂寸洃鎺э細</span>
+            <span class="text-slate-600">褰撳墠鍏辨湁 <span id="dashArrearsCount" class="font-bold text-rose-600">--</span> 浣嶅鐢熸湭缁撴竻锛屽緟鏀堕噾棰?<span id="dashArrearsAmount" class="font-bold text-rose-600">--</span></span>
+          </div>
+        </div>
+        <span class="text-xs font-semibold text-rose-700 hover:underline flex items-center space-x-1">
+          <span>鏌ョ湅娆犺垂鏄庣粏涓庡偓鏀?鈫?/span>
+        </span>
+      </div>
       <!-- 4 Stats Cards -->
       <div class="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-5">
         <!-- Current Balance -->
@@ -782,6 +799,172 @@
       </div>
     </div>
 
+        <!-- 4.5 BOARDING FEES & ARREARS VIEW -->
+    <div id="view-arrears" class="space-y-6 hidden">
+      <!-- Arrears Header Card -->
+      <div class="bg-white rounded-2xl p-5 sm:p-6 border border-slate-200 shadow-sm space-y-4">
+        <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+          <div>
+            <div class="flex items-center space-x-2">
+              <span class="text-2xl">馃彔</span>
+              <h3 class="text-lg sm:text-xl font-bold text-slate-900">浣忓瀛︾敓缂磋垂涓庢瑺璐规竻鏌?/h3>
+              <span class="bg-rose-100 text-rose-800 text-xs px-2.5 py-0.5 rounded-full font-bold">15浣嶄綇瀹跨敓</span>
+            </div>
+            <p class="text-xs text-slate-500 mt-1">
+              绮惧噯璺熻釜鍚勬湀浠戒綇瀹胯垂浜ょ即杩涘害锛屾櫤鑳借绠楁瑺璐规湀浠姐€佹湭缂撮噾棰濓紝鏀寔涓€閿偓缂翠笌蹇€熻ˉ褰曞叆璐?            </p>
+          </div>
+          
+          <!-- Top Action Buttons -->
+          <div class="flex flex-wrap items-center gap-2">
+            <button onclick="copyAllArrearsSummary()" class="inline-flex items-center px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-xs font-semibold transition">
+              <svg class="w-3.5 h-3.5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"></path></svg>
+              <span>澶嶅埗娆犺垂鎬绘竻鍗?/span>
+            </button>
+            <button onclick="printArrearsReport()" class="inline-flex items-center px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-xs font-semibold transition">
+              <svg class="w-3.5 h-3.5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path></svg>
+              <span>鎵撳嵃瀵硅处鎶ヨ〃</span>
+            </button>
+            <button onclick="renderArrearsTracker()" class="inline-flex items-center px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-xs font-semibold shadow-sm transition">
+              <svg class="w-3.5 h-3.5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+              <span>鍒锋柊鏍稿</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- 4 KPI Metrics -->
+        <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 pt-2">
+          <!-- Total Arrears -->
+          <div class="bg-rose-50/70 border border-rose-200 rounded-xl p-4">
+            <div class="flex items-center justify-between text-xs text-rose-700 font-semibold">
+              <span>寰呮敹娆犺垂鎬婚</span>
+              <span class="text-base">馃毃</span>
+            </div>
+            <div id="arrearsTotalOwed" class="text-xl sm:text-2xl font-black text-rose-600 mt-1.5">RM 0.00</div>
+            <div id="arrearsOwedSub" class="text-[11px] text-rose-700/80 mt-1">璁＄畻涓?..</div>
+          </div>
+
+          <!-- Students with Arrears -->
+          <div class="bg-amber-50/70 border border-amber-200 rounded-xl p-4">
+            <div class="flex items-center justify-between text-xs text-amber-700 font-semibold">
+              <span>娆犺垂瀛︾敓浜烘暟</span>
+              <span class="text-base">鈿狅笍</span>
+            </div>
+            <div id="arrearsCountStudents" class="text-xl sm:text-2xl font-black text-amber-700 mt-1.5">0 浜?/div>
+            <div id="arrearsCountSub" class="text-[11px] text-amber-700/80 mt-1">鍏?15 浣嶄綇瀹垮鐢?/div>
+          </div>
+
+          <!-- Fully Paid Students -->
+          <div class="bg-emerald-50/70 border border-emerald-200 rounded-xl p-4">
+            <div class="flex items-center justify-between text-xs text-emerald-700 font-semibold">
+              <span>瀹屽叏缁撴竻瀛︾敓</span>
+              <span class="text-base">鉁?/span>
+            </div>
+            <div id="arrearsFullyPaidCount" class="text-xl sm:text-2xl font-black text-emerald-600 mt-1.5">0 浜?/div>
+            <div class="text-[11px] text-emerald-700/80 mt-1">鏃犱换浣曢€炬湡鎷栨瑺</div>
+          </div>
+
+          <!-- Collection Rate -->
+          <div class="bg-slate-50 border border-slate-200 rounded-xl p-4">
+            <div class="flex items-center justify-between text-xs text-slate-600 font-semibold">
+              <span>浣忓璐规敹缂寸巼</span>
+              <span class="text-base">馃搱</span>
+            </div>
+            <div id="arrearsCollectionRate" class="text-xl sm:text-2xl font-black text-slate-800 mt-1.5">0.0%</div>
+            <div class="w-full bg-slate-200 rounded-full h-1.5 mt-2 overflow-hidden">
+              <div id="arrearsProgressBar" class="bg-emerald-500 h-1.5 rounded-full transition-all duration-500" style="width: 0%"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Brothers Special Callout Banner -->
+      <div id="brothersCalloutBanner" class="p-5 rounded-2xl bg-gradient-to-r from-rose-50 via-amber-50 to-orange-50 border-2 border-rose-300 shadow-sm space-y-3">
+        <!-- Rendered dynamically -->
+      </div>
+
+      <!-- Controls & Filter Toolbar -->
+      <div class="bg-white rounded-2xl p-4 border border-slate-200 shadow-sm space-y-3">
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-3 text-xs">
+          <!-- Left: Cutoff Month & Standard Fee -->
+          <div class="flex flex-wrap items-center gap-3">
+            <div class="flex items-center space-x-1.5">
+              <span class="font-bold text-slate-700">瀵硅处鎴鏈堜唤:</span>
+              <select id="arrearsCutoffMonthSelect" onchange="handleArrearsCutoffChange(this.value)" class="px-2.5 py-1.5 bg-slate-50 border border-slate-300 rounded-lg font-semibold text-slate-800 focus:ring-1 focus:ring-emerald-500 text-xs">
+                <option value="1">2026骞?1鏈?/option>
+                <option value="2">2026骞?2鏈?/option>
+                <option value="3">2026骞?3鏈?/option>
+                <option value="4">2026骞?4鏈?/option>
+                <option value="5">2026骞?5鏈?/option>
+                <option value="6">2026骞?6鏈?/option>
+                <option value="7">2026骞?7鏈?/option>
+                <option value="8">2026骞?8鏈?/option>
+                <option value="9" selected>2026骞?9鏈?(褰撳墠鏈?</option>
+                <option value="10">2026骞?10鏈?/option>
+                <option value="11">2026骞?11鏈?/option>
+                <option value="12">2026骞?12鏈?(鍏ㄥ勾)</option>
+              </select>
+            </div>
+
+            <div class="flex items-center space-x-1.5">
+              <span class="font-bold text-slate-700">姣忎汉鏈堣垂 (RM):</span>
+              <input type="number" id="arrearsMonthlyFeeInput" value="480" onchange="handleArrearsFeeChange(this.value)" class="w-20 px-2 py-1.5 bg-slate-50 border border-slate-300 rounded-lg text-xs font-semibold text-slate-800 text-center">
+            </div>
+
+            <div class="relative">
+              <input type="text" id="arrearsSearchInput" oninput="handleArrearsSearch(this.value)" placeholder="鎼滅储瀛︾敓濮撳悕..." class="pl-7 pr-3 py-1.5 bg-slate-50 border border-slate-300 rounded-lg text-xs text-slate-800 w-36 sm:w-44 focus:ring-1 focus:ring-emerald-500">
+              <svg class="w-3.5 h-3.5 text-slate-400 absolute left-2 top-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+            </div>
+          </div>
+
+          <!-- Right: View Mode Toggle & Status Filter -->
+          <div class="flex flex-wrap items-center gap-2">
+            <!-- Filter Pills -->
+            <div class="inline-flex rounded-lg border border-slate-200 bg-slate-50 p-0.5 text-xs font-medium">
+              <button onclick="setArrearsStatusFilter('all')" id="filterArrearsBtn-all" class="px-2.5 py-1 rounded-md bg-white font-bold text-slate-800 shadow-sm transition">鍏ㄩ儴(15)</button>
+              <button onclick="setArrearsStatusFilter('owing')" id="filterArrearsBtn-owing" class="px-2.5 py-1 rounded-md text-slate-600 hover:text-slate-900 transition">娆犺垂瀛︾敓</button>
+              <button onclick="setArrearsStatusFilter('severe')" id="filterArrearsBtn-severe" class="px-2.5 py-1 rounded-md text-slate-600 hover:text-slate-900 transition">涓ラ噸娆犺垂(鈮?鏈?</button>
+              <button onclick="setArrearsStatusFilter('paid')" id="filterArrearsBtn-paid" class="px-2.5 py-1 rounded-md text-slate-600 hover:text-slate-900 transition">宸茬粨娓?/button>
+            </div>
+
+            <!-- View Mode Toggle Buttons -->
+            <div class="inline-flex rounded-lg border border-slate-200 bg-slate-50 p-0.5 text-xs font-medium">
+              <button onclick="setArrearsViewMode('cards')" id="arrearsModeBtn-cards" class="px-2.5 py-1 rounded-md bg-white font-bold text-emerald-700 shadow-sm transition flex items-center space-x-1">
+                <span>馃搵</span>
+                <span class="hidden sm:inline">鍗＄墖鍒楄〃</span>
+              </button>
+              <button onclick="setArrearsViewMode('matrix')" id="arrearsModeBtn-matrix" class="px-2.5 py-1 rounded-md text-slate-600 hover:text-slate-900 transition flex items-center space-x-1">
+                <span>馃搳</span>
+                <span class="hidden sm:inline">12鏈堢煩闃靛ぇ琛?/span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- View Container 1: Cards List View -->
+      <div id="arrearsCardsContainer" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <!-- Rendered dynamically -->
+      </div>
+
+      <!-- View Container 2: 12-Month Matrix Table View -->
+      <div id="arrearsMatrixContainer" class="hidden bg-white rounded-2xl p-5 border border-slate-200 shadow-sm overflow-x-auto">
+        <!-- Rendered dynamically -->
+      </div>
+
+      <!-- Unassigned Cash Incomes Callout Notice -->
+      <div class="p-4 rounded-xl bg-blue-50 border border-blue-200 text-xs text-blue-900 space-y-2">
+        <div class="font-bold flex items-center space-x-2">
+          <span>馃挕</span>
+          <span>绯荤粺鏈叿鍚嶆敹鍏ユ牳瀵规彁绀?/span>
+        </div>
+        <p class="text-[11px] text-blue-800">
+          绯荤粺涓洰鍓嶆湁閮ㄥ垎閫氳繃瀛樻鏈猴紙Cash Deposit锛夋垨鏈～鍐欏鐢熷鍚嶇殑瀛﹁垂鏀舵璁板綍銆傝嫢纭灞炰簬涓婅堪娆犺垂瀛︾敓锛屽缓璁湪銆愭敹鍏ユ槑缁嗐€戜腑鐐瑰嚮鈥溾湉锔?缂栬緫鈥濊ˉ鍏ㄤ氦娆句汉濮撳悕锛岀郴缁熷皢鑷姩璇嗗埆鎶垫墸鍏跺搴旀瑺璐规湀浠姐€?        </p>
+        <div id="arrearsUnassignedList" class="space-y-1 text-[11px] font-mono pt-1">
+          <!-- Populated dynamically -->
+        </div>
+      </div>
+    </div>
+
     <!-- 5. ACCOUNTS & CATEGORIES VIEW -->
     <div id="view-accounts" class="space-y-6 hidden">
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -1053,8 +1236,56 @@
           </div>
         </div>
         <div>
-          <label class="block font-medium text-slate-700 mb-1">交款人 / 客户名称</label>
-          <input type="text" id="incomeCounterparty" placeholder="例如：LEE JU YAN" class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg focus:ring-1 focus:ring-emerald-500 focus:bg-white">
+          <div class="flex items-center justify-between mb-1">
+            <label class="block font-medium text-slate-700">交款人 / 客户名称 *</label>
+            <span class="text-[11px] text-emerald-600 font-medium">支持下拉选择或直接输入</span>
+          </div>
+          
+          <div class="space-y-2">
+            <!-- Payer Dropdown Selector -->
+            <select id="incomePayerSelect" onchange="handleSelectPayer(this.value)" class="w-full px-3 py-2 bg-emerald-50/60 border border-emerald-300 text-slate-800 rounded-lg focus:ring-2 focus:ring-emerald-500 text-xs font-semibold">
+              <option value="">-- 点击选择交款人（15位住宿生 / 常用交款人） --</option>
+              <optgroup label="🏠 住宿学生（每月 RM480）">
+                <option value="HONG YE & KAI YE">HONG YE & KAI YE (两兄弟合并 · RM960/月)</option>
+                <option value="HONG YE">HONG YE (宏业 · RM480/月)</option>
+                <option value="KAI YE">KAI YE (凯业 · RM480/月)</option>
+                <option value="LEE YAN CHENG">LEE YAN CHENG</option>
+                <option value="KAIHAO">KAIHAO</option>
+                <option value="LEE JU YAN">LEE JU YAN</option>
+                <option value="CHUA MING ZHE">CHUA MING ZHE</option>
+                <option value="ONG SHI SHUI">ONG SHI SHUI</option>
+                <option value="ENG WEI ZHI">ENG WEI ZHI</option>
+                <option value="WONG E FULL">WONG E FULL</option>
+                <option value="HUAIDERK">HUAIDERK</option>
+                <option value="GOH JYJE SHAN">GOH JYJE SHAN</option>
+                <option value="TAN JIAN FONG">TAN JIAN FONG</option>
+                <option value="LEE JI CHUEN">LEE JI CHUEN</option>
+                <option value="CHIA KAI JIE">CHIA KAI JIE</option>
+                <option value="ZHI XIAO">ZHI XIAO</option>
+              </optgroup>
+              <optgroup id="incomeOtherPayersOptgroup" label="👥 历史其他交款人">
+                <!-- Populated dynamically -->
+              </optgroup>
+              <option value="__CUSTOM__">✍️ 【自定义输入其他交款人...】</option>
+            </select>
+
+            <!-- Text Input + Datalist for autocomplete/manual entry -->
+            <input type="text" id="incomeCounterparty" list="counterpartyDatalist" oninput="updatePayerArrearsHint(this.value)" placeholder="选择上方下拉框，或在此直接输入姓名" class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg focus:ring-1 focus:ring-emerald-500 focus:bg-white text-xs">
+            <datalist id="counterpartyDatalist"></datalist>
+
+            <!-- Quick Selection Chips for 15 students -->
+            <div class="pt-0.5">
+              <div class="text-[10px] text-slate-400 mb-1 flex items-center justify-between">
+                <span>快捷选择标签 (点击即填入):</span>
+              </div>
+              <div class="flex flex-wrap gap-1" id="payerQuickChips">
+                <!-- Rendered dynamically -->
+              </div>
+            </div>
+
+            <!-- Dynamic Arrears Alert Hint in Modal -->
+            <div id="incomePayerArrearsHint" class="hidden p-2.5 rounded-lg text-xs transition-all"></div>
+          </div>
         </div>
         <div>
           <label class="block font-medium text-slate-700 mb-1">单据备注 / 摘要</label>
@@ -1849,6 +2080,17 @@ alter publication supabase_realtime add table finance_store;</pre>
       </div>
 
       <div class="space-y-2 pt-1 text-xs">
+                <button onclick="closeMobileMoreMenu(); switchTab('arrears');" class="w-full p-3.5 bg-gradient-to-r from-rose-50 to-amber-50 hover:from-rose-100 hover:to-amber-100 border border-rose-200 rounded-xl flex items-center justify-between text-slate-900 transition shadow-sm">
+          <span class="flex items-center space-x-3 font-bold text-rose-800">
+            <span class="text-xl">馃彔</span>
+            <span class="text-left">
+              <span class="block text-sm">浣忓鐢熸瑺璐规竻鏌?/span>
+              <span class="block text-[11px] font-normal text-rose-600">鍒版湡鏈即瀵硅处 路 鍌即娓呭崟 路 蹇€熸敹娆?/span>
+            </span>
+          </span>
+          <span id="mobileMoreArrearsBadge" class="bg-rose-600 text-white text-[11px] px-2 py-0.5 rounded-full font-bold">11浜烘瑺璐?/span>
+        </button>
+
         <button onclick="closeMobileMoreMenu(); switchTab('monthly');" class="w-full p-3.5 bg-slate-50 hover:bg-slate-100 border border-slate-200/80 rounded-xl flex items-center justify-between text-slate-800">
           <span class="flex items-center space-x-3 font-semibold">
             <span class="text-base">📅</span>
@@ -1905,6 +2147,8 @@ alter publication supabase_realtime add table finance_store;</pre>
 
 
 
+
+
   <!-- Scripts -->
   <script>
 // Initial Financial Data Seed
@@ -1950,7 +2194,7 @@ let ocrSettings = {
 };
 
 // Application Version and OTA Release Timestamp
-window.VOYAGE_APP_VERSION = '2026.3.22';
+window.VOYAGE_APP_VERSION = '2026.3.23';
 window.VOYAGE_APP_BUILD_TIME = Date.now();
 
 // ==========================================
@@ -2818,7 +3062,7 @@ function saveData() {
 // Tab Switching
 function switchTab(tabId) {
   currentTab = tabId;
-  const views = ['dashboard', 'statement', 'income', 'expense', 'monthly', 'accounts', 'settings'];
+  const views = ['dashboard', 'statement', 'income', 'expense', 'monthly', 'arrears', 'accounts', 'settings'];
   views.forEach(v => {
     const el = document.getElementById(`view-${v}`);
     const tabBtn = document.getElementById(`tab-${v}`);
@@ -2837,7 +3081,7 @@ function switchTab(tabId) {
   mobileNavTabs.forEach(t => {
     const mBtn = document.getElementById(`mobileNav-${t}`);
     if (mBtn) {
-      if (t === tabId || (t === 'more' && ['monthly', 'accounts', 'settings', 'statement'].includes(tabId))) {
+      if (t === tabId || (t === 'more' && ['monthly', 'accounts', 'settings', 'statement', 'arrears'].includes(tabId))) {
         mBtn.className = 'flex flex-col items-center justify-center py-1 text-emerald-600 font-bold transition';
       } else {
         mBtn.className = 'flex flex-col items-center justify-center py-1 text-slate-400 hover:text-slate-600 transition';
@@ -2853,6 +3097,8 @@ function switchTab(tabId) {
     renderExpenseTable();
   } else if (tabId === 'monthly') {
     renderMonthlyReport();
+  } else if (tabId === 'arrears') {
+    renderArrearsTracker();
   } else if (tabId === 'accounts') {
     renderAccountsAndCategories();
   }
@@ -2974,6 +3220,7 @@ function renderDashboard() {
   const navExp = document.getElementById('navExpenseBadge');
   if (navInc) navInc.textContent = appData.incomes.length;
   if (navExp) navExp.textContent = appData.expenses.length;
+  if (typeof updateArrearsBadge === 'function') updateArrearsBadge();
 
   // Stat Cards
   document.getElementById('statTotalBalance').textContent = formatMoney(metrics.totalBalance);
@@ -3633,6 +3880,11 @@ function openModal(modalId) {
     document.getElementById('incomeRemark').value = '';
     document.getElementById('incomeReceiptNo').value = '';
     document.getElementById('incomeInvoiceNo').value = '';
+    if (typeof populatePayerDropdown === 'function') populatePayerDropdown();
+    const payerSelect = document.getElementById('incomePayerSelect');
+    if (payerSelect) payerSelect.value = '';
+    const hintEl = document.getElementById('incomePayerArrearsHint');
+    if (hintEl) { hintEl.classList.add('hidden'); hintEl.innerHTML = ''; }
     const notice = document.getElementById('incomeDuplicateNotice');
     if (notice) notice.classList.add('hidden');
     const submitBtn = document.getElementById('incomeSubmitBtn');
@@ -3896,6 +4148,12 @@ function saveIncomeRecord(e) {
   closeModal('incomeModal');
   renderDashboard();
   renderIncomeTable();
+  if (typeof renderArrearsTracker === 'function' && currentTab === 'arrears') {
+    renderArrearsTracker();
+  }
+  if (typeof updateArrearsBadge === 'function') {
+    updateArrearsBadge();
+  }
 
   if (supabaseClient) {
     pushToCloud(false);
@@ -3918,6 +4176,14 @@ function editIncome(id) {
   document.getElementById('incomeReceiptNo').value = item.receiptNo || '';
   document.getElementById('incomeInvoiceNo').value = item.invoiceNo || '';
 
+  if (typeof populatePayerDropdown === 'function') populatePayerDropdown();
+  const payerSelect = document.getElementById('incomePayerSelect');
+  if (payerSelect) {
+    payerSelect.value = item.counterparty || '';
+    if (!payerSelect.value && item.counterparty) payerSelect.value = '__CUSTOM__';
+  }
+  if (typeof updatePayerArrearsHint === 'function') updatePayerArrearsHint(item.counterparty || '');
+
   const notice = document.getElementById('incomeDuplicateNotice');
   if (notice) notice.classList.add('hidden');
   const submitBtn = document.getElementById('incomeSubmitBtn');
@@ -3937,6 +4203,12 @@ function deleteIncome(id) {
     showToast('收入记录已删除');
     renderDashboard();
     renderIncomeTable();
+    if (typeof renderArrearsTracker === 'function' && currentTab === 'arrears') {
+      renderArrearsTracker();
+    }
+    if (typeof updateArrearsBadge === 'function') {
+      updateArrearsBadge();
+    }
   }
 }
 
@@ -6722,6 +6994,743 @@ window.testLocalOcrEngine = testLocalOcrEngine;
 window.triggerRescanActiveBatchItem = triggerRescanActiveBatchItem;
 window.handleCloudSyncPillClick = handleCloudSyncPillClick;
 
+
+
+// ==========================================
+// 馃彔 BOARDING STUDENT FEE & ARREARS MANAGER
+// ==========================================
+
+const DEFAULT_BOARDING_STUDENTS = [
+  { id: 'LEE YAN CHENG', name: 'LEE YAN CHENG', aliases: ['LEE YAN CHENG', 'LEE YAN', 'LEE YA'], count: 1, fee: 480 },
+  { id: 'KAIHAO', name: 'KAIHAO', aliases: ['KAI HAO', 'KAIHAO'], count: 1, fee: 480 },
+  { id: 'LEE JU YAN', name: 'LEE JU YAN', aliases: ['LEE JU YAN', 'JU YAN'], count: 1, fee: 480 },
+  { id: 'CHUA MING ZHE', name: 'CHUA MING ZHE', aliases: ['CHUA MING ZHE', 'MING ZHE'], count: 1, fee: 480 },
+  { id: 'ONG SHI SHUI', name: 'ONG SHI SHUI', aliases: ['ONG SHI SHUI', 'SHI SHUI'], count: 1, fee: 480 },
+  { id: 'ENG WEI ZHI', name: 'ENG WEI ZHI', aliases: ['ENG WEI ZHI', 'ENG WEE ZHI', 'WEI ZHI'], count: 1, fee: 480 },
+  { id: 'WONG E FULL', name: 'WONG E FULL', aliases: ['WONG E FULL', 'E FULL'], count: 1, fee: 480 },
+  { id: 'HUAIDERK', name: 'HUAIDERK', aliases: ['HUAIDERK', 'HUAI DERK', 'HUAI D'], count: 1, fee: 480 },
+  { id: 'GOH JYJE SHAN', name: 'GOH JYJE SHAN', aliases: ['GOH JYJE SHAN', 'JYJE SHAN'], count: 1, fee: 480 },
+  { id: 'TAN JIAN FONG', name: 'TAN JIAN FONG', aliases: ['TAN JIAN FONG', 'JIAN FONG', 'TAN JI'], count: 1, fee: 480 },
+  { id: 'LEE JI CHUEN', name: 'LEE JI CHUEN', aliases: ['LEE JI CHUEN', 'JI CHUEN'], count: 1, fee: 480 },
+  { id: 'CHIA KAI JIE', name: 'CHIA KAI JIE', aliases: ['CHIA KAI JIE', 'KAI JIE'], count: 1, fee: 480 },
+  { id: 'ZHI XIAO', name: 'ZHI XIAO', aliases: ['ZHI XIAO'], count: 1, fee: 480 },
+  { id: 'HONG YE & KAI YE', name: 'HONG YE & KAI YE (涓ゅ厔寮熷悎骞?', aliases: ['HONG YE', 'KAI YE', 'HONG YIP', 'KAI YIP'], count: 2, fee: 960, isBrothers: true, note: '涓ゅ厔寮熷悎骞惰浆璐︼紙姣嶏細RM960/鏈堬級' }
+];
+
+let arrearsCutoffMonth = 9;
+let arrearsMonthlyFeePerPerson = 480;
+let arrearsViewMode = 'cards'; // 'cards' | 'matrix'
+let arrearsStatusFilter = 'all'; // 'all' | 'owing' | 'severe' | 'paid'
+let arrearsSearchKeyword = '';
+
+// Core arrears calculation engine
+function calculateStudentArrears(cutoffMonth = arrearsCutoffMonth, feePerPerson = arrearsMonthlyFeePerPerson) {
+  const monthNames = ['1鏈?, '2鏈?, '3鏈?, '4鏈?, '5鏈?, '6鏈?, '7鏈?, '8鏈?, '9鏈?, '10鏈?, '11鏈?, '12鏈?];
+  const students = DEFAULT_BOARDING_STUDENTS.map(st => {
+    const monthlyFee = st.count * feePerPerson;
+    const expectedTotal = monthlyFee * cutoffMonth;
+
+    // Find matching incomes
+    const matchedIncomes = (appData.incomes || []).filter(inc => {
+      const text = `${inc.counterparty || ''} ${inc.remark || ''}`.toUpperCase();
+      return st.aliases.some(al => text.includes(al.toUpperCase()));
+    }).sort((a, b) => new Date(a.date) - new Date(b.date));
+
+    const totalPaid = matchedIncomes.reduce((sum, inc) => sum + (Number(inc.amount) || 0), 0);
+
+    // Month mapping 1..12
+    const monthsPaidMap = {};
+    for (let m = 1; m <= 12; m++) monthsPaidMap[m] = false;
+
+    // Check remarks for explicit month mentions
+    matchedIncomes.forEach(inc => {
+      const rem = (inc.remark || '').toUpperCase();
+      if (/JAN|2026[-/]0?1\b|1鏈?i.test(rem)) monthsPaidMap[1] = true;
+      if (/FEB|2026[-/]0?2\b|2鏈?i.test(rem)) monthsPaidMap[2] = true;
+      if (/MAR|2026[-/]0?3\b|3鏈?i.test(rem)) monthsPaidMap[3] = true;
+      if (/APR|2026[-/]0?4\b|4鏈?i.test(rem)) monthsPaidMap[4] = true;
+      if (/MAY|2026[-/]0?5\b|5鏈?i.test(rem)) monthsPaidMap[5] = true;
+      if (/JUN|2026[-/]0?6\b|6鏈?i.test(rem)) monthsPaidMap[6] = true;
+      if (/JUL|2026[-/]0?7\b|7鏈?i.test(rem)) monthsPaidMap[7] = true;
+      if (/AUG|2026[-/]0?8\b|8鏈?i.test(rem)) monthsPaidMap[8] = true;
+      if (/SEP|2026[-/]0?9\b|9鏈?i.test(rem)) monthsPaidMap[9] = true;
+      if (/OCT|2026[-/]10\b|10鏈?i.test(rem)) monthsPaidMap[10] = true;
+      if (/NOV|2026[-/]11\b|11鏈?i.test(rem)) monthsPaidMap[11] = true;
+      if (/DEC|2026[-/]12\b|12鏈?i.test(rem)) monthsPaidMap[12] = true;
+    });
+
+    // Fill remaining months based on total amount paid
+    const numMonthsPaid = Math.floor(totalPaid / monthlyFee);
+    let curAssigned = 0;
+    for (let m = 1; m <= 12; m++) {
+      if (monthsPaidMap[m]) curAssigned++;
+    }
+    if (curAssigned < numMonthsPaid) {
+      for (let m = 1; m <= 12; m++) {
+        if (!monthsPaidMap[m] && curAssigned < numMonthsPaid) {
+          monthsPaidMap[m] = true;
+          curAssigned++;
+        }
+      }
+    }
+
+    // Determine unpaid months up to cutoff
+    const unpaidMonths = [];
+    const paidMonths = [];
+    for (let m = 1; m <= cutoffMonth; m++) {
+      if (monthsPaidMap[m]) {
+        paidMonths.push(m);
+      } else {
+        unpaidMonths.push(m);
+      }
+    }
+
+    const arrearsAmount = Math.max(0, unpaidMonths.length * monthlyFee);
+    const lastIncome = matchedIncomes.length > 0 ? matchedIncomes[matchedIncomes.length - 1] : null;
+
+    let status = 'paid';
+    if (unpaidMonths.length >= 3) {
+      status = 'severe';
+    } else if (unpaidMonths.length > 0) {
+      status = 'owing';
+    }
+
+    return {
+      ...st,
+      monthlyFee,
+      expectedTotal,
+      totalPaid,
+      arrearsAmount,
+      monthsPaidMap,
+      paidMonths,
+      unpaidMonths,
+      status,
+      lastIncome,
+      matchedIncomes
+    };
+  });
+
+  const totalExpected = students.reduce((sum, s) => sum + s.expectedTotal, 0);
+  const totalPaid = students.reduce((sum, s) => sum + s.totalPaid, 0);
+  const totalArrears = students.reduce((sum, s) => sum + s.arrearsAmount, 0);
+  const owingStudentsCount = students.filter(s => s.arrearsAmount > 0).length;
+  const severeStudentsCount = students.filter(s => s.status === 'severe').length;
+  const fullyPaidCount = students.filter(s => s.arrearsAmount === 0).length;
+  const collectionRate = totalExpected > 0 ? ((totalPaid / totalExpected) * 100).toFixed(1) : '100.0';
+
+  return {
+    cutoffMonth,
+    feePerPerson,
+    students,
+    totalExpected,
+    totalPaid,
+    totalArrears,
+    owingStudentsCount,
+    severeStudentsCount,
+    fullyPaidCount,
+    collectionRate
+  };
+}
+
+// Update badges on nav and dashboard
+function updateArrearsBadge() {
+  const report = calculateStudentArrears();
+  const navBadge = document.getElementById('navArrearsBadge');
+  if (navBadge) {
+    navBadge.textContent = report.owingStudentsCount > 0 ? `${report.owingStudentsCount}浜烘瑺璐筦 : '宸茬粨娓?;
+    navBadge.className = report.owingStudentsCount > 0 
+      ? 'bg-rose-500 text-white text-[10px] px-1.5 py-0.5 rounded-full font-bold shadow-sm'
+      : 'bg-emerald-500 text-white text-[10px] px-1.5 py-0.5 rounded-full font-bold shadow-sm';
+  }
+
+  const mobileBadge = document.getElementById('mobileMoreArrearsBadge');
+  if (mobileBadge) {
+    mobileBadge.textContent = report.owingStudentsCount > 0 ? `娆犺垂 ${formatMoney(report.totalArrears)}` : '宸茬粨娓?;
+  }
+
+  const dashCount = document.getElementById('dashArrearsCount');
+  const dashAmount = document.getElementById('dashArrearsAmount');
+  if (dashCount) dashCount.textContent = report.owingStudentsCount;
+  if (dashAmount) dashAmount.textContent = formatMoney(report.totalArrears);
+}
+
+// Populate Payer Dropdown & Chips in Income Modal
+function populatePayerDropdown() {
+  const payerSelect = document.getElementById('incomePayerSelect');
+  const datalist = document.getElementById('counterpartyDatalist');
+  const chipsContainer = document.getElementById('payerQuickChips');
+
+  // Collect known counterparties from historical incomes
+  const knownCounterparties = new Set();
+  (appData.incomes || []).forEach(inc => {
+    if (inc.counterparty && inc.counterparty.trim()) {
+      knownCounterparties.add(inc.counterparty.trim());
+    }
+  });
+
+  // Populate other counterparties in dropdown
+  const otherOptgroup = document.getElementById('incomeOtherPayersOptgroup');
+  if (otherOptgroup) {
+    const studentAliases = DEFAULT_BOARDING_STUDENTS.flatMap(s => s.aliases.map(a => a.toUpperCase()));
+    const otherPayers = Array.from(knownCounterparties).filter(p => !studentAliases.some(al => p.toUpperCase().includes(al)));
+    if (otherPayers.length > 0) {
+      otherOptgroup.innerHTML = otherPayers.map(p => `<option value="${p}">${p}</option>`).join('');
+    } else {
+      otherOptgroup.innerHTML = `<option value="" disabled>(鏆傛棤鍏朵粬瀹㈡埛)</option>`;
+    }
+  }
+
+  // Populate Datalist
+  if (datalist) {
+    const allNames = new Set([
+      ...DEFAULT_BOARDING_STUDENTS.map(s => s.name),
+      ...DEFAULT_BOARDING_STUDENTS.flatMap(s => s.aliases),
+      ...Array.from(knownCounterparties)
+    ]);
+    datalist.innerHTML = Array.from(allNames).map(n => `<option value="${n}"></option>`).join('');
+  }
+
+  // Populate Quick Chips
+  if (chipsContainer) {
+    chipsContainer.innerHTML = DEFAULT_BOARDING_STUDENTS.map(s => `
+      <button type="button" onclick="handleSelectPayer('${s.name}')" class="px-2 py-0.5 rounded-md text-[11px] font-medium bg-slate-100 hover:bg-emerald-100 text-slate-700 hover:text-emerald-800 border border-slate-200 transition">
+        ${s.name.includes('&') ? '馃懃 ' + s.name.split(' ')[0] + '鍏勫紵' : s.name.split(' ')[0]}
+      </button>
+    `).join('');
+  }
+}
+
+// Handle Payer Selection from Dropdown or Chip
+function handleSelectPayer(name) {
+  if (!name) return;
+  const payerSelect = document.getElementById('incomePayerSelect');
+  const counterpartyInput = document.getElementById('incomeCounterparty');
+  const amountInput = document.getElementById('incomeAmount');
+  const catSelect = document.getElementById('incomeCategorySelect');
+  const remarkInput = document.getElementById('incomeRemark');
+
+  if (name === '__CUSTOM__') {
+    if (counterpartyInput) {
+      counterpartyInput.focus();
+      counterpartyInput.select();
+    }
+    return;
+  }
+
+  if (counterpartyInput) counterpartyInput.value = name;
+  if (payerSelect && payerSelect.querySelector(`option[value="${name}"]`)) {
+    payerSelect.value = name;
+  }
+
+  // Auto set amount if currently empty or zero
+  const isBrothers = name.includes('HONG YE & KAI YE') || name.includes('涓ゅ厔寮?);
+  if (amountInput && (!amountInput.value || Number(amountInput.value) === 0)) {
+    amountInput.value = isBrothers ? 960 : 480;
+  }
+
+  // Auto set category to '閿€鍞敹鍏? or '瀛﹁垂鏀跺叆' if available
+  if (catSelect) {
+    const options = Array.from(catSelect.options).map(o => o.value);
+    if (options.includes('閿€鍞敹鍏?)) catSelect.value = '閿€鍞敹鍏?;
+    else if (options.includes('瀛﹁垂鏀跺叆')) catSelect.value = '瀛﹁垂鏀跺叆';
+  }
+
+  updatePayerArrearsHint(name);
+}
+
+// Update Dynamic Arrears Hint in Income Modal
+function updatePayerArrearsHint(name) {
+  const hintEl = document.getElementById('incomePayerArrearsHint');
+  const remarkInput = document.getElementById('incomeRemark');
+  if (!hintEl) return;
+
+  if (!name || !name.trim()) {
+    hintEl.classList.add('hidden');
+    hintEl.innerHTML = '';
+    return;
+  }
+
+  const report = calculateStudentArrears();
+  const searchUpper = name.trim().toUpperCase();
+  const student = report.students.find(s => 
+    s.name.toUpperCase().includes(searchUpper) || 
+    s.aliases.some(al => al.toUpperCase() === searchUpper || searchUpper.includes(al.toUpperCase()))
+  );
+
+  if (!student) {
+    hintEl.classList.add('hidden');
+    hintEl.innerHTML = '';
+    return;
+  }
+
+  hintEl.classList.remove('hidden');
+  const monthNames = ['1鏈?, '2鏈?, '3鏈?, '4鏈?, '5鏈?, '6鏈?, '7鏈?, '8鏈?, '9鏈?, '10鏈?, '11鏈?, '12鏈?];
+
+  if (student.arrearsAmount === 0) {
+    hintEl.className = 'p-2.5 rounded-lg text-xs bg-emerald-50 border border-emerald-200 text-emerald-800 flex items-center justify-between';
+    hintEl.innerHTML = `
+      <div class="flex items-center space-x-1.5">
+        <span>鉁?/span>
+        <span><b>${student.name}</b> 鎴嚦 ${report.cutoffMonth} 鏈堜唤浣忓璐瑰凡瀹屽叏缁撴竻锛?/span>
+      </div>
+      <span class="text-[11px] font-semibold text-emerald-600">宸茬即婊?${student.paidMonths.length} 涓湀</span>
+    `;
+  } else {
+    const unpaidStr = student.unpaidMonths.map(m => monthNames[m - 1]).join('銆?);
+    hintEl.className = 'p-2.5 rounded-lg text-xs bg-rose-50 border border-rose-300 text-rose-900 space-y-1';
+    hintEl.innerHTML = `
+      <div class="flex items-center justify-between font-bold">
+        <span class="flex items-center space-x-1">
+          <span>馃毃</span>
+          <span>娆犺垂鎻愰啋锛?{student.name}</span>
+        </span>
+        <span class="text-rose-700">绱娆犵即: RM ${formatMoney(student.arrearsAmount)}</span>
+      </div>
+      <div class="text-[11px] text-rose-800">
+        灏氭瑺鏈堜唤锛?span class="font-bold text-rose-600 bg-rose-100/80 px-1.5 py-0.5 rounded">${unpaidStr}</span> (鍏?${student.unpaidMonths.length} 涓湀鏈氦)
+      </div>
+    `;
+
+    // Auto suggest remark if empty
+    if (remarkInput && (!remarkInput.value || !remarkInput.value.trim())) {
+      const firstUnpaid = student.unpaidMonths[0];
+      remarkInput.value = `2026/${firstUnpaid} 浣忓璐筦;
+    }
+  }
+}
+
+// Quick Add Payment for Student
+function quickAddPaymentForStudent(studentName, suggestedMonth) {
+  openModal('incomeModal');
+  handleSelectPayer(studentName);
+  const remarkInput = document.getElementById('incomeRemark');
+  if (remarkInput && suggestedMonth) {
+    remarkInput.value = `2026/${suggestedMonth} 浣忓璐筦;
+  }
+  showToast(`宸蹭负鎮ㄨ嚜鍔ㄥ～鍏?${studentName} 缂磋垂鍙傛暟锛乣);
+}
+
+// Copy WhatsApp / WeChat Reminder for Student
+function copyStudentReminder(studentId) {
+  const report = calculateStudentArrears();
+  const student = report.students.find(s => s.id === studentId || s.name === studentId);
+  if (!student) return;
+
+  const monthNames = ['1鏈?, '2鏈?, '3鏈?, '4鏈?, '5鏈?, '6鏈?, '7鏈?, '8鏈?, '9鏈?, '10鏈?, '11鏈?, '12鏈?];
+  const unpaidStr = student.unpaidMonths.map(m => `2026骞?{monthNames[m - 1]}`).join('銆?);
+
+  let text = `銆怴oyage 浣忓璐圭即璐规俯棣ㄦ彁閱掋€慭n\n`;
+  text += `灏婃暚鐨勫闀挎偍濂斤細\n`;
+  text += `娓╅Θ鎻愰啋鎮ㄦ煡鏀跺鐢熴€?{student.name}銆戠殑浣忓璐圭即绾虫儏鍐点€俓n\n`;
+  text += `鎴嚦 2026骞?{report.cutoffMonth}鏈堜唤锛屽鐢熷綋鍓嶇即璐圭姸鎬佸涓嬶細\n`;
+  text += `馃搮 灏氭瑺鏈堜唤锛?{unpaidStr || '宸茬粨娓?}\n`;
+  text += `馃搳 鏈即鏈堟暟锛?{student.unpaidMonths.length} 涓湀\n`;
+  text += `馃挵 娆犵即閲戦锛歊M ${formatMoney(student.arrearsAmount)}\n`;
+  if (student.isBrothers) {
+    text += `锛堜袱鍏勫紵 HONG YE 涓?KAI YE 鍚堝苟娆犳锛歊M ${formatMoney(student.arrearsAmount)}锛屾瘡鏈堝悎璁?RM 960锛塡n`;
+  }
+  text += `\n--------------------------\n`;
+  text += `銆愭眹娆鹃摱琛岃处鎴疯祫鏂欍€慭n`;
+  text += `鎴峰悕锛歏oyage Learning\n`;
+  text += `閾惰锛欻ong Leong Bank\n`;
+  text += `璐﹀彿锛?5200056062\n`;
+  text += `--------------------------\n\n`;
+  text += `鐑﹁鎮ㄥ湪杞处鍚庡皢姹囨鍑瘉/鍗曟嵁鍙戠粰鎴戜滑浠ヤ究鏍稿閿€璐︺€傞潪甯告劅璋㈡偍鐨勬敮鎸佷笌閰嶅悎锛侌煓廯;
+
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(text).then(() => {
+      showToast(`馃搵 宸插鍒躲€?{student.name}銆戝偓缂撮€氱煡鍒板壀璐存澘锛乣);
+    }).catch(() => {
+      prompt('璇峰鍒朵互涓嬪偓缂存枃瀛楋細', text);
+    });
+  } else {
+    prompt('璇峰鍒朵互涓嬪偓缂存枃瀛楋細', text);
+  }
+}
+
+// Copy All Arrears Summary Text
+function copyAllArrearsSummary() {
+  const report = calculateStudentArrears();
+  const monthNames = ['1鏈?, '2鏈?, '3鏈?, '4鏈?, '5鏈?, '6鏈?, '7鏈?, '8鏈?, '9鏈?, '10鏈?, '11鏈?, '12鏈?];
+
+  let text = `銆怴oyage 2026 浣忓鐢熸瑺璐规竻鏌ユ眹鎬昏〃銆慭n`;
+  text += `瀵硅处鎴鏈燂細2026骞?{report.cutoffMonth}鏈?| 鏀惰垂鏍囧噯锛歊M ${report.feePerPerson}/浜?鏈圽n`;
+  text += `鎬诲簲鏀讹細RM ${formatMoney(report.totalExpected)} | 宸插疄鏀讹細RM ${formatMoney(report.totalPaid)} | 娆犺垂鎬婚锛歊M ${formatMoney(report.totalArrears)}\n`;
+  text += `娆犺垂浜烘暟锛?{report.owingStudentsCount} 浜?/ 鍏?15 浜?| 缁撴竻浜烘暟锛?{report.fullyPaidCount} 浜篭n\n`;
+  text += `--------------------------------------------------\n`;
+
+  report.students.forEach((s, idx) => {
+    const unpaidStr = s.unpaidMonths.length > 0 ? s.unpaidMonths.map(m => monthNames[m - 1]).join(',') : '宸茬粨娓?;
+    text += `${idx + 1}. ${s.name} | 宸蹭氦: RM ${s.totalPaid} | 灏氭瑺: RM ${s.arrearsAmount} | 娆犳湀: ${unpaidStr}\n`;
+  });
+  text += `--------------------------------------------------\n`;
+
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(text).then(() => {
+      showToast('馃搵 宸插鍒跺叏閮ㄤ綇瀹跨敓娆犺垂鎬绘竻鍗曞埌鍓创鏉匡紒');
+    }).catch(() => {
+      prompt('璇峰鍒朵互涓嬫€绘竻鍗曪細', text);
+    });
+  } else {
+    prompt('璇峰鍒朵互涓嬫€绘竻鍗曪細', text);
+  }
+}
+
+// Print Arrears Report
+function printArrearsReport() {
+  window.print();
+}
+
+// Filter and View Mode Controllers
+function setArrearsViewMode(mode) {
+  arrearsViewMode = mode;
+  const cardsContainer = document.getElementById('arrearsCardsContainer');
+  const matrixContainer = document.getElementById('arrearsMatrixContainer');
+  const cardsBtn = document.getElementById('arrearsModeBtn-cards');
+  const matrixBtn = document.getElementById('arrearsModeBtn-matrix');
+
+  if (cardsContainer) cardsContainer.classList.toggle('hidden', mode !== 'cards');
+  if (matrixContainer) matrixContainer.classList.toggle('hidden', mode !== 'matrix');
+
+  if (cardsBtn) {
+    cardsBtn.className = mode === 'cards' 
+      ? 'px-2.5 py-1 rounded-md bg-white font-bold text-emerald-700 shadow-sm transition flex items-center space-x-1'
+      : 'px-2.5 py-1 rounded-md text-slate-600 hover:text-slate-900 transition flex items-center space-x-1';
+  }
+  if (matrixBtn) {
+    matrixBtn.className = mode === 'matrix' 
+      ? 'px-2.5 py-1 rounded-md bg-white font-bold text-emerald-700 shadow-sm transition flex items-center space-x-1'
+      : 'px-2.5 py-1 rounded-md text-slate-600 hover:text-slate-900 transition flex items-center space-x-1';
+  }
+}
+
+function setArrearsStatusFilter(filter) {
+  arrearsStatusFilter = filter;
+  ['all', 'owing', 'severe', 'paid'].forEach(f => {
+    const btn = document.getElementById(`filterArrearsBtn-${f}`);
+    if (btn) {
+      btn.className = f === filter
+        ? 'px-2.5 py-1 rounded-md bg-white font-bold text-slate-800 shadow-sm transition'
+        : 'px-2.5 py-1 rounded-md text-slate-600 hover:text-slate-900 transition';
+    }
+  });
+  renderArrearsTracker();
+}
+
+function handleArrearsCutoffChange(val) {
+  arrearsCutoffMonth = parseInt(val) || 9;
+  renderArrearsTracker();
+  updateArrearsBadge();
+}
+
+function handleArrearsFeeChange(val) {
+  arrearsMonthlyFeePerPerson = parseFloat(val) || 480;
+  renderArrearsTracker();
+  updateArrearsBadge();
+}
+
+function handleArrearsSearch(keyword) {
+  arrearsSearchKeyword = (keyword || '').trim().toUpperCase();
+  renderArrearsTracker();
+}
+
+// Main View Renderer for Arrears Tracker
+function renderArrearsTracker() {
+  const report = calculateStudentArrears(arrearsCutoffMonth, arrearsMonthlyFeePerPerson);
+  const monthNames = ['1鏈?, '2鏈?, '3鏈?, '4鏈?, '5鏈?, '6鏈?, '7鏈?, '8鏈?, '9鏈?, '10鏈?, '11鏈?, '12鏈?];
+
+  // 1. Update KPI Cards
+  const totalOwedEl = document.getElementById('arrearsTotalOwed');
+  const owedSubEl = document.getElementById('arrearsOwedSub');
+  const countEl = document.getElementById('arrearsCountStudents');
+  const countSubEl = document.getElementById('arrearsCountSub');
+  const fullyPaidEl = document.getElementById('arrearsFullyPaidCount');
+  const rateEl = document.getElementById('arrearsCollectionRate');
+  const barEl = document.getElementById('arrearsProgressBar');
+
+  if (totalOwedEl) totalOwedEl.textContent = formatMoney(report.totalArrears);
+  if (owedSubEl) owedSubEl.textContent = `鎬诲簲鏀?${formatMoney(report.totalExpected)} 路 宸插疄鏀?${formatMoney(report.totalPaid)}`;
+  if (countEl) countEl.textContent = `${report.owingStudentsCount} 浜篳;
+  if (countSubEl) countSubEl.textContent = `鍏朵腑涓ラ噸鎷栨瑺 (鈮?鏈? ${report.severeStudentsCount} 浜篳;
+  if (fullyPaidEl) fullyPaidEl.textContent = `${report.fullyPaidCount} 浜篳;
+  if (rateEl) rateEl.textContent = `${report.collectionRate}%`;
+  if (barEl) barEl.style.width = `${Math.min(100, Math.max(0, report.collectionRate))}%`;
+
+  // 2. Brothers Special Callout Banner
+  const brothersBanner = document.getElementById('brothersCalloutBanner');
+  const brothersStudent = report.students.find(s => s.isBrothers);
+  if (brothersBanner && brothersStudent) {
+    const unpaidListStr = brothersStudent.unpaidMonths.map(m => monthNames[m - 1]).join('銆?);
+    brothersBanner.innerHTML = `
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-rose-200 pb-3">
+        <div class="flex items-start space-x-3">
+          <div class="w-10 h-10 rounded-2xl bg-rose-600 text-white flex items-center justify-center font-bold text-lg shadow-md shadow-rose-600/20 flex-shrink-0">
+            馃毃
+          </div>
+          <div>
+            <div class="flex items-center space-x-2">
+              <h4 class="text-sm sm:text-base font-bold text-slate-900">閲嶇偣鍏虫敞鍌即锛欻ONG YE & KAI YE (涓ゅ厔寮熷悎骞惰浆璐?</h4>
+              <span class="bg-rose-600 text-white text-[10px] px-2 py-0.5 rounded-full font-bold">娆?${brothersStudent.unpaidMonths.length} 涓湀</span>
+            </div>
+            <p class="text-xs text-rose-800 mt-1 font-medium">
+              鍏勫紵淇╃敱濡堝鍚堝苟缂寸撼浣忓璐?(RM 960/鏈?銆傝嚜 6鏈?鏃?浠樻鍚庯紝<span class="font-bold underline">${unpaidListStr}</span> 宸茶繛缁?${brothersStudent.unpaidMonths.length} 涓湀鏈粯锛?            </p>
+          </div>
+        </div>
+        <div class="flex items-center space-x-2 self-end sm:self-center">
+          <button onclick="copyStudentReminder('${brothersStudent.id}')" class="px-3 py-1.5 bg-rose-600 hover:bg-rose-700 text-white rounded-lg text-xs font-semibold shadow-sm transition flex items-center space-x-1">
+            <span>馃搵</span>
+            <span>澶嶅埗濡堝鍌即閫氱煡</span>
+          </button>
+          <button onclick="quickAddPaymentForStudent('${brothersStudent.name}', '${brothersStudent.unpaidMonths[0] || 9}')" class="px-3 py-1.5 bg-white border border-rose-300 hover:bg-rose-50 text-rose-700 rounded-lg text-xs font-semibold transition flex items-center space-x-1">
+            <span>馃挵</span>
+            <span>璁颁竴绗斿厔寮熶粯娆?(RM 960)</span>
+          </button>
+        </div>
+      </div>
+      <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 pt-1 text-xs text-slate-700">
+        <div>搴旂即鎬婚锛?span class="font-bold text-slate-900">${formatMoney(brothersStudent.expectedTotal)}</span></div>
+        <div>宸茬即鎬婚锛?span class="font-bold text-emerald-600">${formatMoney(brothersStudent.totalPaid)}</span></div>
+        <div>姣忎汉娆犺垂锛?span class="font-bold text-rose-600">${formatMoney(brothersStudent.arrearsAmount / 2)}</span></div>
+        <div>涓ゅ厔寮熸€绘瑺璐癸細<span class="font-black text-rose-700 text-sm">${formatMoney(brothersStudent.arrearsAmount)}</span></div>
+      </div>
+    `;
+  }
+
+  // 3. Filter Students for Cards View
+  let filteredStudents = report.students;
+  if (arrearsSearchKeyword) {
+    filteredStudents = filteredStudents.filter(s => 
+      s.name.toUpperCase().includes(arrearsSearchKeyword) || 
+      s.aliases.some(al => al.toUpperCase().includes(arrearsSearchKeyword))
+    );
+  }
+  if (arrearsStatusFilter === 'owing') {
+    filteredStudents = filteredStudents.filter(s => s.arrearsAmount > 0);
+  } else if (arrearsStatusFilter === 'severe') {
+    filteredStudents = filteredStudents.filter(s => s.status === 'severe');
+  } else if (arrearsStatusFilter === 'paid') {
+    filteredStudents = filteredStudents.filter(s => s.arrearsAmount === 0);
+  }
+
+  // 4. Render Cards View
+  const cardsContainer = document.getElementById('arrearsCardsContainer');
+  if (cardsContainer) {
+    if (filteredStudents.length === 0) {
+      cardsContainer.innerHTML = `
+        <div class="col-span-2 p-12 text-center text-slate-400 bg-white rounded-2xl border border-slate-200">
+          <div class="text-4xl mb-2">馃攳</div>
+          <div class="text-sm font-semibold">娌℃湁鎵惧埌绗﹀悎鏉′欢鐨勫鐢?/div>
+        </div>
+      `;
+    } else {
+      cardsContainer.innerHTML = filteredStudents.map(st => {
+        let badgeColor = 'bg-emerald-100 text-emerald-800 border-emerald-200';
+        let badgeText = '馃煝 宸茬粨娓?(鏃犳瑺璐?';
+        if (st.status === 'severe') {
+          badgeColor = 'bg-rose-100 text-rose-800 border-rose-300 animate-pulse';
+          badgeText = `馃敶 娆犺垂 ${st.unpaidMonths.length} 涓湀 (涓ラ噸)`;
+        } else if (st.status === 'owing') {
+          badgeColor = 'bg-amber-100 text-amber-800 border-amber-300';
+          badgeText = `馃煛 娆犺垂 ${st.unpaidMonths.length} 涓湀`;
+        }
+
+        const unpaidBadges = st.unpaidMonths.map(m => 
+          `<span class="px-1.5 py-0.5 rounded bg-rose-100 text-rose-700 font-bold border border-rose-200">${monthNames[m - 1]}</span>`
+        ).join('');
+
+        const paidBadges = st.paidMonths.map(m => 
+          `<span class="px-1.5 py-0.5 rounded bg-emerald-50 text-emerald-700 border border-emerald-200 font-medium">${monthNames[m - 1]}</span>`
+        ).join('');
+
+        const lastPayStr = st.lastIncome 
+          ? `${st.lastIncome.date} (RM ${formatMoney(st.lastIncome.amount)} 路 ${st.lastIncome.remark || '-'})`
+          : '鏆傛棤鏀舵璁板綍';
+
+        return `
+          <div class="bg-white rounded-2xl p-5 border border-slate-200 hover:border-emerald-300 hover:shadow-md transition space-y-4">
+            <!-- Header Row -->
+            <div class="flex items-start justify-between">
+              <div class="flex items-center space-x-3">
+                <div class="w-11 h-11 rounded-2xl ${st.arrearsAmount > 0 ? 'bg-gradient-to-tr from-rose-500 to-amber-500' : 'bg-gradient-to-tr from-emerald-500 to-teal-500'} text-white flex items-center justify-center font-bold text-sm shadow-sm flex-shrink-0">
+                  ${st.name.substring(0, 2)}
+                </div>
+                <div>
+                  <div class="flex items-center space-x-2">
+                    <h4 class="text-sm sm:text-base font-bold text-slate-900">${st.name}</h4>
+                    ${st.isBrothers ? '<span class="bg-indigo-100 text-indigo-800 text-[10px] px-1.5 py-0.5 rounded font-bold">涓ゅ厔寮?/span>' : ''}
+                  </div>
+                  <p class="text-[11px] text-slate-400">鏍囧噯鏀惰垂锛歊M ${st.monthlyFee}/鏈?${st.isBrothers ? '(涓や汉RM960)' : ''}</p>
+                </div>
+              </div>
+              <span class="text-xs px-2.5 py-1 rounded-full border font-bold ${badgeColor}">
+                ${badgeText}
+              </span>
+            </div>
+
+            <!-- Financial Metrics -->
+            <div class="grid grid-cols-3 gap-2 p-3 bg-slate-50 rounded-xl text-xs">
+              <div>
+                <span class="text-[10px] text-slate-400 block">搴旀敹鎬婚</span>
+                <span class="font-bold text-slate-800">${formatMoney(st.expectedTotal)}</span>
+              </div>
+              <div>
+                <span class="text-[10px] text-slate-400 block">宸叉敹鎬婚</span>
+                <span class="font-bold text-emerald-600">${formatMoney(st.totalPaid)}</span>
+              </div>
+              <div>
+                <span class="text-[10px] text-slate-400 block">褰撳墠灏氭瑺</span>
+                <span class="font-black text-sm ${st.arrearsAmount > 0 ? 'text-rose-600' : 'text-slate-400'}">${formatMoney(st.arrearsAmount)}</span>
+              </div>
+            </div>
+
+            <!-- Unpaid Months Pills -->
+            <div class="text-xs space-y-1">
+              <div class="flex items-center justify-between text-[11px]">
+                <span class="font-semibold text-slate-600">鏈即鏈堜唤:</span>
+                <span class="text-slate-400">${st.unpaidMonths.length > 0 ? `鍏?${st.unpaidMonths.length} 涓湀寰呯即` : '宸插叏閮ㄧ即榻?}</span>
+              </div>
+              <div class="flex flex-wrap gap-1">
+                ${unpaidBadges || '<span class="text-[11px] text-emerald-600 font-medium">鎴嚦褰撴湡宸叉棤娆犵即 鉁?/span>'}
+              </div>
+            </div>
+
+            <!-- Paid Months Accordion / Preview -->
+            <div class="text-xs space-y-1">
+              <span class="font-semibold text-slate-600 text-[11px]">宸茬即鏈堜唤:</span>
+              <div class="flex flex-wrap gap-1">
+                ${paidBadges || '<span class="text-[11px] text-slate-400">鏆傛棤宸茬即鏈堜唤</span>'}
+              </div>
+            </div>
+
+            <!-- Last Payment & Action Footer -->
+            <div class="pt-3 border-t border-slate-100 flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs">
+              <div class="text-[11px] text-slate-400 truncate" title="${lastPayStr}">
+                鏈€鍚庝氦娆撅細<span class="text-slate-600 font-medium">${lastPayStr}</span>
+              </div>
+              <div class="flex items-center space-x-2 self-end sm:self-auto">
+                <button onclick="copyStudentReminder('${st.id}')" class="px-2.5 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg font-medium transition flex items-center space-x-1" title="澶嶅埗鍌即閫氱煡">
+                  <span>馃搵</span>
+                  <span>鍌即閫氱煡</span>
+                </button>
+                <button onclick="quickAddPaymentForStudent('${st.name}', '${st.unpaidMonths[0] || report.cutoffMonth}')" class="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg font-semibold shadow-sm transition flex items-center space-x-1" title="蹇€熻ˉ褰曡鐢熶綇瀹胯垂">
+                  <span>馃挵</span>
+                  <span>璁拌繖绗旀</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+  }
+
+  // 5. Render 12-Month Matrix View
+  const matrixContainer = document.getElementById('arrearsMatrixContainer');
+  if (matrixContainer) {
+    let headerCells = '';
+    for (let m = 1; m <= 12; m++) {
+      const isPastOrCur = m <= report.cutoffMonth;
+      headerCells += `<th class="px-2 py-2.5 text-center text-xs font-bold ${isPastOrCur ? 'text-slate-800 bg-slate-100' : 'text-slate-400 bg-slate-50'}">${monthNames[m - 1]}</th>`;
+    }
+
+    const matrixRows = report.students.map((st, idx) => {
+      let cells = '';
+      for (let m = 1; m <= 12; m++) {
+        const isPaid = st.monthsPaidMap[m];
+        const isUnderCutoff = m <= report.cutoffMonth;
+
+        if (isPaid) {
+          cells += `<td class="px-2 py-2 text-center text-[11px] bg-emerald-50 text-emerald-800 font-semibold border-b border-slate-100" title="${monthNames[m - 1]}: 宸茬即 RM ${st.monthlyFee}">鉁?${st.monthlyFee}</td>`;
+        } else if (isUnderCutoff) {
+          cells += `<td class="px-2 py-2 text-center text-[11px] bg-rose-50 text-rose-700 font-bold border-b border-slate-100" title="${monthNames[m - 1]}: 娆犵即 RM ${st.monthlyFee}">鉁?娆犺垂</td>`;
+        } else {
+          cells += `<td class="px-2 py-2 text-center text-[11px] text-slate-300 border-b border-slate-100">-</td>`;
+        }
+      }
+
+      return `
+        <tr class="hover:bg-slate-50/80 transition">
+          <td class="px-3 py-2.5 text-xs font-bold text-slate-900 border-b border-slate-100 sticky left-0 bg-white z-10 whitespace-nowrap">
+            <span class="text-slate-400 mr-1.5 font-normal">${idx + 1}.</span>
+            ${st.name}
+            ${st.isBrothers ? '<span class="text-[10px] text-indigo-600 ml-1">(鍙屼汉)</span>' : ''}
+          </td>
+          ${cells}
+          <td class="px-3 py-2 text-right text-xs font-bold text-emerald-600 border-b border-slate-100 whitespace-nowrap">${formatMoney(st.totalPaid)}</td>
+          <td class="px-3 py-2 text-right text-xs font-black ${st.arrearsAmount > 0 ? 'text-rose-600' : 'text-slate-400'} border-b border-slate-100 whitespace-nowrap">${formatMoney(st.arrearsAmount)}</td>
+          <td class="px-3 py-2 text-center border-b border-slate-100 whitespace-nowrap">
+            <button onclick="copyStudentReminder('${st.id}')" class="px-2 py-1 text-[11px] bg-slate-100 hover:bg-slate-200 text-slate-700 rounded font-medium mr-1">鍌即</button>
+            <button onclick="quickAddPaymentForStudent('${st.name}', '${st.unpaidMonths[0] || report.cutoffMonth}')" class="px-2 py-1 text-[11px] bg-emerald-600 hover:bg-emerald-700 text-white rounded font-medium">璁拌处</button>
+          </td>
+        </tr>
+      `;
+    }).join('');
+
+    matrixContainer.innerHTML = `
+      <div class="mb-3 flex items-center justify-between">
+        <div>
+          <h4 class="text-sm font-bold text-slate-900">鍏ㄥ勾 12 涓湀鏀剁即鐘舵€佺煩闃垫€昏琛?/h4>
+          <p class="text-xs text-slate-400">缁胯壊 鉁?涓哄凡缂存竻锛岀孩鑹?鉁?涓烘埅姝?${report.cutoffMonth} 鏈堜唤鍒版湡鏈粯</p>
+        </div>
+        <div class="text-xs text-slate-500">
+          鍏?15 浣忓鐢?路 鎴鏈堜唤锛?span class="font-bold text-slate-800">${report.cutoffMonth}鏈?/span>
+        </div>
+      </div>
+      <table class="w-full border-collapse text-left">
+        <thead>
+          <tr class="border-b border-slate-200">
+            <th class="px-3 py-2.5 text-xs font-bold text-slate-600 bg-slate-50 sticky left-0 z-10">瀛︾敓濮撳悕</th>
+            ${headerCells}
+            <th class="px-3 py-2.5 text-right text-xs font-bold text-slate-700 bg-slate-50">宸茬即鎬婚</th>
+            <th class="px-3 py-2.5 text-right text-xs font-bold text-rose-700 bg-slate-50">灏氭瑺鎬婚</th>
+            <th class="px-3 py-2.5 text-center text-xs font-bold text-slate-700 bg-slate-50">鎿嶄綔</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${matrixRows}
+        </tbody>
+      </table>
+    `;
+  }
+
+  // 6. Populate Unassigned Incomes Notice
+  const unassignedContainer = document.getElementById('arrearsUnassignedList');
+  if (unassignedContainer) {
+    const unassignedList = (appData.incomes || []).filter(inc => {
+      const p = (inc.counterparty || '').trim();
+      const r = (inc.remark || '').trim();
+      return !p || p.includes('鐜伴噾') || p.includes('Deposit') || p.includes('瀛﹁垂瀹㈡埛');
+    }).slice(0, 5);
+
+    if (unassignedList.length > 0) {
+      unassignedContainer.innerHTML = unassignedList.map(u => `
+        <div class="flex items-center justify-between p-1.5 bg-white/80 rounded border border-blue-100">
+          <span>路 ${u.date} | <b>RM ${formatMoney(u.amount)}</b> | ${u.remark || '(鏃犲娉?'} | 瀹㈡埛: ${u.counterparty || '鏈～鍐?}</span>
+          <button onclick="editIncome('${u.id}')" class="text-blue-600 hover:text-blue-800 font-bold underline text-[10px]">鍘昏ˉ鍏ㄥ鍚?鈫?/button>
+        </div>
+      `).join('');
+    } else {
+      unassignedContainer.innerHTML = `<span class="text-slate-400">鐩墠鎵€鏈夋敹鍏ユ祦姘村潎宸插叧鑱斿鎴峰鍚嶃€?/span>`;
+    }
+  }
+}
+
+// Window Exports for Arrears Module
+window.calculateStudentArrears = calculateStudentArrears;
+window.renderArrearsTracker = renderArrearsTracker;
+window.setArrearsViewMode = setArrearsViewMode;
+window.setArrearsStatusFilter = setArrearsStatusFilter;
+window.handleArrearsCutoffChange = handleArrearsCutoffChange;
+window.handleArrearsFeeChange = handleArrearsFeeChange;
+window.handleArrearsSearch = handleArrearsSearch;
+window.updateArrearsBadge = updateArrearsBadge;
+window.populatePayerDropdown = populatePayerDropdown;
+window.handleSelectPayer = handleSelectPayer;
+window.updatePayerArrearsHint = updatePayerArrearsHint;
+window.quickAddPaymentForStudent = quickAddPaymentForStudent;
+window.copyStudentReminder = copyStudentReminder;
+window.copyAllArrearsSummary = copyAllArrearsSummary;
+window.printArrearsReport = printArrearsReport;
 
   </script>
 </body>
