@@ -4,13 +4,20 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
   <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
   <meta name="apple-mobile-web-app-title" content="2026记账">
-  <meta name="theme-color" content="#059669">
+  <meta name="theme-color" content="#ffffff">
   <meta name="mobile-web-app-capable" content="yes">
   <style>
-    @supports (padding: max(0px)) {
-      .pb-safe { padding-bottom: max(1rem, env(safe-area-inset-bottom, 16px)); }
+    .pt-safe-top {
+      padding-top: max(16px, env(safe-area-inset-top, 16px));
+    }
+    .pb-safe {
+      padding-bottom: max(16px, env(safe-area-inset-bottom, 16px));
+    }
+    @supports (padding-top: max(0px)) {
+      .pt-safe-top { padding-top: max(16px, env(safe-area-inset-top, 16px)); }
+      .pb-safe { padding-bottom: max(16px, env(safe-area-inset-bottom, 16px)); }
     }
   </style>
 
@@ -63,8 +70,39 @@
 <body class="bg-slate-50 text-slate-800 antialiased min-h-screen flex flex-col font-sans">
 
   <!-- Top Header Navigation -->
-  <header class="bg-white border-b border-slate-200 sticky top-0 z-30 shadow-sm">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+  <header class="bg-white/95 backdrop-blur-md border-b border-slate-200 sticky top-0 z-30 shadow-xs">
+    <!-- 1. Mobile Top Bar (< md) with Safe-Area Notch Inset -->
+    <div class="md:hidden pt-safe-top px-4 pb-3">
+      <div class="flex items-center justify-between">
+        <div class="flex items-center space-x-2.5">
+          <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-emerald-600 to-teal-500 flex items-center justify-center text-white shadow-sm shadow-emerald-500/25 text-lg flex-shrink-0">
+            💰
+          </div>
+          <div>
+            <div class="flex items-center space-x-1.5">
+              <h1 class="text-base font-black text-slate-900 tracking-tight">2026 记账管理</h1>
+              <span class="bg-emerald-100 text-emerald-800 text-[10px] px-1.5 py-0.5 rounded font-bold">云端版</span>
+            </div>
+            <p class="text-[10px] text-slate-400 font-medium tracking-wide">VOYAGE LEARNING CENTER</p>
+          </div>
+        </div>
+
+        <div class="flex items-center space-x-2">
+          <!-- Mobile Cloud Sync Pill -->
+          <button type="button" onclick="openCloudSyncModal()" id="mobileCloudSyncBtn" class="inline-flex items-center px-2.5 py-1.5 text-xs font-semibold rounded-full bg-slate-50 hover:bg-slate-100 text-slate-700 border border-slate-200 shadow-2xs active:scale-95 transition">
+            <span id="mobileCloudSyncDot" class="w-2 h-2 rounded-full bg-emerald-500 mr-1.5 animate-pulse"></span>
+            <span id="mobileCloudSyncText" class="text-[11px]">已同步</span>
+          </button>
+          <!-- Mobile Settings Button -->
+          <button type="button" onclick="openMobileMoreMenu()" class="w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 flex items-center justify-center text-slate-600 active:scale-95 transition text-sm" title="更多功能">
+            ⚙️
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 2. Desktop & Tablet Top Bar (>= md) -->
+    <div class="hidden md:block max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="flex items-center justify-between h-16">
         <div class="flex items-center space-x-3">
           <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-emerald-600 to-teal-500 flex items-center justify-center text-white shadow-md shadow-emerald-500/20">
@@ -83,14 +121,14 @@
 
         <!-- Quick Actions & Status -->
         <div class="flex items-center space-x-2 sm:space-x-2.5">
-                                        <!-- Cloud Sync Status Pill & Modal Trigger -->
+          <!-- Cloud Sync Status Pill & Modal Trigger -->
           <button onclick="openCloudSyncModal()" id="cloudSyncStatusBtn" title="点击配置或管理云端多设备实时同步" class="inline-flex items-center px-2.5 sm:px-3 py-1.5 sm:py-2 text-xs font-medium rounded-lg border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 transition shadow-sm focus:outline-none ring-2 ring-emerald-500/10">
             <span id="cloudSyncDot" class="w-2 h-2 rounded-full bg-amber-400 mr-1.5"></span>
             <span id="cloudSyncText">🟡 离线模式</span>
           </button>
 
           <!-- Bank Statement Import Button -->
-          <button onclick="switchTab('statement')" class="hidden md:inline-flex items-center px-3 sm:px-3.5 py-2 text-xs sm:text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-lg shadow-sm transition-all focus:outline-none ring-2 ring-blue-500/20">
+          <button onclick="switchTab('statement')" class="inline-flex items-center px-3 sm:px-3.5 py-2 text-xs sm:text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-lg shadow-sm transition-all focus:outline-none ring-2 ring-blue-500/20">
             <svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.5L19 7.5V19a2 2 0 01-2 2z"></path>
             </svg>
@@ -98,7 +136,7 @@
           </button>
 
           <!-- OCR Scan Button -->
-          <button onclick="openScanReceiptModal()" class="hidden md:inline-flex items-center px-3 sm:px-3 py-2 text-xs sm:text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 rounded-lg shadow-sm transition-all focus:outline-none ring-2 ring-indigo-500/20">
+          <button onclick="openScanReceiptModal()" class="inline-flex items-center px-3 sm:px-3 py-2 text-xs sm:text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 rounded-lg shadow-sm transition-all focus:outline-none ring-2 ring-indigo-500/20">
             <svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"></path>
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"></path>
@@ -106,13 +144,13 @@
             <span>扫单记账</span>
           </button>
 
-          <button onclick="openModal('incomeModal')" class="hidden md:inline-flex items-center px-3 py-2 text-xs sm:text-sm font-medium text-white bg-emerald-600 hover:bg-emerald-700 rounded-lg shadow-sm transition-all focus:outline-none">
+          <button onclick="openModal('incomeModal')" class="inline-flex items-center px-3 py-2 text-xs sm:text-sm font-medium text-white bg-emerald-600 hover:bg-emerald-700 rounded-lg shadow-sm transition-all focus:outline-none">
             <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
             </svg>
             <span>记收入</span>
           </button>
-          <button onclick="openModal('expenseModal')" class="hidden md:inline-flex items-center px-3 py-2 text-xs sm:text-sm font-medium text-white bg-rose-600 hover:bg-rose-700 rounded-lg shadow-sm transition-all focus:outline-none">
+          <button onclick="openModal('expenseModal')" class="inline-flex items-center px-3 py-2 text-xs sm:text-sm font-medium text-white bg-rose-600 hover:bg-rose-700 rounded-lg shadow-sm transition-all focus:outline-none">
             <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 12H4"></path>
             </svg>
@@ -709,7 +747,7 @@
         </div>
 
         <div class="pt-4 border-t border-slate-100">
-          <h4 class="text-sm font-bold text-slate-800 mb-3">系统数据备份与重置</h4>
+          <h4 class="text-sm font-bold text-slate-800 mb-3">系统数据安全与备份恢复</h4>
           <div class="space-y-4">
                                                     <!-- Supabase Cloud Dynamic Hot-Update (OTA) Engine Card -->
         <div class="p-5 rounded-2xl bg-gradient-to-br from-indigo-50/90 via-blue-50/50 to-purple-50/40 border border-indigo-200 space-y-4 shadow-sm mb-6">
@@ -811,16 +849,6 @@
               </div>
             </div>
 
-            <!-- Reset -->
-            <div class="p-4 rounded-xl bg-red-50/60 border border-red-200/80 flex items-center justify-between">
-              <div>
-                <h4 class="text-xs font-semibold text-red-900">重置为 Excel 原始数据</h4>
-                <p class="text-[11px] text-red-600/80">恢复至从原 Excel 读取的初始 54 笔收入与 55 笔支出状态。</p>
-              </div>
-              <button onclick="resetToInitialData()" class="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg text-xs font-medium transition-all shadow-sm">
-                重置账目
-              </button>
-            </div>
           </div>
         </div>
 
@@ -1081,7 +1109,7 @@ alter publication supabase_realtime add table finance_store;</pre>
 
 
   <!-- Toast Notification Container -->
-              <!-- Direct Mobile Camera Input -->
+                    <!-- Direct Mobile Camera Input -->
   <input type="file" id="mobileCameraInput" accept="image/*" capture="environment" class="hidden" onchange="handleReceiptImageUpload(event)">
 
   <!-- Mobile Bottom Navigation Bar (Visible only on mobile devices < 768px) -->
@@ -1230,25 +1258,6 @@ alter publication supabase_realtime add table finance_store;</pre>
           <span class="text-slate-400 font-medium">设置 →</span>
         </button>
       </div>
-    </div>
-  </div>
-
-  <!-- Floating OTA Update Notification Banner -->
-  <div id="otaUpdateBanner" class="fixed top-4 inset-x-3 sm:inset-x-auto sm:right-6 sm:max-w-md bg-slate-900/95 backdrop-blur-md text-white p-4 rounded-2xl shadow-2xl border border-indigo-500/40 flex items-center justify-between gap-3 z-50 transform -translate-y-28 opacity-0 transition-all duration-500 pointer-events-none">
-    <div class="flex items-center space-x-3">
-      <span class="text-2xl animate-bounce">🚀</span>
-      <div>
-        <div class="text-xs font-bold text-indigo-300">全网系统最新版已发布</div>
-        <div id="otaBannerDesc" class="text-[11px] text-slate-300 line-clamp-1 mt-0.5">点击立即无缝升级，无需重新发文件</div>
-      </div>
-    </div>
-    <div class="flex items-center space-x-2 flex-shrink-0">
-      <button onclick="applyAndReloadOta()" class="px-3 py-1.5 bg-indigo-600 hover:bg-indigo-500 text-white rounded-lg text-xs font-bold shadow transition-all pointer-events-auto">
-        立即升级
-      </button>
-      <button onclick="dismissOtaBanner()" class="p-1 text-slate-400 hover:text-white rounded pointer-events-auto">
-        ✕
-      </button>
     </div>
   </div>
 
@@ -2682,16 +2691,26 @@ function updateCloudSyncUI() {
   if (inputId && !inputId.value) inputId.value = cloudSettings.syncId || 'voyage_learning_2026';
 
   const isConnected = !!supabaseClient;
+  const mobileDot = document.getElementById('mobileCloudSyncDot');
+  const mobileText = document.getElementById('mobileCloudSyncText');
+  const mobileBtn = document.getElementById('mobileCloudSyncBtn');
+
   if (isConnected) {
     if (dot) dot.className = 'w-2 h-2 rounded-full bg-emerald-500 mr-1.5 animate-pulse';
     if (text) text.textContent = '🟢 云端实时同步';
     if (modalStatus) modalStatus.innerHTML = '<span class="text-emerald-600 font-bold">🟢 已连接 (实时多端双向同步)</span>';
     if (settingsStatus) settingsStatus.innerHTML = '<span class="text-emerald-600 font-bold">🟢 已连接 (实时多端双向同步)</span>';
+    if (mobileDot) mobileDot.className = 'w-2 h-2 rounded-full bg-emerald-500 mr-1.5 animate-pulse';
+    if (mobileText) mobileText.textContent = '已同步';
+    if (mobileBtn) mobileBtn.className = 'inline-flex items-center px-2.5 py-1.5 text-xs font-semibold rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 active:scale-95 shadow-2xs transition';
   } else {
     if (dot) dot.className = 'w-2 h-2 rounded-full bg-amber-400 mr-1.5';
     if (text) text.textContent = '🟡 离线模式';
     if (modalStatus) modalStatus.innerHTML = '<span class="text-amber-600 font-medium">🟡 离线模式 (仅保存在本机)</span>';
     if (settingsStatus) settingsStatus.innerHTML = '<span class="text-amber-600 font-medium">🟡 离线模式 (仅保存在本机)</span>';
+    if (mobileDot) mobileDot.className = 'w-2 h-2 rounded-full bg-amber-400 mr-1.5';
+    if (mobileText) mobileText.textContent = '离线';
+    if (mobileBtn) mobileBtn.className = 'inline-flex items-center px-2.5 py-1.5 text-xs font-semibold rounded-full bg-amber-50 text-amber-700 border border-amber-200 active:scale-95 shadow-2xs transition';
   }
 
   const syncText = cloudSettings.lastSyncTime ? `上次同步：${cloudSettings.lastSyncTime}` : '暂无云端同步记录';
@@ -2862,8 +2881,12 @@ async function pushToCloud(isManual = false) {
 
   const dot = document.getElementById('cloudSyncDot');
   const text = document.getElementById('cloudSyncText');
+  const mobileDot = document.getElementById('mobileCloudSyncDot');
+  const mobileText = document.getElementById('mobileCloudSyncText');
   if (dot) dot.className = 'w-2 h-2 rounded-full bg-blue-500 mr-1.5 animate-spin';
   if (text) text.textContent = '正在同步云端...';
+  if (mobileDot) mobileDot.className = 'w-2 h-2 rounded-full bg-blue-500 mr-1.5 animate-spin';
+  if (mobileText) mobileText.textContent = '同步中';
 
   try {
     appData.updatedAt = Date.now();
@@ -3003,7 +3026,7 @@ async function checkForCloudAppUpdates(isManual = false) {
           applyAndReloadOta();
         }
       } else {
-        showOtaUpdateBanner(cloudRelease);
+        showToast(`🚀 云端有新版 v${cloudRelease.version} 可用，可在设置中更新`);
       }
     } else {
       if (isManual) {
@@ -3024,35 +3047,15 @@ function handleCloudReleaseIncoming(releaseData) {
       localStorage.setItem('voyage_finance_cached_bundle', releaseData.bundle);
       localStorage.setItem('voyage_finance_cached_version', releaseData.version || '最新版');
       localStorage.setItem('voyage_finance_cached_time', String(releaseData.updatedAt));
-      showOtaUpdateBanner(releaseData);
-      showToast('📢 全网系统已发布新版，随时可点击上方升级！');
+      showToast('📢 全网系统已发布新版，随时可刷新网页升级！');
     } catch (e) {
       console.warn('Failed to cache OTA bundle in localStorage', e);
     }
   }
 }
 
-function showOtaUpdateBanner(release) {
-  const b = document.getElementById('otaUpdateBanner');
-  const desc = document.getElementById('otaBannerDesc');
-  if (!b) return;
-  if (desc) {
-    desc.textContent = `最新版本 v${release.version} (${release.changelog || '功能升级'})，点击无缝升级`;
-  }
-  b.classList.remove('-translate-y-28', 'opacity-0', 'pointer-events-none');
-  b.classList.add('pointer-events-auto');
-}
-
 function applyAndReloadOta() {
   location.reload();
-}
-
-function dismissOtaBanner() {
-  const b = document.getElementById('otaUpdateBanner');
-  if (b) {
-    b.classList.add('-translate-y-28', 'opacity-0', 'pointer-events-none');
-    b.classList.remove('pointer-events-auto');
-  }
 }
 
 async function publishCurrentAppToCloud() {
@@ -5008,19 +5011,7 @@ function handleImportJSON(event) {
   event.target.value = '';
 }
 
-// Reset to Initial Excel Data
-function resetToInitialData() {
-  if (confirm('警告：此操作将清空您在网页中做出的所有新增或修改，恢复为 Excel 原始初始账目（54笔收入、55笔支出）。确定要重置吗？')) {
-    appData = JSON.parse(JSON.stringify(INITIAL_FINANCE_DATA));
-    appData.updatedAt = Date.now();
-    saveData();
-    showToast('已成功重置为 Excel 原始账目数据！');
-    renderDashboard();
-    renderIncomeTable();
-    renderExpenseTable();
-    populateDropdowns();
-  }
-}
+
 
 // Attach Event Listeners on Page Load
 window.addEventListener('DOMContentLoaded', () => {
