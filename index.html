@@ -11,15 +11,19 @@
   <script id="voyage-ota-bootloader">
     (function() {
       try {
-        var expectedVersion = '2026.3.22';
-        var baseBuildTime = 1789037189005;
+        var expectedVersion = '2026.3.24';
+        var baseBuildTime = 1789047622366;
         var cachedBundle = localStorage.getItem('voyage_finance_cached_bundle');
         var cachedVersion = localStorage.getItem('voyage_finance_cached_version');
         var cachedTime = parseInt(localStorage.getItem('voyage_finance_cached_time') || '0', 10);
         
-        // Only purge if corrupted or strictly older than base build time
+        // Force purge if corrupted, older build, or version mismatch
         if (cachedBundle) {
-          var isCorrupt = (cachedBundle.indexOf('????') !== -1) || (cachedTime < baseBuildTime);
+          var isCorrupt = (cachedBundle.indexOf('????') !== -1) || 
+                          (cachedBundle.indexOf('?/span>') !== -1) ||
+                          (cachedBundle.indexOf('0\u4eba\u6b20\u8d39?') !== -1) ||
+                          (cachedTime < baseBuildTime) || 
+                          (cachedVersion !== expectedVersion);
           if (isCorrupt) {
             localStorage.removeItem('voyage_finance_cached_bundle');
             localStorage.removeItem('voyage_finance_cached_time');
@@ -215,9 +219,10 @@
           <span>🛒 支出明细</span>
           <span id="navExpenseBadge" class="bg-rose-100 text-rose-800 text-xs px-2 py-0.5 rounded-full font-semibold">0</span>
         </button>
-                <button onclick="switchTab('arrears')" id="tab-arrears" class="tab-link text-slate-500 hover:text-slate-700 py-3 px-1 border-b-2 border-transparent font-medium flex items-center space-x-1.5 relative">
-          <span>馃彔 浣忓娆犺垂娓呮煡</span>
-          <span id="navArrearsBadge" class="bg-rose-500 text-white text-[10px] px-1.5 py-0.5 rounded-full font-bold shadow-sm">0浜烘瑺璐?/span>
+                
+        <button onclick="switchTab('arrears')" id="tab-arrears" class="tab-link text-slate-500 hover:text-slate-700 py-3 px-1 border-b-2 border-transparent font-medium flex items-center space-x-1.5 relative">
+          <span>🏠 住宿欠费清查</span>
+          <span id="navArrearsBadge" class="bg-rose-500 text-white text-[10px] px-1.5 py-0.5 rounded-full font-bold shadow-sm">0人欠费</span>
         </button>
         <button onclick="switchTab('monthly')" id="tab-monthly" class="tab-link text-slate-500 hover:text-slate-700 py-3 px-1 border-b-2 border-transparent font-medium flex items-center space-x-2">
           <span>📅 月度收支统计</span>
@@ -240,14 +245,14 @@
       <!-- Boarding Fees Arrears Alert Banner -->
       <div onclick="switchTab('arrears')" class="cursor-pointer p-3.5 rounded-xl bg-gradient-to-r from-rose-50 via-amber-50 to-orange-50 border border-rose-200 hover:border-rose-300 transition shadow-sm flex items-center justify-between">
         <div class="flex items-center space-x-2.5">
-          <span class="text-xl">馃彔</span>
+          <span class="text-xl">🏠</span>
           <div class="text-xs">
-            <span class="font-bold text-slate-900">浣忓璐规敹缂寸洃鎺э細</span>
-            <span class="text-slate-600">褰撳墠鍏辨湁 <span id="dashArrearsCount" class="font-bold text-rose-600">--</span> 浣嶅鐢熸湭缁撴竻锛屽緟鏀堕噾棰?<span id="dashArrearsAmount" class="font-bold text-rose-600">--</span></span>
+            <span class="font-bold text-slate-900">住宿费收缴监控：</span>
+            <span class="text-slate-600">当前共有 <span id="dashArrearsCount" class="font-bold text-rose-600">--</span> 位学生未结清，待收金额 <span id="dashArrearsAmount" class="font-bold text-rose-600">--</span></span>
           </div>
         </div>
         <span class="text-xs font-semibold text-rose-700 hover:underline flex items-center space-x-1">
-          <span>鏌ョ湅娆犺垂鏄庣粏涓庡偓鏀?鈫?/span>
+          <span>查看欠费明细与催收 →</span>
         </span>
       </div>
       <!-- 4 Stats Cards -->
@@ -799,34 +804,35 @@
       </div>
     </div>
 
-        <!-- 4.5 BOARDING FEES & ARREARS VIEW -->
+    <!-- 4.5 BOARDING FEES & ARREARS VIEW -->
     <div id="view-arrears" class="space-y-6 hidden">
       <!-- Arrears Header Card -->
       <div class="bg-white rounded-2xl p-5 sm:p-6 border border-slate-200 shadow-sm space-y-4">
         <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
           <div>
             <div class="flex items-center space-x-2">
-              <span class="text-2xl">馃彔</span>
-              <h3 class="text-lg sm:text-xl font-bold text-slate-900">浣忓瀛︾敓缂磋垂涓庢瑺璐规竻鏌?/h3>
-              <span class="bg-rose-100 text-rose-800 text-xs px-2.5 py-0.5 rounded-full font-bold">15浣嶄綇瀹跨敓</span>
+              <span class="text-2xl">🏠</span>
+              <h3 class="text-lg sm:text-xl font-bold text-slate-900">住宿学生缴费与欠费清查</h3>
+              <span class="bg-rose-100 text-rose-800 text-xs px-2.5 py-0.5 rounded-full font-bold">15位住宿生</span>
             </div>
             <p class="text-xs text-slate-500 mt-1">
-              绮惧噯璺熻釜鍚勬湀浠戒綇瀹胯垂浜ょ即杩涘害锛屾櫤鑳借绠楁瑺璐规湀浠姐€佹湭缂撮噾棰濓紝鏀寔涓€閿偓缂翠笌蹇€熻ˉ褰曞叆璐?            </p>
+              精准跟踪各月份住宿费交缴进度，智能计算欠费月份、未缴金额，支持一键催缴与快速补录入账
+            </p>
           </div>
           
           <!-- Top Action Buttons -->
           <div class="flex flex-wrap items-center gap-2">
             <button onclick="copyAllArrearsSummary()" class="inline-flex items-center px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-xs font-semibold transition">
               <svg class="w-3.5 h-3.5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"></path></svg>
-              <span>澶嶅埗娆犺垂鎬绘竻鍗?/span>
+              <span>复制欠费总清单</span>
             </button>
             <button onclick="printArrearsReport()" class="inline-flex items-center px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-xs font-semibold transition">
               <svg class="w-3.5 h-3.5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path></svg>
-              <span>鎵撳嵃瀵硅处鎶ヨ〃</span>
+              <span>打印对账报表</span>
             </button>
             <button onclick="renderArrearsTracker()" class="inline-flex items-center px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-xs font-semibold shadow-sm transition">
               <svg class="w-3.5 h-3.5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
-              <span>鍒锋柊鏍稿</span>
+              <span>刷新核对</span>
             </button>
           </div>
         </div>
@@ -836,38 +842,38 @@
           <!-- Total Arrears -->
           <div class="bg-rose-50/70 border border-rose-200 rounded-xl p-4">
             <div class="flex items-center justify-between text-xs text-rose-700 font-semibold">
-              <span>寰呮敹娆犺垂鎬婚</span>
-              <span class="text-base">馃毃</span>
+              <span>待收欠费总额</span>
+              <span class="text-base">🚨</span>
             </div>
             <div id="arrearsTotalOwed" class="text-xl sm:text-2xl font-black text-rose-600 mt-1.5">RM 0.00</div>
-            <div id="arrearsOwedSub" class="text-[11px] text-rose-700/80 mt-1">璁＄畻涓?..</div>
+            <div id="arrearsOwedSub" class="text-[11px] text-rose-700/80 mt-1">计算中...</div>
           </div>
 
           <!-- Students with Arrears -->
           <div class="bg-amber-50/70 border border-amber-200 rounded-xl p-4">
             <div class="flex items-center justify-between text-xs text-amber-700 font-semibold">
-              <span>娆犺垂瀛︾敓浜烘暟</span>
-              <span class="text-base">鈿狅笍</span>
+              <span>欠费学生人数</span>
+              <span class="text-base">⚠️</span>
             </div>
-            <div id="arrearsCountStudents" class="text-xl sm:text-2xl font-black text-amber-700 mt-1.5">0 浜?/div>
-            <div id="arrearsCountSub" class="text-[11px] text-amber-700/80 mt-1">鍏?15 浣嶄綇瀹垮鐢?/div>
+            <div id="arrearsCountStudents" class="text-xl sm:text-2xl font-black text-amber-700 mt-1.5">0 人</div>
+            <div id="arrearsCountSub" class="text-[11px] text-amber-700/80 mt-1">共 15 位住宿学生</div>
           </div>
 
           <!-- Fully Paid Students -->
           <div class="bg-emerald-50/70 border border-emerald-200 rounded-xl p-4">
             <div class="flex items-center justify-between text-xs text-emerald-700 font-semibold">
-              <span>瀹屽叏缁撴竻瀛︾敓</span>
-              <span class="text-base">鉁?/span>
+              <span>完全结清学生</span>
+              <span class="text-base">✅</span>
             </div>
-            <div id="arrearsFullyPaidCount" class="text-xl sm:text-2xl font-black text-emerald-600 mt-1.5">0 浜?/div>
-            <div class="text-[11px] text-emerald-700/80 mt-1">鏃犱换浣曢€炬湡鎷栨瑺</div>
+            <div id="arrearsFullyPaidCount" class="text-xl sm:text-2xl font-black text-emerald-600 mt-1.5">0 人</div>
+            <div class="text-[11px] text-emerald-700/80 mt-1">无任何逾期拖欠</div>
           </div>
 
           <!-- Collection Rate -->
           <div class="bg-slate-50 border border-slate-200 rounded-xl p-4">
             <div class="flex items-center justify-between text-xs text-slate-600 font-semibold">
-              <span>浣忓璐规敹缂寸巼</span>
-              <span class="text-base">馃搱</span>
+              <span>住宿费收缴率</span>
+              <span class="text-base">📈</span>
             </div>
             <div id="arrearsCollectionRate" class="text-xl sm:text-2xl font-black text-slate-800 mt-1.5">0.0%</div>
             <div class="w-full bg-slate-200 rounded-full h-1.5 mt-2 overflow-hidden">
@@ -888,30 +894,30 @@
           <!-- Left: Cutoff Month & Standard Fee -->
           <div class="flex flex-wrap items-center gap-3">
             <div class="flex items-center space-x-1.5">
-              <span class="font-bold text-slate-700">瀵硅处鎴鏈堜唤:</span>
+              <span class="font-bold text-slate-700">对账截止月份:</span>
               <select id="arrearsCutoffMonthSelect" onchange="handleArrearsCutoffChange(this.value)" class="px-2.5 py-1.5 bg-slate-50 border border-slate-300 rounded-lg font-semibold text-slate-800 focus:ring-1 focus:ring-emerald-500 text-xs">
-                <option value="1">2026骞?1鏈?/option>
-                <option value="2">2026骞?2鏈?/option>
-                <option value="3">2026骞?3鏈?/option>
-                <option value="4">2026骞?4鏈?/option>
-                <option value="5">2026骞?5鏈?/option>
-                <option value="6">2026骞?6鏈?/option>
-                <option value="7">2026骞?7鏈?/option>
-                <option value="8">2026骞?8鏈?/option>
-                <option value="9" selected>2026骞?9鏈?(褰撳墠鏈?</option>
-                <option value="10">2026骞?10鏈?/option>
-                <option value="11">2026骞?11鏈?/option>
-                <option value="12">2026骞?12鏈?(鍏ㄥ勾)</option>
+                <option value="1">2026年 1月</option>
+                <option value="2">2026年 2月</option>
+                <option value="3">2026年 3月</option>
+                <option value="4">2026年 4月</option>
+                <option value="5">2026年 5月</option>
+                <option value="6">2026年 6月</option>
+                <option value="7">2026年 7月</option>
+                <option value="8">2026年 8月</option>
+                <option value="9" selected>2026年 9月 (当前月)</option>
+                <option value="10">2026年 10月</option>
+                <option value="11">2026年 11月</option>
+                <option value="12">2026年 12月 (全年)</option>
               </select>
             </div>
 
             <div class="flex items-center space-x-1.5">
-              <span class="font-bold text-slate-700">姣忎汉鏈堣垂 (RM):</span>
+              <span class="font-bold text-slate-700">每人月费 (RM):</span>
               <input type="number" id="arrearsMonthlyFeeInput" value="480" onchange="handleArrearsFeeChange(this.value)" class="w-20 px-2 py-1.5 bg-slate-50 border border-slate-300 rounded-lg text-xs font-semibold text-slate-800 text-center">
             </div>
 
             <div class="relative">
-              <input type="text" id="arrearsSearchInput" oninput="handleArrearsSearch(this.value)" placeholder="鎼滅储瀛︾敓濮撳悕..." class="pl-7 pr-3 py-1.5 bg-slate-50 border border-slate-300 rounded-lg text-xs text-slate-800 w-36 sm:w-44 focus:ring-1 focus:ring-emerald-500">
+              <input type="text" id="arrearsSearchInput" oninput="handleArrearsSearch(this.value)" placeholder="搜索学生姓名..." class="pl-7 pr-3 py-1.5 bg-slate-50 border border-slate-300 rounded-lg text-xs text-slate-800 w-36 sm:w-44 focus:ring-1 focus:ring-emerald-500">
               <svg class="w-3.5 h-3.5 text-slate-400 absolute left-2 top-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
             </div>
           </div>
@@ -920,21 +926,21 @@
           <div class="flex flex-wrap items-center gap-2">
             <!-- Filter Pills -->
             <div class="inline-flex rounded-lg border border-slate-200 bg-slate-50 p-0.5 text-xs font-medium">
-              <button onclick="setArrearsStatusFilter('all')" id="filterArrearsBtn-all" class="px-2.5 py-1 rounded-md bg-white font-bold text-slate-800 shadow-sm transition">鍏ㄩ儴(15)</button>
-              <button onclick="setArrearsStatusFilter('owing')" id="filterArrearsBtn-owing" class="px-2.5 py-1 rounded-md text-slate-600 hover:text-slate-900 transition">娆犺垂瀛︾敓</button>
-              <button onclick="setArrearsStatusFilter('severe')" id="filterArrearsBtn-severe" class="px-2.5 py-1 rounded-md text-slate-600 hover:text-slate-900 transition">涓ラ噸娆犺垂(鈮?鏈?</button>
-              <button onclick="setArrearsStatusFilter('paid')" id="filterArrearsBtn-paid" class="px-2.5 py-1 rounded-md text-slate-600 hover:text-slate-900 transition">宸茬粨娓?/button>
+              <button onclick="setArrearsStatusFilter('all')" id="filterArrearsBtn-all" class="px-2.5 py-1 rounded-md bg-white font-bold text-slate-800 shadow-sm transition">全部(15)</button>
+              <button onclick="setArrearsStatusFilter('owing')" id="filterArrearsBtn-owing" class="px-2.5 py-1 rounded-md text-slate-600 hover:text-slate-900 transition">欠费学生</button>
+              <button onclick="setArrearsStatusFilter('severe')" id="filterArrearsBtn-severe" class="px-2.5 py-1 rounded-md text-slate-600 hover:text-slate-900 transition">严重欠费(≥3月)</button>
+              <button onclick="setArrearsStatusFilter('paid')" id="filterArrearsBtn-paid" class="px-2.5 py-1 rounded-md text-slate-600 hover:text-slate-900 transition">已结清</button>
             </div>
 
             <!-- View Mode Toggle Buttons -->
             <div class="inline-flex rounded-lg border border-slate-200 bg-slate-50 p-0.5 text-xs font-medium">
               <button onclick="setArrearsViewMode('cards')" id="arrearsModeBtn-cards" class="px-2.5 py-1 rounded-md bg-white font-bold text-emerald-700 shadow-sm transition flex items-center space-x-1">
-                <span>馃搵</span>
-                <span class="hidden sm:inline">鍗＄墖鍒楄〃</span>
+                <span>📋</span>
+                <span class="hidden sm:inline">卡片列表</span>
               </button>
               <button onclick="setArrearsViewMode('matrix')" id="arrearsModeBtn-matrix" class="px-2.5 py-1 rounded-md text-slate-600 hover:text-slate-900 transition flex items-center space-x-1">
-                <span>馃搳</span>
-                <span class="hidden sm:inline">12鏈堢煩闃靛ぇ琛?/span>
+                <span>📊</span>
+                <span class="hidden sm:inline">12月矩阵大表</span>
               </button>
             </div>
           </div>
@@ -954,11 +960,12 @@
       <!-- Unassigned Cash Incomes Callout Notice -->
       <div class="p-4 rounded-xl bg-blue-50 border border-blue-200 text-xs text-blue-900 space-y-2">
         <div class="font-bold flex items-center space-x-2">
-          <span>馃挕</span>
-          <span>绯荤粺鏈叿鍚嶆敹鍏ユ牳瀵规彁绀?/span>
+          <span>💡</span>
+          <span>系统未具名收入核对提示</span>
         </div>
         <p class="text-[11px] text-blue-800">
-          绯荤粺涓洰鍓嶆湁閮ㄥ垎閫氳繃瀛樻鏈猴紙Cash Deposit锛夋垨鏈～鍐欏鐢熷鍚嶇殑瀛﹁垂鏀舵璁板綍銆傝嫢纭灞炰簬涓婅堪娆犺垂瀛︾敓锛屽缓璁湪銆愭敹鍏ユ槑缁嗐€戜腑鐐瑰嚮鈥溾湉锔?缂栬緫鈥濊ˉ鍏ㄤ氦娆句汉濮撳悕锛岀郴缁熷皢鑷姩璇嗗埆鎶垫墸鍏跺搴旀瑺璐规湀浠姐€?        </p>
+          系统中目前有部分通过存款机（Cash Deposit）或未填写学生姓名的学费收款记录。若确认属于上述欠费学生，建议在【收入明细】中点击“✏️ 编辑”补全交款人姓名，系统将自动识别抵扣其对应欠费月份。
+        </p>
         <div id="arrearsUnassignedList" class="space-y-1 text-[11px] font-mono pt-1">
           <!-- Populated dynamically -->
         </div>
@@ -2080,15 +2087,17 @@ alter publication supabase_realtime add table finance_store;</pre>
       </div>
 
       <div class="space-y-2 pt-1 text-xs">
-                <button onclick="closeMobileMoreMenu(); switchTab('arrears');" class="w-full p-3.5 bg-gradient-to-r from-rose-50 to-amber-50 hover:from-rose-100 hover:to-amber-100 border border-rose-200 rounded-xl flex items-center justify-between text-slate-900 transition shadow-sm">
+                
+
+        <button onclick="closeMobileMoreMenu(); switchTab('arrears');" class="w-full p-3.5 bg-gradient-to-r from-rose-50 to-amber-50 hover:from-rose-100 hover:to-amber-100 border border-rose-200 rounded-xl flex items-center justify-between text-slate-900 transition shadow-sm">
           <span class="flex items-center space-x-3 font-bold text-rose-800">
-            <span class="text-xl">馃彔</span>
+            <span class="text-xl">🏠</span>
             <span class="text-left">
-              <span class="block text-sm">浣忓鐢熸瑺璐规竻鏌?/span>
-              <span class="block text-[11px] font-normal text-rose-600">鍒版湡鏈即瀵硅处 路 鍌即娓呭崟 路 蹇€熸敹娆?/span>
+              <span class="block text-sm">住宿生欠费清查</span>
+              <span class="block text-[11px] font-normal text-rose-600">到期未缴对账 · 催缴清单 · 快速收款</span>
             </span>
           </span>
-          <span id="mobileMoreArrearsBadge" class="bg-rose-600 text-white text-[11px] px-2 py-0.5 rounded-full font-bold">11浜烘瑺璐?/span>
+          <span id="mobileMoreArrearsBadge" class="bg-rose-600 text-white text-[11px] px-2 py-0.5 rounded-full font-bold">11人欠费</span>
         </button>
 
         <button onclick="closeMobileMoreMenu(); switchTab('monthly');" class="w-full p-3.5 bg-slate-50 hover:bg-slate-100 border border-slate-200/80 rounded-xl flex items-center justify-between text-slate-800">
@@ -2149,6 +2158,7 @@ alter publication supabase_realtime add table finance_store;</pre>
 
 
 
+
   <!-- Scripts -->
   <script>
 // Initial Financial Data Seed
@@ -2194,7 +2204,7 @@ let ocrSettings = {
 };
 
 // Application Version and OTA Release Timestamp
-window.VOYAGE_APP_VERSION = '2026.3.23';
+window.VOYAGE_APP_VERSION = '2026.3.24';
 window.VOYAGE_APP_BUILD_TIME = Date.now();
 
 // ==========================================
@@ -6994,10 +7004,8 @@ window.testLocalOcrEngine = testLocalOcrEngine;
 window.triggerRescanActiveBatchItem = triggerRescanActiveBatchItem;
 window.handleCloudSyncPillClick = handleCloudSyncPillClick;
 
-
-
 // ==========================================
-// 馃彔 BOARDING STUDENT FEE & ARREARS MANAGER
+// 🏠 BOARDING STUDENT FEE & ARREARS MANAGER
 // ==========================================
 
 const DEFAULT_BOARDING_STUDENTS = [
@@ -7014,7 +7022,7 @@ const DEFAULT_BOARDING_STUDENTS = [
   { id: 'LEE JI CHUEN', name: 'LEE JI CHUEN', aliases: ['LEE JI CHUEN', 'JI CHUEN'], count: 1, fee: 480 },
   { id: 'CHIA KAI JIE', name: 'CHIA KAI JIE', aliases: ['CHIA KAI JIE', 'KAI JIE'], count: 1, fee: 480 },
   { id: 'ZHI XIAO', name: 'ZHI XIAO', aliases: ['ZHI XIAO'], count: 1, fee: 480 },
-  { id: 'HONG YE & KAI YE', name: 'HONG YE & KAI YE (涓ゅ厔寮熷悎骞?', aliases: ['HONG YE', 'KAI YE', 'HONG YIP', 'KAI YIP'], count: 2, fee: 960, isBrothers: true, note: '涓ゅ厔寮熷悎骞惰浆璐︼紙姣嶏細RM960/鏈堬級' }
+  { id: 'HONG YE & KAI YE', name: 'HONG YE & KAI YE (两兄弟合并)', aliases: ['HONG YE', 'KAI YE', 'HONG YIP', 'KAI YIP'], count: 2, fee: 960, isBrothers: true, note: '两兄弟合并转账（母：RM960/月）' }
 ];
 
 let arrearsCutoffMonth = 9;
@@ -7025,7 +7033,7 @@ let arrearsSearchKeyword = '';
 
 // Core arrears calculation engine
 function calculateStudentArrears(cutoffMonth = arrearsCutoffMonth, feePerPerson = arrearsMonthlyFeePerPerson) {
-  const monthNames = ['1鏈?, '2鏈?, '3鏈?, '4鏈?, '5鏈?, '6鏈?, '7鏈?, '8鏈?, '9鏈?, '10鏈?, '11鏈?, '12鏈?];
+  const monthNames = ['1月', '2月', '3月', '4月', '5月', '6月', '7月', '8月', '9月', '10月', '11月', '12月'];
   const students = DEFAULT_BOARDING_STUDENTS.map(st => {
     const monthlyFee = st.count * feePerPerson;
     const expectedTotal = monthlyFee * cutoffMonth;
@@ -7045,18 +7053,18 @@ function calculateStudentArrears(cutoffMonth = arrearsCutoffMonth, feePerPerson 
     // Check remarks for explicit month mentions
     matchedIncomes.forEach(inc => {
       const rem = (inc.remark || '').toUpperCase();
-      if (/JAN|2026[-/]0?1\b|1鏈?i.test(rem)) monthsPaidMap[1] = true;
-      if (/FEB|2026[-/]0?2\b|2鏈?i.test(rem)) monthsPaidMap[2] = true;
-      if (/MAR|2026[-/]0?3\b|3鏈?i.test(rem)) monthsPaidMap[3] = true;
-      if (/APR|2026[-/]0?4\b|4鏈?i.test(rem)) monthsPaidMap[4] = true;
-      if (/MAY|2026[-/]0?5\b|5鏈?i.test(rem)) monthsPaidMap[5] = true;
-      if (/JUN|2026[-/]0?6\b|6鏈?i.test(rem)) monthsPaidMap[6] = true;
-      if (/JUL|2026[-/]0?7\b|7鏈?i.test(rem)) monthsPaidMap[7] = true;
-      if (/AUG|2026[-/]0?8\b|8鏈?i.test(rem)) monthsPaidMap[8] = true;
-      if (/SEP|2026[-/]0?9\b|9鏈?i.test(rem)) monthsPaidMap[9] = true;
-      if (/OCT|2026[-/]10\b|10鏈?i.test(rem)) monthsPaidMap[10] = true;
-      if (/NOV|2026[-/]11\b|11鏈?i.test(rem)) monthsPaidMap[11] = true;
-      if (/DEC|2026[-/]12\b|12鏈?i.test(rem)) monthsPaidMap[12] = true;
+      if (/JAN|2026[-/]0?1\b|1月/i.test(rem)) monthsPaidMap[1] = true;
+      if (/FEB|2026[-/]0?2\b|2月/i.test(rem)) monthsPaidMap[2] = true;
+      if (/MAR|2026[-/]0?3\b|3月/i.test(rem)) monthsPaidMap[3] = true;
+      if (/APR|2026[-/]0?4\b|4月/i.test(rem)) monthsPaidMap[4] = true;
+      if (/MAY|2026[-/]0?5\b|5月/i.test(rem)) monthsPaidMap[5] = true;
+      if (/JUN|2026[-/]0?6\b|6月/i.test(rem)) monthsPaidMap[6] = true;
+      if (/JUL|2026[-/]0?7\b|7月/i.test(rem)) monthsPaidMap[7] = true;
+      if (/AUG|2026[-/]0?8\b|8月/i.test(rem)) monthsPaidMap[8] = true;
+      if (/SEP|2026[-/]0?9\b|9月/i.test(rem)) monthsPaidMap[9] = true;
+      if (/OCT|2026[-/]10\b|10月/i.test(rem)) monthsPaidMap[10] = true;
+      if (/NOV|2026[-/]11\b|11月/i.test(rem)) monthsPaidMap[11] = true;
+      if (/DEC|2026[-/]12\b|12月/i.test(rem)) monthsPaidMap[12] = true;
     });
 
     // Fill remaining months based on total amount paid
@@ -7137,7 +7145,7 @@ function updateArrearsBadge() {
   const report = calculateStudentArrears();
   const navBadge = document.getElementById('navArrearsBadge');
   if (navBadge) {
-    navBadge.textContent = report.owingStudentsCount > 0 ? `${report.owingStudentsCount}浜烘瑺璐筦 : '宸茬粨娓?;
+    navBadge.textContent = report.owingStudentsCount > 0 ? `${report.owingStudentsCount}人欠费` : '已结清';
     navBadge.className = report.owingStudentsCount > 0 
       ? 'bg-rose-500 text-white text-[10px] px-1.5 py-0.5 rounded-full font-bold shadow-sm'
       : 'bg-emerald-500 text-white text-[10px] px-1.5 py-0.5 rounded-full font-bold shadow-sm';
@@ -7145,7 +7153,7 @@ function updateArrearsBadge() {
 
   const mobileBadge = document.getElementById('mobileMoreArrearsBadge');
   if (mobileBadge) {
-    mobileBadge.textContent = report.owingStudentsCount > 0 ? `娆犺垂 ${formatMoney(report.totalArrears)}` : '宸茬粨娓?;
+    mobileBadge.textContent = report.owingStudentsCount > 0 ? `欠费 ${formatMoney(report.totalArrears)}` : '已结清';
   }
 
   const dashCount = document.getElementById('dashArrearsCount');
@@ -7176,7 +7184,7 @@ function populatePayerDropdown() {
     if (otherPayers.length > 0) {
       otherOptgroup.innerHTML = otherPayers.map(p => `<option value="${p}">${p}</option>`).join('');
     } else {
-      otherOptgroup.innerHTML = `<option value="" disabled>(鏆傛棤鍏朵粬瀹㈡埛)</option>`;
+      otherOptgroup.innerHTML = `<option value="" disabled>(暂无其他客户)</option>`;
     }
   }
 
@@ -7194,7 +7202,7 @@ function populatePayerDropdown() {
   if (chipsContainer) {
     chipsContainer.innerHTML = DEFAULT_BOARDING_STUDENTS.map(s => `
       <button type="button" onclick="handleSelectPayer('${s.name}')" class="px-2 py-0.5 rounded-md text-[11px] font-medium bg-slate-100 hover:bg-emerald-100 text-slate-700 hover:text-emerald-800 border border-slate-200 transition">
-        ${s.name.includes('&') ? '馃懃 ' + s.name.split(' ')[0] + '鍏勫紵' : s.name.split(' ')[0]}
+        ${s.name.includes('&') ? '👥 ' + s.name.split(' ')[0] + '兄弟' : s.name.split(' ')[0]}
       </button>
     `).join('');
   }
@@ -7223,16 +7231,16 @@ function handleSelectPayer(name) {
   }
 
   // Auto set amount if currently empty or zero
-  const isBrothers = name.includes('HONG YE & KAI YE') || name.includes('涓ゅ厔寮?);
+  const isBrothers = name.includes('HONG YE & KAI YE') || name.includes('两兄弟');
   if (amountInput && (!amountInput.value || Number(amountInput.value) === 0)) {
     amountInput.value = isBrothers ? 960 : 480;
   }
 
-  // Auto set category to '閿€鍞敹鍏? or '瀛﹁垂鏀跺叆' if available
+  // Auto set category to '销售收入' or '学费收入' if available
   if (catSelect) {
     const options = Array.from(catSelect.options).map(o => o.value);
-    if (options.includes('閿€鍞敹鍏?)) catSelect.value = '閿€鍞敹鍏?;
-    else if (options.includes('瀛﹁垂鏀跺叆')) catSelect.value = '瀛﹁垂鏀跺叆';
+    if (options.includes('销售收入')) catSelect.value = '销售收入';
+    else if (options.includes('学费收入')) catSelect.value = '学费收入';
   }
 
   updatePayerArrearsHint(name);
@@ -7264,37 +7272,37 @@ function updatePayerArrearsHint(name) {
   }
 
   hintEl.classList.remove('hidden');
-  const monthNames = ['1鏈?, '2鏈?, '3鏈?, '4鏈?, '5鏈?, '6鏈?, '7鏈?, '8鏈?, '9鏈?, '10鏈?, '11鏈?, '12鏈?];
+  const monthNames = ['1月', '2月', '3月', '4月', '5月', '6月', '7月', '8月', '9月', '10月', '11月', '12月'];
 
   if (student.arrearsAmount === 0) {
     hintEl.className = 'p-2.5 rounded-lg text-xs bg-emerald-50 border border-emerald-200 text-emerald-800 flex items-center justify-between';
     hintEl.innerHTML = `
       <div class="flex items-center space-x-1.5">
-        <span>鉁?/span>
-        <span><b>${student.name}</b> 鎴嚦 ${report.cutoffMonth} 鏈堜唤浣忓璐瑰凡瀹屽叏缁撴竻锛?/span>
+        <span>✅</span>
+        <span><b>${student.name}</b> 截至 ${report.cutoffMonth} 月份住宿费已完全结清！</span>
       </div>
-      <span class="text-[11px] font-semibold text-emerald-600">宸茬即婊?${student.paidMonths.length} 涓湀</span>
+      <span class="text-[11px] font-semibold text-emerald-600">已缴满 ${student.paidMonths.length} 个月</span>
     `;
   } else {
-    const unpaidStr = student.unpaidMonths.map(m => monthNames[m - 1]).join('銆?);
+    const unpaidStr = student.unpaidMonths.map(m => monthNames[m - 1]).join('、');
     hintEl.className = 'p-2.5 rounded-lg text-xs bg-rose-50 border border-rose-300 text-rose-900 space-y-1';
     hintEl.innerHTML = `
       <div class="flex items-center justify-between font-bold">
         <span class="flex items-center space-x-1">
-          <span>馃毃</span>
-          <span>娆犺垂鎻愰啋锛?{student.name}</span>
+          <span>🚨</span>
+          <span>欠费提醒：${student.name}</span>
         </span>
-        <span class="text-rose-700">绱娆犵即: RM ${formatMoney(student.arrearsAmount)}</span>
+        <span class="text-rose-700">累计欠缴: RM ${formatMoney(student.arrearsAmount)}</span>
       </div>
       <div class="text-[11px] text-rose-800">
-        灏氭瑺鏈堜唤锛?span class="font-bold text-rose-600 bg-rose-100/80 px-1.5 py-0.5 rounded">${unpaidStr}</span> (鍏?${student.unpaidMonths.length} 涓湀鏈氦)
+        尚欠月份：<span class="font-bold text-rose-600 bg-rose-100/80 px-1.5 py-0.5 rounded">${unpaidStr}</span> (共 ${student.unpaidMonths.length} 个月未交)
       </div>
     `;
 
     // Auto suggest remark if empty
     if (remarkInput && (!remarkInput.value || !remarkInput.value.trim())) {
       const firstUnpaid = student.unpaidMonths[0];
-      remarkInput.value = `2026/${firstUnpaid} 浣忓璐筦;
+      remarkInput.value = `2026/${firstUnpaid} 住宿费`;
     }
   }
 }
@@ -7305,9 +7313,9 @@ function quickAddPaymentForStudent(studentName, suggestedMonth) {
   handleSelectPayer(studentName);
   const remarkInput = document.getElementById('incomeRemark');
   if (remarkInput && suggestedMonth) {
-    remarkInput.value = `2026/${suggestedMonth} 浣忓璐筦;
+    remarkInput.value = `2026/${suggestedMonth} 住宿费`;
   }
-  showToast(`宸蹭负鎮ㄨ嚜鍔ㄥ～鍏?${studentName} 缂磋垂鍙傛暟锛乣);
+  showToast(`已为您自动填充 ${studentName} 缴费参数！`);
 }
 
 // Copy WhatsApp / WeChat Reminder for Student
@@ -7316,63 +7324,63 @@ function copyStudentReminder(studentId) {
   const student = report.students.find(s => s.id === studentId || s.name === studentId);
   if (!student) return;
 
-  const monthNames = ['1鏈?, '2鏈?, '3鏈?, '4鏈?, '5鏈?, '6鏈?, '7鏈?, '8鏈?, '9鏈?, '10鏈?, '11鏈?, '12鏈?];
-  const unpaidStr = student.unpaidMonths.map(m => `2026骞?{monthNames[m - 1]}`).join('銆?);
+  const monthNames = ['1月', '2月', '3月', '4月', '5月', '6月', '7月', '8月', '9月', '10月', '11月', '12月'];
+  const unpaidStr = student.unpaidMonths.map(m => `2026年${monthNames[m - 1]}`).join('、');
 
-  let text = `銆怴oyage 浣忓璐圭即璐规俯棣ㄦ彁閱掋€慭n\n`;
-  text += `灏婃暚鐨勫闀挎偍濂斤細\n`;
-  text += `娓╅Θ鎻愰啋鎮ㄦ煡鏀跺鐢熴€?{student.name}銆戠殑浣忓璐圭即绾虫儏鍐点€俓n\n`;
-  text += `鎴嚦 2026骞?{report.cutoffMonth}鏈堜唤锛屽鐢熷綋鍓嶇即璐圭姸鎬佸涓嬶細\n`;
-  text += `馃搮 灏氭瑺鏈堜唤锛?{unpaidStr || '宸茬粨娓?}\n`;
-  text += `馃搳 鏈即鏈堟暟锛?{student.unpaidMonths.length} 涓湀\n`;
-  text += `馃挵 娆犵即閲戦锛歊M ${formatMoney(student.arrearsAmount)}\n`;
+  let text = `【Voyage 住宿费缴费温馨提醒】\n\n`;
+  text += `尊敬的家长您好：\n`;
+  text += `温馨提醒您查收学生【${student.name}】的住宿费缴纳情况。\n\n`;
+  text += `截至 2026年${report.cutoffMonth}月份，学生当前缴费状态如下：\n`;
+  text += `📅 尚欠月份：${unpaidStr || '已结清'}\n`;
+  text += `📊 未缴月数：${student.unpaidMonths.length} 个月\n`;
+  text += `💰 欠缴金额：RM ${formatMoney(student.arrearsAmount)}\n`;
   if (student.isBrothers) {
-    text += `锛堜袱鍏勫紵 HONG YE 涓?KAI YE 鍚堝苟娆犳锛歊M ${formatMoney(student.arrearsAmount)}锛屾瘡鏈堝悎璁?RM 960锛塡n`;
+    text += `（两兄弟 HONG YE 与 KAI YE 合并欠款：RM ${formatMoney(student.arrearsAmount)}，每月合计 RM 960）\n`;
   }
   text += `\n--------------------------\n`;
-  text += `銆愭眹娆鹃摱琛岃处鎴疯祫鏂欍€慭n`;
-  text += `鎴峰悕锛歏oyage Learning\n`;
-  text += `閾惰锛欻ong Leong Bank\n`;
-  text += `璐﹀彿锛?5200056062\n`;
+  text += `【汇款银行账户资料】\n`;
+  text += `户名：Voyage Learning\n`;
+  text += `银行：Hong Leong Bank\n`;
+  text += `账号：15200056062\n`;
   text += `--------------------------\n\n`;
-  text += `鐑﹁鎮ㄥ湪杞处鍚庡皢姹囨鍑瘉/鍗曟嵁鍙戠粰鎴戜滑浠ヤ究鏍稿閿€璐︺€傞潪甯告劅璋㈡偍鐨勬敮鎸佷笌閰嶅悎锛侌煓廯;
+  text += `烦请您在转账后将汇款凭证/单据发给我们以便核对销账。非常感谢您的支持与配合！🙏`;
 
   if (navigator.clipboard && navigator.clipboard.writeText) {
     navigator.clipboard.writeText(text).then(() => {
-      showToast(`馃搵 宸插鍒躲€?{student.name}銆戝偓缂撮€氱煡鍒板壀璐存澘锛乣);
+      showToast(`📋 已复制【${student.name}】催缴通知到剪贴板！`);
     }).catch(() => {
-      prompt('璇峰鍒朵互涓嬪偓缂存枃瀛楋細', text);
+      prompt('请复制以下催缴文字：', text);
     });
   } else {
-    prompt('璇峰鍒朵互涓嬪偓缂存枃瀛楋細', text);
+    prompt('请复制以下催缴文字：', text);
   }
 }
 
 // Copy All Arrears Summary Text
 function copyAllArrearsSummary() {
   const report = calculateStudentArrears();
-  const monthNames = ['1鏈?, '2鏈?, '3鏈?, '4鏈?, '5鏈?, '6鏈?, '7鏈?, '8鏈?, '9鏈?, '10鏈?, '11鏈?, '12鏈?];
+  const monthNames = ['1月', '2月', '3月', '4月', '5月', '6月', '7月', '8月', '9月', '10月', '11月', '12月'];
 
-  let text = `銆怴oyage 2026 浣忓鐢熸瑺璐规竻鏌ユ眹鎬昏〃銆慭n`;
-  text += `瀵硅处鎴鏈燂細2026骞?{report.cutoffMonth}鏈?| 鏀惰垂鏍囧噯锛歊M ${report.feePerPerson}/浜?鏈圽n`;
-  text += `鎬诲簲鏀讹細RM ${formatMoney(report.totalExpected)} | 宸插疄鏀讹細RM ${formatMoney(report.totalPaid)} | 娆犺垂鎬婚锛歊M ${formatMoney(report.totalArrears)}\n`;
-  text += `娆犺垂浜烘暟锛?{report.owingStudentsCount} 浜?/ 鍏?15 浜?| 缁撴竻浜烘暟锛?{report.fullyPaidCount} 浜篭n\n`;
+  let text = `【Voyage 2026 住宿生欠费清查汇总表】\n`;
+  text += `对账截止期：2026年${report.cutoffMonth}月 | 收费标准：RM ${report.feePerPerson}/人/月\n`;
+  text += `总应收：RM ${formatMoney(report.totalExpected)} | 已实收：RM ${formatMoney(report.totalPaid)} | 欠费总额：RM ${formatMoney(report.totalArrears)}\n`;
+  text += `欠费人数：${report.owingStudentsCount} 人 / 共 15 人 | 结清人数：${report.fullyPaidCount} 人\n\n`;
   text += `--------------------------------------------------\n`;
 
   report.students.forEach((s, idx) => {
-    const unpaidStr = s.unpaidMonths.length > 0 ? s.unpaidMonths.map(m => monthNames[m - 1]).join(',') : '宸茬粨娓?;
-    text += `${idx + 1}. ${s.name} | 宸蹭氦: RM ${s.totalPaid} | 灏氭瑺: RM ${s.arrearsAmount} | 娆犳湀: ${unpaidStr}\n`;
+    const unpaidStr = s.unpaidMonths.length > 0 ? s.unpaidMonths.map(m => monthNames[m - 1]).join(',') : '已结清';
+    text += `${idx + 1}. ${s.name} | 已交: RM ${s.totalPaid} | 尚欠: RM ${s.arrearsAmount} | 欠月: ${unpaidStr}\n`;
   });
   text += `--------------------------------------------------\n`;
 
   if (navigator.clipboard && navigator.clipboard.writeText) {
     navigator.clipboard.writeText(text).then(() => {
-      showToast('馃搵 宸插鍒跺叏閮ㄤ綇瀹跨敓娆犺垂鎬绘竻鍗曞埌鍓创鏉匡紒');
+      showToast('📋 已复制全部住宿生欠费总清单到剪贴板！');
     }).catch(() => {
-      prompt('璇峰鍒朵互涓嬫€绘竻鍗曪細', text);
+      prompt('请复制以下总清单：', text);
     });
   } else {
-    prompt('璇峰鍒朵互涓嬫€绘竻鍗曪細', text);
+    prompt('请复制以下总清单：', text);
   }
 }
 
@@ -7437,7 +7445,7 @@ function handleArrearsSearch(keyword) {
 // Main View Renderer for Arrears Tracker
 function renderArrearsTracker() {
   const report = calculateStudentArrears(arrearsCutoffMonth, arrearsMonthlyFeePerPerson);
-  const monthNames = ['1鏈?, '2鏈?, '3鏈?, '4鏈?, '5鏈?, '6鏈?, '7鏈?, '8鏈?, '9鏈?, '10鏈?, '11鏈?, '12鏈?];
+  const monthNames = ['1月', '2月', '3月', '4月', '5月', '6月', '7月', '8月', '9月', '10月', '11月', '12月'];
 
   // 1. Update KPI Cards
   const totalOwedEl = document.getElementById('arrearsTotalOwed');
@@ -7449,10 +7457,10 @@ function renderArrearsTracker() {
   const barEl = document.getElementById('arrearsProgressBar');
 
   if (totalOwedEl) totalOwedEl.textContent = formatMoney(report.totalArrears);
-  if (owedSubEl) owedSubEl.textContent = `鎬诲簲鏀?${formatMoney(report.totalExpected)} 路 宸插疄鏀?${formatMoney(report.totalPaid)}`;
-  if (countEl) countEl.textContent = `${report.owingStudentsCount} 浜篳;
-  if (countSubEl) countSubEl.textContent = `鍏朵腑涓ラ噸鎷栨瑺 (鈮?鏈? ${report.severeStudentsCount} 浜篳;
-  if (fullyPaidEl) fullyPaidEl.textContent = `${report.fullyPaidCount} 浜篳;
+  if (owedSubEl) owedSubEl.textContent = `总应收 ${formatMoney(report.totalExpected)} · 已实收 ${formatMoney(report.totalPaid)}`;
+  if (countEl) countEl.textContent = `${report.owingStudentsCount} 人`;
+  if (countSubEl) countSubEl.textContent = `其中严重拖欠 (≥3月) ${report.severeStudentsCount} 人`;
+  if (fullyPaidEl) fullyPaidEl.textContent = `${report.fullyPaidCount} 人`;
   if (rateEl) rateEl.textContent = `${report.collectionRate}%`;
   if (barEl) barEl.style.width = `${Math.min(100, Math.max(0, report.collectionRate))}%`;
 
@@ -7460,38 +7468,39 @@ function renderArrearsTracker() {
   const brothersBanner = document.getElementById('brothersCalloutBanner');
   const brothersStudent = report.students.find(s => s.isBrothers);
   if (brothersBanner && brothersStudent) {
-    const unpaidListStr = brothersStudent.unpaidMonths.map(m => monthNames[m - 1]).join('銆?);
+    const unpaidListStr = brothersStudent.unpaidMonths.map(m => monthNames[m - 1]).join('、');
     brothersBanner.innerHTML = `
       <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-rose-200 pb-3">
         <div class="flex items-start space-x-3">
           <div class="w-10 h-10 rounded-2xl bg-rose-600 text-white flex items-center justify-center font-bold text-lg shadow-md shadow-rose-600/20 flex-shrink-0">
-            馃毃
+            🚨
           </div>
           <div>
             <div class="flex items-center space-x-2">
-              <h4 class="text-sm sm:text-base font-bold text-slate-900">閲嶇偣鍏虫敞鍌即锛欻ONG YE & KAI YE (涓ゅ厔寮熷悎骞惰浆璐?</h4>
-              <span class="bg-rose-600 text-white text-[10px] px-2 py-0.5 rounded-full font-bold">娆?${brothersStudent.unpaidMonths.length} 涓湀</span>
+              <h4 class="text-sm sm:text-base font-bold text-slate-900">重点关注催缴：HONG YE & KAI YE (两兄弟合并转账)</h4>
+              <span class="bg-rose-600 text-white text-[10px] px-2 py-0.5 rounded-full font-bold">欠 ${brothersStudent.unpaidMonths.length} 个月</span>
             </div>
             <p class="text-xs text-rose-800 mt-1 font-medium">
-              鍏勫紵淇╃敱濡堝鍚堝苟缂寸撼浣忓璐?(RM 960/鏈?銆傝嚜 6鏈?鏃?浠樻鍚庯紝<span class="font-bold underline">${unpaidListStr}</span> 宸茶繛缁?${brothersStudent.unpaidMonths.length} 涓湀鏈粯锛?            </p>
+              兄弟俩由妈妈合并缴纳住宿费 (RM 960/月)。自 6月9日 付款后，<span class="font-bold underline">${unpaidListStr}</span> 已连续 ${brothersStudent.unpaidMonths.length} 个月未付！
+            </p>
           </div>
         </div>
         <div class="flex items-center space-x-2 self-end sm:self-center">
           <button onclick="copyStudentReminder('${brothersStudent.id}')" class="px-3 py-1.5 bg-rose-600 hover:bg-rose-700 text-white rounded-lg text-xs font-semibold shadow-sm transition flex items-center space-x-1">
-            <span>馃搵</span>
-            <span>澶嶅埗濡堝鍌即閫氱煡</span>
+            <span>📋</span>
+            <span>复制妈妈催缴通知</span>
           </button>
           <button onclick="quickAddPaymentForStudent('${brothersStudent.name}', '${brothersStudent.unpaidMonths[0] || 9}')" class="px-3 py-1.5 bg-white border border-rose-300 hover:bg-rose-50 text-rose-700 rounded-lg text-xs font-semibold transition flex items-center space-x-1">
-            <span>馃挵</span>
-            <span>璁颁竴绗斿厔寮熶粯娆?(RM 960)</span>
+            <span>💰</span>
+            <span>记一笔兄弟付款 (RM 960)</span>
           </button>
         </div>
       </div>
       <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 pt-1 text-xs text-slate-700">
-        <div>搴旂即鎬婚锛?span class="font-bold text-slate-900">${formatMoney(brothersStudent.expectedTotal)}</span></div>
-        <div>宸茬即鎬婚锛?span class="font-bold text-emerald-600">${formatMoney(brothersStudent.totalPaid)}</span></div>
-        <div>姣忎汉娆犺垂锛?span class="font-bold text-rose-600">${formatMoney(brothersStudent.arrearsAmount / 2)}</span></div>
-        <div>涓ゅ厔寮熸€绘瑺璐癸細<span class="font-black text-rose-700 text-sm">${formatMoney(brothersStudent.arrearsAmount)}</span></div>
+        <div>应缴总额：<span class="font-bold text-slate-900">${formatMoney(brothersStudent.expectedTotal)}</span></div>
+        <div>已缴总额：<span class="font-bold text-emerald-600">${formatMoney(brothersStudent.totalPaid)}</span></div>
+        <div>每人欠费：<span class="font-bold text-rose-600">${formatMoney(brothersStudent.arrearsAmount / 2)}</span></div>
+        <div>两兄弟总欠费：<span class="font-black text-rose-700 text-sm">${formatMoney(brothersStudent.arrearsAmount)}</span></div>
       </div>
     `;
   }
@@ -7518,20 +7527,20 @@ function renderArrearsTracker() {
     if (filteredStudents.length === 0) {
       cardsContainer.innerHTML = `
         <div class="col-span-2 p-12 text-center text-slate-400 bg-white rounded-2xl border border-slate-200">
-          <div class="text-4xl mb-2">馃攳</div>
-          <div class="text-sm font-semibold">娌℃湁鎵惧埌绗﹀悎鏉′欢鐨勫鐢?/div>
+          <div class="text-4xl mb-2">🔍</div>
+          <div class="text-sm font-semibold">没有找到符合条件的学生</div>
         </div>
       `;
     } else {
       cardsContainer.innerHTML = filteredStudents.map(st => {
         let badgeColor = 'bg-emerald-100 text-emerald-800 border-emerald-200';
-        let badgeText = '馃煝 宸茬粨娓?(鏃犳瑺璐?';
+        let badgeText = '🟢 已结清 (无欠费)';
         if (st.status === 'severe') {
           badgeColor = 'bg-rose-100 text-rose-800 border-rose-300 animate-pulse';
-          badgeText = `馃敶 娆犺垂 ${st.unpaidMonths.length} 涓湀 (涓ラ噸)`;
+          badgeText = `🔴 欠费 ${st.unpaidMonths.length} 个月 (严重)`;
         } else if (st.status === 'owing') {
           badgeColor = 'bg-amber-100 text-amber-800 border-amber-300';
-          badgeText = `馃煛 娆犺垂 ${st.unpaidMonths.length} 涓湀`;
+          badgeText = `🟡 欠费 ${st.unpaidMonths.length} 个月`;
         }
 
         const unpaidBadges = st.unpaidMonths.map(m => 
@@ -7543,8 +7552,8 @@ function renderArrearsTracker() {
         ).join('');
 
         const lastPayStr = st.lastIncome 
-          ? `${st.lastIncome.date} (RM ${formatMoney(st.lastIncome.amount)} 路 ${st.lastIncome.remark || '-'})`
-          : '鏆傛棤鏀舵璁板綍';
+          ? `${st.lastIncome.date} (RM ${formatMoney(st.lastIncome.amount)} · ${st.lastIncome.remark || '-'})`
+          : '暂无收款记录';
 
         return `
           <div class="bg-white rounded-2xl p-5 border border-slate-200 hover:border-emerald-300 hover:shadow-md transition space-y-4">
@@ -7557,9 +7566,9 @@ function renderArrearsTracker() {
                 <div>
                   <div class="flex items-center space-x-2">
                     <h4 class="text-sm sm:text-base font-bold text-slate-900">${st.name}</h4>
-                    ${st.isBrothers ? '<span class="bg-indigo-100 text-indigo-800 text-[10px] px-1.5 py-0.5 rounded font-bold">涓ゅ厔寮?/span>' : ''}
+                    ${st.isBrothers ? '<span class="bg-indigo-100 text-indigo-800 text-[10px] px-1.5 py-0.5 rounded font-bold">两兄弟</span>' : ''}
                   </div>
-                  <p class="text-[11px] text-slate-400">鏍囧噯鏀惰垂锛歊M ${st.monthlyFee}/鏈?${st.isBrothers ? '(涓や汉RM960)' : ''}</p>
+                  <p class="text-[11px] text-slate-400">标准收费：RM ${st.monthlyFee}/月 ${st.isBrothers ? '(两人RM960)' : ''}</p>
                 </div>
               </div>
               <span class="text-xs px-2.5 py-1 rounded-full border font-bold ${badgeColor}">
@@ -7570,15 +7579,15 @@ function renderArrearsTracker() {
             <!-- Financial Metrics -->
             <div class="grid grid-cols-3 gap-2 p-3 bg-slate-50 rounded-xl text-xs">
               <div>
-                <span class="text-[10px] text-slate-400 block">搴旀敹鎬婚</span>
+                <span class="text-[10px] text-slate-400 block">应收总额</span>
                 <span class="font-bold text-slate-800">${formatMoney(st.expectedTotal)}</span>
               </div>
               <div>
-                <span class="text-[10px] text-slate-400 block">宸叉敹鎬婚</span>
+                <span class="text-[10px] text-slate-400 block">已收总额</span>
                 <span class="font-bold text-emerald-600">${formatMoney(st.totalPaid)}</span>
               </div>
               <div>
-                <span class="text-[10px] text-slate-400 block">褰撳墠灏氭瑺</span>
+                <span class="text-[10px] text-slate-400 block">当前尚欠</span>
                 <span class="font-black text-sm ${st.arrearsAmount > 0 ? 'text-rose-600' : 'text-slate-400'}">${formatMoney(st.arrearsAmount)}</span>
               </div>
             </div>
@@ -7586,35 +7595,35 @@ function renderArrearsTracker() {
             <!-- Unpaid Months Pills -->
             <div class="text-xs space-y-1">
               <div class="flex items-center justify-between text-[11px]">
-                <span class="font-semibold text-slate-600">鏈即鏈堜唤:</span>
-                <span class="text-slate-400">${st.unpaidMonths.length > 0 ? `鍏?${st.unpaidMonths.length} 涓湀寰呯即` : '宸插叏閮ㄧ即榻?}</span>
+                <span class="font-semibold text-slate-600">未缴月份:</span>
+                <span class="text-slate-400">${st.unpaidMonths.length > 0 ? `共 ${st.unpaidMonths.length} 个月待缴` : '已全部缴齐'}</span>
               </div>
               <div class="flex flex-wrap gap-1">
-                ${unpaidBadges || '<span class="text-[11px] text-emerald-600 font-medium">鎴嚦褰撴湡宸叉棤娆犵即 鉁?/span>'}
+                ${unpaidBadges || '<span class="text-[11px] text-emerald-600 font-medium">截至当期已无欠缴 ✨</span>'}
               </div>
             </div>
 
             <!-- Paid Months Accordion / Preview -->
             <div class="text-xs space-y-1">
-              <span class="font-semibold text-slate-600 text-[11px]">宸茬即鏈堜唤:</span>
+              <span class="font-semibold text-slate-600 text-[11px]">已缴月份:</span>
               <div class="flex flex-wrap gap-1">
-                ${paidBadges || '<span class="text-[11px] text-slate-400">鏆傛棤宸茬即鏈堜唤</span>'}
+                ${paidBadges || '<span class="text-[11px] text-slate-400">暂无已缴月份</span>'}
               </div>
             </div>
 
             <!-- Last Payment & Action Footer -->
             <div class="pt-3 border-t border-slate-100 flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs">
               <div class="text-[11px] text-slate-400 truncate" title="${lastPayStr}">
-                鏈€鍚庝氦娆撅細<span class="text-slate-600 font-medium">${lastPayStr}</span>
+                最后交款：<span class="text-slate-600 font-medium">${lastPayStr}</span>
               </div>
               <div class="flex items-center space-x-2 self-end sm:self-auto">
-                <button onclick="copyStudentReminder('${st.id}')" class="px-2.5 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg font-medium transition flex items-center space-x-1" title="澶嶅埗鍌即閫氱煡">
-                  <span>馃搵</span>
-                  <span>鍌即閫氱煡</span>
+                <button onclick="copyStudentReminder('${st.id}')" class="px-2.5 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg font-medium transition flex items-center space-x-1" title="复制催缴通知">
+                  <span>📋</span>
+                  <span>催缴通知</span>
                 </button>
-                <button onclick="quickAddPaymentForStudent('${st.name}', '${st.unpaidMonths[0] || report.cutoffMonth}')" class="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg font-semibold shadow-sm transition flex items-center space-x-1" title="蹇€熻ˉ褰曡鐢熶綇瀹胯垂">
-                  <span>馃挵</span>
-                  <span>璁拌繖绗旀</span>
+                <button onclick="quickAddPaymentForStudent('${st.name}', '${st.unpaidMonths[0] || report.cutoffMonth}')" class="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg font-semibold shadow-sm transition flex items-center space-x-1" title="快速补录该生住宿费">
+                  <span>💰</span>
+                  <span>记这笔款</span>
                 </button>
               </div>
             </div>
@@ -7640,9 +7649,9 @@ function renderArrearsTracker() {
         const isUnderCutoff = m <= report.cutoffMonth;
 
         if (isPaid) {
-          cells += `<td class="px-2 py-2 text-center text-[11px] bg-emerald-50 text-emerald-800 font-semibold border-b border-slate-100" title="${monthNames[m - 1]}: 宸茬即 RM ${st.monthlyFee}">鉁?${st.monthlyFee}</td>`;
+          cells += `<td class="px-2 py-2 text-center text-[11px] bg-emerald-50 text-emerald-800 font-semibold border-b border-slate-100" title="${monthNames[m - 1]}: 已缴 RM ${st.monthlyFee}">✓ ${st.monthlyFee}</td>`;
         } else if (isUnderCutoff) {
-          cells += `<td class="px-2 py-2 text-center text-[11px] bg-rose-50 text-rose-700 font-bold border-b border-slate-100" title="${monthNames[m - 1]}: 娆犵即 RM ${st.monthlyFee}">鉁?娆犺垂</td>`;
+          cells += `<td class="px-2 py-2 text-center text-[11px] bg-rose-50 text-rose-700 font-bold border-b border-slate-100" title="${monthNames[m - 1]}: 欠缴 RM ${st.monthlyFee}">✗ 欠费</td>`;
         } else {
           cells += `<td class="px-2 py-2 text-center text-[11px] text-slate-300 border-b border-slate-100">-</td>`;
         }
@@ -7653,14 +7662,14 @@ function renderArrearsTracker() {
           <td class="px-3 py-2.5 text-xs font-bold text-slate-900 border-b border-slate-100 sticky left-0 bg-white z-10 whitespace-nowrap">
             <span class="text-slate-400 mr-1.5 font-normal">${idx + 1}.</span>
             ${st.name}
-            ${st.isBrothers ? '<span class="text-[10px] text-indigo-600 ml-1">(鍙屼汉)</span>' : ''}
+            ${st.isBrothers ? '<span class="text-[10px] text-indigo-600 ml-1">(双人)</span>' : ''}
           </td>
           ${cells}
           <td class="px-3 py-2 text-right text-xs font-bold text-emerald-600 border-b border-slate-100 whitespace-nowrap">${formatMoney(st.totalPaid)}</td>
           <td class="px-3 py-2 text-right text-xs font-black ${st.arrearsAmount > 0 ? 'text-rose-600' : 'text-slate-400'} border-b border-slate-100 whitespace-nowrap">${formatMoney(st.arrearsAmount)}</td>
           <td class="px-3 py-2 text-center border-b border-slate-100 whitespace-nowrap">
-            <button onclick="copyStudentReminder('${st.id}')" class="px-2 py-1 text-[11px] bg-slate-100 hover:bg-slate-200 text-slate-700 rounded font-medium mr-1">鍌即</button>
-            <button onclick="quickAddPaymentForStudent('${st.name}', '${st.unpaidMonths[0] || report.cutoffMonth}')" class="px-2 py-1 text-[11px] bg-emerald-600 hover:bg-emerald-700 text-white rounded font-medium">璁拌处</button>
+            <button onclick="copyStudentReminder('${st.id}')" class="px-2 py-1 text-[11px] bg-slate-100 hover:bg-slate-200 text-slate-700 rounded font-medium mr-1">催缴</button>
+            <button onclick="quickAddPaymentForStudent('${st.name}', '${st.unpaidMonths[0] || report.cutoffMonth}')" class="px-2 py-1 text-[11px] bg-emerald-600 hover:bg-emerald-700 text-white rounded font-medium">记账</button>
           </td>
         </tr>
       `;
@@ -7669,21 +7678,21 @@ function renderArrearsTracker() {
     matrixContainer.innerHTML = `
       <div class="mb-3 flex items-center justify-between">
         <div>
-          <h4 class="text-sm font-bold text-slate-900">鍏ㄥ勾 12 涓湀鏀剁即鐘舵€佺煩闃垫€昏琛?/h4>
-          <p class="text-xs text-slate-400">缁胯壊 鉁?涓哄凡缂存竻锛岀孩鑹?鉁?涓烘埅姝?${report.cutoffMonth} 鏈堜唤鍒版湡鏈粯</p>
+          <h4 class="text-sm font-bold text-slate-900">全年 12 个月收缴状态矩阵总览表</h4>
+          <p class="text-xs text-slate-400">绿色 ✓ 为已缴清，红色 ✗ 为截止 ${report.cutoffMonth} 月份到期未付</p>
         </div>
         <div class="text-xs text-slate-500">
-          鍏?15 浣忓鐢?路 鎴鏈堜唤锛?span class="font-bold text-slate-800">${report.cutoffMonth}鏈?/span>
+          共 15 住宿生 · 截止月份：<span class="font-bold text-slate-800">${report.cutoffMonth}月</span>
         </div>
       </div>
       <table class="w-full border-collapse text-left">
         <thead>
           <tr class="border-b border-slate-200">
-            <th class="px-3 py-2.5 text-xs font-bold text-slate-600 bg-slate-50 sticky left-0 z-10">瀛︾敓濮撳悕</th>
+            <th class="px-3 py-2.5 text-xs font-bold text-slate-600 bg-slate-50 sticky left-0 z-10">学生姓名</th>
             ${headerCells}
-            <th class="px-3 py-2.5 text-right text-xs font-bold text-slate-700 bg-slate-50">宸茬即鎬婚</th>
-            <th class="px-3 py-2.5 text-right text-xs font-bold text-rose-700 bg-slate-50">灏氭瑺鎬婚</th>
-            <th class="px-3 py-2.5 text-center text-xs font-bold text-slate-700 bg-slate-50">鎿嶄綔</th>
+            <th class="px-3 py-2.5 text-right text-xs font-bold text-slate-700 bg-slate-50">已缴总额</th>
+            <th class="px-3 py-2.5 text-right text-xs font-bold text-rose-700 bg-slate-50">尚欠总额</th>
+            <th class="px-3 py-2.5 text-center text-xs font-bold text-slate-700 bg-slate-50">操作</th>
           </tr>
         </thead>
         <tbody>
@@ -7699,18 +7708,18 @@ function renderArrearsTracker() {
     const unassignedList = (appData.incomes || []).filter(inc => {
       const p = (inc.counterparty || '').trim();
       const r = (inc.remark || '').trim();
-      return !p || p.includes('鐜伴噾') || p.includes('Deposit') || p.includes('瀛﹁垂瀹㈡埛');
+      return !p || p.includes('现金') || p.includes('Deposit') || p.includes('学费客户');
     }).slice(0, 5);
 
     if (unassignedList.length > 0) {
       unassignedContainer.innerHTML = unassignedList.map(u => `
         <div class="flex items-center justify-between p-1.5 bg-white/80 rounded border border-blue-100">
-          <span>路 ${u.date} | <b>RM ${formatMoney(u.amount)}</b> | ${u.remark || '(鏃犲娉?'} | 瀹㈡埛: ${u.counterparty || '鏈～鍐?}</span>
-          <button onclick="editIncome('${u.id}')" class="text-blue-600 hover:text-blue-800 font-bold underline text-[10px]">鍘昏ˉ鍏ㄥ鍚?鈫?/button>
+          <span>· ${u.date} | <b>RM ${formatMoney(u.amount)}</b> | ${u.remark || '(无备注)'} | 客户: ${u.counterparty || '未填写'}</span>
+          <button onclick="editIncome('${u.id}')" class="text-blue-600 hover:text-blue-800 font-bold underline text-[10px]">去补全姓名 →</button>
         </div>
       `).join('');
     } else {
-      unassignedContainer.innerHTML = `<span class="text-slate-400">鐩墠鎵€鏈夋敹鍏ユ祦姘村潎宸插叧鑱斿鎴峰鍚嶃€?/span>`;
+      unassignedContainer.innerHTML = `<span class="text-slate-400">目前所有收入流水均已关联客户姓名。</span>`;
     }
   }
 }
