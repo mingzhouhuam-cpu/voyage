@@ -13,25 +13,6 @@
       .pb-safe { padding-bottom: max(1rem, env(safe-area-inset-bottom, 16px)); }
     }
   </style>
-  <!-- OTA Dynamic Hot-Update Bootstrap Loader -->
-  <script id="voyage-ota-bootstrap">
-    (function() {
-      try {
-        var baseTime = 1773120000000;
-        var cachedTime = parseInt(localStorage.getItem('voyage_finance_cached_time') || '0', 10);
-        if (cachedTime > baseTime && !window.location.search.includes('clean=1')) {
-          var cachedBundle = localStorage.getItem('voyage_finance_cached_bundle');
-          if (cachedBundle && cachedBundle.length > 50000) {
-            document.open();
-            document.write(cachedBundle);
-            document.close();
-          }
-        }
-      } catch(e) {
-        console.warn('OTA bootstrap failed', e);
-      }
-    })();
-  </script>
 
   <title>2026 财务收支记账管理系统</title>
   <!-- Tailwind CSS -->
@@ -1100,7 +1081,7 @@ alter publication supabase_realtime add table finance_store;</pre>
 
 
   <!-- Toast Notification Container -->
-          <!-- Direct Mobile Camera Input -->
+              <!-- Direct Mobile Camera Input -->
   <input type="file" id="mobileCameraInput" accept="image/*" capture="environment" class="hidden" onchange="handleReceiptImageUpload(event)">
 
   <!-- Mobile Bottom Navigation Bar (Visible only on mobile devices < 768px) -->
@@ -2561,6 +2542,13 @@ function showToast(message) {
 
 // Initialize Application Data & Settings
 function initData() {
+  // Purge any legacy OTA bundle cache that causes duplicated DOM
+  try {
+    localStorage.removeItem('voyage_finance_cached_bundle');
+    localStorage.removeItem('voyage_finance_cached_time');
+    localStorage.removeItem('voyage_finance_cached_version');
+  } catch (e) {}
+
   const stored = localStorage.getItem('finance_2026_data');
   if (stored) {
     try {
