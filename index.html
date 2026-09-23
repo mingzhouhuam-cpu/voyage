@@ -5,14 +5,18 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
-  <meta name="apple-mobile-web-app-title" content="2026记账">
-  <meta name="theme-color" content="#ffffff">
+  <meta name="apple-mobile-web-app-title" content="Voyage记账">
+  <meta name="theme-color" content="#059669">
   <meta name="mobile-web-app-capable" content="yes">
+  <meta name="application-name" content="Voyage记账">
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%22100%22 height=%22100%22 rx=%2222%22 fill=%22%23059669%22/><text y=%2268%22 font-size=%2260%22 x=%2250%22 text-anchor=%22middle%22>💰</text></svg>">
+  <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%22100%22 height=%22100%22 rx=%2222%22 fill=%22%23059669%22/><text y=%2268%22 font-size=%2260%22 x=%2250%22 text-anchor=%22middle%22>💰</text></svg>">
   <script id="voyage-ota-bootloader">
     (function() {
       try {
-        var expectedVersion = '2026.3.37';
-        var baseBuildTime = 1789056272805;
+        var expectedVersion = '2026.3.38';
+        var baseBuildTime = 1790148744731;
         var cachedBundle = localStorage.getItem('voyage_finance_cached_bundle');
         var cachedVersion = localStorage.getItem('voyage_finance_cached_version');
         var cachedTime = parseInt(localStorage.getItem('voyage_finance_cached_time') || '0', 10);
@@ -2472,6 +2476,9 @@ alter publication supabase_realtime add table finance_store;</pre>
 
 
 
+
+
+
   <!-- Scripts -->
   <script>
 const INITIAL_FINANCE_DATA = {"incomes":[{"id":"INC-03084750","date":"2026-09-08","amount":480,"remark":"2026年9月 住宿费 (TAN JIAN FONG · 付款人: Tan Jian Fong)","account":"Hong Leong","category":"住宿费","feeMonth":"","invoiceNo":"","receiptNo":"","counterparty":"TAN JIAN FONG"},{"id":"INC-03084715","date":"2026-09-07","amount":480,"remark":"2026年9月 住宿费 (ENG WEI ZHI · 付款人: ENG WEE HOSTEL ZHI 2609)","account":"Hong Leong","category":"住宿费","feeMonth":"2026-09","invoiceNo":"","receiptNo":"","counterparty":"ENG WEI ZHI"},{"id":"INC-03084698","date":"2026-09-07","amount":480,"remark":"2026年9月 住宿费 (WONG E FULL · 付款人: WongEFull Fund transfer S3X Sept26)","account":"Hong Leong","category":"住宿费","feeMonth":"2026-09","invoiceNo":"","receiptNo":"","counterparty":"WONG E FULL"},{"id":"INC-03084669","date":"2026-09-06","amount":480,"remark":"2026年9月 住宿费 (HUAIDERK · 付款人: SEPT HUAI DERK)","account":"Hong Leong","category":"住宿费","feeMonth":"2026-09","invoiceNo":"","receiptNo":"","counterparty":"HUAIDERK"},{"id":"INC-63668868","date":"2026-09-05","amount":480,"remark":"sept ","account":"Hong Leong","category":"销售收入","invoiceNo":"","receiptNo":"","counterparty":"LEE YAN CHENG"},{"id":"INC-63668898","date":"2026-09-01","amount":960,"remark":"Instant Transfer at KLM Kaihao","account":"Hong Leong","category":"销售收入","invoiceNo":"","receiptNo":"","counterparty":"KAI HAO"},{"id":"INC-63668821","date":"2026-08-28","amount":480,"remark":"Sept","account":"Hong Leong","category":"销售收入","invoiceNo":"","receiptNo":"","counterparty":"LEE JU YAN"},{"id":"INC-63668860","date":"2026-08-24","amount":480,"remark":"August ","account":"Hong Leong","category":"销售收入","invoiceNo":"","receiptNo":"","counterparty":"CHUA MING ZHE"},{"id":"INC-63668814","date":"2026-08-22","amount":1440,"remark":"JUN","account":"Hong Leong","category":"销售收入","invoiceNo":"","receiptNo":"","counterparty":"ONG SHI SHUI"},{"id":"INC-63668834","date":"2026-08-09","amount":480,"remark":"HOSTEL 2608","account":"Hong Leong","category":"销售收入","invoiceNo":"","receiptNo":"","counterparty":"ENG WEE ZHI"},{"id":"INC-63668875","date":"2026-08-07","amount":480,"remark":"Aug26","account":"Hong Leong","category":"销售收入","invoiceNo":"","receiptNo":"","counterparty":"WONG E FULL"},{"id":"INC-63668886","date":"2026-08-06","amount":480,"remark":"AUGUST ","account":"Hong Leong","category":"销售收入","invoiceNo":"","receiptNo":"","counterparty":"HUAI DERK"},{"id":"INC-49721123","date":"2026-08-05","amount":480,"remark":"Aug26","account":"Hong Leong","category":"销售收入","invoiceNo":"","receiptNo":"","counterparty":"GOH JYJE SHAN"},{"id":"INC-49721147","date":"2026-08-04","amount":480,"remark":"AUG26","account":"Hong Leong","category":"销售收入","invoiceNo":"","receiptNo":"","counterparty":"LEE YAN CHENG"},{"id":"INC-49721145","date":"2026-08-04","amount":480,"remark":"Aug","account":"Hong Leong","category":"销售收入","invoiceNo":"","receiptNo":"","counterparty":"LEE JU YAN"},{"id":"INC-49721142","date":"2026-08-03","amount":480,"remark":"Aug 26","account":"Hong Leong","category":"销售收入","invoiceNo":"","receiptNo":"","counterparty":"TAN JIAN FONG"},{"id":"INC-49721176","date":"2026-07-08","amount":960,"remark":"Deposit","account":"Hong Leong","category":"销售收入","invoiceNo":"","receiptNo":"","counterparty":"HONG YE \u0026 KAI YE"},{"id":"INC-49721159","date":"2026-07-08","amount":480,"remark":"HOSTEL 2607","account":"Hong Leong","category":"销售收入","invoiceNo":"","receiptNo":"","counterparty":"ENG WEE ZHI"},{"id":"INC-49721184","date":"2026-07-07","amount":480,"remark":"Instant Transfer at KLM Tan Ji","account":"Hong Leong","category":"销售收入","invoiceNo":"","receiptNo":"","counterparty":"TAN JIAN FONG"},{"id":"INC-49721138","date":"2026-07-07","amount":480,"remark":"Jul26","account":"Hong Leong","category":"销售收入","invoiceNo":"","receiptNo":"","counterparty":"WONG E FULL"},{"id":"INC-66518721","date":"2026-07-05","amount":480,"remark":"Jul26","account":"Hong Leong","category":"销售收入","invoiceNo":"","receiptNo":"","counterparty":"GOH JYJE SHAN"},{"id":"INC-66518775","date":"2026-07-03","amount":480,"remark":"JULY ","account":"Hong Leong","category":"销售收入","invoiceNo":"","receiptNo":"","counterparty":"LEE YAN CHENG"},{"id":"INC-66518734","date":"2026-07-02","amount":480,"remark":"JUL ","account":"Hong Leong","category":"销售收入","invoiceNo":"","receiptNo":"","counterparty":"HUAI DERK"},{"id":"INC-66518787","date":"2026-06-30","amount":960,"remark":"Instant Transfer at KLM Kaihao","account":"Hong Leong","category":"销售收入","invoiceNo":"","receiptNo":"","counterparty":"KAI HAO"},{"id":"INC-66518770","date":"2026-06-30","amount":480,"remark":"Jul","account":"Hong Leong","category":"销售收入","invoiceNo":"","receiptNo":"","counterparty":"LEE JU YAN"},{"id":"INC-66518723","date":"2026-06-26","amount":480,"remark":"June","account":"Hong Leong","category":"销售收入","invoiceNo":"","receiptNo":"","counterparty":"CHUA MING ZHE"},{"id":"INC-66518742","date":"2026-06-13","amount":480,"remark":"Instant Transfer at KLM TAN JI","account":"Hong Leong","category":"销售收入","invoiceNo":"","receiptNo":"","counterparty":"TAN JIAN FONG"},{"id":"INC-66518767","date":"2026-06-09","amount":1920,"remark":"HONG YIP/KAI YIP","account":"Hong Leong","category":"销售收入","invoiceNo":"","receiptNo":"","counterparty":"HONG YIP/KAI YIP"},{"id":"INC-66518786","date":"2026-06-07","amount":480,"remark":"JUN 2026","account":"Hong Leong","category":"销售收入","invoiceNo":"","receiptNo":"","counterparty":"ENG WEE ZHI"},{"id":"INC-66518731","date":"2026-06-07","amount":480,"remark":"June26","account":"Hong Leong","category":"销售收入","invoiceNo":"","receiptNo":"","counterparty":"WONG E FULL"},{"id":"INC-73878417","date":"2026-06-04","amount":480,"remark":"Instant Transfer at KLM LEE YA","account":"Hong Leong","category":"销售收入","invoiceNo":"","receiptNo":"","counterparty":"LEE YAN CHENG"},{"id":"INC-73878461","date":"2026-06-02","amount":480,"remark":"Instant Transfer at KLM HUAI D","account":"Hong Leong","category":"销售收入","invoiceNo":"","receiptNo":"","counterparty":"HUAI DERK"},{"id":"INC-73878383","date":"2026-06-01","amount":480,"remark":"Jun26","account":"Hong Leong","category":"销售收入","invoiceNo":"","receiptNo":"","counterparty":"GOH JYJE SHAN"},{"id":"INC-0054","date":"2026-05-28","amount":480,"remark":"JUNE","account":"Hong Leong","category":"销售收入","invoiceNo":"","receiptNo":"","counterparty":"LEE JU YAN"},{"id":"INC-0053","date":"2026-05-27","amount":480,"remark":"MAY","account":"Hong Leong","category":"销售收入","invoiceNo":"","receiptNo":"","counterparty":"LEE JI CHUEN"},{"id":"INC-0052","date":"2026-05-26","amount":480,"remark":"MAY","account":"Hong Leong","category":"销售收入","invoiceNo":"","receiptNo":"","counterparty":"CHUA MING ZHE"},{"id":"INC-0051","date":"2026-05-20","amount":1920,"remark":"FEB+MAR+APRIL+MAY","account":"Hong Leong","category":"销售收入","invoiceNo":"","receiptNo":"","counterparty":"CHIA KAI JIE"},{"id":"INC-0050","date":"2026-05-10","amount":2400,"remark":"JAN+FEB+MAR+APRIL+MAY","account":"Hong Leong","category":"销售收入","invoiceNo":"","receiptNo":"","counterparty":"ZHI XIAO"},{"id":"INC-0049","date":"2026-05-09","amount":480,"remark":"MAY","account":"Hong Leong","category":"销售收入","invoiceNo":"","receiptNo":"","counterparty":"ENG WEI ZHI"},{"id":"INC-0048","date":"2026-05-07","amount":480,"remark":"MAY","account":"Hong Leong","category":"销售收入","invoiceNo":"","receiptNo":"","counterparty":"TAN JIAN FONG"},{"id":"INC-0046","date":"2026-05-06","amount":480,"remark":"MAY","account":"Hong Leong","category":"销售收入","invoiceNo":"","receiptNo":"","counterparty":"LEE YAN CHENG"},{"id":"INC-0047","date":"2026-05-06","amount":480,"remark":"MAY","account":"Hong Leong","category":"销售收入","invoiceNo":"","receiptNo":"","counterparty":"HUAI DERK"},{"id":"INC-0045","date":"2026-05-04","amount":480,"remark":"MAY","account":"Hong Leong","category":"销售收入","invoiceNo":"","receiptNo":"","counterparty":"WONG E FULL"},{"id":"INC-0044","date":"2026-05-03","amount":480,"remark":"MAY","account":"Hong Leong","category":"销售收入","invoiceNo":"","receiptNo":"","counterparty":"GOH JYJE SHAN"},{"id":"INC-0042","date":"2026-05-02","amount":960,"remark":"APRIL+MAY","account":"Hong Leong","category":"销售收入","invoiceNo":"","receiptNo":"","counterparty":"KAI HAO"},{"id":"INC-0043","date":"2026-05-02","amount":480,"remark":"APRIL","account":"Hong Leong","category":"销售收入","invoiceNo":"","receiptNo":"","counterparty":"ONG SHI SHUI"},{"id":"INC-0041","date":"2026-04-30","amount":480,"remark":"MAY","account":"Hong Leong","category":"销售收入","invoiceNo":"","receiptNo":"","counterparty":"LEE JU YAN"},{"id":"INC-0040","date":"2026-04-28","amount":480,"remark":"APRIL","account":"Hong Leong","category":"销售收入","invoiceNo":"","receiptNo":"","counterparty":"CHUA MING ZHE"},{"id":"INC-0039","date":"2026-04-21","amount":1920,"remark":"MAR+APRIL","account":"Hong Leong","category":"销售收入","invoiceNo":"","receiptNo":"","counterparty":"HONG YIP/KAI YIP"},{"id":"INC-0038","date":"2026-04-17","amount":480,"remark":"APRIL","account":"Hong Leong","category":"销售收入","invoiceNo":"","receiptNo":"","counterparty":"TAN JIAN FONG"},{"id":"INC-0037","date":"2026-04-11","amount":480,"remark":"APRIL","account":"Hong Leong","category":"销售收入","invoiceNo":"","receiptNo":"","counterparty":"LEE JI CHUEN"},{"id":"INC-0036","date":"2026-04-10","amount":480,"remark":"APRIL","account":"Hong Leong","category":"销售收入","invoiceNo":"","receiptNo":"","counterparty":"ENG WEI ZHI"},{"id":"INC-0035","date":"2026-04-06","amount":480,"remark":"APRIL","account":"Hong Leong","category":"销售收入","invoiceNo":"","receiptNo":"","counterparty":"LEE YAN CHENG"},{"id":"INC-0034","date":"2026-04-04","amount":480,"remark":"APRIL","account":"Hong Leong","category":"销售收入","invoiceNo":"","receiptNo":"","counterparty":"WONG E FULL"},{"id":"INC-0033","date":"2026-04-02","amount":960,"remark":"MAR+APRIL","account":"Hong Leong","category":"销售收入","invoiceNo":"","receiptNo":"","counterparty":"GOH JYJE SHAN"},{"id":"INC-0032","date":"2026-04-01","amount":480,"remark":"APRIL","account":"Hong Leong","category":"销售收入","invoiceNo":"","receiptNo":"","counterparty":"HUAI DERK"},{"id":"INC-0029","date":"2026-03-31","amount":480,"remark":"APRIL","account":"Hong Leong","category":"销售收入","invoiceNo":"","receiptNo":"","counterparty":"LEE JU YAN"},{"id":"INC-0030","date":"2026-03-31","amount":480,"remark":"MARCH","account":"Hong Leong","category":"销售收入","invoiceNo":"","receiptNo":"","counterparty":"CHUA MING ZHE"},{"id":"INC-0031","date":"2026-03-31","amount":960,"remark":"MARCH","account":"Hong Leong","category":"销售收入","invoiceNo":"","receiptNo":"","counterparty":"ONG SHI SHUI"},{"id":"INC-0028","date":"2026-03-19","amount":960,"remark":"FEB+MAR","account":"Hong Leong","category":"销售收入","invoiceNo":"","receiptNo":"","counterparty":"KAI HAO"},{"id":"INC-0027","date":"2026-03-12","amount":40,"remark":"","account":"Hong Leong","category":"销售收入","invoiceNo":"","receiptNo":"","counterparty":""},{"id":"INC-0024","date":"2026-03-06","amount":40,"remark":"","account":"Hong Leong","category":"销售收入","invoiceNo":"","receiptNo":"","counterparty":"TAN ZE LUN"},{"id":"INC-0025","date":"2026-03-06","amount":480,"remark":"","account":"Hong Leong","category":"销售收入","invoiceNo":"","receiptNo":"","counterparty":"WONG E FULL"},{"id":"INC-0026","date":"2026-03-06","amount":40,"remark":"","account":"Hong Leong","category":"销售收入","invoiceNo":"","receiptNo":"","counterparty":""},{"id":"INC-0023","date":"2026-03-05","amount":480,"remark":"MARCH","account":"Hong Leong","category":"销售收入","invoiceNo":"","receiptNo":"","counterparty":"HUAI DERK"},{"id":"INC-0020","date":"2026-03-04","amount":1920,"remark":"DEPOSIT+JAN+FEB+MAR","account":"Hong Leong","category":"销售收入","invoiceNo":"","receiptNo":"","counterparty":"LEE JI CHUEN"},{"id":"INC-0021","date":"2026-03-04","amount":480,"remark":"MARCH","account":"Hong Leong","category":"销售收入","invoiceNo":"","receiptNo":"","counterparty":"LEE YAN CHENG"},{"id":"INC-0022","date":"2026-03-04","amount":480,"remark":"MARCH","account":"Hong Leong","category":"销售收入","invoiceNo":"","receiptNo":"","counterparty":"ENG WEI ZHI"},{"id":"INC-0019","date":"2026-03-03","amount":1440,"remark":"JAN+FEB+MAR","account":"Hong Leong","category":"销售收入","invoiceNo":"","receiptNo":"","counterparty":"TAN JIAN FONG"},{"id":"INC-0018","date":"2026-03-02","amount":480,"remark":"MARCH","account":"Hong Leong","category":"销售收入","invoiceNo":"","receiptNo":"","counterparty":"LEE JU YAN"},{"id":"INC-0017","date":"2026-02-24","amount":1920,"remark":"JAN+FEB","account":"Hong Leong","category":"销售收入","invoiceNo":"","receiptNo":"","counterparty":"HONG YIP/KAI YIP"},{"id":"INC-0016","date":"2026-02-15","amount":480,"remark":"FEB","account":"Hong Leong","category":"销售收入","invoiceNo":"","receiptNo":"","counterparty":"CHUA MING ZHE"},{"id":"INC-0015","date":"2026-02-14","amount":480,"remark":"FEB","account":"Hong Leong","category":"销售收入","invoiceNo":"","receiptNo":"","counterparty":"WONG E FULL"},{"id":"INC-0014","date":"2026-02-09","amount":480,"remark":"FEB","account":"Hong Leong","category":"销售收入","invoiceNo":"","receiptNo":"","counterparty":"HUAI DERK"},{"id":"INC-0013","date":"2026-02-04","amount":960,"remark":"JAN+FEB","account":"Hong Leong","category":"销售收入","feeMonth":"2026-01, 2026-02","invoiceNo":"","receiptNo":"","counterparty":"ONG SHI SHUI"},{"id":"INC-0010","date":"2026-02-03","amount":480,"remark":"2026-02-01","account":"Hong Leong","category":"销售收入","feeMonth":"2026-02","invoiceNo":"","receiptNo":"","counterparty":"LEE YAN CHENG"},{"id":"INC-0011","date":"2026-02-03","amount":480,"remark":"2026-02-01","account":"Hong Leong","category":"销售收入","feeMonth":"2026-02","invoiceNo":"","receiptNo":"","counterparty":"GOH JYJE SHAN"},{"id":"INC-0012","date":"2026-02-03","amount":960,"remark":"JAN+FEB","account":"Hong Leong","category":"销售收入","feeMonth":"2026-01","invoiceNo":"","receiptNo":"","counterparty":"ENG WEI ZHI"},{"id":"INC-0009","date":"2026-01-31","amount":480,"remark":"2026-01-01","account":"Hong Leong","category":"销售收入","feeMonth":"2026-01","invoiceNo":"","receiptNo":"","counterparty":"KAI HAO"},{"id":"INC-0008","date":"2026-01-30","amount":480,"remark":"2026-02-01","account":"Hong Leong","category":"销售收入","feeMonth":"2026-02","invoiceNo":"","receiptNo":"","counterparty":"LEE JU YAN"},{"id":"INC-0007","date":"2026-01-26","amount":480,"remark":"2026-01-01","account":"Hong Leong","category":"销售收入","invoiceNo":"","receiptNo":"","counterparty":"CHUA MING ZHE"},{"id":"INC-0006","date":"2026-01-19","amount":480,"remark":"2026-01-01","account":"Hong Leong","category":"销售收入","feeMonth":"2026-01","invoiceNo":"","receiptNo":"","counterparty":"WONG E FULL"},{"id":"INC-0005","date":"2026-01-18","amount":960,"remark":"2026/1 + DEPOSIT","account":"Hong Leong","category":"销售收入","feeMonth":"2026-01","invoiceNo":"","receiptNo":"","counterparty":"CHIA KAI JIE"},{"id":"INC-0004","date":"2026-01-12","amount":960,"remark":"2026/1 + DEPOSIT","account":"Hong Leong","category":"销售收入","feeMonth":"2026-01","invoiceNo":"","receiptNo":"","counterparty":"GOH JYJE SHAN"},{"id":"INC-0003","date":"2026-01-11","amount":480,"remark":"2026-01-01","account":"Hong Leong","category":"销售收入","feeMonth":"2026-01","invoiceNo":"","receiptNo":"","counterparty":"LEE JU YAN"},{"id":"INC-0002","date":"2026-01-08","amount":480,"remark":"2026-01-01","account":"Hong Leong","category":"销售收入","feeMonth":"2026-01","invoiceNo":"","receiptNo":"","counterparty":"HUAI DERK"},{"id":"INC-0001","date":"2026-01-05","amount":480,"remark":"2026-01-01","account":"Hong Leong","category":"销售收入","feeMonth":"2026-01","invoiceNo":"","receiptNo":"","counterparty":"LEE YAN CHENG"}],"accounts":[{"name":"Hong Leong","initial":492.15,"accountNo":"15200056062"},{"name":"MING ZHOU","initial":0,"accountNo":""},{"name":"PART LEAM","initial":0,"accountNo":""},{"name":"KEE THUANG","initial":0,"accountNo":""},{"name":"CASH","initial":0,"accountNo":""}],"expenses":[{"id":"EXP-7192660","date":"2026-07-19","item":"单据日常支出","time":null,"amount":26.6,"remark":"petron 单据日常支出","account":"PART LEAM","category":"原材料","counterparty":"petron","receiptImage":""},{"id":"EXP-FIX-2026-09-KEETHUANG","date":"2026-09-01","item":"9月汽油津贴","amount":100,"remark":null,"account":"KEE THUANG","category":"汽油津贴","counterparty":"KEE THUANG","receiptImage":""},{"id":"EXP-FIX-2026-09-PARTLEAM","date":"2026-09-01","item":"9月汽油津贴","amount":150,"remark":null,"account":"PART LEAM","category":"汽油津贴","counterparty":"PART LEAM","receiptImage":""},{"id":"EXP-FIX-2026-09-MAXIS","date":"2026-09-01","item":"MAXIS HOME FIBRE (2026-09)","amount":106,"remark":null,"account":"MING ZHOU","category":"水电费","counterparty":"MAXIS","receiptImage":""},{"id":"EXP-FIX-2026-09-COWAYMALAYSIASDNBHD","date":"2026-09-01","item":"COWAY-2026-09","amount":118,"remark":null,"account":"PART LEAM","category":"水电费","counterparty":"COWAY(MALAYSIA) SDN BHD","receiptImage":""},{"id":"EXP-03360910","date":"2026-08-11","item":"TNB 电费","amount":850.1,"remark":"006968511746","account":"MING ZHOU","category":"水电费","counterparty":"TENAGA NASIONAL BERHAD","receiptImage":""},{"id":"EXP-109483","date":"2026-08-02","item":"洗碗液","time":"","amount":10.09,"remark":"","account":"PART LEAM","category":"原材料","counterparty":"lotus","receiptImage":""},{"id":"EXP-FIX-2026-08-PARTLEAM","date":"2026-08-01","item":"8月汽油津贴","amount":150,"remark":null,"account":"PART LEAM","category":"汽油津贴","counterparty":"PART LEAM","receiptImage":""},{"id":"EXP-FIX-2026-08-KEETHUANG","date":"2026-08-01","item":"8月汽油津贴","amount":100,"remark":null,"account":"KEE THUANG","category":"汽油津贴","counterparty":"KEE THUANG","receiptImage":""},{"id":"EXP-FIX-2026-08-MAXIS","date":"2026-08-01","item":"MAXIS HOME FIBRE (2026-08)","amount":106,"remark":null,"account":"MING ZHOU","category":"水电费","counterparty":"MAXIS","receiptImage":""},{"id":"EXP-FIX-2026-08-COWAYMALAYSIASDNBHD","date":"2026-08-01","item":"COWAY-2026-08","amount":118,"remark":null,"account":"PART LEAM","category":"水电费","counterparty":"COWAY(MALAYSIA) SDN BHD","receiptImage":""},{"id":"EXP-841015","date":"2026-07-15","item":"Bil Air","amount":156,"remark":"880299","account":"MING ZHOU","category":"水电费","counterparty":"Lembaga Air Perak","receiptImage":""},{"id":"EXP-05762195","date":"2026-07-12","item":"TNB 电费","amount":863.15,"remark":"006968511746","account":"MING ZHOU","category":"水电费","counterparty":"TENAGA NASIONAL BERHAD","receiptImage":""},{"id":"EXP-FIX-2026-07-COWAYMALAYSIASDNBHD","date":"2026-07-01","item":"COWAY-2026-07","amount":118,"remark":null,"account":"PART LEAM","category":"水电费","counterparty":"COWAY(MALAYSIA) SDN BHD","receiptImage":""},{"id":"EXP-FIX-2026-07-PARTLEAM","date":"2026-07-01","item":"7月汽油津贴","amount":150,"remark":null,"account":"PART LEAM","category":"汽油津贴","counterparty":"PART LEAM","receiptImage":""},{"id":"EXP-FIX-2026-07-KEETHUANG","date":"2026-07-01","item":"7月汽油津贴","amount":100,"remark":null,"account":"KEE THUANG","category":"汽油津贴","counterparty":"KEE THUANG","receiptImage":""},{"id":"EXP-FIX-2026-07-MAXIS","date":"2026-07-01","item":"MAXIS HOME FIBRE (2026-07)","amount":106,"remark":null,"account":"MING ZHOU","category":"水电费","counterparty":"MAXIS","receiptImage":""},{"id":"EXP-FIX-2026-06-KEETHUANG","date":"2026-06-01","item":"6月汽油津贴","amount":100,"remark":null,"account":"KEE THUANG","category":"汽油津贴","counterparty":"KEE THUANG","receiptImage":""},{"id":"EXP-FIX-2026-06-PARTLEAM","date":"2026-06-01","item":"6月汽油津贴","amount":150,"remark":null,"account":"PART LEAM","category":"汽油津贴","counterparty":"PART LEAM","receiptImage":""},{"id":"EXP-FIX-2026-06-COWAYMALAYSIASDNBHD","date":"2026-06-01","item":"COWAY-2026-06","amount":118,"remark":null,"account":"PART LEAM","category":"水电费","counterparty":"COWAY(MALAYSIA) SDN BHD","receiptImage":""},{"id":"EXP-FIX-2026-06-MAXIS","date":"2026-06-01","item":"MAXIS HOME FIBRE (2026-06)","amount":106,"remark":null,"account":"MING ZHOU","category":"水电费","counterparty":"MAXIS","receiptImage":""},{"id":"EXP-0053","date":"2026-05-28","item":"PARTNER CLAIM","amount":7000,"remark":"","account":"Hong Leong","category":"提现","counterparty":"HUAM MING ZHOU"},{"id":"EXP-0054","date":"2026-05-28","item":"PARTNER CLAIM","amount":7000,"remark":"","account":"Hong Leong","category":"提现","counterparty":"LOR PART LEAM"},{"id":"EXP-0052","date":"2026-05-28","item":"RENTAL FEE JAN-MAY","amount":2500,"remark":"","account":"Hong Leong","category":"房租","counterparty":"NG SU EIN"},{"id":"EXP-0055","date":"2026-05-28","item":"PARTNER CLAIM","amount":7000,"remark":"","account":"Hong Leong","category":"提现","counterparty":"HENG KEE THUANG"},{"id":"EXP-0051","date":"2026-05-19","item":"Water Bill","amount":201.9,"remark":"803582","account":"Hong Leong","category":"水电费","counterparty":"LEMBAGA AIR PERAK"},{"id":"EXP-0045","date":"2026-05-12","item":"Bil Elektrik","amount":866.3,"remark":"6947037589","account":"Hong Leong","category":"水电费","counterparty":"Tenaga Nasional"},{"id":"EXP-0044","date":"2026-05-03","item":"WAXCO DIY AIRCOND CLEANER","amount":21.9,"remark":"T1R000318306","account":"Hong Leong","category":"原材料","counterparty":"MR DIY"},{"id":"EXP-0043","date":"2026-05-01","item":"5月汽油津贴","amount":100,"remark":"","account":"Hong Leong","category":"汽油津贴","counterparty":"KEE THUANG"},{"id":"EXP-FIX-2026-05-MAXIS","date":"2026-05-01","item":"MAXIS HOME FIBRE (2026-05)","amount":106,"remark":null,"account":"MING ZHOU","category":"水电费","counterparty":"MAXIS","receiptImage":""},{"id":"EXP-0041","date":"2026-05-01","item":"COWAY-MAY","amount":118,"remark":"","account":"Hong Leong","category":"水电费","counterparty":"COWAY(MALAYSIA) SDN BHD"},{"id":"EXP-0042","date":"2026-05-01","item":"5月汽油津贴","amount":150,"remark":"","account":"Hong Leong","category":"汽油津贴","counterparty":"PART LEAM"},{"id":"EXP-0040","date":"2026-04-26","item":"垃圾袋","amount":37,"remark":"T3R000343393","account":"Hong Leong","category":"原材料","counterparty":"MR DIY"},{"id":"EXP-0048","date":"2026-04-23","item":"杂货","amount":49.96,"remark":"","account":"Hong Leong","category":"差旅费用","counterparty":"","receiptImage":""},{"id":"EXP-0049","date":"2026-04-23","item":"","amount":172.6,"remark":"","account":"Hong Leong","category":"差旅费用","counterparty":""},{"id":"EXP-0050","date":"2026-04-23","item":"","amount":17.6,"remark":"","account":"Hong Leong","category":"差旅费用","counterparty":""},{"id":"EXP-0039","date":"2026-04-22","item":"蚊油，垃圾袋","amount":23.7,"remark":"182721297/103/T0045","account":"Hong Leong","category":"原材料","counterparty":"99 SPEEDMART"},{"id":"EXP-0038","date":"2026-04-21","item":"AIRCOND REPAIR","amount":510,"remark":"0972","account":"Hong Leong","category":"原材料","counterparty":"ONG AIRCOND\u0026 REPAIR"},{"id":"EXP-0037","date":"2026-04-17","item":"杂物","amount":38.7,"remark":"T1R000330005","account":"Hong Leong","category":"原材料","counterparty":"MR DIY"},{"id":"EXP-0036","date":"2026-04-12","item":"Bil Elektrik","amount":586.95,"remark":"6938793825","account":"Hong Leong","category":"水电费","counterparty":"Tenaga Nasional"},{"id":"EXP-0035","date":"2026-04-04","item":"GAS","amount":26.6,"remark":"12819049","account":"Hong Leong","category":"原材料","counterparty":"SNA SMART ENTERPRISE"},{"id":"EXP-0034","date":"2026-04-01","item":"4月汽油津贴","amount":100,"remark":"","account":"Hong Leong","category":"汽油津贴","counterparty":"KEE THUANG"},{"id":"EXP-0032","date":"2026-04-01","item":"COWAY-APRIL","amount":118,"remark":"","account":"Hong Leong","category":"水电费","counterparty":"COWAY(MALAYSIA) SDN BHD"},{"id":"EXP-FIX-2026-04-MAXIS","date":"2026-04-01","item":"MAXIS HOME FIBRE (2026-04)","amount":106,"remark":null,"account":"MING ZHOU","category":"水电费","counterparty":"MAXIS","receiptImage":""},{"id":"EXP-0033","date":"2026-04-01","item":"4月汽油津贴","amount":150,"remark":"","account":"Hong Leong","category":"汽油津贴","counterparty":"PART LEAM"},{"id":"EXP-0046","date":"2026-03-16","item":"Water Bill","amount":171.3,"remark":"725749","account":"Hong Leong","category":"水电费","counterparty":"LEMBAGA AIR PERAK"},{"id":"EXP-0031","date":"2026-03-12","item":"Bil Elektrik","amount":567,"remark":"6930390713","account":"Hong Leong","category":"水电费","counterparty":"Tenaga Nasional"},{"id":"EXP-0030","date":"2026-03-11","item":"plumbing","amount":4900,"remark":"","account":"Hong Leong","category":"原材料","counterparty":""},{"id":"EXP-0029","date":"2026-03-10","item":"割门","amount":10,"remark":"","account":"Hong Leong","category":"原材料","counterparty":""},{"id":"EXP-0047","date":"2026-03-03","item":"GAS","amount":26.6,"remark":"","account":"Hong Leong","category":"原材料","counterparty":""},{"id":"EXP-0028","date":"2026-03-01","item":"3月汽油津贴","amount":100,"remark":"","account":"Hong Leong","category":"汽油津贴","counterparty":"KEE THUANG"},{"id":"EXP-FIX-2026-03-MAXIS","date":"2026-03-01","item":"MAXIS HOME FIBRE (2026-03)","amount":106,"remark":null,"account":"MING ZHOU","category":"水电费","counterparty":"MAXIS","receiptImage":""},{"id":"EXP-0026","date":"2026-03-01","item":"COWAY-MAR","amount":118,"remark":"","account":"Hong Leong","category":"水电费","counterparty":"COWAY(MALAYSIA) SDN BHD"},{"id":"EXP-0027","date":"2026-03-01","item":"3月汽油津贴","amount":150,"remark":"","account":"Hong Leong","category":"汽油津贴","counterparty":"PART LEAM"},{"id":"EXP-0025","date":"2026-02-12","item":"素食","amount":96,"remark":"231750","account":"Hong Leong","category":"差旅费用","counterparty":""},{"id":"EXP-0024","date":"2026-02-12","item":"聚餐","amount":623,"remark":"","account":"Hong Leong","category":"差旅费用","counterparty":"Kedai Makanan Laut Ju Fu"},{"id":"EXP-0023","date":"2026-02-11","item":"梯子","amount":199,"remark":"","account":"Hong Leong","category":"原材料","counterparty":"MR DIY"},{"id":"EXP-0022","date":"2026-02-10","item":"Bil Elektrik","amount":556.35,"remark":"6923211800","account":"Hong Leong","category":"水电费","counterparty":"Tenaga Nasional"},{"id":"EXP-0021","date":"2026-02-08","item":"桌子","amount":230.9,"remark":"260124TQHW41CK","account":"Hong Leong","category":"原材料","counterparty":"SEVENWOOD TECHNOLOGY PLT"},{"id":"EXP-0020","date":"2026-02-06","item":"防水漆","amount":40,"remark":"","account":"Hong Leong","category":"原材料","counterparty":"WANG SENG HARDWARE TRADING"},{"id":"EXP-0019","date":"2026-02-05","item":"WATER SQUEEGEE+BROOM HANDLE","amount":9.1,"remark":"","account":"Hong Leong","category":"原材料","counterparty":"MR DIY"},{"id":"EXP-0015","date":"2026-02-01","item":"COWAY-FEB","amount":118,"remark":"","account":"Hong Leong","category":"水电费","counterparty":"COWAY(MALAYSIA) SDN BHD"},{"id":"EXP-0018","date":"2026-02-01","item":"2月汽油津贴","amount":100,"remark":"","account":"Hong Leong","category":"汽油津贴","counterparty":"KEE THUANG"},{"id":"EXP-0017","date":"2026-02-01","item":"FEB-MAXIS HOME FIBRE","amount":106,"remark":"","account":"Hong Leong","category":"水电费","counterparty":""},{"id":"EXP-0016","date":"2026-02-01","item":"2月汽油津贴","amount":150,"remark":"","account":"Hong Leong","category":"汽油津贴","counterparty":"PART LEAM"},{"id":"EXP-0014","date":"2026-01-22","item":"GARBAG BAG+BASIN TOOLS","amount":33.6,"remark":"","account":"Hong Leong","category":"原材料","counterparty":"MR DIY"},{"id":"EXP-0013","date":"2026-01-22","item":"LAUNDRY BASKET","amount":9.9,"remark":"LSOS02-1685196","account":"Hong Leong","category":"原材料","counterparty":"LIMA SEN SDN BHD"},{"id":"EXP-0012","date":"2026-01-16","item":"Water Bill","amount":91.5,"remark":"647291","account":"Hong Leong","category":"水电费","counterparty":"LEMBAGA AIR PERAK"},{"id":"EXP-0009","date":"2026-01-11","item":"垃圾袋+消毒","amount":23.4,"remark":"T1R000308066","account":"Hong Leong","category":"原材料","counterparty":"MR DIY"},{"id":"EXP-0011","date":"2026-01-11","item":"3M SCOTCH BRITE TOUCH","amount":5.9,"remark":"182721196/102/T0489","account":"Hong Leong","category":"原材料","counterparty":"99 SPEEDMART"},{"id":"EXP-0010","date":"2026-01-11","item":"拖把","amount":39.8,"remark":"T1BSP04202601110026","account":"Hong Leong","category":"原材料","counterparty":"TF VALUE MART"},{"id":"EXP-0005","date":"2026-01-10","item":"Bil Elektrik","amount":72.25,"remark":"6916660401","account":"Hong Leong","category":"水电费","counterparty":"Tenaga Nasional"},{"id":"EXP-0008","date":"2026-01-10","item":"NYLON BROOM+FLOOR CLEANER","amount":43.2,"remark":"T3R000305382","account":"Hong Leong","category":"原材料","counterparty":"MR DIY"},{"id":"EXP-0007","date":"2026-01-10","item":"CYLINDER LOCK","amount":41,"remark":"T2R000598025","account":"Hong Leong","category":"原材料","counterparty":"MR DIY"},{"id":"EXP-0006","date":"2026-01-10","item":"漆","amount":113,"remark":"CS-301277","account":"Hong Leong","category":"原材料","counterparty":"WANG SENG HARDWARE TRADING"},{"id":"EXP-0001","date":"2026-01-01","item":"COWAY-JAN","amount":118,"remark":"","account":"Hong Leong","category":"水电费","counterparty":"COWAY(MALAYSIA) SDN BHD"},{"id":"EXP-0003","date":"2026-01-01","item":"JAN-MAXIS HOME FIBRE","amount":106,"remark":"","account":"Hong Leong","category":"水电费","counterparty":""},{"id":"EXP-0004","date":"2026-01-01","item":"1月汽油津贴","amount":100,"remark":"","account":"Hong Leong","category":"汽油津贴","counterparty":"KEE THUANG"},{"id":"EXP-0002","date":"2026-01-01","item":"1月汽油津贴","amount":150,"remark":"","account":"Hong Leong","category":"汽油津贴","counterparty":"PART LEAM"}],"updatedAt":1789053867988,"ocrSettings":{"mode":"local","geminiApiKey":"","localLanguages":"chi_sim+eng+msa"},"initialBalance":492.15,"incomeCategories":["销售收入","理财收益","营运资金"],"expenseCategories":["原材料","差旅费用","房租","职工工资","管理费用","水电费","财务成本","汽油津贴","提现"]};
@@ -2517,8 +2524,33 @@ let ocrSettings = {
 };
 
 // Application Version and OTA Release Timestamp
-window.VOYAGE_APP_VERSION = '2026.3.37';
+window.VOYAGE_APP_VERSION = '2026.3.38';
 window.VOYAGE_APP_BUILD_TIME = Date.now();
+
+// 15 Boarding Students Master Configuration (Globally initialized)
+const DEFAULT_BOARDING_STUDENTS = [
+  { id: 'LEE YAN CHENG', zhName: '李晏丞', name: 'LEE YAN CHENG', aliases: ['李晏丞', 'LEE YAN CHENG', 'LEE YAN', 'LEE YA', '晏丞', 'LIM YEE LING'], count: 1, fee: 480 },
+  { id: 'KAIHAO', zhName: '蔡凯皓', name: 'KAIHAO', aliases: ['蔡凯皓', 'KAI HAO', 'KAIHAO', '凯皓', 'CHUA HEE SIANG'], count: 1, fee: 480 },
+  { id: 'LEE JU YAN', zhName: '李居彦', name: 'LEE JU YAN', aliases: ['李居彦', 'LEE JU YAN', 'JU YAN', '居彦', 'WONG PIK WOON'], count: 1, fee: 480 },
+  { id: 'CHUA MING ZHE', zhName: '蔡旻哲', name: 'CHUA MING ZHE', aliases: ['蔡旻哲', 'CHUA MING ZHE', 'MING ZHE', '旻哲', 'CHUA MIN ZHE', 'MIN ZHE', 'MR FOO POH HAR'], count: 1, fee: 480 },
+  { id: 'ONG SHI SHUI', zhName: '翁诗岁', name: 'ONG SHI SHUI', aliases: ['翁诗岁', 'ONG SHI SHUI', 'ONG SHI SUI', 'BEH SIEW SIEW', 'SHI SHUI', 'SHI SUI', '诗岁', 'MR ONG CHAU LEANG'], count: 1, fee: 480 },
+  { id: 'ENG WEI ZHI', zhName: '黄炜智', name: 'ENG WEI ZHI', aliases: ['黄炜智', 'ENG WEI ZHI', 'ENG WEE ZHI', 'ENG WEE HOSTEL ZHI', 'WEI ZHI', '炜智', '黄伟智', 'TEE LEK TING'], count: 1, fee: 480 },
+  { id: 'WONG E FULL', zhName: '黄益富', name: 'WONG E FULL', aliases: ['黄益富', 'WONG E FULL', 'E FULL', '益富', '黄益福', 'RAINBOW ZONE VENTURES'], count: 1, fee: 480 },
+  { id: 'HUAIDERK', zhName: '陈怀德', name: 'HUAIDERK', aliases: ['陈怀德', 'HUAIDERK', 'HUAI DERK', 'HUAI D', '怀德', 'CHONG MEI KOON'], count: 1, fee: 480 },
+  { id: 'GOH JYJE SHAN', zhName: '吴劼善', name: 'GOH JYJE SHAN', aliases: ['吴劼善', 'GOH JYJE SHAN', 'GOHJYIESHANN', 'JYJE SHAN', 'JYIE SHAN', '劼善', 'TAN HOOI P', 'GOH HOCK G'], count: 1, fee: 480 },
+  { id: 'TAN JIAN FONG', zhName: '陈剑锋', name: 'TAN JIAN FONG', aliases: ['陈剑锋', 'TAN JIAN FONG', 'JIAN FONG', 'TAN JI', '剑锋', 'WONG MEI NGUK'], count: 1, fee: 480 },
+  { id: 'LEE JI CHUEN', zhName: '吕梓铨', name: 'LEE JI CHUEN', aliases: ['吕梓铨', 'LEE JI CHUEN', 'JI CHUEN', '梓铨', '吕子铨', 'LEE YENG MAN'], count: 1, fee: 480 },
+  { id: 'CHIA KAI JIE', zhName: '谢凯捷', name: 'CHIA KAI JIE', aliases: ['谢凯捷', 'CHIA KAI JIE', 'KAI JIE', '凯捷'], count: 1, fee: 480 },
+  { id: 'ZHI XIAO', zhName: '侯智逍', name: 'ZHI XIAO', aliases: ['侯智逍', 'ZHI XIAO', 'HOW ZHI XIAO', '智逍', '侯智宵', 'CHONG CHEE YENG'], count: 1, fee: 480 },
+  { id: 'HONG YE & KAI YE', zhName: '邹宏业 & 邹楷业', name: 'HONG YE & KAI YE', aliases: ['邹宏业', '邹楷业', 'HONG YE', 'KAI YE', 'HONG YIP', 'KAI YIP', '宏业', '楷业', '邹宏业 & 邹楷业', 'HONG YE & KAI YE', 'HONG YIP/KAI YIP'], count: 2, fee: 960, isBrothers: true, note: '邹宏业 & 邹楷业 两兄弟合并转账（母：RM960/月）' }
+];
+window.DEFAULT_BOARDING_STUDENTS = DEFAULT_BOARDING_STUDENTS;
+
+let arrearsCutoffMonth = 9;
+let arrearsMonthlyFeePerPerson = 480;
+let arrearsViewMode = 'cards';
+let arrearsStatusFilter = 'all';
+let arrearsSearchKeyword = '';
 
 // ==========================================
 // SUPABASE REAL-TIME CLOUD SYNC MANAGER
@@ -5035,44 +5067,19 @@ async function parseStatementPdfFile(file) {
 
 const LEARNED_STUDENT_RULES = [
   // 15 Boarding Students (Chinese & English Patterns) & Known Parents
-  { pattern: /陈怀德|HUAI\s*DERK|HUAIDERK|HUAI\s*D\b/i, zhName: '陈怀德', name: 'HUAIDERK', fee: 480 },
-  { pattern: /CHONG\s*MEI\s*KOON/i, zhName: '陈怀德', name: 'HUAIDERK', fee: 480 }, // Parent of HUAI DERK
-
-  { pattern: /黄益富|WONG\s*E\s*FULL|WongEFull|\bE\s*FULL\b|黄益福/i, zhName: '黄益富', name: 'WONG E FULL', fee: 480 },
-  { pattern: /RAINBOW\s*ZONE\s*VENTURES/i, zhName: '黄益富', name: 'WONG E FULL', fee: 480 }, // Business / Parent of WONG E FULL
-
-  { pattern: /黄炜智|ENG\s*WE[EI]\s*ZHI|WEI\s*ZHI|黄伟智/i, zhName: '黄炜智', name: 'ENG WEI ZHI', fee: 480 },
-  { pattern: /TEE\s*LEK\s*TING/i, zhName: '黄炜智', name: 'ENG WEI ZHI', fee: 480 }, // Parent of ENG WEI ZHI
-
-  { pattern: /陈剑锋|TAN\s*JIAN\s*FONG|Tan\s*Jian\s*Fong|\bJIAN\s*FONG\b/i, zhName: '陈剑锋', name: 'TAN JIAN FONG', fee: 480 },
-  { pattern: /WONG\s*MEI\s*NGUK/i, zhName: '陈剑锋', name: 'TAN JIAN FONG', fee: 480 }, // Parent of TAN JIAN FONG
-
-  { pattern: /李晏丞|LEE\s*YAN\s*CHENG|LEE\s*YAN\b/i, zhName: '李晏丞', name: 'LEE YAN CHENG', fee: 480 },
-  { pattern: /LIM\s*YEE\s*LING/i, zhName: '李晏丞', name: 'LEE YAN CHENG', fee: 480 }, // Parent of LEE YAN CHENG
-
-  { pattern: /蔡凯皓|KAI\s*HAO|Kaihao|\bKAIHAO\b/i, zhName: '蔡凯皓', name: 'KAIHAO', fee: 480 },
-  { pattern: /CHUA\s*HEE\s*SIANG/i, zhName: '蔡凯皓', name: 'KAIHAO', fee: 480 }, // Parent of KAIHAO
-
-  { pattern: /李居彦|LEE\s*JU\s*YAN|\bJU\s*YAN\b/i, zhName: '李居彦', name: 'LEE JU YAN', fee: 480 },
-  { pattern: /WONG\s*PIK\s*WOON/i, zhName: '李居彦', name: 'LEE JU YAN', fee: 480 }, // Parent of LEE JU YAN
-
-  { pattern: /蔡旻哲|CHUA\s*MI[NN]G\s*ZHE|MI[NN]G\s*ZHE/i, zhName: '蔡旻哲', name: 'CHUA MING ZHE', fee: 480 },
-
-  { pattern: /翁诗岁|ONG\s*SHI\s*SHUI|SHI\s*SHUI/i, zhName: '翁诗岁', name: 'ONG SHI SHUI', fee: 480 },
-  { pattern: /BEH\s*SIEW\s*SIEW/i, zhName: '翁诗岁', name: 'ONG SHI SHUI', fee: 480 },
-
-  { pattern: /吴劼善|GOH\s*JYJE\s*SHAN|GohJyieShann|JYJE\s*SHAN/i, zhName: '吴劼善', name: 'GOH JYJE SHAN', fee: 480 },
-  { pattern: /TAN\s*HOOI\s*P|GOH\s*HOCK\s*G/i, zhName: '吴劼善', name: 'GOH JYJE SHAN', fee: 480 }, // Parents of GOH JYJE SHAN
-
-  { pattern: /吕梓铨|LEE\s*JI\s*CHUEN|JI\s*CHUEN|吕子铨/i, zhName: '吕梓铨', name: 'LEE JI CHUEN', fee: 480 },
-  { pattern: /LEE\s*YENG\s*MAN/i, zhName: '吕梓铨', name: 'LEE JI CHUEN', fee: 480 },
-
+  { pattern: /陈怀德|HUAI\s*DERK|HUAIDERK|HUAI\s*D\b|CHONG\s*MEI\s*KOON/i, zhName: '陈怀德', name: 'HUAIDERK', fee: 480 },
+  { pattern: /黄益富|WONG\s*E\s*FULL|WongEFull|\bE\s*FULL\b|黄益福|RAINBOW\s*ZONE\s*VENTURES/i, zhName: '黄益富', name: 'WONG E FULL', fee: 480 },
+  { pattern: /黄炜智|ENG\s*WE[EI]\s*ZHI|WEI\s*ZHI|黄伟智|TEE\s*LEK\s*TING/i, zhName: '黄炜智', name: 'ENG WEI ZHI', fee: 480 },
+  { pattern: /陈剑锋|TAN\s*JIAN\s*FONG|Tan\s*Jian\s*Fong|\bJIAN\s*FONG\b|WONG\s*MEI\s*NGUK/i, zhName: '陈剑锋', name: 'TAN JIAN FONG', fee: 480 },
+  { pattern: /李晏丞|LEE\s*YAN\s*CHENG|LEE\s*YAN\b|LIM\s*YEE\s*LING/i, zhName: '李晏丞', name: 'LEE YAN CHENG', fee: 480 },
+  { pattern: /蔡凯皓|KAI\s*HAO|Kaihao|\bKAIHAO\b|CHUA\s*HEE\s*SIANG/i, zhName: '蔡凯皓', name: 'KAIHAO', fee: 480 },
+  { pattern: /李居彦|LEE\s*JU\s*YAN|\bJU\s*YAN\b|WONG\s*PIK\s*WOON/i, zhName: '李居彦', name: 'LEE JU YAN', fee: 480 },
+  { pattern: /蔡旻哲|CHUA\s*MI[NN]G?\s*ZHE|MI[NN]G?\s*ZHE|MR\s*FOO\s*POH\s*HAR/i, zhName: '蔡旻哲', name: 'CHUA MING ZHE', fee: 480 },
+  { pattern: /翁诗岁|ONG\s*SHI\s*S(?:H)?UI|SHI\s*S(?:H)?UI|BEH\s*SIEW\s*SIEW|MR\s*ONG\s*CHAU\s*LEANG/i, zhName: '翁诗岁', name: 'ONG SHI SHUI', fee: 480 },
+  { pattern: /吴劼善|GOH\s*JY[EI]+E?\s*SHAN|GohJyieShann|TAN\s*HOOI\s*P|GOH\s*HOCK\s*G/i, zhName: '吴劼善', name: 'GOH JYJE SHAN', fee: 480 },
+  { pattern: /吕梓铨|LEE\s*JI\s*CHUEN|JI\s*CHUEN|吕子铨|LEE\s*YENG\s*MAN/i, zhName: '吕梓铨', name: 'LEE JI CHUEN', fee: 480 },
   { pattern: /谢凯捷|CHIA\s*KAI\s*JIE|\bKAI\s*JIE\b/i, zhName: '谢凯捷', name: 'CHIA KAI JIE', fee: 480 },
-
-  { pattern: /侯智逍|ZHI\s*XIAO|How\s*Zhi\s*Xiao|侯智宵/i, zhName: '侯智逍', name: 'ZHI XIAO', fee: 480 },
-  { pattern: /CHONG\s*CHEE\s*YENG/i, zhName: '侯智逍', name: 'ZHI XIAO', fee: 480 },
-
-  // Brothers: 邹宏业 & 邹楷业 (RM 960)
+  { pattern: /侯智逍|ZHI\s*XIAO|How\s*Zhi\s*Xiao|侯智宵|CHONG\s*CHEE\s*YENG/i, zhName: '侯智逍', name: 'ZHI XIAO', fee: 480 },
   { pattern: /邹宏业.*邹楷业|邹楷业.*邹宏业|HONG\s*Y[EI]P?.*KAI\s*Y[EI]P?|KAI\s*Y[EI]P?.*HONG\s*Y[EI]P?/i, zhName: '邹宏业 & 邹楷业', name: 'HONG YE & KAI YE', fee: 960 },
   { pattern: /邹宏业|HONG\s*Y[EI]P?\b/i, zhName: '邹宏业', name: 'HONG YE', fee: 480 },
   { pattern: /邹楷业|KAI\s*Y[EI]P?\b/i, zhName: '邹楷业', name: 'KAI YE', fee: 480 }
@@ -5080,7 +5087,7 @@ const LEARNED_STUDENT_RULES = [
 
 // Helper: Extract fee month from any free text or payment reference
 function parseFeeMonthFromStatementText(text, fallbackDate) {
-  if (!text) return fallbackDate ? fallbackDate.slice(0, 7) : '';
+  if (!text) return (fallbackDate && fallbackDate.startsWith('2026-')) ? fallbackDate.slice(0, 7) : '';
   const upper = text.toUpperCase();
 
   // 1. Pattern like HOSTEL 2609, 2609, 2601..2612
@@ -5089,16 +5096,27 @@ function parseFeeMonthFromStatementText(text, fallbackDate) {
     return '2026-' + mHostel[1];
   }
 
-  // 2. English month names with optional 26 or 2026 (e.g. SEPT, Sept26, S3X Sept26, JULY, Jun26)
+  // 2. English month names (e.g. July, Sept, Aug26, June, Jan, etc.)
   const monthMap = {
-    'JAN': '01', 'FEB': '02', 'MAR': '03', 'APR': '04', 'MAY': '05', 'JUN': '06',
-    'JUL': '07', 'AUG': '08', 'SEP': '09', 'SEPT': '09', 'OCT': '10', 'NOV': '11', 'DEC': '12'
+    'JAN': '01', 'JANUARY': '01',
+    'FEB': '02', 'FEBRUARY': '02',
+    'MAR': '03', 'MARCH': '03',
+    'APR': '04', 'APRIL': '04',
+    'MAY': '05',
+    'JUN': '06', 'JUNE': '06',
+    'JUL': '07', 'JULY': '07',
+    'AUG': '08', 'AUGUST': '08',
+    'SEP': '09', 'SEPT': '09', 'SEPTEMBER': '09',
+    'OCT': '10', 'OCTOBER': '10',
+    'NOV': '11', 'NOVEMBER': '11',
+    'DEC': '12', 'DECEMBER': '12'
   };
-  for (const [mName, mCode] of Object.entries(monthMap)) {
-    const reg = new RegExp('\\b' + mName + '(?:EMBER|TEMBER|UST|OBER)?(?:[-_\\s]*2[5-9]|202[5-9])?\\b', 'i');
-    if (reg.test(upper)) {
-      return '2026-' + mCode;
-    }
+
+  const reg = /\b(JAN(?:UARY)?|FEB(?:RUARY)?|MAR(?:CH)?|APR(?:IL)?|MAY|JUN(?:E)?|JUL(?:Y)?|AUG(?:UST)?|SEP(?:T|TEMBER)?|OCT(?:OBER)?|NOV(?:EMBER)?|DEC(?:EMBER)?)(?:[-_\s]*2[5-9]|202[5-9])?\b/i;
+  const mMatch = upper.match(reg);
+  if (mMatch) {
+    const code = monthMap[mMatch[1].toUpperCase()];
+    if (code) return '2026-' + code;
   }
 
   // 3. Explicit YYYY-MM or YYYY/MM (e.g. 2026-09 or 2026/1)
@@ -5124,7 +5142,6 @@ function parseFeeMonthFromStatementText(text, fallbackDate) {
 // Helper: Extract bank transaction reference number
 function extractBankReferenceNo(text) {
   if (!text) return '';
-  // e.g. 20260906MBBEMYKL010ORM20605635 or 20260907PBBEMYKL010ORB23005033
   const m = text.match(/\b(202\d{5}[A-Z0-9]{12,25})\b/i);
   return m ? m[1] : '';
 }
@@ -5167,111 +5184,116 @@ function extractTransactionsFromStatementItems(items) {
   statementMeta.accountNo = accountNo;
   statementMeta.priorDayBalance = priorDayBalance;
 
-  // Group items into physical lines
-  const lines = [];
-  let currentLine = [];
-  let lastY = null;
-  let lastPage = null;
-
-  items.forEach(it => {
-    if (!it.str || it.str === '') return;
-    if (lastPage !== null && (it.page !== lastPage || Math.abs(it.y - lastY) > 3.5)) {
-      if (currentLine.length > 0) lines.push(currentLine);
-      currentLine = [];
-    }
-    currentLine.push(it);
-    lastY = it.y;
-    lastPage = it.page;
-  });
-  if (currentLine.length > 0) lines.push(currentLine);
-
   // Date detector matching DD/MM/YYYY or DD-MM-YYYY
-  const dateRegex = /^(\d{2})[-/](\d{2})[-/](\d{4})(?:\s+\d{2}:\d{2}(?::\d{2})?)?$/;
   const isDateStart = (str) => {
     const s = str.trim();
     return /^(\d{2})[-/](\d{2})[-/](\d{4})/.test(s) || /^(\d{2})[-/](\d{2})[-/](\d{2})\b/.test(s);
   };
 
-  // Group into transaction blocks
-  const transactionBlocks = [];
-  let currentBlock = null;
-
-  for (const line of lines) {
-    if (line.length === 0) continue;
-    const firstItem = line[0];
-    const firstStr = firstItem.str.trim();
-
-    // Check if line starts a new transaction (must be near left margin x < 120 and start with date)
-    if (firstItem.x < 120 && isDateStart(firstStr)) {
-      if (currentBlock) transactionBlocks.push(currentBlock);
-      currentBlock = [line];
-    } else if (currentBlock) {
-      const lineStr = line.map(x => x.str).join(' ');
-      if (lineStr.includes('Total Withdrawals') || lineStr.includes('Total Deposits') || lineStr.includes('Closing Balance') || lineStr.includes('Disclaimer') || lineStr.includes('Page ')) {
-        transactionBlocks.push(currentBlock);
-        currentBlock = null;
-      } else {
-        currentBlock.push(line);
-      }
+  // Detect all transaction date locations on pages
+  const datePositions = [];
+  items.forEach(it => {
+    const s = it.str.trim();
+    if (it.x < 80 && isDateStart(s)) {
+      datePositions.push(it);
     }
+  });
+
+  // Sort dates descending by page and y (top to bottom)
+  datePositions.sort((a, b) => {
+    if (a.page !== b.page) return a.page - b.page;
+    return b.y - a.y;
+  });
+
+  const transactionBands = [];
+  if (datePositions.length > 0) {
+    // Partition items into horizontal bands based on midpoints between transaction dates
+    for (let i = 0; i < datePositions.length; i++) {
+      const cur = datePositions[i];
+      const prev = i > 0 ? datePositions[i - 1] : null;
+      const next = i < datePositions.length - 1 ? datePositions[i + 1] : null;
+
+      const top = (prev && prev.page === cur.page) ? (prev.y + cur.y) / 2.0 : (cur.y + 48.0);
+      const bottom = (next && next.page === cur.page) ? (cur.y + next.y) / 2.0 : 45.0;
+
+      transactionBands.push({
+        date: cur.str.trim(),
+        page: cur.page,
+        top: top,
+        bottom: bottom,
+        items: []
+      });
+    }
+
+    items.forEach(it => {
+      if (!it.str || it.str.trim() === '') return;
+      if (it.y < 45 || it.str.includes('Disclaimer') || it.str.includes('Page ') || it.str.includes('Total Withdrawals') || it.str.includes('Total Deposits') || it.str.includes('Closing Balance')) {
+        return;
+      }
+      for (const band of transactionBands) {
+        if (band.page === it.page && it.y <= band.top && it.y > band.bottom) {
+          band.items.push(it);
+          break;
+        }
+      }
+    });
   }
-  if (currentBlock) transactionBlocks.push(currentBlock);
 
   const transactions = [];
   let totalDep = 0;
   let totalWith = 0;
   let runningBalance = priorDayBalance;
 
-  transactionBlocks.forEach((block, idx) => {
-    const firstLine = block[0];
-    const firstStr = firstLine[0].str.trim();
-    
-    // Parse date
-    const dateMatch = firstStr.match(/^(\d{2})[-/](\d{2})[-/](\d{2,4})/);
+  // Process each transaction band
+  const bandsToProcess = transactionBands.length > 0 ? transactionBands : [];
+
+  bandsToProcess.forEach((band, idx) => {
+    const dateMatch = band.date.match(/^(\d{2})[-/](\d{2})[-/](\d{2,4})/);
     if (!dateMatch) return;
 
     let [, d, m, y] = dateMatch;
     if (y.length === 2) y = '20' + y;
     const isoDate = `${y}-${m}-${d}`;
 
-    // Collect all items in block
+    band.items.sort((a, b) => {
+      if (Math.abs(a.y - b.y) > 3) return b.y - a.y;
+      return a.x - b.x;
+    });
+
     let allTextItems = [];
     let numberItems = [];
     let timeStr = '';
 
-    block.forEach(line => {
-      line.forEach(it => {
-        const clean = it.str.trim();
-        if (!clean) return;
+    band.items.forEach(it => {
+      const clean = it.str.trim();
+      if (!clean) return;
 
-        // Check if time (e.g. 17:49:18)
-        if (/^\d{2}:\d{2}(:\d{2})?$/.test(clean)) {
-          timeStr = clean;
-          return;
-        }
+      if (/^\d{2}:\d{2}(:\d{2})?$/.test(clean)) {
+        timeStr = clean;
+        return;
+      }
 
-        // Check if numeric amount
-        const cleanNum = clean.replace(/,/g, '');
-        if (/^\d+\.\d{2}$/.test(cleanNum)) {
-          numberItems.push({
-            val: parseFloat(cleanNum),
-            x: it.x,
-            y: it.y,
-            raw: clean
-          });
-        } else if (!isDateStart(clean)) {
-          allTextItems.push(it);
-        }
-      });
+      // Robust currency matching: extracts amounts even if branch code is stuck (e.g. 25,084.14 00001)
+      const numMatches = [...clean.matchAll(/\b(\d{1,3}(?:,\d{3})*\.\d{2}|\d+\.\d{2})\b/g)];
+      if (numMatches.length > 0) {
+        numMatches.forEach(nm => {
+          const val = parseFloat(nm[1].replace(/,/g, ''));
+          if (!isNaN(val) && val > 0) {
+            numberItems.push({
+              val: val,
+              x: it.x,
+              y: it.y,
+              raw: nm[1]
+            });
+          }
+        });
+      } else if (!isDateStart(clean)) {
+        allTextItems.push(it);
+      }
     });
 
-    // Detect amount & flow direction
-    let deposit = 0;
-    let withdrawal = 0;
-    let balance = 0;
-
-    // Separate columns based on x coordinates for Transaction Details:
-    // x approx: Remarks (70-220), ChequeNo (220-250), Sender (250-365), RecipientRef (365-455), OtherDetails (455-545), PaymentAmt (545-610), CreditAmt (610-685), Balance (685-770)
+    // Column Partitioning (Hong Leong Bank Transaction Details layout)
+    // Remarks: x ~ 80-140 | Cheque: x ~ 140-180 | Sender: x ~ 180-230 | RecipientRef: x ~ 230-290 | OtherDetails: x ~ 290-350
     let remarksParts = [];
     let senderParts = [];
     let recipientRefParts = [];
@@ -5279,12 +5301,12 @@ function extractTransactionsFromStatementItems(items) {
 
     allTextItems.forEach(it => {
       const s = it.str.trim();
-      if (s === 'NA' || s === '-') return;
-      if (it.x >= 240 && it.x < 365) {
+      if (s === 'NA' || s === '-' || !s) return;
+      if (it.x >= 180 && it.x < 230) {
         senderParts.push(s);
-      } else if (it.x >= 365 && it.x < 455) {
+      } else if (it.x >= 230 && it.x < 290) {
         recipientRefParts.push(s);
-      } else if (it.x >= 455 && it.x < 545) {
+      } else if (it.x >= 290 && it.x < 350) {
         otherDetailsParts.push(s);
       } else {
         remarksParts.push(s);
@@ -5297,19 +5319,11 @@ function extractTransactionsFromStatementItems(items) {
     const remarksText = remarksParts.join(' ').trim();
     const combinedDescription = [remarksText, senderText, recipientRefText, otherDetailsText].filter(Boolean).join(' ');
 
-    // Determine deposit vs withdrawal from numberItems
-    // Pre-check student matching and transfer keywords
-    let matchedStudent = null;
-    for (const rule of LEARNED_STUDENT_RULES) {
-      if (rule.pattern.test(combinedDescription)) {
-        matchedStudent = rule;
-        break;
-      }
-    }
-
-    // Determine deposit vs withdrawal
+    // Sort numeric values by x-axis
     numberItems.sort((a, b) => a.x - b.x);
+    let balance = 0;
     let transItem = null;
+
     if (numberItems.length >= 2) {
       const rightmost = numberItems[numberItems.length - 1];
       balance = rightmost.val;
@@ -5318,12 +5332,24 @@ function extractTransactionsFromStatementItems(items) {
       transItem = numberItems[0];
     }
 
+    // Match student rule
+    let matchedStudent = null;
+    for (const rule of LEARNED_STUDENT_RULES) {
+      if (rule.pattern.test(combinedDescription)) {
+        matchedStudent = rule;
+        break;
+      }
+    }
+
     const isStudentFeeAmount = transItem && (Math.abs(transItem.val - 480) < 0.01 || Math.abs(transItem.val - 960) < 0.01 || Math.abs(transItem.val - 1440) < 0.01 || Math.abs(transItem.val - 1920) < 0.01);
     const hasDepositKeywords = /Instant Transfer|Fund Trf|Credit|CDM Deposit|Deposit|fr CA to CA|DuitNow|IBG/i.test(combinedDescription);
     const hasWithdrawalKeywords = /Cheque|Debit|Payment to|Charges|Fee|Withdrawal|Tax/i.test(combinedDescription);
 
-    // Layer 1: Mathematical Balance Difference (The Ultimate Source of Truth)
+    let deposit = 0;
+    let withdrawal = 0;
     let determinedByBalance = false;
+
+    // Layer 1: Mathematical Balance Difference (The Ultimate Source of Truth)
     if (runningBalance > 0 && balance > 0) {
       const balanceDiff = Math.round((balance - runningBalance) * 100) / 100;
       if (balanceDiff > 0.01) {
@@ -5337,32 +5363,42 @@ function extractTransactionsFromStatementItems(items) {
       }
     }
 
-    // Layer 2: Boarding Student Identification
-    if (!determinedByBalance && matchedStudent && isStudentFeeAmount) {
-      deposit = transItem ? transItem.val : matchedStudent.fee;
-      withdrawal = 0;
-    }
-    // Layer 3: Transfer keywords
-    else if (!determinedByBalance && hasDepositKeywords && !hasWithdrawalKeywords) {
-      deposit = transItem ? transItem.val : (numberItems[0] ? numberItems[0].val : 0);
-      withdrawal = 0;
-    } else if (!determinedByBalance && hasWithdrawalKeywords && !hasDepositKeywords) {
-      withdrawal = transItem ? transItem.val : (numberItems[0] ? numberItems[0].val : 0);
-      deposit = 0;
-    }
-    // Layer 4: Coordinate-based fallback (Debit ~ 450-530, Credit ~ 530-685)
-    else if (!determinedByBalance && transItem) {
-      if (transItem.x >= 530 && transItem.x <= 685) {
+    // Layer 2: Physical Column Coordinates for both Hong Leong Bank formats
+    if (!determinedByBalance && transItem) {
+      // Credit Amount column: 410-455 (Transaction Details) or 530-685 (Monthly Statement)
+      if ((transItem.x >= 410 && transItem.x <= 455) || (transItem.x >= 530 && transItem.x <= 685)) {
         deposit = transItem.val;
-      } else if (transItem.x >= 450 && transItem.x < 530) {
+        withdrawal = 0;
+      }
+      // Payment/Debit Amount column: 350-410 (Transaction Details) or 450-530 (Monthly Statement)
+      else if ((transItem.x >= 350 && transItem.x < 410) || (transItem.x >= 450 && transItem.x < 530)) {
         withdrawal = transItem.val;
-      } else if (hasDepositKeywords) {
-        deposit = transItem.val;
-      } else {
-        withdrawal = transItem.val;
+        deposit = 0;
       }
     }
 
+    // Layer 3: Boarding Student Identification
+    if (deposit === 0 && withdrawal === 0 && matchedStudent && isStudentFeeAmount) {
+      deposit = transItem ? transItem.val : matchedStudent.fee;
+      withdrawal = 0;
+    }
+
+    // Layer 4: Keywords fallback
+    if (deposit === 0 && withdrawal === 0) {
+      if (hasDepositKeywords && !hasWithdrawalKeywords) {
+        deposit = transItem ? transItem.val : (numberItems[0] ? numberItems[0].val : 0);
+        withdrawal = 0;
+      } else if (hasWithdrawalKeywords && !hasDepositKeywords) {
+        withdrawal = transItem ? transItem.val : (numberItems[0] ? numberItems[0].val : 0);
+        deposit = 0;
+      } else if (hasDepositKeywords) {
+        deposit = transItem ? transItem.val : 0;
+      } else {
+        withdrawal = transItem ? transItem.val : 0;
+      }
+    }
+
+    // Update running balance
     if (balance > 0) {
       runningBalance = balance;
     } else if (deposit > 0 && runningBalance > 0) {
@@ -5378,20 +5414,9 @@ function extractTransactionsFromStatementItems(items) {
     if (isDeposit) totalDep += deposit;
     else totalWith += withdrawal;
 
-    // Advanced Classification for Boarding Students & Fee Months
-    if (!matchedStudent) {
-      for (const rule of LEARNED_STUDENT_RULES) {
-        if (rule.pattern.test(combinedDescription)) {
-          matchedStudent = rule;
-          break;
-        }
-      }
-    }
-
-    // Determine category and counterparty
-    let category = isDeposit ? '销售收入' : '其他支出';
+    let feeMonth = isDeposit ? parseFeeMonthFromStatementText(combinedDescription, isoDate) : '';
+    let category = isDeposit ? (matchedStudent ? '住宿费' : '销售收入') : '其他支出';
     let counterparty = '';
-    let feeMonth = '';
     let refNo = extractBankReferenceNo(combinedDescription);
 
     if (isDeposit) {
@@ -5406,24 +5431,20 @@ function extractTransactionsFromStatementItems(items) {
       } else {
         counterparty = '学费客户';
       }
-
-      // Detect Fee Month
-      feeMonth = parseFeeMonthFromStatementText(combinedDescription, isoDate);
     } else {
-      // Expense classification
       const expClass = classifyBankTransaction('expense', combinedDescription, amount);
       category = expClass.category;
       counterparty = expClass.counterparty;
     }
 
-    // Build clean human-friendly remark
+    // Clean human-friendly remark
     let cleanRemark = '';
     if (isDeposit && matchedStudent) {
       const monthDisp = feeMonth ? (typeof formatFeeMonthDisplay === 'function' ? formatFeeMonthDisplay(feeMonth) : feeMonth) : '';
-      const payerNote = (senderText && senderText !== counterparty) ? ` · 付款人: ${senderText}` : '';
-      cleanRemark = `${monthDisp} 住宿费 (${counterparty}${payerNote})`.trim();
+      const payerNote = (senderText && senderText !== counterparty && senderText !== matchedStudent.zhName) ? ` · 付款人: ${senderText}` : '';
+      cleanRemark = `${monthDisp} 住宿费 (${matchedStudent.zhName}${payerNote})`.trim();
     } else if (isDeposit) {
-      cleanRemark = [recipientRefText, otherDetailsText, remarksText.slice(0, 30)].filter(Boolean).join(' | ');
+      cleanRemark = [recipientRefText, otherDetailsText, remarksText.slice(0, 35)].filter(Boolean).join(' | ');
     } else {
       cleanRemark = combinedDescription.slice(0, 45);
     }
@@ -5437,14 +5458,14 @@ function extractTransactionsFromStatementItems(items) {
       type: isDeposit ? 'income' : 'expense',
       amount: amount,
       category: category,
+      account: accountNo ? 'Hong Leong' : 'Hong Leong',
       counterparty: counterparty,
       feeMonth: feeMonth,
-      refNo: refNo,
-      remark: cleanRemark || remarksText.slice(0, 40),
+      remark: cleanRemark,
       rawDescription: combinedDescription,
       senderText: senderText,
-      recipientRef: recipientRefText,
-      otherDetails: otherDetailsText,
+      refNo: refNo,
+      balance: balance,
       isDuplicate: isDuplicate,
       selected: !isDuplicate
     });
@@ -5452,80 +5473,31 @@ function extractTransactionsFromStatementItems(items) {
 
   statementMeta.totalDeposits = totalDep;
   statementMeta.totalWithdrawals = totalWith;
+  statementMeta.closingBalance = runningBalance;
+  parsedStatementTransactions = transactions;
 
   return transactions;
 }
 
-// Window Exports
 window.extractTransactionsFromStatementItems = extractTransactionsFromStatementItems;
-window.parseFeeMonthFromStatementText = parseFeeMonthFromStatementText;
-window.extractBankReferenceNo = extractBankReferenceNo;
 
-
-function classifyBankTransaction(flowType, description, amount) {
-  if (flowType === 'income') {
-    let student = '';
-    for (const rule of LEARNED_STUDENTS) {
-      if (rule.pattern.test(description)) {
-        student = rule.name;
-        break;
-      }
-    }
-    if (!student) {
-      if (/CDM Deposit/i.test(description)) student = '现金存款机缴费';
-      else student = '学费客户';
-    }
-
-    let remark = '';
-    const monthPatterns = [
-      /\b(JAN(?:UARY)?|FEB(?:RUARY)?|MAR(?:CH)?|APR(?:IL)?|MAY|JUN(?:E)?|JUL(?:Y)?|AUG(?:UST)?|SEP(?:T|TEMBER)?|OCT(?:OBER)?|NOV(?:EMBER)?|DEC(?:EMBER)?)\s*(?:202[5-9]|2[5-9])?\b/i,
-      /\b(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)[-'\s]*2[5-9]\b/i,
-      /\bHOSTEL\s*([0-9A-Z]+)\b/i,
-      /\b(?:rental|deposit)\b/i
-    ];
-
-    for (const pat of monthPatterns) {
-      const m = description.match(pat);
-      if (m) {
-        remark = m[0];
-        break;
-      }
-    }
-
+// Classify bank transactions for automatic bookkeeping
+function classifyBankTransaction(type, description, amount) {
+  if (type === 'income') {
     return {
       category: '销售收入',
-      counterparty: student,
-      remark: remark || description.slice(0, 30)
+      counterparty: '学费客户',
+      remark: '银行入账流水'
     };
   } else {
     let category = '其他支出';
     let counterparty = '';
-    let item = '银行支出';
+    let item = description.slice(0, 40);
 
-    if (/PARTNER\s*CLAIM/i.test(description)) {
-      category = '提现';
-      item = 'PARTNER CLAIM (合伙人提现)';
-      if (/LOH\s*PART\s*LEAM|LOR\s*PART\s*LEAM/i.test(description)) counterparty = 'LOR PART LEAM';
-      else if (/HUAM\s*MING\s*ZHOU/i.test(description)) counterparty = 'HUAM MING ZHOU';
-      else if (/HENG\s*KEE\s*THUANG/i.test(description)) counterparty = 'HENG KEE THUANG';
-    } else if (/RENTAL/i.test(description) || /NG\s*SU\s*EIN/i.test(description)) {
-      category = '房租';
-      counterparty = 'NG SU EIN';
-      item = 'RENTAL FEE (中心租金)';
-    } else if (/plumbing|SEI\s*YONG\s*HAO/i.test(description)) {
-      category = '管理费用';
-      counterparty = 'SEI YONG HAO';
-      item = '水管管道维修保养';
-    } else if (/\bCLAIM\b/i.test(description)) {
-      category = '管理费用';
-      if (/LOH\s*PART\s*LEAM|LOR\s*PART\s*LEAM/i.test(description)) counterparty = 'LOR PART LEAM';
-      else if (/HUAM\s*MING\s*ZHOU/i.test(description)) counterparty = 'HUAM MING ZHOU';
-      else if (/HENG\s*KEE\s*THUANG/i.test(description)) counterparty = 'HENG KEE THUANG';
-      item = '日常费用报销 (CLAIM)';
-    } else if (/TENAGA\s*NASIONAL|TNB|ELEKTRIK/i.test(description)) {
+    if (/TNB|TENAGA/i.test(description)) {
       category = '水电费';
-      counterparty = 'Tenaga Nasional';
-      item = 'Bil Elektrik (电费)';
+      counterparty = 'Tenaga Nasional Berhad';
+      item = 'TNB 电费账单';
     } else if (/LEMBAGA\s*AIR|AIR\s*PERAK/i.test(description)) {
       category = '水电费';
       counterparty = 'Lembaga Air Perak';
@@ -5584,11 +5556,60 @@ function renderParsedStatementWorkbench() {
   updateCommitButtonCount();
 }
 
-// ==========================================
-// STATEMENT WORKBENCH & MULTI-FORMAT IMPORT ENGINE
-// Supports PDF (pdf.js) + Images/Screenshots (tesseract.js)
-// ==========================================
+// Recalculate total deposits and withdrawals after manual user changes
+function recalculateStatementMetaTotals() {
+  let dep = 0;
+  let withdr = 0;
+  parsedStatementTransactions.forEach(t => {
+    if (t.type === 'income') dep += Number(t.amount) || 0;
+    else withdr += Number(t.amount) || 0;
+  });
+  statementMeta.totalDeposits = dep;
+  statementMeta.totalWithdrawals = withdr;
 
+  const depEl = document.getElementById('parsedStatementDeposit');
+  const withEl = document.getElementById('parsedStatementWithdrawal');
+  if (depEl) depEl.textContent = formatMoney(dep);
+  if (withEl) withEl.textContent = formatMoney(withdr);
+}
+
+// Quick student matcher triggered by select dropdown in workbench
+function onStatementSelectStudent(id, studentName) {
+  const item = parsedStatementTransactions.find(t => t.id === id);
+  if (!item) return;
+
+  if (!studentName) {
+    item.counterparty = item.senderText || '学费客户';
+    item.category = item.type === 'income' ? '销售收入' : '其他支出';
+    renderParsedStatementTable();
+    return;
+  }
+
+  const student = (DEFAULT_BOARDING_STUDENTS || []).find(s => s.name === studentName || s.id === studentName || s.zhName === studentName);
+  const zhName = student ? student.zhName : studentName;
+  const engName = student ? student.name : studentName;
+
+  item.counterparty = engName;
+  item.category = '住宿费';
+  item.type = 'income'; // Boarding fees are always income/credit
+
+  if (!item.feeMonth) {
+    item.feeMonth = item.date ? item.date.slice(0, 7) : '2026-09';
+  }
+
+  const monthDisp = typeof formatFeeMonthDisplay === 'function' ? formatFeeMonthDisplay(item.feeMonth) : item.feeMonth;
+  const payerNote = (item.senderText && item.senderText !== engName && item.senderText !== zhName) ? ` · 付款人: ${item.senderText}` : '';
+  item.remark = `${monthDisp} 住宿费 (${zhName}${payerNote})`.trim();
+
+  item.isDuplicate = checkExistingDuplicate(item.date, item.amount, item.type, item.counterparty);
+  recalculateStatementMetaTotals();
+  renderParsedStatementTable();
+  if (typeof showToast === 'function') {
+    showToast(`⚡ 已成功匹配为【${zhName}】住宿费！`);
+  }
+}
+
+// Interactive Statement Table with dynamic dropdowns for Type, Student, FeeMonth & Category
 function renderParsedStatementTable() {
   const tbody = document.getElementById('statementTableBody');
   if (!tbody) return;
@@ -5607,10 +5628,10 @@ function renderParsedStatementTable() {
     return;
   }
 
+  const monthOptions = ['2026-01','2026-02','2026-03','2026-04','2026-05','2026-06','2026-07','2026-08','2026-09','2026-10','2026-11','2026-12'];
+
   tbody.innerHTML = displayList.map((t, idx) => {
     if (!t.account) t.account = globalAcc;
-
-    const isStudent = t.counterparty && DEFAULT_BOARDING_STUDENTS && DEFAULT_BOARDING_STUDENTS.some(s => s.name.toUpperCase().includes(t.counterparty.toUpperCase()) || s.aliases.some(a => t.counterparty.toUpperCase().includes(a.toUpperCase())));
 
     return `
     <tr class="hover:bg-slate-50/80 transition-colors ${t.isDuplicate ? 'opacity-60 bg-slate-50/40' : ''}">
@@ -5622,9 +5643,11 @@ function renderParsedStatementTable() {
         ${t.time ? `<div class="text-[10px] text-slate-400">${t.time}</div>` : ''}
       </td>
       <td class="px-3 py-3 whitespace-nowrap">
-        ${t.type === 'income' 
-          ? `<span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-semibold bg-emerald-100 text-emerald-800">入账 (Credit)</span>`
-          : `<span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-semibold bg-rose-100 text-rose-800">出账 (Debit)</span>`}
+        <!-- Interactive Flow Type Switcher (Credit vs Debit) -->
+        <select onchange="updateStatementRowField('${t.id}', 'type', this.value)" class="text-xs px-2 py-1 rounded-lg font-bold border transition-colors cursor-pointer ${t.type === 'income' ? 'bg-emerald-50 text-emerald-800 border-emerald-300' : 'bg-rose-50 text-rose-800 border-rose-300'}">
+          <option value="income" ${t.type === 'income' ? 'selected' : ''}>入账 (Credit)</option>
+          <option value="expense" ${t.type === 'expense' ? 'selected' : ''}>出账 (Debit)</option>
+        </select>
       </td>
       <td class="px-3 py-3 whitespace-nowrap text-right font-black ${t.type === 'income' ? 'text-emerald-600' : 'text-rose-600'}">
         ${formatMoney(t.amount)}
@@ -5635,21 +5658,51 @@ function renderParsedStatementTable() {
         </select>
       </td>
       <td class="px-3 py-3 whitespace-nowrap">
-        <input type="text" value="${t.category}" onchange="updateStatementRowField('${t.id}', 'category', this.value)" class="text-xs px-2 py-1 bg-white border border-slate-200 rounded font-semibold text-slate-800 w-24">
+        <select onchange="updateStatementRowField('${t.id}', 'category', this.value)" class="text-xs px-2 py-1 bg-white border border-slate-200 rounded-lg font-semibold text-slate-800 shadow-2xs">
+          <option value="住宿费" ${t.category === '住宿费' ? 'selected' : ''}>🏠 住宿费</option>
+          <option value="销售收入" ${t.category === '销售收入' ? 'selected' : ''}>💰 销售收入</option>
+          <option value="其他支出" ${t.category === '其他支出' ? 'selected' : ''}>💸 其他支出</option>
+          <option value="水电费" ${t.category === '水电费' ? 'selected' : ''}>⚡ 水电费</option>
+          <option value="原材料" ${t.category === '原材料' ? 'selected' : ''}>🛒 原材料</option>
+          <option value="差旅费用" ${t.category === '差旅费用' ? 'selected' : ''}>🚗 差旅费用</option>
+          <option value="汽油津贴" ${t.category === '汽油津贴' ? 'selected' : ''}>⛽ 汽油津贴</option>
+          <option value="房租" ${t.category === '房租' ? 'selected' : ''}>🏢 房租</option>
+          <option value="提现" ${t.category === '提现' ? 'selected' : ''}>🏧 提现</option>
+        </select>
       </td>
-      <td class="px-3 py-3">
-        <div class="space-y-0.5">
-          <input type="text" value="${t.counterparty}" onchange="updateStatementRowField('${t.id}', 'counterparty', this.value)" class="text-xs px-2 py-1 bg-white border border-slate-200 rounded font-bold text-slate-900 w-full min-w-[130px]">
-          ${t.senderText && t.senderText !== t.counterparty ? `<div class="text-[10px] text-slate-400 truncate max-w-[150px]" title="付款人: ${t.senderText}">付款人: ${t.senderText}</div>` : ''}
+      <td class="px-3 py-3 min-w-[200px]">
+        <div class="space-y-1.5">
+          <!-- Student Quick Dropdown Selector -->
+          <select onchange="onStatementSelectStudent('${t.id}', this.value)" class="text-[11px] px-2 py-1 bg-blue-50/90 border border-blue-200 rounded font-semibold text-blue-900 w-full hover:bg-blue-100 transition-colors cursor-pointer shadow-2xs">
+            <option value="">🎯 匹配寄宿生...</option>
+            ${(DEFAULT_BOARDING_STUDENTS || []).map(s => {
+              const isSelected = t.counterparty === s.name || t.counterparty === s.zhName || (s.aliases && s.aliases.some(a => a.toUpperCase() === (t.counterparty || '').toUpperCase()));
+              return `<option value="${s.name}" ${isSelected ? 'selected' : ''}>${s.zhName} (${s.name})${s.count > 1 ? ' · 双人 RM' + s.fee : ''}</option>`;
+            }).join('')}
+            <option value="CHENG HONG YE" ${t.counterparty === 'HONG YE' ? 'selected' : ''}>邹宏业 (HONG YE · 单人 RM480)</option>
+            <option value="CHENG KAI YE" ${t.counterparty === 'KAI YE' ? 'selected' : ''}>邹楷业 (KAI YE · 单人 RM480)</option>
+          </select>
+          <!-- Editable Counterparty Text Input -->
+          <input type="text" value="${t.counterparty}" onchange="updateStatementRowField('${t.id}', 'counterparty', this.value)" placeholder="对象/学生/商家名称" class="text-xs px-2 py-1 bg-white border border-slate-200 rounded font-bold text-slate-900 w-full">
+          ${t.senderText && t.senderText !== t.counterparty ? `<div class="text-[10px] text-slate-400 truncate max-w-[200px]" title="付款人: ${t.senderText}">付款人: ${t.senderText}</div>` : ''}
         </div>
       </td>
-      <td class="px-3 py-3 whitespace-nowrap">
-        <div class="flex items-center space-x-1">
-          <input type="text" value="${t.feeMonth || ''}" onchange="updateStatementRowField('${t.id}', 'feeMonth', this.value)" placeholder="如 2026-09" class="text-xs px-2 py-1 bg-indigo-50/70 border border-indigo-200 rounded font-bold text-indigo-700 w-24 text-center shadow-2xs">
+      <td class="px-3 py-3 whitespace-nowrap min-w-[130px]">
+        <div class="space-y-1">
+          <!-- Quick Fee Month Selector Dropdown -->
+          <select onchange="updateStatementRowField('${t.id}', 'feeMonth', this.value)" class="text-xs px-2 py-1 bg-indigo-50/80 border border-indigo-200 rounded font-bold text-indigo-800 w-full cursor-pointer shadow-2xs hover:bg-indigo-100 transition-colors">
+            <option value="">📅 归属月份...</option>
+            ${monthOptions.map(m => {
+              const isSel = t.feeMonth === m;
+              const mNum = parseInt(m.slice(5), 10);
+              return `<option value="${m}" ${isSel ? 'selected' : ''}>${mNum}月份 (${m})</option>`;
+            }).join('')}
+          </select>
+          <input type="text" value="${t.feeMonth || ''}" onchange="updateStatementRowField('${t.id}', 'feeMonth', this.value)" placeholder="如 2026-09" class="text-[11px] px-1.5 py-0.5 bg-white border border-slate-200 rounded text-center text-slate-700 w-full font-semibold" title="亦可手动输入或输入多月合并，如 2026-07, 2026-08">
         </div>
       </td>
-      <td class="px-3 py-3 text-slate-500 max-w-xs truncate" title="${t.rawDescription}">
-        <input type="text" value="${t.remark}" onchange="updateStatementRowField('${t.id}', 'remark', this.value)" class="text-xs px-2 py-1 bg-white border border-slate-200 rounded text-slate-600 w-full min-w-[160px]">
+      <td class="px-3 py-3 min-w-[180px]">
+        <input type="text" value="${t.remark}" onchange="updateStatementRowField('${t.id}', 'remark', this.value)" class="text-xs px-2 py-1 bg-white border border-slate-200 rounded text-slate-700 w-full font-medium">
       </td>
       <td class="px-3 py-3 text-center whitespace-nowrap">
         ${t.isDuplicate 
@@ -5662,15 +5715,15 @@ function renderParsedStatementTable() {
   updateCommitButtonCount();
 }
 
-
-
 function onStatementGlobalAccountChange(newAcc) {
   if (!newAcc) return;
   parsedStatementTransactions.forEach(t => {
     t.account = newAcc;
   });
   renderParsedStatementTable();
-  showToast(`⚡ 已将所有流水的入账账户设置为【${newAcc}】！`);
+  if (typeof showToast === 'function') {
+    showToast(`⚡ 已将所有流水的入账账户设置为【${newAcc}】！`);
+  }
 }
 
 function toggleStatementRowSelection(id, checked) {
@@ -5681,7 +5734,58 @@ function toggleStatementRowSelection(id, checked) {
 
 function updateStatementRowField(id, field, value) {
   const item = parsedStatementTransactions.find(t => t.id === id);
-  if (item) item[field] = value;
+  if (!item) return;
+
+  item[field] = value;
+
+  if (field === 'type') {
+    if (value === 'income' && item.category === '其他支出') {
+      const isStudent = (DEFAULT_BOARDING_STUDENTS || []).some(s => s.name === item.counterparty || s.zhName === item.counterparty);
+      item.category = isStudent ? '住宿费' : '销售收入';
+    } else if (value === 'expense' && (item.category === '住宿费' || item.category === '销售收入')) {
+      item.category = '其他支出';
+    }
+    item.isDuplicate = checkExistingDuplicate(item.date, item.amount, item.type, item.counterparty);
+    recalculateStatementMetaTotals();
+    renderParsedStatementWorkbench();
+    return;
+  }
+
+  if (field === 'feeMonth') {
+    if (item.category === '住宿费') {
+      const student = (DEFAULT_BOARDING_STUDENTS || []).find(s => s.name === item.counterparty || s.zhName === item.counterparty || (s.aliases && s.aliases.includes(item.counterparty)));
+      const nameDisp = student ? student.zhName : (item.counterparty || '');
+      const monthDisp = typeof formatFeeMonthDisplay === 'function' ? formatFeeMonthDisplay(value) : value;
+      const payerNote = (item.senderText && item.senderText !== item.counterparty) ? ` · 付款人: ${item.senderText}` : '';
+      item.remark = `${monthDisp} 住宿费 (${nameDisp}${payerNote})`.trim();
+    }
+    renderParsedStatementTable();
+    return;
+  }
+
+  if (field === 'counterparty') {
+    const student = (DEFAULT_BOARDING_STUDENTS || []).find(s => s.name.toUpperCase() === value.trim().toUpperCase() || s.zhName === value.trim() || (s.aliases && s.aliases.some(a => a.toUpperCase() === value.trim().toUpperCase())));
+    if (student) {
+      item.counterparty = student.name;
+      item.category = '住宿费';
+      item.type = 'income';
+      if (!item.feeMonth) item.feeMonth = item.date ? item.date.slice(0, 7) : '2026-09';
+      const monthDisp = typeof formatFeeMonthDisplay === 'function' ? formatFeeMonthDisplay(item.feeMonth) : item.feeMonth;
+      item.remark = `${monthDisp} 住宿费 (${student.zhName})`.trim();
+      recalculateStatementMetaTotals();
+    }
+    item.isDuplicate = checkExistingDuplicate(item.date, item.amount, item.type, item.counterparty);
+    renderParsedStatementTable();
+    return;
+  }
+
+  if (field === 'category') {
+    if (value === '住宿费') item.type = 'income';
+    else if (value === '其他支出') item.type = 'expense';
+    recalculateStatementMetaTotals();
+    renderParsedStatementTable();
+    return;
+  }
 }
 
 function toggleSelectAllStatement(checked) {
@@ -7838,31 +7942,9 @@ window.triggerRescanActiveBatchItem = triggerRescanActiveBatchItem;
 window.handleCloudSyncPillClick = handleCloudSyncPillClick;
 
 // ==========================================
-// 🏠 BOARDING STUDENT FEE & ARREARS MANAGER (V2026.3.25)
+// 🏠 BOARDING STUDENT FEE & ARREARS MANAGER (V2026.3.38)
 // ==========================================
-
-const DEFAULT_BOARDING_STUDENTS = [
-  { id: 'LEE YAN CHENG', zhName: '李晏丞', name: 'LEE YAN CHENG', aliases: ['李晏丞', 'LEE YAN CHENG', 'LEE YAN', 'LEE YA', '晏丞', 'LIM YEE LING'], count: 1, fee: 480 },
-  { id: 'KAIHAO', zhName: '蔡凯皓', name: 'KAIHAO', aliases: ['蔡凯皓', 'KAI HAO', 'KAIHAO', '凯皓', 'CHUA HEE SIANG'], count: 1, fee: 480 },
-  { id: 'LEE JU YAN', zhName: '李居彦', name: 'LEE JU YAN', aliases: ['李居彦', 'LEE JU YAN', 'JU YAN', '居彦', 'WONG PIK WOON'], count: 1, fee: 480 },
-  { id: 'CHUA MING ZHE', zhName: '蔡旻哲', name: 'CHUA MING ZHE', aliases: ['蔡旻哲', 'CHUA MING ZHE', 'MING ZHE', '旻哲', 'CHUA MIN ZHE'], count: 1, fee: 480 },
-  { id: 'ONG SHI SHUI', zhName: '翁诗岁', name: 'ONG SHI SHUI', aliases: ['翁诗岁', 'ONG SHI SHUI', 'BEH SIEW SIEW', 'SHI SHUI', '诗岁'], count: 1, fee: 480 },
-  { id: 'ENG WEI ZHI', zhName: '黄炜智', name: 'ENG WEI ZHI', aliases: ['黄炜智', 'ENG WEI ZHI', 'ENG WEE ZHI', 'ENG WEE HOSTEL ZHI', 'WEI ZHI', '炜智', '黄伟智', 'TEE LEK TING'], count: 1, fee: 480 },
-  { id: 'WONG E FULL', zhName: '黄益富', name: 'WONG E FULL', aliases: ['黄益富', 'WONG E FULL', 'E FULL', '益富', '黄益福', 'RAINBOW ZONE VENTURES'], count: 1, fee: 480 },
-  { id: 'HUAIDERK', zhName: '陈怀德', name: 'HUAIDERK', aliases: ['陈怀德', 'HUAIDERK', 'HUAI DERK', 'HUAI D', '怀德', 'CHONG MEI KOON'], count: 1, fee: 480 },
-  { id: 'GOH JYJE SHAN', zhName: '吴劼善', name: 'GOH JYJE SHAN', aliases: ['吴劼善', 'GOH JYJE SHAN', 'GOHJYIESHANN', 'JYJE SHAN', '劼善', 'TAN HOOI P', 'GOH HOCK G'], count: 1, fee: 480 },
-  { id: 'TAN JIAN FONG', zhName: '陈剑锋', name: 'TAN JIAN FONG', aliases: ['陈剑锋', 'TAN JIAN FONG', 'JIAN FONG', 'TAN JI', '剑锋', 'WONG MEI NGUK'], count: 1, fee: 480 },
-  { id: 'LEE JI CHUEN', zhName: '吕梓铨', name: 'LEE JI CHUEN', aliases: ['吕梓铨', 'LEE JI CHUEN', 'JI CHUEN', '梓铨', '吕子铨', 'LEE YENG MAN'], count: 1, fee: 480 },
-  { id: 'CHIA KAI JIE', zhName: '谢凯捷', name: 'CHIA KAI JIE', aliases: ['谢凯捷', 'CHIA KAI JIE', 'KAI JIE', '凯捷'], count: 1, fee: 480 },
-  { id: 'ZHI XIAO', zhName: '侯智逍', name: 'ZHI XIAO', aliases: ['侯智逍', 'ZHI XIAO', 'HOW ZHI XIAO', '智逍', '侯智宵', 'CHONG CHEE YENG'], count: 1, fee: 480 },
-  { id: 'HONG YE & KAI YE', zhName: '邹宏业 & 邹楷业', name: 'HONG YE & KAI YE', aliases: ['邹宏业', '邹楷业', 'HONG YE', 'KAI YE', 'HONG YIP', 'KAI YIP', '宏业', '楷业', '邹宏业 & 邹楷业', 'HONG YE & KAI YE', 'HONG YIP/KAI YIP'], count: 2, fee: 960, isBrothers: true, note: '邹宏业 & 邹楷业 两兄弟合并转账（母：RM960/月）' }
-];
-
-let arrearsCutoffMonth = 9;
-let arrearsMonthlyFeePerPerson = 480;
-let arrearsViewMode = 'cards'; // 'cards' | 'matrix'
-let arrearsStatusFilter = 'all'; // 'all' | 'owing' | 'severe' | 'paid'
-let arrearsSearchKeyword = '';
+// Note: DEFAULT_BOARDING_STUDENTS and arrearsCutoffMonth are initialized globally at top of script
 
 // Smart helper: Get income fee month (explicit feeMonth or smart inference)
 function getIncomeFeeMonth(income) {
@@ -8148,10 +8230,14 @@ function renderArrearsTracker() {
     const brothersStudent = report.students.find(s => s.isBrothers);
     if (brothersStudent) {
       const isOwing = brothersStudent.arrearsAmount > 0;
+      brothersBanner.className = isOwing 
+        ? 'p-5 rounded-2xl bg-gradient-to-r from-rose-50 via-amber-50 to-orange-50 border-2 border-rose-300 shadow-sm space-y-3'
+        : 'p-5 rounded-2xl bg-emerald-50/40 border border-emerald-200 shadow-xs space-y-3';
+
       brothersBanner.innerHTML = `
         <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
           <div class="flex items-start space-x-3">
-            <span class="text-2xl mt-0.5">👥</span>
+            <span class="text-2xl mt-0.5">${isOwing ? '👥' : '🎉'}</span>
             <div>
               <div class="flex items-center space-x-2">
                 <h4 class="font-bold text-slate-900 text-sm">邹宏业 / 邹楷业 兄弟（双人合交 RM 960/月）特别监控</h4>
@@ -8165,12 +8251,18 @@ function renderArrearsTracker() {
             </div>
           </div>
           <div class="flex items-center space-x-2 shrink-0">
-            <button onclick="quickAddPaymentForStudent('${brothersStudent.name}', ${brothersStudent.unpaidMonths[0] || report.cutoffMonth})" class="px-3 py-1.5 bg-white hover:bg-slate-50 text-slate-800 rounded-lg text-xs font-bold border border-slate-300 shadow-xs transition">
+            <button onclick="quickAddPaymentForStudent('${brothersStudent.name}', ${brothersStudent.unpaidMonths[0] || (report.cutoffMonth + 1)})" class="px-3 py-1.5 bg-white hover:bg-slate-50 text-slate-800 rounded-lg text-xs font-bold border border-slate-300 shadow-xs transition">
               ➕ 记兄弟交费 (RM 960)
             </button>
-            <button onclick="copyStudentReminder('${brothersStudent.id}')" class="px-2.5 py-1.5 bg-white hover:bg-slate-50 text-slate-700 rounded-lg text-xs font-medium border border-slate-300 shadow-xs transition">
-              💬 催费通知
-            </button>
+            ${isOwing ? `
+              <button onclick="copyStudentReminder('${brothersStudent.id}')" class="px-2.5 py-1.5 bg-rose-50 hover:bg-rose-100 text-rose-700 rounded-lg text-xs font-bold border border-rose-200 shadow-xs transition flex items-center space-x-1">
+                <span>💬 催费通知</span>
+              </button>
+            ` : `
+              <span class="px-3 py-1.5 bg-emerald-100 text-emerald-800 rounded-lg text-xs font-bold border border-emerald-200 shadow-xs flex items-center space-x-1">
+                <span>✅ 费用已结清</span>
+              </span>
+            `}
           </div>
         </div>
       `;
@@ -8327,9 +8419,15 @@ function renderArrearsCards(students, report) {
             <span>➕ 记该生交费</span>
           </button>
           <div class="flex items-center space-x-2">
-            <button onclick="copyStudentReminder('${st.id}')" title="复制催收通知文字" class="px-2.5 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg font-medium transition">
-              💬 催费通知
-            </button>
+            ${isOwing ? `
+              <button onclick="copyStudentReminder('${st.id}')" title="复制催收通知文字" class="px-2.5 py-1.5 bg-rose-50 hover:bg-rose-100 text-rose-700 rounded-lg text-xs font-bold border border-rose-200 transition flex items-center space-x-1">
+                <span>💬 催费通知</span>
+              </button>
+            ` : `
+              <span class="px-2.5 py-1 bg-emerald-50 text-emerald-700 rounded-lg text-[11px] font-bold border border-emerald-200 flex items-center space-x-1">
+                <span>✅ 已结清</span>
+              </span>
+            `}
           </div>
         </div>
       </div>
@@ -8480,11 +8578,29 @@ function copyStudentReminder(studentId) {
   const unpaidStr = student.unpaidMonths.map(m => `2026年${monthNames[m - 1]}`).join('、');
   const salutationName = student.zhName ? `${student.zhName} (${student.name})` : student.name;
 
+  if (student.arrearsAmount === 0) {
+    let text = `【Voyage 住宿费缴费确认】\n\n`;
+    text += `${salutationName} 你好：\n`;
+    text += `经财务系统核对，截至 2026年${report.cutoffMonth}月份，你的住宿费已全额交齐结清（共实缴 ${formatMoney(student.totalPaid)}）。\n\n`;
+    if (student.lastIncome) {
+      text += `🕒 最近一次到账记录：${student.lastIncome.date} (${formatMoney(student.lastIncome.amount)})\n\n`;
+    }
+    text += `感谢你的按时缴费与配合！如有任何疑问请随时联系。🙏`;
+
+    navigator.clipboard.writeText(text).then(() => {
+      const toastName = student.zhName ? `${student.zhName} (${student.name})` : student.name;
+      showToast(`✅ 已复制【${toastName}】住宿费结清确认文字！`);
+    }).catch(() => {
+      prompt('请复制以下结清确认文字：', text);
+    });
+    return;
+  }
+
   let text = `【Voyage 住宿费缴费温馨提醒】\n\n`;
   text += `${salutationName} 你好：\n`;
   text += `温馨提醒你查收 2026 年度的住宿费缴纳情况。\n\n`;
   text += `截至 2026年${report.cutoffMonth}月份，你当前的缴费状态如下：\n`;
-  text += `📅 尚欠月份：${unpaidStr || '已结清'}\n`;
+  text += `📅 尚欠月份：${unpaidStr}\n`;
   text += `💰 欠费总计：${formatMoney(student.arrearsAmount)}\n`;
   text += `（标准住宿费：${formatMoney(student.monthlyFee)} / 月）\n\n`;
 
