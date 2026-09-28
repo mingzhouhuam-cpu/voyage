@@ -15,8 +15,8 @@
   <script id="voyage-ota-bootloader">
     (function() {
       try {
-        var expectedVersion = '2026.3.38';
-        var baseBuildTime = 1790148744731;
+        var expectedVersion = '2026.3.41';
+        var baseBuildTime = 1790592908352;
         var cachedBundle = localStorage.getItem('voyage_finance_cached_bundle');
         var cachedVersion = localStorage.getItem('voyage_finance_cached_version');
         var cachedTime = parseInt(localStorage.getItem('voyage_finance_cached_time') || '0', 10);
@@ -235,6 +235,10 @@
         </button>
         <button onclick="switchTab('settings')" id="tab-settings" class="tab-link text-slate-500 hover:text-slate-700 py-3 px-1 border-b-2 border-transparent font-medium flex items-center space-x-2">
           <span>⚙️ 数据与 AI 设置</span>
+        </button>
+        <button onclick="switchTab('audit')" id="tab-audit" class="tab-link text-slate-500 hover:text-slate-700 py-3 px-1 border-b-2 border-transparent font-medium flex items-center space-x-1.5 relative">
+          <span>📋 审计追踪</span>
+          <span id="navAuditBadge" class="bg-indigo-100 text-indigo-700 text-[10px] px-1.5 py-0.5 rounded-full font-bold">0</span>
         </button>
       </nav>
     </div>
@@ -1407,7 +1411,266 @@
       </div>
     </div>
 
+
+    <!-- 9. AUDIT TRAIL VIEW -->
+    <div id="view-audit" class="space-y-6 hidden">
+      <!-- Top Banner -->
+      <div class="bg-gradient-to-r from-slate-900 via-indigo-950 to-slate-900 rounded-2xl p-5 text-white shadow-md flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div class="flex items-center space-x-3.5">
+          <div class="w-12 h-12 rounded-xl bg-indigo-500/20 border border-indigo-400/30 flex items-center justify-center text-2xl flex-shrink-0">
+            📋
+          </div>
+          <div>
+            <div class="flex items-center space-x-2">
+              <h2 class="text-lg font-bold text-white tracking-tight">全生命周期财务审计追踪 (Audit Trail)</h2>
+              <span class="bg-indigo-500/30 text-indigo-300 border border-indigo-400/30 text-[10px] px-2 py-0.5 rounded-full font-semibold">全程留痕 · 多端同步 · 防篡改</span>
+            </div>
+            <p class="text-xs text-slate-300 mt-1">自动记录收入/支出新增、编辑修改对比、删除原始快照、银行流水导入及系统恢复事件，杜绝坏账漏记与责任推诿。</p>
+          </div>
+        </div>
+        <div class="flex items-center space-x-2.5 flex-shrink-0">
+          <button onclick="exportAuditLogsCSV()" class="px-3.5 py-2 bg-indigo-600 hover:bg-indigo-500 text-white font-semibold text-xs rounded-xl shadow transition flex items-center space-x-1.5 active:scale-95">
+            <span>📥 导出审计日志 (CSV)</span>
+          </button>
+          <button onclick="renderAuditLogs()" class="px-3 py-2 bg-white/10 hover:bg-white/20 text-white font-semibold text-xs rounded-xl border border-white/20 transition flex items-center space-x-1 active:scale-95">
+            <span>🔄 刷新</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- 4 Audit Stat Cards -->
+      <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+        <!-- Stat 1: Total Logs -->
+        <div class="bg-white rounded-2xl p-4 sm:p-5 border border-slate-200/90 shadow-xs">
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-semibold text-slate-500">累计操作日志</span>
+            <span class="w-8 h-8 rounded-lg bg-indigo-50 text-indigo-600 flex items-center justify-center text-sm">📋</span>
+          </div>
+          <div class="mt-2.5">
+            <h3 id="auditStatTotalCount" class="text-2xl font-bold text-slate-900 tracking-tight">0</h3>
+            <p class="text-[11px] text-slate-400 mt-0.5">多端双向实时同步留痕</p>
+          </div>
+        </div>
+
+        <!-- Stat 2: Today Logs -->
+        <div class="bg-white rounded-2xl p-4 sm:p-5 border border-slate-200/90 shadow-xs">
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-semibold text-slate-500">今日财务操作</span>
+            <span class="w-8 h-8 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center text-sm">⚡</span>
+          </div>
+          <div class="mt-2.5">
+            <h3 id="auditStatTodayCount" class="text-2xl font-bold text-emerald-600 tracking-tight">0</h3>
+            <p class="text-[11px] text-slate-400 mt-0.5">今日录入、修改与导入</p>
+          </div>
+        </div>
+
+        <!-- Stat 3: Delete & Sensitive Operations -->
+        <div class="bg-white rounded-2xl p-4 sm:p-5 border border-slate-200/90 shadow-xs">
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-semibold text-slate-500">敏感删除操作</span>
+            <span class="w-8 h-8 rounded-lg bg-rose-50 text-rose-600 flex items-center justify-center text-sm">🗑️</span>
+          </div>
+          <div class="mt-2.5">
+            <h3 id="auditStatDeleteCount" class="text-2xl font-bold text-rose-600 tracking-tight">0</h3>
+            <p class="text-[11px] text-slate-400 mt-0.5">均已留存完整原始快照</p>
+          </div>
+        </div>
+
+        <!-- Stat 4: Last Active Info -->
+        <div class="bg-white rounded-2xl p-4 sm:p-5 border border-slate-200/90 shadow-xs">
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-semibold text-slate-500">最近操作终端</span>
+            <span class="w-8 h-8 rounded-lg bg-amber-50 text-amber-600 flex items-center justify-center text-sm">💻</span>
+          </div>
+          <div class="mt-2.5">
+            <h3 id="auditStatLastOperator" class="text-sm font-bold text-slate-800 truncate" title="最近终端">--</h3>
+            <p id="auditStatLastTime" class="text-[11px] text-slate-500 mt-0.5 font-medium truncate">--</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Filters & Search Toolbar -->
+      <div class="bg-white rounded-2xl p-4 border border-slate-200/90 shadow-xs space-y-3">
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-12 gap-3 items-center">
+          <!-- Search input -->
+          <div class="lg:col-span-5 relative">
+            <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400 text-sm">🔍</span>
+            <input type="text" id="auditSearchInput" oninput="renderAuditLogs()" placeholder="搜索日志 ID、摘要、金额、记录单号、经手人..." class="w-full pl-9 pr-3 py-2 text-xs bg-slate-50 hover:bg-slate-100/80 focus:bg-white border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition">
+          </div>
+
+          <!-- Action Filter -->
+          <div class="lg:col-span-3">
+            <select id="auditFilterAction" onchange="renderAuditLogs()" class="w-full text-xs py-2 px-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500/20 font-medium text-slate-700">
+              <option value="ALL">全部操作类型 (全部动作)</option>
+              <option value="CREATE">🟢 录入新增 (CREATE)</option>
+              <option value="UPDATE">🟡 编辑修改 (UPDATE)</option>
+              <option value="DELETE">🔴 永久删除 (DELETE)</option>
+              <option value="BATCH_DELETE">🟣 批量删除 (BATCH_DELETE)</option>
+              <option value="BATCH_UPDATE">🟣 批量更新 (BATCH_UPDATE)</option>
+              <option value="IMPORT">🔵 银行流水导入 (IMPORT)</option>
+              <option value="RESTORE">⚙️ 数据恢复 (RESTORE)</option>
+            </select>
+          </div>
+
+          <!-- Module Filter -->
+          <div class="lg:col-span-2">
+            <select id="auditFilterModule" onchange="renderAuditLogs()" class="w-full text-xs py-2 px-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500/20 font-medium text-slate-700">
+              <option value="ALL">全部业务模块</option>
+              <option value="income">💰 收入明细</option>
+              <option value="expense">🛒 支出明细</option>
+              <option value="statement">📄 银行流水</option>
+              <option value="arrears">🏠 住宿欠费</option>
+              <option value="system">⚙️ 系统设置</option>
+            </select>
+          </div>
+
+          <!-- Time Range Buttons -->
+          <div class="lg:col-span-2 flex items-center space-x-1">
+            <button type="button" onclick="setAuditTimeRange('ALL')" id="auditTimeBtn-ALL" class="flex-1 py-2 text-[11px] font-semibold rounded-lg bg-indigo-50 text-indigo-700 border border-indigo-200 transition">全部</button>
+            <button type="button" onclick="setAuditTimeRange('TODAY')" id="auditTimeBtn-TODAY" class="flex-1 py-2 text-[11px] font-medium rounded-lg text-slate-600 hover:bg-slate-100 transition">今天</button>
+            <button type="button" onclick="setAuditTimeRange('7DAYS')" id="auditTimeBtn-7DAYS" class="flex-1 py-2 text-[11px] font-medium rounded-lg text-slate-600 hover:bg-slate-100 transition">近7天</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Audit Logs Table (Desktop) & Cards (Mobile) -->
+      <div class="bg-white rounded-2xl border border-slate-200/90 shadow-xs overflow-hidden">
+        <!-- Desktop Table View -->
+        <div class="hidden md:block overflow-x-auto">
+          <table class="w-full text-left text-xs text-slate-600">
+            <thead class="bg-slate-50/80 text-slate-500 uppercase tracking-wider text-[11px] border-b border-slate-200">
+              <tr>
+                <th class="py-3 px-4 font-semibold">时间戳</th>
+                <th class="py-3 px-3 font-semibold">业务模块</th>
+                <th class="py-3 px-3 font-semibold">操作动作</th>
+                <th class="py-3 px-3 font-semibold">记录单号</th>
+                <th class="py-3 px-4 font-semibold">操作摘要与详情</th>
+                <th class="py-3 px-4 font-semibold text-right">涉及金额</th>
+                <th class="py-3 px-3 font-semibold text-center">操作终端</th>
+                <th class="py-3 px-4 font-semibold text-center">审计快照</th>
+              </tr>
+            </thead>
+            <tbody id="auditTableBody" class="divide-y divide-slate-100 font-sans">
+              <!-- Rendered via JS -->
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Mobile Card View -->
+        <div id="auditMobileCards" class="md:hidden divide-y divide-slate-100 p-2 space-y-2">
+          <!-- Rendered via JS -->
+        </div>
+
+        <!-- Empty State -->
+        <div id="auditEmptyState" class="hidden py-16 text-center text-slate-400">
+          <div class="text-4xl mb-2">🔍</div>
+          <p class="text-sm font-medium">暂无符合筛选条件的审计记录</p>
+          <p class="text-xs text-slate-400 mt-1">系统已实时监听所有操作，一旦发生修改或删除将自动在此留痕</p>
+        </div>
+
+        <!-- Table Footer / Count Info -->
+        <div class="px-4 py-3 bg-slate-50/60 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500">
+          <div>显示 <span id="auditDisplayCount" class="font-bold text-slate-800">0</span> 条记录 (最多保留最新 1,500 笔留痕)</div>
+          <div class="flex items-center space-x-2">
+            <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+            <span class="text-[11px]">审计引擎运行中 · 防篡改保护已开启</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
   </main>
+
+
+  <!-- Audit Log Detail / Snapshot Modal -->
+  <div id="auditDetailModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 hidden overflow-y-auto">
+    <div class="bg-white rounded-t-3xl sm:rounded-2xl max-w-2xl w-full p-5 sm:p-6 shadow-2xl border border-slate-100 space-y-4 my-0 sm:my-8 max-h-[92vh] overflow-y-auto transition-all">
+      <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+        <div class="flex items-center space-x-3">
+          <div id="auditModalIcon" class="w-10 h-10 rounded-xl bg-indigo-50 text-indigo-700 border border-indigo-200 flex items-center justify-center text-lg font-bold">
+            📋
+          </div>
+          <div>
+            <div class="flex items-center space-x-2">
+              <h4 class="text-base font-bold text-slate-900">审计操作详情与历史快照</h4>
+              <span id="auditModalActionBadge" class="text-[10px] px-2 py-0.5 rounded-full font-bold bg-indigo-100 text-indigo-800">CREATE</span>
+            </div>
+            <p id="auditModalSubheader" class="text-xs text-slate-400 mt-0.5">日志 ID: AUD-xxxx · 2026-09-23 16:35:12</p>
+          </div>
+        </div>
+        <button onclick="closeModal('auditDetailModal')" class="text-slate-400 hover:text-slate-600 text-2xl font-bold px-2 py-1">&times;</button>
+      </div>
+
+      <!-- Summary Card -->
+      <div class="p-3.5 bg-slate-50 rounded-xl border border-slate-200/80 space-y-1.5 text-xs">
+        <div class="flex items-center justify-between">
+          <span class="font-bold text-slate-700">操作摘要：</span>
+          <span id="auditModalAmountBadge" class="font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-md border border-emerald-200">RM 0.00</span>
+        </div>
+        <p id="auditModalSummaryText" class="text-slate-800 font-medium leading-relaxed"></p>
+        <div class="flex items-center space-x-4 text-[11px] text-slate-500 pt-1 border-t border-slate-200/60">
+          <span>终端：<span id="auditModalOperator" class="font-semibold text-slate-700">电脑端 (Web)</span></span>
+          <span>模块：<span id="auditModalModule" class="font-semibold text-slate-700">收入</span></span>
+          <span>关联单号：<span id="auditModalRecordId" class="font-mono font-semibold text-indigo-600">INC-001</span></span>
+        </div>
+      </div>
+
+      <!-- Diff Table (Visible for UPDATE) -->
+      <div id="auditModalDiffSection" class="space-y-2 hidden">
+        <div class="flex items-center justify-between">
+          <h5 class="text-xs font-bold text-slate-800 flex items-center space-x-1.5">
+            <span>🔄</span>
+            <span>修改字段对比 (Before vs After)</span>
+          </h5>
+          <span class="text-[10px] text-amber-600 font-medium">黄色高亮为变更内容</span>
+        </div>
+        <div class="border border-slate-200 rounded-xl overflow-hidden">
+          <table class="w-full text-xs text-left">
+            <thead class="bg-slate-100/80 text-slate-600 text-[11px] uppercase border-b border-slate-200">
+              <tr>
+                <th class="py-2 px-3 font-semibold w-1/4">变更字段</th>
+                <th class="py-2 px-3 font-semibold text-rose-700 bg-rose-50/50 w-3/8">修改前 (旧值)</th>
+                <th class="py-2 px-3 font-semibold text-emerald-700 bg-emerald-50/50 w-3/8">修改后 (新值)</th>
+              </tr>
+            </thead>
+            <tbody id="auditModalDiffBody" class="divide-y divide-slate-100 font-medium">
+              <!-- Rendered via JS -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Snapshot Card (Visible for DELETE or Full Records) -->
+      <div id="auditModalSnapshotSection" class="space-y-2 hidden">
+        <div class="flex items-center justify-between">
+          <h5 class="text-xs font-bold text-slate-800 flex items-center space-x-1.5">
+            <span>🛡️</span>
+            <span id="auditSnapshotTitle">被删除记录原始快照</span>
+          </h5>
+          <span class="text-[10px] text-rose-600 font-semibold bg-rose-50 px-2 py-0.5 rounded-full border border-rose-200">已存档备份 · 随时追溯</span>
+        </div>
+        <div id="auditModalSnapshotCard" class="p-3.5 bg-amber-50/40 rounded-xl border border-amber-200 space-y-2 text-xs">
+          <!-- Rendered via JS -->
+        </div>
+      </div>
+
+      <!-- Technical JSON Inspector (Collapsible) -->
+      <details class="text-xs group border border-slate-200 rounded-xl overflow-hidden">
+        <summary class="py-2 px-3 bg-slate-50 hover:bg-slate-100 cursor-pointer font-semibold text-slate-600 flex items-center justify-between select-none">
+          <span>🔧 查看底层 JSON 原始凭据数据</span>
+          <span class="text-slate-400 group-open:rotate-180 transition">▼</span>
+        </summary>
+        <pre id="auditModalRawJson" class="p-3 bg-slate-900 text-emerald-400 font-mono text-[11px] overflow-x-auto max-h-48"></pre>
+      </details>
+
+      <div class="pt-2 flex justify-end">
+        <button onclick="closeModal('auditDetailModal')" class="px-5 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs rounded-xl transition">
+          关闭
+        </button>
+      </div>
+    </div>
+  </div>
+
 
   <!-- Income Add / Edit Modal -->
   <div id="incomeModal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 hidden overflow-y-auto">
@@ -2390,6 +2653,13 @@ alter publication supabase_realtime add table finance_store;</pre>
           <span class="text-indigo-700 font-bold">检查 →</span>
         </button>
 
+        <button onclick="closeMobileMoreMenu(); switchTab('audit');" class="w-full p-3.5 bg-indigo-50/70 hover:bg-indigo-100 border border-indigo-200/80 rounded-xl flex items-center justify-between text-slate-800 transition shadow-2xs">
+          <span class="flex items-center space-x-3 font-bold text-indigo-900">
+            <span class="text-base">📋</span>
+            <span>操作留痕与审计追踪</span>
+          </span>
+          <span id="mobileMoreAuditBadge" class="bg-indigo-600 text-white text-[10px] px-2 py-0.5 rounded-full font-bold">0条日志</span>
+        </button>
         <button onclick="closeMobileMoreMenu(); switchTab('settings');" class="w-full p-3.5 bg-slate-50 hover:bg-slate-100 border border-slate-200/80 rounded-xl flex items-center justify-between text-slate-800">
           <span class="flex items-center space-x-3 font-semibold">
             <span class="text-base">⚙️</span>
@@ -2479,6 +2749,10 @@ alter publication supabase_realtime add table finance_store;</pre>
 
 
 
+
+
+
+
   <!-- Scripts -->
   <script>
 const INITIAL_FINANCE_DATA = {"incomes":[{"id":"INC-03084750","date":"2026-09-08","amount":480,"remark":"2026年9月 住宿费 (TAN JIAN FONG · 付款人: Tan Jian Fong)","account":"Hong Leong","category":"住宿费","feeMonth":"","invoiceNo":"","receiptNo":"","counterparty":"TAN JIAN FONG"},{"id":"INC-03084715","date":"2026-09-07","amount":480,"remark":"2026年9月 住宿费 (ENG WEI ZHI · 付款人: ENG WEE HOSTEL ZHI 2609)","account":"Hong Leong","category":"住宿费","feeMonth":"2026-09","invoiceNo":"","receiptNo":"","counterparty":"ENG WEI ZHI"},{"id":"INC-03084698","date":"2026-09-07","amount":480,"remark":"2026年9月 住宿费 (WONG E FULL · 付款人: WongEFull Fund transfer S3X Sept26)","account":"Hong Leong","category":"住宿费","feeMonth":"2026-09","invoiceNo":"","receiptNo":"","counterparty":"WONG E FULL"},{"id":"INC-03084669","date":"2026-09-06","amount":480,"remark":"2026年9月 住宿费 (HUAIDERK · 付款人: SEPT HUAI DERK)","account":"Hong Leong","category":"住宿费","feeMonth":"2026-09","invoiceNo":"","receiptNo":"","counterparty":"HUAIDERK"},{"id":"INC-63668868","date":"2026-09-05","amount":480,"remark":"sept ","account":"Hong Leong","category":"销售收入","invoiceNo":"","receiptNo":"","counterparty":"LEE YAN CHENG"},{"id":"INC-63668898","date":"2026-09-01","amount":960,"remark":"Instant Transfer at KLM Kaihao","account":"Hong Leong","category":"销售收入","invoiceNo":"","receiptNo":"","counterparty":"KAI HAO"},{"id":"INC-63668821","date":"2026-08-28","amount":480,"remark":"Sept","account":"Hong Leong","category":"销售收入","invoiceNo":"","receiptNo":"","counterparty":"LEE JU YAN"},{"id":"INC-63668860","date":"2026-08-24","amount":480,"remark":"August ","account":"Hong Leong","category":"销售收入","invoiceNo":"","receiptNo":"","counterparty":"CHUA MING ZHE"},{"id":"INC-63668814","date":"2026-08-22","amount":1440,"remark":"JUN","account":"Hong Leong","category":"销售收入","invoiceNo":"","receiptNo":"","counterparty":"ONG SHI SHUI"},{"id":"INC-63668834","date":"2026-08-09","amount":480,"remark":"HOSTEL 2608","account":"Hong Leong","category":"销售收入","invoiceNo":"","receiptNo":"","counterparty":"ENG WEE ZHI"},{"id":"INC-63668875","date":"2026-08-07","amount":480,"remark":"Aug26","account":"Hong Leong","category":"销售收入","invoiceNo":"","receiptNo":"","counterparty":"WONG E FULL"},{"id":"INC-63668886","date":"2026-08-06","amount":480,"remark":"AUGUST ","account":"Hong Leong","category":"销售收入","invoiceNo":"","receiptNo":"","counterparty":"HUAI DERK"},{"id":"INC-49721123","date":"2026-08-05","amount":480,"remark":"Aug26","account":"Hong Leong","category":"销售收入","invoiceNo":"","receiptNo":"","counterparty":"GOH JYJE SHAN"},{"id":"INC-49721147","date":"2026-08-04","amount":480,"remark":"AUG26","account":"Hong Leong","category":"销售收入","invoiceNo":"","receiptNo":"","counterparty":"LEE YAN CHENG"},{"id":"INC-49721145","date":"2026-08-04","amount":480,"remark":"Aug","account":"Hong Leong","category":"销售收入","invoiceNo":"","receiptNo":"","counterparty":"LEE JU YAN"},{"id":"INC-49721142","date":"2026-08-03","amount":480,"remark":"Aug 26","account":"Hong Leong","category":"销售收入","invoiceNo":"","receiptNo":"","counterparty":"TAN JIAN FONG"},{"id":"INC-49721176","date":"2026-07-08","amount":960,"remark":"Deposit","account":"Hong Leong","category":"销售收入","invoiceNo":"","receiptNo":"","counterparty":"HONG YE \u0026 KAI YE"},{"id":"INC-49721159","date":"2026-07-08","amount":480,"remark":"HOSTEL 2607","account":"Hong Leong","category":"销售收入","invoiceNo":"","receiptNo":"","counterparty":"ENG WEE ZHI"},{"id":"INC-49721184","date":"2026-07-07","amount":480,"remark":"Instant Transfer at KLM Tan Ji","account":"Hong Leong","category":"销售收入","invoiceNo":"","receiptNo":"","counterparty":"TAN JIAN FONG"},{"id":"INC-49721138","date":"2026-07-07","amount":480,"remark":"Jul26","account":"Hong Leong","category":"销售收入","invoiceNo":"","receiptNo":"","counterparty":"WONG E FULL"},{"id":"INC-66518721","date":"2026-07-05","amount":480,"remark":"Jul26","account":"Hong Leong","category":"销售收入","invoiceNo":"","receiptNo":"","counterparty":"GOH JYJE SHAN"},{"id":"INC-66518775","date":"2026-07-03","amount":480,"remark":"JULY ","account":"Hong Leong","category":"销售收入","invoiceNo":"","receiptNo":"","counterparty":"LEE YAN CHENG"},{"id":"INC-66518734","date":"2026-07-02","amount":480,"remark":"JUL ","account":"Hong Leong","category":"销售收入","invoiceNo":"","receiptNo":"","counterparty":"HUAI DERK"},{"id":"INC-66518787","date":"2026-06-30","amount":960,"remark":"Instant Transfer at KLM Kaihao","account":"Hong Leong","category":"销售收入","invoiceNo":"","receiptNo":"","counterparty":"KAI HAO"},{"id":"INC-66518770","date":"2026-06-30","amount":480,"remark":"Jul","account":"Hong Leong","category":"销售收入","invoiceNo":"","receiptNo":"","counterparty":"LEE JU YAN"},{"id":"INC-66518723","date":"2026-06-26","amount":480,"remark":"June","account":"Hong Leong","category":"销售收入","invoiceNo":"","receiptNo":"","counterparty":"CHUA MING ZHE"},{"id":"INC-66518742","date":"2026-06-13","amount":480,"remark":"Instant Transfer at KLM TAN JI","account":"Hong Leong","category":"销售收入","invoiceNo":"","receiptNo":"","counterparty":"TAN JIAN FONG"},{"id":"INC-66518767","date":"2026-06-09","amount":1920,"remark":"HONG YIP/KAI YIP","account":"Hong Leong","category":"销售收入","invoiceNo":"","receiptNo":"","counterparty":"HONG YIP/KAI YIP"},{"id":"INC-66518786","date":"2026-06-07","amount":480,"remark":"JUN 2026","account":"Hong Leong","category":"销售收入","invoiceNo":"","receiptNo":"","counterparty":"ENG WEE ZHI"},{"id":"INC-66518731","date":"2026-06-07","amount":480,"remark":"June26","account":"Hong Leong","category":"销售收入","invoiceNo":"","receiptNo":"","counterparty":"WONG E FULL"},{"id":"INC-73878417","date":"2026-06-04","amount":480,"remark":"Instant Transfer at KLM LEE YA","account":"Hong Leong","category":"销售收入","invoiceNo":"","receiptNo":"","counterparty":"LEE YAN CHENG"},{"id":"INC-73878461","date":"2026-06-02","amount":480,"remark":"Instant Transfer at KLM HUAI D","account":"Hong Leong","category":"销售收入","invoiceNo":"","receiptNo":"","counterparty":"HUAI DERK"},{"id":"INC-73878383","date":"2026-06-01","amount":480,"remark":"Jun26","account":"Hong Leong","category":"销售收入","invoiceNo":"","receiptNo":"","counterparty":"GOH JYJE SHAN"},{"id":"INC-0054","date":"2026-05-28","amount":480,"remark":"JUNE","account":"Hong Leong","category":"销售收入","invoiceNo":"","receiptNo":"","counterparty":"LEE JU YAN"},{"id":"INC-0053","date":"2026-05-27","amount":480,"remark":"MAY","account":"Hong Leong","category":"销售收入","invoiceNo":"","receiptNo":"","counterparty":"LEE JI CHUEN"},{"id":"INC-0052","date":"2026-05-26","amount":480,"remark":"MAY","account":"Hong Leong","category":"销售收入","invoiceNo":"","receiptNo":"","counterparty":"CHUA MING ZHE"},{"id":"INC-0051","date":"2026-05-20","amount":1920,"remark":"FEB+MAR+APRIL+MAY","account":"Hong Leong","category":"销售收入","invoiceNo":"","receiptNo":"","counterparty":"CHIA KAI JIE"},{"id":"INC-0050","date":"2026-05-10","amount":2400,"remark":"JAN+FEB+MAR+APRIL+MAY","account":"Hong Leong","category":"销售收入","invoiceNo":"","receiptNo":"","counterparty":"ZHI XIAO"},{"id":"INC-0049","date":"2026-05-09","amount":480,"remark":"MAY","account":"Hong Leong","category":"销售收入","invoiceNo":"","receiptNo":"","counterparty":"ENG WEI ZHI"},{"id":"INC-0048","date":"2026-05-07","amount":480,"remark":"MAY","account":"Hong Leong","category":"销售收入","invoiceNo":"","receiptNo":"","counterparty":"TAN JIAN FONG"},{"id":"INC-0046","date":"2026-05-06","amount":480,"remark":"MAY","account":"Hong Leong","category":"销售收入","invoiceNo":"","receiptNo":"","counterparty":"LEE YAN CHENG"},{"id":"INC-0047","date":"2026-05-06","amount":480,"remark":"MAY","account":"Hong Leong","category":"销售收入","invoiceNo":"","receiptNo":"","counterparty":"HUAI DERK"},{"id":"INC-0045","date":"2026-05-04","amount":480,"remark":"MAY","account":"Hong Leong","category":"销售收入","invoiceNo":"","receiptNo":"","counterparty":"WONG E FULL"},{"id":"INC-0044","date":"2026-05-03","amount":480,"remark":"MAY","account":"Hong Leong","category":"销售收入","invoiceNo":"","receiptNo":"","counterparty":"GOH JYJE SHAN"},{"id":"INC-0042","date":"2026-05-02","amount":960,"remark":"APRIL+MAY","account":"Hong Leong","category":"销售收入","invoiceNo":"","receiptNo":"","counterparty":"KAI HAO"},{"id":"INC-0043","date":"2026-05-02","amount":480,"remark":"APRIL","account":"Hong Leong","category":"销售收入","invoiceNo":"","receiptNo":"","counterparty":"ONG SHI SHUI"},{"id":"INC-0041","date":"2026-04-30","amount":480,"remark":"MAY","account":"Hong Leong","category":"销售收入","invoiceNo":"","receiptNo":"","counterparty":"LEE JU YAN"},{"id":"INC-0040","date":"2026-04-28","amount":480,"remark":"APRIL","account":"Hong Leong","category":"销售收入","invoiceNo":"","receiptNo":"","counterparty":"CHUA MING ZHE"},{"id":"INC-0039","date":"2026-04-21","amount":1920,"remark":"MAR+APRIL","account":"Hong Leong","category":"销售收入","invoiceNo":"","receiptNo":"","counterparty":"HONG YIP/KAI YIP"},{"id":"INC-0038","date":"2026-04-17","amount":480,"remark":"APRIL","account":"Hong Leong","category":"销售收入","invoiceNo":"","receiptNo":"","counterparty":"TAN JIAN FONG"},{"id":"INC-0037","date":"2026-04-11","amount":480,"remark":"APRIL","account":"Hong Leong","category":"销售收入","invoiceNo":"","receiptNo":"","counterparty":"LEE JI CHUEN"},{"id":"INC-0036","date":"2026-04-10","amount":480,"remark":"APRIL","account":"Hong Leong","category":"销售收入","invoiceNo":"","receiptNo":"","counterparty":"ENG WEI ZHI"},{"id":"INC-0035","date":"2026-04-06","amount":480,"remark":"APRIL","account":"Hong Leong","category":"销售收入","invoiceNo":"","receiptNo":"","counterparty":"LEE YAN CHENG"},{"id":"INC-0034","date":"2026-04-04","amount":480,"remark":"APRIL","account":"Hong Leong","category":"销售收入","invoiceNo":"","receiptNo":"","counterparty":"WONG E FULL"},{"id":"INC-0033","date":"2026-04-02","amount":960,"remark":"MAR+APRIL","account":"Hong Leong","category":"销售收入","invoiceNo":"","receiptNo":"","counterparty":"GOH JYJE SHAN"},{"id":"INC-0032","date":"2026-04-01","amount":480,"remark":"APRIL","account":"Hong Leong","category":"销售收入","invoiceNo":"","receiptNo":"","counterparty":"HUAI DERK"},{"id":"INC-0029","date":"2026-03-31","amount":480,"remark":"APRIL","account":"Hong Leong","category":"销售收入","invoiceNo":"","receiptNo":"","counterparty":"LEE JU YAN"},{"id":"INC-0030","date":"2026-03-31","amount":480,"remark":"MARCH","account":"Hong Leong","category":"销售收入","invoiceNo":"","receiptNo":"","counterparty":"CHUA MING ZHE"},{"id":"INC-0031","date":"2026-03-31","amount":960,"remark":"MARCH","account":"Hong Leong","category":"销售收入","invoiceNo":"","receiptNo":"","counterparty":"ONG SHI SHUI"},{"id":"INC-0028","date":"2026-03-19","amount":960,"remark":"FEB+MAR","account":"Hong Leong","category":"销售收入","invoiceNo":"","receiptNo":"","counterparty":"KAI HAO"},{"id":"INC-0027","date":"2026-03-12","amount":40,"remark":"","account":"Hong Leong","category":"销售收入","invoiceNo":"","receiptNo":"","counterparty":""},{"id":"INC-0024","date":"2026-03-06","amount":40,"remark":"","account":"Hong Leong","category":"销售收入","invoiceNo":"","receiptNo":"","counterparty":"TAN ZE LUN"},{"id":"INC-0025","date":"2026-03-06","amount":480,"remark":"","account":"Hong Leong","category":"销售收入","invoiceNo":"","receiptNo":"","counterparty":"WONG E FULL"},{"id":"INC-0026","date":"2026-03-06","amount":40,"remark":"","account":"Hong Leong","category":"销售收入","invoiceNo":"","receiptNo":"","counterparty":""},{"id":"INC-0023","date":"2026-03-05","amount":480,"remark":"MARCH","account":"Hong Leong","category":"销售收入","invoiceNo":"","receiptNo":"","counterparty":"HUAI DERK"},{"id":"INC-0020","date":"2026-03-04","amount":1920,"remark":"DEPOSIT+JAN+FEB+MAR","account":"Hong Leong","category":"销售收入","invoiceNo":"","receiptNo":"","counterparty":"LEE JI CHUEN"},{"id":"INC-0021","date":"2026-03-04","amount":480,"remark":"MARCH","account":"Hong Leong","category":"销售收入","invoiceNo":"","receiptNo":"","counterparty":"LEE YAN CHENG"},{"id":"INC-0022","date":"2026-03-04","amount":480,"remark":"MARCH","account":"Hong Leong","category":"销售收入","invoiceNo":"","receiptNo":"","counterparty":"ENG WEI ZHI"},{"id":"INC-0019","date":"2026-03-03","amount":1440,"remark":"JAN+FEB+MAR","account":"Hong Leong","category":"销售收入","invoiceNo":"","receiptNo":"","counterparty":"TAN JIAN FONG"},{"id":"INC-0018","date":"2026-03-02","amount":480,"remark":"MARCH","account":"Hong Leong","category":"销售收入","invoiceNo":"","receiptNo":"","counterparty":"LEE JU YAN"},{"id":"INC-0017","date":"2026-02-24","amount":1920,"remark":"JAN+FEB","account":"Hong Leong","category":"销售收入","invoiceNo":"","receiptNo":"","counterparty":"HONG YIP/KAI YIP"},{"id":"INC-0016","date":"2026-02-15","amount":480,"remark":"FEB","account":"Hong Leong","category":"销售收入","invoiceNo":"","receiptNo":"","counterparty":"CHUA MING ZHE"},{"id":"INC-0015","date":"2026-02-14","amount":480,"remark":"FEB","account":"Hong Leong","category":"销售收入","invoiceNo":"","receiptNo":"","counterparty":"WONG E FULL"},{"id":"INC-0014","date":"2026-02-09","amount":480,"remark":"FEB","account":"Hong Leong","category":"销售收入","invoiceNo":"","receiptNo":"","counterparty":"HUAI DERK"},{"id":"INC-0013","date":"2026-02-04","amount":960,"remark":"JAN+FEB","account":"Hong Leong","category":"销售收入","feeMonth":"2026-01, 2026-02","invoiceNo":"","receiptNo":"","counterparty":"ONG SHI SHUI"},{"id":"INC-0010","date":"2026-02-03","amount":480,"remark":"2026-02-01","account":"Hong Leong","category":"销售收入","feeMonth":"2026-02","invoiceNo":"","receiptNo":"","counterparty":"LEE YAN CHENG"},{"id":"INC-0011","date":"2026-02-03","amount":480,"remark":"2026-02-01","account":"Hong Leong","category":"销售收入","feeMonth":"2026-02","invoiceNo":"","receiptNo":"","counterparty":"GOH JYJE SHAN"},{"id":"INC-0012","date":"2026-02-03","amount":960,"remark":"JAN+FEB","account":"Hong Leong","category":"销售收入","feeMonth":"2026-01","invoiceNo":"","receiptNo":"","counterparty":"ENG WEI ZHI"},{"id":"INC-0009","date":"2026-01-31","amount":480,"remark":"2026-01-01","account":"Hong Leong","category":"销售收入","feeMonth":"2026-01","invoiceNo":"","receiptNo":"","counterparty":"KAI HAO"},{"id":"INC-0008","date":"2026-01-30","amount":480,"remark":"2026-02-01","account":"Hong Leong","category":"销售收入","feeMonth":"2026-02","invoiceNo":"","receiptNo":"","counterparty":"LEE JU YAN"},{"id":"INC-0007","date":"2026-01-26","amount":480,"remark":"2026-01-01","account":"Hong Leong","category":"销售收入","invoiceNo":"","receiptNo":"","counterparty":"CHUA MING ZHE"},{"id":"INC-0006","date":"2026-01-19","amount":480,"remark":"2026-01-01","account":"Hong Leong","category":"销售收入","feeMonth":"2026-01","invoiceNo":"","receiptNo":"","counterparty":"WONG E FULL"},{"id":"INC-0005","date":"2026-01-18","amount":960,"remark":"2026/1 + DEPOSIT","account":"Hong Leong","category":"销售收入","feeMonth":"2026-01","invoiceNo":"","receiptNo":"","counterparty":"CHIA KAI JIE"},{"id":"INC-0004","date":"2026-01-12","amount":960,"remark":"2026/1 + DEPOSIT","account":"Hong Leong","category":"销售收入","feeMonth":"2026-01","invoiceNo":"","receiptNo":"","counterparty":"GOH JYJE SHAN"},{"id":"INC-0003","date":"2026-01-11","amount":480,"remark":"2026-01-01","account":"Hong Leong","category":"销售收入","feeMonth":"2026-01","invoiceNo":"","receiptNo":"","counterparty":"LEE JU YAN"},{"id":"INC-0002","date":"2026-01-08","amount":480,"remark":"2026-01-01","account":"Hong Leong","category":"销售收入","feeMonth":"2026-01","invoiceNo":"","receiptNo":"","counterparty":"HUAI DERK"},{"id":"INC-0001","date":"2026-01-05","amount":480,"remark":"2026-01-01","account":"Hong Leong","category":"销售收入","feeMonth":"2026-01","invoiceNo":"","receiptNo":"","counterparty":"LEE YAN CHENG"}],"accounts":[{"name":"Hong Leong","initial":492.15,"accountNo":"15200056062"},{"name":"MING ZHOU","initial":0,"accountNo":""},{"name":"PART LEAM","initial":0,"accountNo":""},{"name":"KEE THUANG","initial":0,"accountNo":""},{"name":"CASH","initial":0,"accountNo":""}],"expenses":[{"id":"EXP-7192660","date":"2026-07-19","item":"单据日常支出","time":null,"amount":26.6,"remark":"petron 单据日常支出","account":"PART LEAM","category":"原材料","counterparty":"petron","receiptImage":""},{"id":"EXP-FIX-2026-09-KEETHUANG","date":"2026-09-01","item":"9月汽油津贴","amount":100,"remark":null,"account":"KEE THUANG","category":"汽油津贴","counterparty":"KEE THUANG","receiptImage":""},{"id":"EXP-FIX-2026-09-PARTLEAM","date":"2026-09-01","item":"9月汽油津贴","amount":150,"remark":null,"account":"PART LEAM","category":"汽油津贴","counterparty":"PART LEAM","receiptImage":""},{"id":"EXP-FIX-2026-09-MAXIS","date":"2026-09-01","item":"MAXIS HOME FIBRE (2026-09)","amount":106,"remark":null,"account":"MING ZHOU","category":"水电费","counterparty":"MAXIS","receiptImage":""},{"id":"EXP-FIX-2026-09-COWAYMALAYSIASDNBHD","date":"2026-09-01","item":"COWAY-2026-09","amount":118,"remark":null,"account":"PART LEAM","category":"水电费","counterparty":"COWAY(MALAYSIA) SDN BHD","receiptImage":""},{"id":"EXP-03360910","date":"2026-08-11","item":"TNB 电费","amount":850.1,"remark":"006968511746","account":"MING ZHOU","category":"水电费","counterparty":"TENAGA NASIONAL BERHAD","receiptImage":""},{"id":"EXP-109483","date":"2026-08-02","item":"洗碗液","time":"","amount":10.09,"remark":"","account":"PART LEAM","category":"原材料","counterparty":"lotus","receiptImage":""},{"id":"EXP-FIX-2026-08-PARTLEAM","date":"2026-08-01","item":"8月汽油津贴","amount":150,"remark":null,"account":"PART LEAM","category":"汽油津贴","counterparty":"PART LEAM","receiptImage":""},{"id":"EXP-FIX-2026-08-KEETHUANG","date":"2026-08-01","item":"8月汽油津贴","amount":100,"remark":null,"account":"KEE THUANG","category":"汽油津贴","counterparty":"KEE THUANG","receiptImage":""},{"id":"EXP-FIX-2026-08-MAXIS","date":"2026-08-01","item":"MAXIS HOME FIBRE (2026-08)","amount":106,"remark":null,"account":"MING ZHOU","category":"水电费","counterparty":"MAXIS","receiptImage":""},{"id":"EXP-FIX-2026-08-COWAYMALAYSIASDNBHD","date":"2026-08-01","item":"COWAY-2026-08","amount":118,"remark":null,"account":"PART LEAM","category":"水电费","counterparty":"COWAY(MALAYSIA) SDN BHD","receiptImage":""},{"id":"EXP-841015","date":"2026-07-15","item":"Bil Air","amount":156,"remark":"880299","account":"MING ZHOU","category":"水电费","counterparty":"Lembaga Air Perak","receiptImage":""},{"id":"EXP-05762195","date":"2026-07-12","item":"TNB 电费","amount":863.15,"remark":"006968511746","account":"MING ZHOU","category":"水电费","counterparty":"TENAGA NASIONAL BERHAD","receiptImage":""},{"id":"EXP-FIX-2026-07-COWAYMALAYSIASDNBHD","date":"2026-07-01","item":"COWAY-2026-07","amount":118,"remark":null,"account":"PART LEAM","category":"水电费","counterparty":"COWAY(MALAYSIA) SDN BHD","receiptImage":""},{"id":"EXP-FIX-2026-07-PARTLEAM","date":"2026-07-01","item":"7月汽油津贴","amount":150,"remark":null,"account":"PART LEAM","category":"汽油津贴","counterparty":"PART LEAM","receiptImage":""},{"id":"EXP-FIX-2026-07-KEETHUANG","date":"2026-07-01","item":"7月汽油津贴","amount":100,"remark":null,"account":"KEE THUANG","category":"汽油津贴","counterparty":"KEE THUANG","receiptImage":""},{"id":"EXP-FIX-2026-07-MAXIS","date":"2026-07-01","item":"MAXIS HOME FIBRE (2026-07)","amount":106,"remark":null,"account":"MING ZHOU","category":"水电费","counterparty":"MAXIS","receiptImage":""},{"id":"EXP-FIX-2026-06-KEETHUANG","date":"2026-06-01","item":"6月汽油津贴","amount":100,"remark":null,"account":"KEE THUANG","category":"汽油津贴","counterparty":"KEE THUANG","receiptImage":""},{"id":"EXP-FIX-2026-06-PARTLEAM","date":"2026-06-01","item":"6月汽油津贴","amount":150,"remark":null,"account":"PART LEAM","category":"汽油津贴","counterparty":"PART LEAM","receiptImage":""},{"id":"EXP-FIX-2026-06-COWAYMALAYSIASDNBHD","date":"2026-06-01","item":"COWAY-2026-06","amount":118,"remark":null,"account":"PART LEAM","category":"水电费","counterparty":"COWAY(MALAYSIA) SDN BHD","receiptImage":""},{"id":"EXP-FIX-2026-06-MAXIS","date":"2026-06-01","item":"MAXIS HOME FIBRE (2026-06)","amount":106,"remark":null,"account":"MING ZHOU","category":"水电费","counterparty":"MAXIS","receiptImage":""},{"id":"EXP-0053","date":"2026-05-28","item":"PARTNER CLAIM","amount":7000,"remark":"","account":"Hong Leong","category":"提现","counterparty":"HUAM MING ZHOU"},{"id":"EXP-0054","date":"2026-05-28","item":"PARTNER CLAIM","amount":7000,"remark":"","account":"Hong Leong","category":"提现","counterparty":"LOR PART LEAM"},{"id":"EXP-0052","date":"2026-05-28","item":"RENTAL FEE JAN-MAY","amount":2500,"remark":"","account":"Hong Leong","category":"房租","counterparty":"NG SU EIN"},{"id":"EXP-0055","date":"2026-05-28","item":"PARTNER CLAIM","amount":7000,"remark":"","account":"Hong Leong","category":"提现","counterparty":"HENG KEE THUANG"},{"id":"EXP-0051","date":"2026-05-19","item":"Water Bill","amount":201.9,"remark":"803582","account":"Hong Leong","category":"水电费","counterparty":"LEMBAGA AIR PERAK"},{"id":"EXP-0045","date":"2026-05-12","item":"Bil Elektrik","amount":866.3,"remark":"6947037589","account":"Hong Leong","category":"水电费","counterparty":"Tenaga Nasional"},{"id":"EXP-0044","date":"2026-05-03","item":"WAXCO DIY AIRCOND CLEANER","amount":21.9,"remark":"T1R000318306","account":"Hong Leong","category":"原材料","counterparty":"MR DIY"},{"id":"EXP-0043","date":"2026-05-01","item":"5月汽油津贴","amount":100,"remark":"","account":"Hong Leong","category":"汽油津贴","counterparty":"KEE THUANG"},{"id":"EXP-FIX-2026-05-MAXIS","date":"2026-05-01","item":"MAXIS HOME FIBRE (2026-05)","amount":106,"remark":null,"account":"MING ZHOU","category":"水电费","counterparty":"MAXIS","receiptImage":""},{"id":"EXP-0041","date":"2026-05-01","item":"COWAY-MAY","amount":118,"remark":"","account":"Hong Leong","category":"水电费","counterparty":"COWAY(MALAYSIA) SDN BHD"},{"id":"EXP-0042","date":"2026-05-01","item":"5月汽油津贴","amount":150,"remark":"","account":"Hong Leong","category":"汽油津贴","counterparty":"PART LEAM"},{"id":"EXP-0040","date":"2026-04-26","item":"垃圾袋","amount":37,"remark":"T3R000343393","account":"Hong Leong","category":"原材料","counterparty":"MR DIY"},{"id":"EXP-0048","date":"2026-04-23","item":"杂货","amount":49.96,"remark":"","account":"Hong Leong","category":"差旅费用","counterparty":"","receiptImage":""},{"id":"EXP-0049","date":"2026-04-23","item":"","amount":172.6,"remark":"","account":"Hong Leong","category":"差旅费用","counterparty":""},{"id":"EXP-0050","date":"2026-04-23","item":"","amount":17.6,"remark":"","account":"Hong Leong","category":"差旅费用","counterparty":""},{"id":"EXP-0039","date":"2026-04-22","item":"蚊油，垃圾袋","amount":23.7,"remark":"182721297/103/T0045","account":"Hong Leong","category":"原材料","counterparty":"99 SPEEDMART"},{"id":"EXP-0038","date":"2026-04-21","item":"AIRCOND REPAIR","amount":510,"remark":"0972","account":"Hong Leong","category":"原材料","counterparty":"ONG AIRCOND\u0026 REPAIR"},{"id":"EXP-0037","date":"2026-04-17","item":"杂物","amount":38.7,"remark":"T1R000330005","account":"Hong Leong","category":"原材料","counterparty":"MR DIY"},{"id":"EXP-0036","date":"2026-04-12","item":"Bil Elektrik","amount":586.95,"remark":"6938793825","account":"Hong Leong","category":"水电费","counterparty":"Tenaga Nasional"},{"id":"EXP-0035","date":"2026-04-04","item":"GAS","amount":26.6,"remark":"12819049","account":"Hong Leong","category":"原材料","counterparty":"SNA SMART ENTERPRISE"},{"id":"EXP-0034","date":"2026-04-01","item":"4月汽油津贴","amount":100,"remark":"","account":"Hong Leong","category":"汽油津贴","counterparty":"KEE THUANG"},{"id":"EXP-0032","date":"2026-04-01","item":"COWAY-APRIL","amount":118,"remark":"","account":"Hong Leong","category":"水电费","counterparty":"COWAY(MALAYSIA) SDN BHD"},{"id":"EXP-FIX-2026-04-MAXIS","date":"2026-04-01","item":"MAXIS HOME FIBRE (2026-04)","amount":106,"remark":null,"account":"MING ZHOU","category":"水电费","counterparty":"MAXIS","receiptImage":""},{"id":"EXP-0033","date":"2026-04-01","item":"4月汽油津贴","amount":150,"remark":"","account":"Hong Leong","category":"汽油津贴","counterparty":"PART LEAM"},{"id":"EXP-0046","date":"2026-03-16","item":"Water Bill","amount":171.3,"remark":"725749","account":"Hong Leong","category":"水电费","counterparty":"LEMBAGA AIR PERAK"},{"id":"EXP-0031","date":"2026-03-12","item":"Bil Elektrik","amount":567,"remark":"6930390713","account":"Hong Leong","category":"水电费","counterparty":"Tenaga Nasional"},{"id":"EXP-0030","date":"2026-03-11","item":"plumbing","amount":4900,"remark":"","account":"Hong Leong","category":"原材料","counterparty":""},{"id":"EXP-0029","date":"2026-03-10","item":"割门","amount":10,"remark":"","account":"Hong Leong","category":"原材料","counterparty":""},{"id":"EXP-0047","date":"2026-03-03","item":"GAS","amount":26.6,"remark":"","account":"Hong Leong","category":"原材料","counterparty":""},{"id":"EXP-0028","date":"2026-03-01","item":"3月汽油津贴","amount":100,"remark":"","account":"Hong Leong","category":"汽油津贴","counterparty":"KEE THUANG"},{"id":"EXP-FIX-2026-03-MAXIS","date":"2026-03-01","item":"MAXIS HOME FIBRE (2026-03)","amount":106,"remark":null,"account":"MING ZHOU","category":"水电费","counterparty":"MAXIS","receiptImage":""},{"id":"EXP-0026","date":"2026-03-01","item":"COWAY-MAR","amount":118,"remark":"","account":"Hong Leong","category":"水电费","counterparty":"COWAY(MALAYSIA) SDN BHD"},{"id":"EXP-0027","date":"2026-03-01","item":"3月汽油津贴","amount":150,"remark":"","account":"Hong Leong","category":"汽油津贴","counterparty":"PART LEAM"},{"id":"EXP-0025","date":"2026-02-12","item":"素食","amount":96,"remark":"231750","account":"Hong Leong","category":"差旅费用","counterparty":""},{"id":"EXP-0024","date":"2026-02-12","item":"聚餐","amount":623,"remark":"","account":"Hong Leong","category":"差旅费用","counterparty":"Kedai Makanan Laut Ju Fu"},{"id":"EXP-0023","date":"2026-02-11","item":"梯子","amount":199,"remark":"","account":"Hong Leong","category":"原材料","counterparty":"MR DIY"},{"id":"EXP-0022","date":"2026-02-10","item":"Bil Elektrik","amount":556.35,"remark":"6923211800","account":"Hong Leong","category":"水电费","counterparty":"Tenaga Nasional"},{"id":"EXP-0021","date":"2026-02-08","item":"桌子","amount":230.9,"remark":"260124TQHW41CK","account":"Hong Leong","category":"原材料","counterparty":"SEVENWOOD TECHNOLOGY PLT"},{"id":"EXP-0020","date":"2026-02-06","item":"防水漆","amount":40,"remark":"","account":"Hong Leong","category":"原材料","counterparty":"WANG SENG HARDWARE TRADING"},{"id":"EXP-0019","date":"2026-02-05","item":"WATER SQUEEGEE+BROOM HANDLE","amount":9.1,"remark":"","account":"Hong Leong","category":"原材料","counterparty":"MR DIY"},{"id":"EXP-0015","date":"2026-02-01","item":"COWAY-FEB","amount":118,"remark":"","account":"Hong Leong","category":"水电费","counterparty":"COWAY(MALAYSIA) SDN BHD"},{"id":"EXP-0018","date":"2026-02-01","item":"2月汽油津贴","amount":100,"remark":"","account":"Hong Leong","category":"汽油津贴","counterparty":"KEE THUANG"},{"id":"EXP-0017","date":"2026-02-01","item":"FEB-MAXIS HOME FIBRE","amount":106,"remark":"","account":"Hong Leong","category":"水电费","counterparty":""},{"id":"EXP-0016","date":"2026-02-01","item":"2月汽油津贴","amount":150,"remark":"","account":"Hong Leong","category":"汽油津贴","counterparty":"PART LEAM"},{"id":"EXP-0014","date":"2026-01-22","item":"GARBAG BAG+BASIN TOOLS","amount":33.6,"remark":"","account":"Hong Leong","category":"原材料","counterparty":"MR DIY"},{"id":"EXP-0013","date":"2026-01-22","item":"LAUNDRY BASKET","amount":9.9,"remark":"LSOS02-1685196","account":"Hong Leong","category":"原材料","counterparty":"LIMA SEN SDN BHD"},{"id":"EXP-0012","date":"2026-01-16","item":"Water Bill","amount":91.5,"remark":"647291","account":"Hong Leong","category":"水电费","counterparty":"LEMBAGA AIR PERAK"},{"id":"EXP-0009","date":"2026-01-11","item":"垃圾袋+消毒","amount":23.4,"remark":"T1R000308066","account":"Hong Leong","category":"原材料","counterparty":"MR DIY"},{"id":"EXP-0011","date":"2026-01-11","item":"3M SCOTCH BRITE TOUCH","amount":5.9,"remark":"182721196/102/T0489","account":"Hong Leong","category":"原材料","counterparty":"99 SPEEDMART"},{"id":"EXP-0010","date":"2026-01-11","item":"拖把","amount":39.8,"remark":"T1BSP04202601110026","account":"Hong Leong","category":"原材料","counterparty":"TF VALUE MART"},{"id":"EXP-0005","date":"2026-01-10","item":"Bil Elektrik","amount":72.25,"remark":"6916660401","account":"Hong Leong","category":"水电费","counterparty":"Tenaga Nasional"},{"id":"EXP-0008","date":"2026-01-10","item":"NYLON BROOM+FLOOR CLEANER","amount":43.2,"remark":"T3R000305382","account":"Hong Leong","category":"原材料","counterparty":"MR DIY"},{"id":"EXP-0007","date":"2026-01-10","item":"CYLINDER LOCK","amount":41,"remark":"T2R000598025","account":"Hong Leong","category":"原材料","counterparty":"MR DIY"},{"id":"EXP-0006","date":"2026-01-10","item":"漆","amount":113,"remark":"CS-301277","account":"Hong Leong","category":"原材料","counterparty":"WANG SENG HARDWARE TRADING"},{"id":"EXP-0001","date":"2026-01-01","item":"COWAY-JAN","amount":118,"remark":"","account":"Hong Leong","category":"水电费","counterparty":"COWAY(MALAYSIA) SDN BHD"},{"id":"EXP-0003","date":"2026-01-01","item":"JAN-MAXIS HOME FIBRE","amount":106,"remark":"","account":"Hong Leong","category":"水电费","counterparty":""},{"id":"EXP-0004","date":"2026-01-01","item":"1月汽油津贴","amount":100,"remark":"","account":"Hong Leong","category":"汽油津贴","counterparty":"KEE THUANG"},{"id":"EXP-0002","date":"2026-01-01","item":"1月汽油津贴","amount":150,"remark":"","account":"Hong Leong","category":"汽油津贴","counterparty":"PART LEAM"}],"updatedAt":1789053867988,"ocrSettings":{"mode":"local","geminiApiKey":"","localLanguages":"chi_sim+eng+msa"},"initialBalance":492.15,"incomeCategories":["销售收入","理财收益","营运资金"],"expenseCategories":["原材料","差旅费用","房租","职工工资","管理费用","水电费","财务成本","汽油津贴","提现"]};
@@ -2494,8 +2768,44 @@ let appData = {
   expenseCategories: [],
   incomes: [],
   expenses: [],
+  deletedIds: [],
+  auditLogs: [],
   updatedAt: Date.now()
 };
+
+function recordDeletedId(id) {
+  if (!id) return;
+  if (!appData.deletedIds || !Array.isArray(appData.deletedIds)) {
+    appData.deletedIds = [];
+  }
+  if (!appData.auditLogs || !Array.isArray(appData.auditLogs)) {
+    appData.auditLogs = [];
+  }
+  if (typeof updateAuditBadges === 'function') {
+    updateAuditBadges();
+  }
+  const idStr = String(id);
+  if (!appData.deletedIds.includes(idStr)) {
+    appData.deletedIds.push(idStr);
+    if (appData.deletedIds.length > 5000) {
+      appData.deletedIds = appData.deletedIds.slice(-5000);
+    }
+  }
+}
+
+function recordDeletedIds(ids) {
+  if (!ids || !ids.length) return;
+  ids.forEach(id => recordDeletedId(id));
+}
+
+window.recordDeletedId = recordDeletedId;
+window.recordDeletedIds = recordDeletedIds;
+window.getAppData = () => appData;
+window.logAuditEvent = logAuditEvent;
+window.renderAuditLogs = renderAuditLogs;
+window.openAuditDetailModal = openAuditDetailModal;
+window.exportAuditLogsCSV = exportAuditLogsCSV;
+window.setAuditTimeRange = setAuditTimeRange;
 
 window.appData = appData;
 let currentTab = 'dashboard';
@@ -2524,7 +2834,7 @@ let ocrSettings = {
 };
 
 // Application Version and OTA Release Timestamp
-window.VOYAGE_APP_VERSION = '2026.3.38';
+window.VOYAGE_APP_VERSION = '2026.3.41';
 window.VOYAGE_APP_BUILD_TIME = Date.now();
 
 // 15 Boarding Students Master Configuration (Globally initialized)
@@ -2616,6 +2926,10 @@ function initData() {
     saveDataLocalOnly();
   }
 
+  if (!appData.deletedIds || !Array.isArray(appData.deletedIds)) {
+    appData.deletedIds = [];
+  }
+
   // Ensure default categories and accounts are always present
   if (!appData.expenseCategories || !Array.isArray(appData.expenseCategories) || appData.expenseCategories.length === 0) {
     appData.expenseCategories = ['原材料', '差旅费用', '房租', '职工工资', '管理费用', '业务招待', '水电费', '汽油津贴', '营销推广', '其他支出'];
@@ -2647,6 +2961,7 @@ function initData() {
 
   // Load Cloud Settings & Connect
   initCloudSync();
+  window.appData = appData;
 }
 
 function applyOcrSettingsUI() {
@@ -2945,19 +3260,53 @@ async function connectToSupabase(showNotification = true) {
 
 // Smart Multi-Device Bidirectional Reconciliation Engine
 function smartMergeCloudAndLocal(localData, cloudData) {
-  let hasNewFromCloud = false;
+  let hasNewItemsFromCloud = false;
+  let hasNewDeletionsFromCloud = false;
   let hasLocalUnpushed = false;
 
-  // 1. Merge Incomes by ID
+  // 0. Merge Tombstones (deletedIds)
+  const localDeleted = new Set(Array.isArray(localData.deletedIds) ? localData.deletedIds.map(String) : []);
+  const cloudDeleted = new Set(Array.isArray(cloudData.deletedIds) ? cloudData.deletedIds.map(String) : []);
+  const allDeleted = new Set([...localDeleted, ...cloudDeleted]);
+
+  // Check if new tombstones came from cloud or local has unpushed tombstones
+  if (cloudDeleted.size > 0) {
+    for (const dId of cloudDeleted) {
+      if (!localDeleted.has(dId)) {
+        hasNewDeletionsFromCloud = true;
+        break;
+      }
+    }
+  }
+  if (localDeleted.size > 0) {
+    for (const dId of localDeleted) {
+      if (!cloudDeleted.has(dId)) {
+        hasLocalUnpushed = true;
+        break;
+      }
+    }
+  }
+
+  // 1. Merge Incomes by ID (skipping any tombstoned IDs)
   const incomeMap = new Map();
-  (localData.incomes || []).forEach(inc => { if (inc && inc.id) incomeMap.set(inc.id, Object.assign({}, inc)); });
+  (localData.incomes || []).forEach(inc => {
+    if (inc && inc.id && !allDeleted.has(String(inc.id))) {
+      incomeMap.set(String(inc.id), Object.assign({}, inc));
+    }
+  });
+
   (cloudData.incomes || []).forEach(inc => {
     if (inc && inc.id) {
-      if (!incomeMap.has(inc.id)) {
-        incomeMap.set(inc.id, Object.assign({}, inc));
-        hasNewFromCloud = true;
+      const idStr = String(inc.id);
+      if (allDeleted.has(idStr)) {
+        // Record was tombstoned: Never resurrect!
+        return;
+      }
+      if (!incomeMap.has(idStr)) {
+        incomeMap.set(idStr, Object.assign({}, inc));
+        hasNewItemsFromCloud = true;
       } else {
-        const localInc = incomeMap.get(inc.id);
+        const localInc = incomeMap.get(idStr);
         let itemUpdated = false;
         ['feeMonth', 'counterparty', 'remark', 'amount', 'category', 'account', 'date', 'receiptImage', 'receiptNo', 'invoiceNo'].forEach(k => {
           if (inc[k] !== undefined && inc[k] !== localInc[k]) {
@@ -2965,26 +3314,40 @@ function smartMergeCloudAndLocal(localData, cloudData) {
             itemUpdated = true;
           }
         });
-        if (itemUpdated) hasNewFromCloud = true;
+        if (itemUpdated) hasNewItemsFromCloud = true;
       }
     }
   });
 
-  const cloudIncomeIds = new Set((cloudData.incomes || []).map(i => i.id));
+  const cloudIncomeIds = new Set((cloudData.incomes || []).map(i => String(i.id)));
   (localData.incomes || []).forEach(inc => {
-    if (inc && inc.id && !cloudIncomeIds.has(inc.id)) hasLocalUnpushed = true;
+    if (inc && inc.id) {
+      const idStr = String(inc.id);
+      if (allDeleted.has(idStr)) return;
+      if (!cloudIncomeIds.has(idStr)) hasLocalUnpushed = true;
+    }
   });
 
-  // 2. Merge Expenses by ID
+  // 2. Merge Expenses by ID (skipping any tombstoned IDs)
   const expenseMap = new Map();
-  (localData.expenses || []).forEach(exp => { if (exp && exp.id) expenseMap.set(exp.id, Object.assign({}, exp)); });
+  (localData.expenses || []).forEach(exp => {
+    if (exp && exp.id && !allDeleted.has(String(exp.id))) {
+      expenseMap.set(String(exp.id), Object.assign({}, exp));
+    }
+  });
+
   (cloudData.expenses || []).forEach(exp => {
     if (exp && exp.id) {
-      if (!expenseMap.has(exp.id)) {
-        expenseMap.set(exp.id, Object.assign({}, exp));
-        hasNewFromCloud = true;
+      const idStr = String(exp.id);
+      if (allDeleted.has(idStr)) {
+        // Record was tombstoned: Never resurrect!
+        return;
+      }
+      if (!expenseMap.has(idStr)) {
+        expenseMap.set(idStr, Object.assign({}, exp));
+        hasNewItemsFromCloud = true;
       } else {
-        const localExp = expenseMap.get(exp.id);
+        const localExp = expenseMap.get(idStr);
         let itemUpdated = false;
         ['feeMonth', 'counterparty', 'remark', 'amount', 'category', 'account', 'date', 'item', 'time', 'receiptImage', 'receiptNo', 'invoiceNo'].forEach(k => {
           if (exp[k] !== undefined && exp[k] !== localExp[k]) {
@@ -2992,14 +3355,18 @@ function smartMergeCloudAndLocal(localData, cloudData) {
             itemUpdated = true;
           }
         });
-        if (itemUpdated) hasNewFromCloud = true;
+        if (itemUpdated) hasNewItemsFromCloud = true;
       }
     }
   });
 
-  const cloudExpenseIds = new Set((cloudData.expenses || []).map(e => e.id));
+  const cloudExpenseIds = new Set((cloudData.expenses || []).map(e => String(e.id)));
   (localData.expenses || []).forEach(exp => {
-    if (exp && exp.id && !cloudExpenseIds.has(exp.id)) hasLocalUnpushed = true;
+    if (exp && exp.id) {
+      const idStr = String(exp.id);
+      if (allDeleted.has(idStr)) return;
+      if (!cloudExpenseIds.has(idStr)) hasLocalUnpushed = true;
+    }
   });
 
   const mergedIncomes = Array.from(incomeMap.values()).sort((a, b) => (b.date || '').localeCompare(a.date || ''));
@@ -3007,9 +3374,30 @@ function smartMergeCloudAndLocal(localData, cloudData) {
 
   const expenseCategories = Array.from(new Set([...(localData.expenseCategories || []), ...(cloudData.expenseCategories || [])]));
   const incomeCategories = Array.from(new Set([...(localData.incomeCategories || []), ...(cloudData.incomeCategories || [])]));
+  const mergedDeletedIds = Array.from(allDeleted).slice(-5000);
+
+  // 3. Merge Audit Logs by ID (Append-only tamper-evident logs)
+  const auditMap = new Map();
+  (localData.auditLogs || []).forEach(log => {
+    if (log && log.id) auditMap.set(log.id, log);
+  });
+  let hasNewAuditFromCloud = false;
+  (cloudData.auditLogs || []).forEach(log => {
+    if (log && log.id && !auditMap.has(log.id)) {
+      auditMap.set(log.id, log);
+      hasNewAuditFromCloud = true;
+    }
+  });
+  const mergedAuditLogs = Array.from(auditMap.values())
+    .sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0))
+    .slice(0, 1500);
+
+  const hasNewFromCloud = hasNewItemsFromCloud || hasNewDeletionsFromCloud || hasNewAuditFromCloud;
 
   return {
     hasNewFromCloud,
+    hasNewItemsFromCloud,
+    hasNewDeletionsFromCloud,
     hasLocalUnpushed,
     mergedData: {
       initialBalance: cloudData.initialBalance !== undefined ? cloudData.initialBalance : (localData.initialBalance || 492.15),
@@ -3018,6 +3406,8 @@ function smartMergeCloudAndLocal(localData, cloudData) {
       expenseCategories,
       incomes: mergedIncomes,
       expenses: mergedExpenses,
+      deletedIds: mergedDeletedIds,
+      auditLogs: mergedAuditLogs,
       updatedAt: Math.max(localData.updatedAt || 0, cloudData.updatedAt || 0, Date.now())
     }
   };
@@ -3055,7 +3445,13 @@ function subscribeToCloudRealtime() {
             renderAccountsAndCategories();
             if (typeof renderArrearsTracker === 'function') renderArrearsTracker();
             if (typeof updateArrearsBadge === 'function') updateArrearsBadge();
-            showToast('🔄 检测到手机/其他设备录入新账目，已自动实时同步！');
+            if (typeof renderAuditLogs === 'function' && currentTab === 'audit') renderAuditLogs();
+            if (typeof updateAuditBadges === 'function') updateAuditBadges();
+            if (hasNewItemsFromCloud) {
+              showToast('🔄 检测到手机/其他设备录入新账目，已自动实时同步！');
+            } else if (hasNewDeletionsFromCloud) {
+              showToast('🗑️ 检测到其他设备删除了账目，已同步删除');
+            }
           }
           if (hasLocalUnpushed) {
             pushToCloud(false);
@@ -3183,8 +3579,10 @@ async function pullFromCloud(isStartup = false, isUserInitiated = false) {
         renderAccountsAndCategories();
         if (typeof renderArrearsTracker === 'function') renderArrearsTracker();
         if (typeof updateArrearsBadge === 'function') updateArrearsBadge();
-        if (hasNewFromCloud) {
+        if (hasNewItemsFromCloud) {
           showToast('☁️ 检测到新账目，已自动完成多端实时同步！');
+        } else if (hasNewDeletionsFromCloud) {
+          showToast('🗑️ 已同步云端账目删除变动');
         } else if (isUserInitiated) {
           showToast('✅ 云端数据已是最新，无待同步账目');
         }
@@ -3395,6 +3793,7 @@ function clearHotUpdateCache() {
 }
 
 function saveDataLocalOnly() {
+  window.appData = appData;
   try {
     localStorage.setItem('finance_2026_data', JSON.stringify(appData));
   } catch (e) {
@@ -3435,7 +3834,7 @@ function saveData() {
 // Tab Switching
 function switchTab(tabId) {
   currentTab = tabId;
-  const views = ['dashboard', 'statement', 'income', 'expense', 'monthly', 'arrears', 'accounts', 'settings'];
+  const views = ['dashboard', 'statement', 'income', 'expense', 'monthly', 'arrears', 'accounts', 'settings', 'audit'];
   views.forEach(v => {
     const el = document.getElementById(`view-${v}`);
     const tabBtn = document.getElementById(`tab-${v}`);
@@ -3454,7 +3853,7 @@ function switchTab(tabId) {
   mobileNavTabs.forEach(t => {
     const mBtn = document.getElementById(`mobileNav-${t}`);
     if (mBtn) {
-      if (t === tabId || (t === 'more' && ['monthly', 'accounts', 'settings', 'statement', 'arrears'].includes(tabId))) {
+      if (t === tabId || (t === 'more' && ['monthly', 'accounts', 'settings', 'statement', 'arrears', 'audit'].includes(tabId))) {
         mBtn.className = 'flex flex-col items-center justify-center py-1 text-emerald-600 font-bold transition';
       } else {
         mBtn.className = 'flex flex-col items-center justify-center py-1 text-slate-400 hover:text-slate-600 transition';
@@ -3474,6 +3873,8 @@ function switchTab(tabId) {
     renderArrearsTracker();
   } else if (tabId === 'accounts') {
     renderAccountsAndCategories();
+  } else if (tabId === 'audit') {
+    renderAuditLogs();
   }
 
   // Auto scroll to top smoothly
@@ -4556,10 +4957,41 @@ function saveIncomeRecord(e) {
 
   if (id) {
     const idx = appData.incomes.findIndex(i => i.id === id);
-    if (idx !== -1) appData.incomes[idx] = record;
+    if (idx !== -1) {
+      const oldRecord = Object.assign({}, appData.incomes[idx]);
+      const diff = [];
+      const fieldLabels = {
+        date: '日期', amount: '金额', category: '科目', account: '收款账户',
+        counterparty: '付款人/学生', remark: '备注', feeMonth: '缴费归属月份',
+        invoiceNo: '发票号', receiptNo: '收据号'
+      };
+      Object.keys(fieldLabels).forEach(k => {
+        if (oldRecord[k] !== record[k] && (oldRecord[k] || record[k])) {
+          diff.push({ field: fieldLabels[k], oldVal: oldRecord[k] || '-', newVal: record[k] || '-' });
+        }
+      });
+      appData.incomes[idx] = record;
+      logAuditEvent({
+        action: 'UPDATE',
+        module: 'income',
+        recordId: record.id,
+        summary: `修改收入记录: ${record.date} ${record.category} RM ${record.amount} (${record.counterparty || '-'})`,
+        amount: record.amount,
+        diff,
+        snapshot: oldRecord
+      });
+    }
     showToast('收入记录已更新');
   } else {
     appData.incomes.unshift(record);
+    logAuditEvent({
+      action: 'CREATE',
+      module: 'income',
+      recordId: record.id,
+      summary: `录入新收入: ${record.date} ${record.category} RM ${record.amount} (${record.counterparty || '-'})`,
+      amount: record.amount,
+      snapshot: record
+    });
     showToast('✅ 新收入记录已保存');
   }
 
@@ -4625,16 +5057,36 @@ function editIncome(id) {
 
 function deleteIncome(id) {
   if (confirm('确定要删除这笔收入记录吗？')) {
-    appData.incomes = appData.incomes.filter(i => i.id !== id);
-    saveData();
-    showToast('收入记录已删除');
+    const target = (appData.incomes || []).find(i => String(i.id) === String(id));
+    if (target) {
+      logAuditEvent({
+        action: 'DELETE',
+        module: 'income',
+        recordId: id,
+        summary: `删除收入记录: ${target.date} ${target.category} RM ${target.amount} (${target.counterparty || '-'})`,
+        amount: target.amount,
+        snapshot: target
+      });
+    }
+    recordDeletedId(id);
+    appData.incomes = (appData.incomes || []).filter(i => String(i.id) !== String(id));
+    appData.updatedAt = Date.now();
+    saveDataLocalOnly();
+    if (supabaseClient) {
+      clearTimeout(syncDebounceTimer);
+      pushToCloud(false);
+    }
+    showToast('🗑️ 收入记录已删除，云端同步已清除');
     renderDashboard();
     renderIncomeTable();
-    if (typeof renderArrearsTracker === 'function' && currentTab === 'arrears') {
+    if (typeof renderArrearsTracker === 'function') {
       renderArrearsTracker();
     }
     if (typeof updateArrearsBadge === 'function') {
       updateArrearsBadge();
+    }
+    if (typeof renderMonthlyReport === 'function') {
+      renderMonthlyReport();
     }
   }
 }
@@ -4666,14 +5118,43 @@ function saveExpenseRecord(e) {
   if (id) {
     const idx = appData.expenses.findIndex(e => e.id === id);
     if (idx !== -1) {
+      const oldRecord = Object.assign({}, appData.expenses[idx]);
       if (!record.receiptImage && appData.expenses[idx].receiptImage) {
         record.receiptImage = appData.expenses[idx].receiptImage;
       }
+      const diff = [];
+      const fieldLabels = {
+        date: '日期', amount: '金额', item: '项目名称', category: '费用科目',
+        account: '出资账户', counterparty: '经办/收款方', remark: '备注',
+        time: '时间', invoiceNo: '发票号', receiptNo: '小票号'
+      };
+      Object.keys(fieldLabels).forEach(k => {
+        if (oldRecord[k] !== record[k] && (oldRecord[k] || record[k])) {
+          diff.push({ field: fieldLabels[k], oldVal: oldRecord[k] || '-', newVal: record[k] || '-' });
+        }
+      });
       appData.expenses[idx] = record;
+      logAuditEvent({
+        action: 'UPDATE',
+        module: 'expense',
+        recordId: record.id,
+        summary: `修改支出记录: ${record.date} ${record.item || '-'} RM ${record.amount} (${record.category} / ${record.account})`,
+        amount: record.amount,
+        diff,
+        snapshot: oldRecord
+      });
     }
     showToast('支出记录已更新');
   } else {
     appData.expenses.unshift(record);
+    logAuditEvent({
+      action: 'CREATE',
+      module: 'expense',
+      recordId: record.id,
+      summary: `录入新支出: ${record.date} ${record.item || '-'} RM ${record.amount} (${record.category} / ${record.account})`,
+      amount: record.amount,
+      snapshot: record
+    });
     showToast(record.receiptImage ? '✅ 支出与单据照片已保存并同步至云端！' : '✅ 新支出记录已保存');
   }
 
@@ -4727,11 +5208,31 @@ function editExpense(id) {
 // Delete Expense
 function deleteExpense(id) {
   if (confirm('确定要删除这笔支出记录吗？')) {
-    appData.expenses = appData.expenses.filter(e => e.id !== id);
-    saveData();
-    showToast('支出记录已删除');
+    const target = (appData.expenses || []).find(e => String(e.id) === String(id));
+    if (target) {
+      logAuditEvent({
+        action: 'DELETE',
+        module: 'expense',
+        recordId: id,
+        summary: `删除支出记录: ${target.date} ${target.item || '-'} RM ${target.amount} (${target.category} / ${target.account})`,
+        amount: target.amount,
+        snapshot: target
+      });
+    }
+    recordDeletedId(id);
+    appData.expenses = (appData.expenses || []).filter(e => String(e.id) !== String(id));
+    appData.updatedAt = Date.now();
+    saveDataLocalOnly();
+    if (supabaseClient) {
+      clearTimeout(syncDebounceTimer);
+      pushToCloud(false);
+    }
+    showToast('🗑️ 支出记录已删除，云端同步已清除');
     renderDashboard();
     renderExpenseTable();
+    if (typeof renderMonthlyReport === 'function') {
+      renderMonthlyReport();
+    }
   }
 }
 
@@ -5868,6 +6369,15 @@ function commitStatementImport() {
   if (supabaseClient) {
     pushToCloud(false);
   }
+
+  logAuditEvent({
+    action: 'IMPORT',
+    module: 'statement',
+    recordId: statementMeta.accountNo || '15200056062',
+    summary: `导入丰隆银行流水: 新增 ${incCount} 笔收入, ${expCount} 笔支出 (跳过 ${skippedCount} 笔重复)`,
+    details: `流水期间: ${statementMeta.period || '-'}, 导入总笔数: ${incCount + expCount}`,
+    snapshot: { period: statementMeta.period, incCount, expCount, skippedCount }
+  });
 
   let msg = `✅ 成功从银行流水导入 ${incCount + expCount} 笔记录！\n· 收入入账：${incCount} 笔\n· 支出扣款：${expCount} 笔`;
   if (skippedCount > 0) {
@@ -7435,6 +7945,12 @@ function handleImportJSON(event) {
     try {
       const imported = JSON.parse(e.target.result);
       if (imported && Array.isArray(imported.incomes) && Array.isArray(imported.expenses)) {
+        logAuditEvent({
+          action: 'RESTORE',
+          module: 'system',
+          summary: `恢复本地数据备份文件 (${file.name})`,
+          details: `恢复后账目: ${imported.incomes?.length || 0} 笔收入, ${imported.expenses?.length || 0} 笔支出`
+        });
         appData = imported;
         saveData();
         showToast('备份数据已成功恢复！');
@@ -7893,6 +8409,14 @@ async function executeBatchEditExpenseModal() {
   if (typeof renderDashboard === 'function') renderDashboard();
   if (typeof renderMonthlyReport === 'function') renderMonthlyReport();
 
+  logAuditEvent({
+    action: 'BATCH_UPDATE',
+    module: 'expense',
+    recordId: ids.slice(0, 3).join(', ') + (ids.length > 3 ? ` 等${count}笔` : ''),
+    summary: `批量更新 ${count} 笔支出记录 (${updateKeys.join(', ')})`,
+    details: `变更字段: ${JSON.stringify(fieldsToUpdate)}`
+  });
+
   showToast(`🎉 成功批量更新 ${count} 笔支出记录！数据已自动同步`);
 }
 
@@ -7908,10 +8432,29 @@ async function confirmBatchDeleteExpenses() {
     return;
   }
 
-  appData.expenses = appData.expenses.filter(e => !ids.includes(e.id));
-  saveData();
-  if (typeof pushToCloud === 'function') {
-    try { await pushToCloud(); } catch(err) { console.warn('Cloud sync error:', err); }
+  const deletedSnapshots = (appData.expenses || []).filter(e => ids.includes(e.id));
+  const totalDelAmt = deletedSnapshots.reduce((acc, c) => acc + (Number(c.amount) || 0), 0);
+  logAuditEvent({
+    action: 'BATCH_DELETE',
+    module: 'expense',
+    recordId: ids.slice(0, 3).join(', ') + (ids.length > 3 ? ` 等${ids.length}笔` : ''),
+    summary: `批量永久删除 ${ids.length} 笔支出记录，总涉及金额 RM ${totalDelAmt.toFixed(2)}`,
+    amount: totalDelAmt,
+    snapshot: {
+      count: ids.length,
+      ids,
+      items: deletedSnapshots.map(s => ({ id: s.id, item: s.item, amount: s.amount, date: s.date, category: s.category, account: s.account }))
+    }
+  });
+
+  recordDeletedIds(ids);
+  const idSet = new Set(ids.map(String));
+  appData.expenses = (appData.expenses || []).filter(e => !idSet.has(String(e.id)));
+  appData.updatedAt = Date.now();
+  saveDataLocalOnly();
+  if (supabaseClient) {
+    clearTimeout(syncDebounceTimer);
+    try { await pushToCloud(false); } catch(err) { console.warn('Cloud sync error:', err); }
   }
 
   closeModal('batchEditExpenseModal');
@@ -7920,7 +8463,7 @@ async function confirmBatchDeleteExpenses() {
   if (typeof renderDashboard === 'function') renderDashboard();
   if (typeof renderMonthlyReport === 'function') renderMonthlyReport();
 
-  showToast(`🗑️ 已成功批量删除 ${ids.length} 笔支出记录！`);
+  showToast(`🗑️ 已成功批量删除 ${ids.length} 笔支出记录并同步云端！`);
 }
 
 // Window Exports
@@ -8060,14 +8603,16 @@ function calculateStudentArrears(cutoffMonth = arrearsCutoffMonth, feePerPerson 
       }
     });
 
-    // Fill remaining months based on total amount paid
+    // Fill remaining months based on total amount paid (capped at cutoffMonth)
+    // Future unbilled months (> cutoffMonth) must NEVER be auto-filled by surplus/deposits
+    // Future months should ONLY be marked as paid if explicitly specified via feeMonth or remark (e.g. 10月/OCT)
     const numMonthsPaid = Math.floor(totalPaid / monthlyFee);
     let curAssigned = 0;
     for (let m = 1; m <= 12; m++) {
       if (monthsPaidMap[m]) curAssigned++;
     }
     if (curAssigned < numMonthsPaid) {
-      for (let m = 1; m <= 12; m++) {
+      for (let m = 1; m <= cutoffMonth; m++) {
         if (!monthsPaidMap[m] && curAssigned < numMonthsPaid) {
           monthsPaidMap[m] = true;
           curAssigned++;
@@ -9415,6 +9960,436 @@ window.quickEditIncomeMonth = quickEditIncomeMonth;
 window.renderQuickMonthGrid = renderQuickMonthGrid;
 window.toggleQuickMonthItem = toggleQuickMonthItem;
 window.saveQuickMonthModal = saveQuickMonthModal;
+
+// ==========================================
+// 📋 AUDIT TRAIL MANAGER (审计追踪引擎 V2026.3.40)
+// ==========================================
+
+let auditFilterAction = 'ALL';
+let auditFilterModule = 'ALL';
+let auditTimeRange = 'ALL';
+
+function logAuditEvent({
+  action,
+  module,
+  recordId,
+  summary,
+  details,
+  amount,
+  diff,
+  snapshot
+}) {
+  if (!appData.auditLogs || !Array.isArray(appData.auditLogs)) {
+    appData.auditLogs = [];
+  }
+  const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+  const operator = isMobile ? '移动手机端' : '电脑端 (Web)';
+
+  const now = new Date();
+  const timeStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')} ${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}:${String(now.getSeconds()).padStart(2, '0')}`;
+
+  const entry = {
+    id: 'AUD-' + Date.now().toString() + '-' + Math.random().toString(36).substring(2, 6).toUpperCase(),
+    timestamp: Date.now(),
+    timeStr,
+    action: action || 'CREATE',
+    module: module || 'income',
+    recordId: recordId || '',
+    summary: summary || '',
+    details: details || '',
+    amount: amount !== undefined && amount !== null && !isNaN(amount) ? Number(amount) : null,
+    operator,
+    diff: diff || null,
+    snapshot: snapshot ? JSON.parse(JSON.stringify(snapshot)) : null
+  };
+
+  // Avoid heavy base64 strings in snapshots
+  if (entry.snapshot && entry.snapshot.receiptImage && entry.snapshot.receiptImage.length > 500) {
+    entry.snapshot.hasReceiptImage = true;
+    entry.snapshot.receiptImage = '[已归档单据图像凭证]';
+  }
+
+  appData.auditLogs.unshift(entry);
+  if (appData.auditLogs.length > 1500) {
+    appData.auditLogs = appData.auditLogs.slice(0, 1500);
+  }
+
+  updateAuditBadges();
+  return entry;
+}
+
+function updateAuditBadges() {
+  const count = (appData.auditLogs || []).length;
+  const navBadge = document.getElementById('navAuditBadge');
+  if (navBadge) navBadge.textContent = count;
+  const mobileBadge = document.getElementById('mobileMoreAuditBadge');
+  if (mobileBadge) mobileBadge.textContent = count + '条日志';
+}
+
+function setAuditTimeRange(range) {
+  auditTimeRange = range;
+  ['ALL', 'TODAY', '7DAYS'].forEach(r => {
+    const btn = document.getElementById(`auditTimeBtn-${r}`);
+    if (btn) {
+      if (r === range) {
+        btn.className = 'flex-1 py-2 text-[11px] font-semibold rounded-lg bg-indigo-50 text-indigo-700 border border-indigo-200 transition shadow-2xs';
+      } else {
+        btn.className = 'flex-1 py-2 text-[11px] font-medium rounded-lg text-slate-600 hover:bg-slate-100 transition';
+      }
+    }
+  });
+  renderAuditLogs();
+}
+
+function getActionBadgeInfo(action) {
+  switch (action) {
+    case 'CREATE':
+      return { label: '录入新增', bg: 'bg-emerald-100', text: 'text-emerald-800', border: 'border-emerald-200', icon: '🟢' };
+    case 'UPDATE':
+      return { label: '编辑修改', bg: 'bg-amber-100', text: 'text-amber-800', border: 'border-amber-200', icon: '🟡' };
+    case 'DELETE':
+      return { label: '永久删除', bg: 'bg-rose-100', text: 'text-rose-800', border: 'border-rose-200', icon: '🔴' };
+    case 'BATCH_DELETE':
+      return { label: '批量删除', bg: 'bg-purple-100', text: 'text-purple-800', border: 'border-purple-200', icon: '🟣' };
+    case 'BATCH_UPDATE':
+      return { label: '批量更新', bg: 'bg-indigo-100', text: 'text-indigo-800', border: 'border-indigo-200', icon: '🟣' };
+    case 'IMPORT':
+      return { label: '银行流水导入', bg: 'bg-blue-100', text: 'text-blue-800', border: 'border-blue-200', icon: '🔵' };
+    case 'RESTORE':
+      return { label: '数据备份恢复', bg: 'bg-teal-100', text: 'text-teal-800', border: 'border-teal-200', icon: '⚙️' };
+    default:
+      return { label: action || '系统操作', bg: 'bg-slate-100', text: 'text-slate-800', border: 'border-slate-200', icon: '📋' };
+  }
+}
+
+function getModuleBadgeInfo(module) {
+  switch (module) {
+    case 'income':
+      return { label: '收入明细', icon: '💰', color: 'text-emerald-700' };
+    case 'expense':
+      return { label: '支出明细', icon: '🛒', color: 'text-rose-700' };
+    case 'statement':
+      return { label: '银行流水', icon: '📄', color: 'text-blue-700' };
+    case 'arrears':
+      return { label: '住宿欠费', icon: '🏠', color: 'text-amber-700' };
+    case 'system':
+      return { label: '系统设置', icon: '⚙️', color: 'text-slate-700' };
+    default:
+      return { label: module || '综合', icon: '📋', color: 'text-slate-700' };
+  }
+}
+
+function renderAuditLogs() {
+  if (!appData.auditLogs || !Array.isArray(appData.auditLogs)) {
+    appData.auditLogs = [];
+  }
+
+  // Ensure default seed audit log if empty
+  if (appData.auditLogs.length === 0) {
+    logAuditEvent({
+      action: 'RESTORE',
+      module: 'system',
+      summary: '财务审计追踪系统 (Audit Trail) 正式启用',
+      details: '系统已全面启用操作全程留痕、防篡改快照与多端同步追踪功能。'
+    });
+  }
+
+  const logs = appData.auditLogs;
+  const keyword = (document.getElementById('auditSearchInput')?.value || '').trim().toLowerCase();
+  const filterAction = document.getElementById('auditFilterAction')?.value || 'ALL';
+  const filterModule = document.getElementById('auditFilterModule')?.value || 'ALL';
+
+  // Calculate Stat metrics
+  const now = new Date();
+  const startOfToday = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime();
+
+  let todayCount = 0;
+  let deleteCount = 0;
+  logs.forEach(l => {
+    if ((l.timestamp || 0) >= startOfToday) todayCount++;
+    if (l.action === 'DELETE' || l.action === 'BATCH_DELETE') deleteCount++;
+  });
+
+  const totalEl = document.getElementById('auditStatTotalCount');
+  const todayEl = document.getElementById('auditStatTodayCount');
+  const delEl = document.getElementById('auditStatDeleteCount');
+  const opEl = document.getElementById('auditStatLastOperator');
+  const timeEl = document.getElementById('auditStatLastTime');
+
+  if (totalEl) totalEl.textContent = logs.length;
+  if (todayEl) todayEl.textContent = todayCount;
+  if (delEl) delEl.textContent = deleteCount;
+  if (logs.length > 0) {
+    if (opEl) opEl.textContent = logs[0].operator || '电脑端 (Web)';
+    if (timeEl) timeEl.textContent = logs[0].timeStr || '刚刚';
+  } else {
+    if (opEl) opEl.textContent = '暂无记录';
+    if (timeEl) timeEl.textContent = '--';
+  }
+
+  updateAuditBadges();
+
+  // Filter logs
+  const filtered = logs.filter(l => {
+    if (filterAction !== 'ALL' && l.action !== filterAction) return false;
+    if (filterModule !== 'ALL' && l.module !== filterModule) return false;
+    if (auditTimeRange === 'TODAY' && (l.timestamp || 0) < startOfToday) return false;
+    if (auditTimeRange === '7DAYS' && (l.timestamp || 0) < (startOfToday - 6 * 86400000)) return false;
+    if (keyword) {
+      const targetStr = `${l.id} ${l.recordId || ''} ${l.summary || ''} ${l.details || ''} ${l.operator || ''} ${l.amount || ''}`.toLowerCase();
+      if (!targetStr.includes(keyword)) return false;
+    }
+    return true;
+  });
+
+  const dispCountEl = document.getElementById('auditDisplayCount');
+  if (dispCountEl) dispCountEl.textContent = filtered.length;
+
+  const tbody = document.getElementById('auditTableBody');
+  const mobileContainer = document.getElementById('auditMobileCards');
+  const emptyState = document.getElementById('auditEmptyState');
+
+  if (filtered.length === 0) {
+    if (tbody) tbody.innerHTML = '';
+    if (mobileContainer) mobileContainer.innerHTML = '';
+    if (emptyState) emptyState.classList.remove('hidden');
+    return;
+  }
+  if (emptyState) emptyState.classList.add('hidden');
+
+  // Render Desktop Table
+  if (tbody) {
+    tbody.innerHTML = filtered.map(log => {
+      const act = getActionBadgeInfo(log.action);
+      const mod = getModuleBadgeInfo(log.module);
+      const hasDetail = (log.diff && log.diff.length > 0) || log.snapshot || log.details;
+      const amtStr = log.amount !== null && log.amount !== undefined ?
+        (log.module === 'income' ? `+${formatMoney(log.amount)}` : `-${formatMoney(log.amount)}`) : '-';
+      const amtColor = log.module === 'income' ? 'text-emerald-600 font-bold' : (log.amount ? 'text-rose-600 font-bold' : 'text-slate-400');
+
+      return `
+        <tr class="hover:bg-slate-50/80 transition-colors">
+          <td class="py-3 px-4 font-mono text-[11px] text-slate-500 whitespace-nowrap">
+            <div>${log.timeStr}</div>
+            <div class="text-[10px] text-slate-400 font-sans">${log.id}</div>
+          </td>
+          <td class="py-3 px-3 whitespace-nowrap">
+            <span class="inline-flex items-center space-x-1 text-xs font-semibold ${mod.color}">
+              <span>${mod.icon}</span>
+              <span>${mod.label}</span>
+            </span>
+          </td>
+          <td class="py-3 px-3 whitespace-nowrap">
+            <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-bold border ${act.bg} ${act.text} ${act.border}">
+              ${act.icon} ${act.label}
+            </span>
+          </td>
+          <td class="py-3 px-3 font-mono text-xs font-bold text-slate-700 whitespace-nowrap">
+            ${log.recordId || '-'}
+          </td>
+          <td class="py-3 px-4 text-xs text-slate-800">
+            <div class="font-medium line-clamp-2">${log.summary || '-'}</div>
+            ${log.details ? `<div class="text-[11px] text-slate-400 mt-0.5">${log.details}</div>` : ''}
+          </td>
+          <td class="py-3 px-4 text-xs text-right whitespace-nowrap ${amtColor}">
+            ${amtStr}
+          </td>
+          <td class="py-3 px-3 text-center whitespace-nowrap text-[11px] text-slate-500">
+            <span class="inline-flex items-center px-1.5 py-0.5 rounded bg-slate-100 text-slate-600 font-medium">
+              ${log.operator || '电脑端'}
+            </span>
+          </td>
+          <td class="py-3 px-4 text-center whitespace-nowrap">
+            ${hasDetail ? `
+              <button onclick="openAuditDetailModal('${log.id}')" class="px-2.5 py-1 text-xs font-semibold text-indigo-700 bg-indigo-50 hover:bg-indigo-100 rounded-lg border border-indigo-200 transition active:scale-95 shadow-2xs">
+                🔍 快照/对比
+              </button>
+            ` : `
+              <span class="text-slate-300 text-xs">-</span>
+            `}
+          </td>
+        </tr>
+      `;
+    }).join('');
+  }
+
+  // Render Mobile Cards
+  if (mobileContainer) {
+    mobileContainer.innerHTML = filtered.map(log => {
+      const act = getActionBadgeInfo(log.action);
+      const mod = getModuleBadgeInfo(log.module);
+      const hasDetail = (log.diff && log.diff.length > 0) || log.snapshot || log.details;
+      const amtStr = log.amount !== null && log.amount !== undefined ?
+        (log.module === 'income' ? `+${formatMoney(log.amount)}` : `-${formatMoney(log.amount)}`) : '';
+
+      return `
+        <div class="p-3 bg-white border border-slate-200/90 rounded-xl space-y-2 shadow-2xs">
+          <div class="flex items-center justify-between">
+            <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold border ${act.bg} ${act.text} ${act.border}">
+              ${act.icon} ${act.label}
+            </span>
+            <span class="text-[10px] text-slate-400 font-mono">${log.timeStr}</span>
+          </div>
+
+          <div class="flex items-start justify-between gap-2 pt-0.5">
+            <div class="text-xs font-bold text-slate-900 leading-snug">
+              ${log.summary}
+            </div>
+            ${amtStr ? `<span class="text-xs font-bold whitespace-nowrap ${log.module === 'income' ? 'text-emerald-600' : 'text-rose-600'}">${amtStr}</span>` : ''}
+          </div>
+
+          <div class="flex items-center justify-between text-[11px] text-slate-500 pt-1 border-t border-slate-100">
+            <div class="flex items-center space-x-2">
+              <span class="${mod.color} font-semibold">${mod.icon} ${mod.label}</span>
+              <span>·</span>
+              <span class="font-mono text-indigo-700">${log.recordId || log.id.slice(-6)}</span>
+            </div>
+            ${hasDetail ? `
+              <button onclick="openAuditDetailModal('${log.id}')" class="text-xs font-bold text-indigo-600 hover:text-indigo-800">
+                查看快照 →
+              </button>
+            ` : ''}
+          </div>
+        </div>
+      `;
+    }).join('');
+  }
+}
+
+function openAuditDetailModal(logId) {
+  const log = (appData.auditLogs || []).find(l => l.id === logId);
+  if (!log) return;
+
+  const act = getActionBadgeInfo(log.action);
+  const mod = getModuleBadgeInfo(log.module);
+
+  const modal = document.getElementById('auditDetailModal');
+  const badgeEl = document.getElementById('auditModalActionBadge');
+  const subheaderEl = document.getElementById('auditModalSubheader');
+  const summaryText = document.getElementById('auditModalSummaryText');
+  const amountBadge = document.getElementById('auditModalAmountBadge');
+  const opEl = document.getElementById('auditModalOperator');
+  const modEl = document.getElementById('auditModalModule');
+  const recEl = document.getElementById('auditModalRecordId');
+  const rawJsonEl = document.getElementById('auditModalRawJson');
+
+  if (badgeEl) {
+    badgeEl.className = `text-[10px] px-2 py-0.5 rounded-full font-bold border ${act.bg} ${act.text} ${act.border}`;
+    badgeEl.textContent = `${act.icon} ${act.label} (${log.action})`;
+  }
+  if (subheaderEl) subheaderEl.textContent = `日志 ID: ${log.id} · ${log.timeStr}`;
+  if (summaryText) summaryText.textContent = log.summary + (log.details ? ` (${log.details})` : '');
+
+  if (amountBadge) {
+    if (log.amount !== null && log.amount !== undefined) {
+      amountBadge.textContent = formatMoney(log.amount);
+      amountBadge.className = `font-bold px-2 py-0.5 rounded-md border text-xs ${log.module === 'income' ? 'bg-emerald-50 text-emerald-700 border-emerald-200' : 'bg-rose-50 text-rose-700 border-rose-200'}`;
+      amountBadge.classList.remove('hidden');
+    } else {
+      amountBadge.classList.add('hidden');
+    }
+  }
+
+  if (opEl) opEl.textContent = log.operator || '电脑端 (Web)';
+  if (modEl) modEl.textContent = `${mod.icon} ${mod.label}`;
+  if (recEl) recEl.textContent = log.recordId || '-';
+  if (rawJsonEl) rawJsonEl.textContent = JSON.stringify(log, null, 2);
+
+  // 1. Diff Section
+  const diffSection = document.getElementById('auditModalDiffSection');
+  const diffBody = document.getElementById('auditModalDiffBody');
+  if (log.diff && Array.isArray(log.diff) && log.diff.length > 0) {
+    diffSection.classList.remove('hidden');
+    diffBody.innerHTML = log.diff.map(d => `
+      <tr class="hover:bg-amber-50/30">
+        <td class="py-2 px-3 font-bold text-slate-700 bg-slate-50">${d.field}</td>
+        <td class="py-2 px-3 text-rose-800 bg-rose-50/40 font-mono line-through">${d.oldVal || '-'}</td>
+        <td class="py-2 px-3 text-emerald-800 bg-emerald-50/40 font-mono font-bold">${d.newVal || '-'}</td>
+      </tr>
+    `).join('');
+  } else {
+    diffSection.classList.add('hidden');
+  }
+
+  // 2. Snapshot Section
+  const snapSection = document.getElementById('auditModalSnapshotSection');
+  const snapTitle = document.getElementById('auditSnapshotTitle');
+  const snapCard = document.getElementById('auditModalSnapshotCard');
+
+  if (log.snapshot && typeof log.snapshot === 'object') {
+    snapSection.classList.remove('hidden');
+    if (log.action === 'DELETE') {
+      snapTitle.textContent = '🛡️ 被删除记录的完整原始快照（历史留底）';
+    } else if (log.action === 'UPDATE') {
+      snapTitle.textContent = '📄 修改前原始记录快照';
+    } else {
+      snapTitle.textContent = '📄 记录原始创建快照';
+    }
+
+    const s = log.snapshot;
+    let fields = [];
+    if (s.id) fields.push({ k: '记录单号', v: s.id });
+    if (s.date) fields.push({ k: '账目日期', v: s.date });
+    if (s.amount !== undefined) fields.push({ k: '账目金额', v: formatMoney(s.amount) });
+    if (s.category) fields.push({ k: '科目分类', v: s.category });
+    if (s.account) fields.push({ k: '收支账户', v: s.account });
+    if (s.item) fields.push({ k: '项目内容', v: s.item });
+    if (s.counterparty) fields.push({ k: '经手人/付款人', v: s.counterparty });
+    if (s.feeMonth) fields.push({ k: '归属月份', v: s.feeMonth });
+    if (s.invoiceNo) fields.push({ k: '发票编号', v: s.invoiceNo });
+    if (s.receiptNo) fields.push({ k: '收据编号', v: s.receiptNo });
+    if (s.remark) fields.push({ k: '附注备注', v: s.remark });
+    if (s.items && Array.isArray(s.items)) {
+      fields.push({ k: '批量清单', v: `${s.items.length} 笔 (包含: ${s.items.map(i => `${i.item || i.category} RM ${i.amount}`).join('; ')})` });
+    }
+
+    snapCard.innerHTML = `
+      <div class="grid grid-cols-2 sm:grid-cols-3 gap-2.5">
+        ${fields.map(f => `
+          <div class="bg-white/80 p-2 rounded-lg border border-amber-200/60">
+            <span class="block text-[10px] text-slate-400 font-medium">${f.k}</span>
+            <span class="block text-xs font-bold text-slate-800 break-words mt-0.5">${f.v}</span>
+          </div>
+        `).join('')}
+      </div>
+    `;
+  } else {
+    snapSection.classList.add('hidden');
+  }
+
+  if (modal) modal.classList.remove('hidden');
+}
+
+function exportAuditLogsCSV() {
+  const logs = appData.auditLogs || [];
+  if (logs.length === 0) {
+    showToast('暂无审计日志可导出');
+    return;
+  }
+
+  let csv = '\uFEFF'; // UTF-8 BOM for Microsoft Excel
+  csv += '日志编号,时间戳,终端来源,业务模块,操作动作,关联单号,涉及金额(RM),操作摘要,详情与变更说明\n';
+
+  logs.forEach(l => {
+    const act = getActionBadgeInfo(l.action).label;
+    const mod = getModuleBadgeInfo(l.module).label;
+    const amt = l.amount !== null && l.amount !== undefined ? l.amount : '';
+    const cleanSum = (l.summary || '').replace(/"/g, '""');
+    const cleanDet = (l.details || '').replace(/"/g, '""');
+
+    csv += `"${l.id}","${l.timeStr}","${l.operator || 'Web'}","${mod}","${act}","${l.recordId || ''}","${amt}","${cleanSum}","${cleanDet}"\n`;
+  });
+
+  const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `财务审计追踪日志_${new Date().toISOString().slice(0, 10)}.csv`;
+  a.click();
+  URL.revokeObjectURL(url);
+  showToast('📥 审计日志已成功导出为 CSV 文件！');
+}
+
   </script>
 </body>
 </html>
