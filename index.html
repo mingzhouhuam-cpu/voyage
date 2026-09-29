@@ -15,8 +15,8 @@
   <script id="voyage-ota-bootloader">
     (function() {
       try {
-        var expectedVersion = '2026.3.43';
-        var baseBuildTime = 1790668892554;
+        var expectedVersion = '2026.3.44';
+        var baseBuildTime = 1790671020335;
         var cachedBundle = localStorage.getItem('voyage_finance_cached_bundle');
         var cachedVersion = localStorage.getItem('voyage_finance_cached_version');
         var cachedTime = parseInt(localStorage.getItem('voyage_finance_cached_time') || '0', 10);
@@ -264,10 +264,6 @@
         <button onclick="switchTab('arrears')" id="tab-arrears" class="tab-link text-slate-500 hover:text-slate-700 py-3 px-1 border-b-2 border-transparent font-medium flex items-center space-x-1.5 relative">
           <span>🏠 住宿欠费清查</span>
           <span id="navArrearsBadge" class="bg-rose-500 text-white text-[10px] px-1.5 py-0.5 rounded-full font-bold shadow-sm">0人欠费</span>
-        </button>
-        <button onclick="switchTab('partners')" id="tab-partners" class="tab-link text-slate-500 hover:text-slate-700 py-3 px-1 border-b-2 border-transparent font-medium flex items-center space-x-1.5 relative">
-          <span>💼 合伙人往来结算</span>
-          <span id="navPartnersBadge" class="bg-purple-100 text-purple-700 text-[10px] px-1.5 py-0.5 rounded-full font-bold">3人</span>
         </button>
         <button onclick="switchTab('monthly')" id="tab-monthly" class="tab-link text-slate-500 hover:text-slate-700 py-3 px-1 border-b-2 border-transparent font-medium flex items-center space-x-2">
           <span>📅 月度收支统计</span>
@@ -1049,157 +1045,6 @@
     </div>
 
     <!-- 5. ACCOUNTS & CATEGORIES VIEW -->
-    
-    <!-- 4.8 PARTNERS EQUITY & SETTLEMENT VIEW -->
-    <div id="view-partners" class="space-y-6 hidden">
-      <!-- Partners Header Card -->
-      <div class="bg-white rounded-2xl p-5 sm:p-6 border border-slate-200 shadow-sm space-y-4">
-        <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
-          <div>
-            <div class="flex items-center space-x-2">
-              <span class="text-2xl">💼</span>
-              <h3 class="text-lg sm:text-xl font-bold text-slate-900">合伙人往来结算与报销中心</h3>
-              <span class="bg-purple-100 text-purple-800 text-xs px-2.5 py-0.5 rounded-full font-bold">3位合伙人</span>
-            </div>
-            <p class="text-xs text-slate-500 mt-1">
-              清晰追踪 HUAM MING ZHOU (明周)、LOR PART LEAM (博林)、HENG KEE THUANG (纪统) 三位合伙人的个人垫付、分红提现与汽油津贴，一键生成对账单与清算报销
-            </p>
-          </div>
-          
-          <div class="flex flex-wrap items-center gap-2">
-            <button onclick="exportPartnerSettlementCSV()" class="inline-flex items-center px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-xs font-semibold transition cursor-pointer">
-              <svg class="w-3.5 h-3.5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
-              <span>📥 导出往来对账单 CSV</span>
-            </button>
-            <button onclick="openNewExpenseForPartner()" class="inline-flex items-center px-3 py-1.5 bg-purple-600 hover:bg-purple-700 text-white rounded-lg text-xs font-semibold shadow-sm transition cursor-pointer">
-              <span>➕ 记合伙人垫付/提现</span>
-            </button>
-            <button onclick="renderPartnersSettlement()" class="inline-flex items-center px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-xs font-semibold transition cursor-pointer">
-              <svg class="w-3.5 h-3.5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
-              <span>刷新核对</span>
-            </button>
-          </div>
-        </div>
-
-        <!-- 4 Global Summary Metric Cards -->
-        <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 pt-2">
-          <!-- Total Out-of-pocket Advances -->
-          <div class="bg-purple-50/70 border border-purple-200 rounded-xl p-4">
-            <div class="flex items-center justify-between text-xs text-purple-700 font-semibold">
-              <span>个人累计垫付支出</span>
-              <span class="text-base">💡</span>
-            </div>
-            <div id="partnerTotalAdvance" class="text-xl sm:text-2xl font-black text-purple-700 mt-1.5">RM 0.00</div>
-            <div id="partnerTotalAdvanceSub" class="text-[11px] text-purple-600/80 mt-1">合伙人自费为中心垫付</div>
-          </div>
-
-          <!-- Total Dividend Claims -->
-          <div class="bg-emerald-50/70 border border-emerald-200 rounded-xl p-4">
-            <div class="flex items-center justify-between text-xs text-emerald-700 font-semibold">
-              <span>累计分红提现总额</span>
-              <span class="text-base">💰</span>
-            </div>
-            <div id="partnerTotalClaim" class="text-xl sm:text-2xl font-black text-emerald-600 mt-1.5">RM 0.00</div>
-            <div class="text-[11px] text-emerald-600/80 mt-1">中心已发放分红资金</div>
-          </div>
-
-          <!-- Total Petrol Allowances -->
-          <div class="bg-amber-50/70 border border-amber-200 rounded-xl p-4">
-            <div class="flex items-center justify-between text-xs text-amber-700 font-semibold">
-              <span>累计汽油津贴发放</span>
-              <span class="text-base">⛽</span>
-            </div>
-            <div id="partnerTotalPetrol" class="text-xl sm:text-2xl font-black text-amber-700 mt-1.5">RM 0.00</div>
-            <div class="text-[11px] text-amber-600/80 mt-1">月度接送津贴规范发放</div>
-          </div>
-
-          <!-- Net Pending Reimbursements -->
-          <div class="bg-blue-50/70 border border-blue-200 rounded-xl p-4">
-            <div class="flex items-center justify-between text-xs text-blue-700 font-semibold">
-              <span>待报销垫款应付结余</span>
-              <span class="text-base">⚖️</span>
-            </div>
-            <div id="partnerTotalNetDue" class="text-xl sm:text-2xl font-black text-blue-700 mt-1.5">RM 0.00</div>
-            <div class="text-[11px] text-blue-600/80 mt-1">中心需向合伙人退还款项</div>
-          </div>
-        </div>
-      </div>
-
-      <!-- 3 Individual Partner Profile Cards -->
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-4" id="partnerProfileCardsContainer">
-        <!-- Rendered dynamically in app.js -->
-      </div>
-
-      <!-- Settlement Recommendation / Summary Card -->
-      <div id="partnerSettlementAdviceCard" class="bg-gradient-to-r from-slate-900 via-indigo-950 to-slate-900 text-white rounded-2xl p-5 border border-indigo-900/50 shadow-md space-y-3">
-        <!-- Rendered dynamically in app.js -->
-      </div>
-
-      <!-- Filterable Partner Ledger Table & Mobile Cards -->
-      <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-4 sm:p-5 space-y-4">
-        <div class="flex flex-col md:flex-row md:items-center justify-between gap-3">
-          <div>
-            <h4 class="text-sm font-bold text-slate-900 flex items-center space-x-1.5">
-              <span>📑 合伙人相关收支往来明细账</span>
-              <span id="partnerLedgerCountBadge" class="bg-slate-100 text-slate-700 text-xs px-2 py-0.5 rounded-full font-bold">0笔</span>
-            </h4>
-            <p class="text-xs text-slate-400 mt-0.5">实时包含垫付水电网日常采购、分红提现(PARTNER CLAIM)与汽油津贴全部明细</p>
-          </div>
-          
-          <div class="flex flex-wrap items-center gap-2">
-            <input type="text" id="partnerLedgerKeyword" oninput="onPartnerFilterChange()" placeholder="搜索账目/备注/金额..." class="text-xs px-3 py-1.5 border border-slate-200 rounded-lg w-48 text-slate-700 focus:outline-none focus:border-purple-500">
-          </div>
-        </div>
-
-        <!-- Filter Pills Bar -->
-        <div class="flex flex-wrap items-center gap-3 pt-1 border-t border-slate-100">
-          <div class="flex flex-wrap items-center gap-1 text-xs" id="partnerFilterPills">
-            <span class="text-slate-400 font-medium mr-1">合伙人:</span>
-            <button onclick="setPartnerFilter('all')" id="pfBtn-all" class="px-2.5 py-1 rounded-lg text-xs font-bold bg-purple-600 text-white shadow-xs cursor-pointer">全部合伙人</button>
-            <button onclick="setPartnerFilter('MING ZHOU')" id="pfBtn-MING_ZHOU" class="px-2.5 py-1 rounded-lg text-xs font-medium text-slate-600 hover:bg-slate-100 cursor-pointer">明周 (HUAM MING ZHOU)</button>
-            <button onclick="setPartnerFilter('PART LEAM')" id="pfBtn-PART_LEAM" class="px-2.5 py-1 rounded-lg text-xs font-medium text-slate-600 hover:bg-slate-100 cursor-pointer">博林 (LOR PART LEAM)</button>
-            <button onclick="setPartnerFilter('KEE THUANG')" id="pfBtn-KEE_THUANG" class="px-2.5 py-1 rounded-lg text-xs font-medium text-slate-600 hover:bg-slate-100 cursor-pointer">纪统 (HENG KEE THUANG)</button>
-          </div>
-
-          <div class="flex flex-wrap items-center gap-1 text-xs" id="partnerTypeFilterPills">
-            <span class="text-slate-400 font-medium mr-1">类型:</span>
-            <button onclick="setPartnerTypeFilter('all')" id="ptBtn-all" class="px-2.5 py-1 rounded-lg text-xs font-bold bg-slate-800 text-white cursor-pointer">全部类型</button>
-            <button onclick="setPartnerTypeFilter('advance')" id="ptBtn-advance" class="px-2.5 py-1 rounded-lg text-xs font-medium text-slate-600 hover:bg-slate-100 cursor-pointer">💡 个人垫付</button>
-            <button onclick="setPartnerTypeFilter('claim')" id="ptBtn-claim" class="px-2.5 py-1 rounded-lg text-xs font-medium text-slate-600 hover:bg-slate-100 cursor-pointer">💰 分红提现</button>
-            <button onclick="setPartnerTypeFilter('petrol')" id="ptBtn-petrol" class="px-2.5 py-1 rounded-lg text-xs font-medium text-slate-600 hover:bg-slate-100 cursor-pointer">⛽ 汽油津贴</button>
-          </div>
-        </div>
-
-        <!-- Desktop Table -->
-        <div class="hidden md:block overflow-x-auto">
-          <table class="min-w-full text-xs text-left">
-            <thead class="bg-slate-50 border-b border-slate-200 uppercase tracking-wider text-slate-600 font-semibold">
-              <tr>
-                <th class="px-3.5 py-2.5 whitespace-nowrap">日期</th>
-                <th class="px-3.5 py-2.5 whitespace-nowrap">关联人</th>
-                <th class="px-3.5 py-2.5 whitespace-nowrap">往来类型</th>
-                <th class="px-3.5 py-2.5 whitespace-nowrap">科目分类</th>
-                <th class="px-3.5 py-2.5 whitespace-nowrap">出资/扣款账户</th>
-                <th class="px-3.5 py-2.5 whitespace-nowrap">交易商户/对象</th>
-                <th class="px-3.5 py-2.5">项目摘要与说明</th>
-                <th class="px-3.5 py-2.5 text-right whitespace-nowrap">金额 (RM)</th>
-                <th class="px-3.5 py-2.5 text-center whitespace-nowrap">结算状态</th>
-                <th class="px-3.5 py-2.5 text-center whitespace-nowrap">操作</th>
-              </tr>
-            </thead>
-            <tbody id="partnerLedgerTableBody" class="divide-y divide-slate-100 font-medium">
-              <!-- Rendered dynamically in app.js -->
-            </tbody>
-          </table>
-        </div>
-
-        <!-- Mobile Cards List -->
-        <div id="partnerLedgerCardList" class="md:hidden space-y-3">
-          <!-- Rendered dynamically in app.js -->
-        </div>
-      </div>
-    </div>
-
     <div id="view-accounts" class="space-y-6 hidden">
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <!-- Accounts Breakdown -->
@@ -2905,17 +2750,6 @@ alter publication supabase_realtime add table finance_store;</pre>
           <span id="mobileMoreArrearsBadge" class="bg-rose-600 text-white text-[11px] px-2 py-0.5 rounded-full font-bold">11人欠费</span>
         </button>
 
-                <button onclick="closeMobileMoreMenu(); switchTab('partners');" class="w-full p-3.5 bg-gradient-to-r from-purple-50 to-indigo-50 hover:from-purple-100 hover:to-indigo-100 border border-purple-200 rounded-xl flex items-center justify-between text-slate-900 transition shadow-sm">
-          <span class="flex items-center space-x-3 font-bold text-purple-900">
-            <span class="text-xl">💼</span>
-            <span class="text-left">
-              <span class="block text-sm">合伙人往来结算</span>
-              <span class="block text-[11px] font-normal text-purple-700">垫付报销 · 分红提现 · 汽油津贴对账</span>
-            </span>
-          </span>
-          <span class="text-purple-600 font-bold">查看 →</span>
-        </button>
-
         <button onclick="closeMobileMoreMenu(); switchTab('monthly');" class="w-full p-3.5 bg-slate-50 hover:bg-slate-100 border border-slate-200/80 rounded-xl flex items-center justify-between text-slate-800">
           <span class="flex items-center space-x-3 font-semibold">
             <span class="text-base">📅</span>
@@ -4243,7 +4077,7 @@ const INITIAL_FINANCE_DATA = {
       "date": "2026-09-01",
       "item": "9月汽油津贴",
       "amount": 100,
-      "remark": null,
+      "remark": "尚未报销",
       "account": "KEE THUANG",
       "category": "汽油津贴",
       "counterparty": "KEE THUANG",
@@ -4254,7 +4088,7 @@ const INITIAL_FINANCE_DATA = {
       "date": "2026-09-01",
       "item": "9月汽油津贴",
       "amount": 150,
-      "remark": null,
+      "remark": "尚未报销",
       "account": "PART LEAM",
       "category": "汽油津贴",
       "counterparty": "PART LEAM",
@@ -4310,7 +4144,7 @@ const INITIAL_FINANCE_DATA = {
       "date": "2026-08-01",
       "item": "8月汽油津贴",
       "amount": 150,
-      "remark": null,
+      "remark": "尚未报销",
       "account": "PART LEAM",
       "category": "汽油津贴",
       "counterparty": "PART LEAM",
@@ -4321,7 +4155,7 @@ const INITIAL_FINANCE_DATA = {
       "date": "2026-08-01",
       "item": "8月汽油津贴",
       "amount": 100,
-      "remark": null,
+      "remark": "尚未报销",
       "account": "KEE THUANG",
       "category": "汽油津贴",
       "counterparty": "KEE THUANG",
@@ -4387,7 +4221,7 @@ const INITIAL_FINANCE_DATA = {
       "date": "2026-07-01",
       "item": "7月汽油津贴",
       "amount": 150,
-      "remark": null,
+      "remark": "尚未报销",
       "account": "PART LEAM",
       "category": "汽油津贴",
       "counterparty": "PART LEAM",
@@ -4398,7 +4232,7 @@ const INITIAL_FINANCE_DATA = {
       "date": "2026-07-01",
       "item": "7月汽油津贴",
       "amount": 100,
-      "remark": null,
+      "remark": "尚未报销",
       "account": "KEE THUANG",
       "category": "汽油津贴",
       "counterparty": "KEE THUANG",
@@ -4420,7 +4254,7 @@ const INITIAL_FINANCE_DATA = {
       "date": "2026-06-01",
       "item": "6月汽油津贴",
       "amount": 100,
-      "remark": null,
+      "remark": "尚未报销",
       "account": "KEE THUANG",
       "category": "汽油津贴",
       "counterparty": "KEE THUANG",
@@ -4431,7 +4265,7 @@ const INITIAL_FINANCE_DATA = {
       "date": "2026-06-01",
       "item": "6月汽油津贴",
       "amount": 150,
-      "remark": null,
+      "remark": "尚未报销",
       "account": "PART LEAM",
       "category": "汽油津贴",
       "counterparty": "PART LEAM",
@@ -5423,7 +5257,7 @@ let ocrSettings = {
 };
 
 // Application Version and OTA Release Timestamp
-window.VOYAGE_APP_VERSION = '2026.3.43';
+window.VOYAGE_APP_VERSION = '2026.3.44';
 window.VOYAGE_APP_BUILD_TIME = Date.now();
 
 // 15 Boarding Students Master Configuration (Globally initialized)
@@ -6505,7 +6339,7 @@ function saveData() {
 // Tab Switching
 function switchTab(tabId) {
   currentTab = tabId;
-  const views = ['dashboard', 'statement', 'income', 'expense', 'monthly', 'arrears', 'partners', 'accounts', 'settings', 'audit'];
+  const views = ['dashboard', 'statement', 'income', 'expense', 'monthly', 'arrears', 'accounts', 'settings', 'audit'];
   views.forEach(v => {
     const el = document.getElementById(`view-${v}`);
     const tabBtn = document.getElementById(`tab-${v}`);
@@ -6541,10 +6375,7 @@ function switchTab(tabId) {
   } else if (tabId === 'monthly') {
     renderMonthlyReport();
   } else if (tabId === 'arrears') {
-    renderArrearsTracker();
-  } else if (tabId === 'partners') {
-    renderPartnersSettlement();
-  } else if (tabId === 'accounts') {
+    renderArrearsTracker();} else if (tabId === 'accounts') {
     renderAccountsAndCategories();
   } else if (tabId === 'audit') {
     renderAuditLogs();
@@ -13894,460 +13725,7 @@ function shareReceiptWhatsApp() {
 }
 
 
-// ----------------------------------------------------------------------------
-// MODULE 3: DEDICATED PARTNERS EQUITY & SETTLEMENT PAGE
-// ----------------------------------------------------------------------------
-
-const PARTNER_PROFILES = [
-  {
-    id: 'MING ZHOU',
-    name: 'HUAM MING ZHOU',
-    zhName: '明周',
-    role: '合伙人 / 运营主管',
-    accountName: 'MING ZHOU',
-    keywords: ['MING ZHOU', 'HUAM MING ZHOU', '明周'],
-    petrolAllowanceMonthly: 0,
-    avatar: '👨‍💼',
-    color: 'purple',
-    note: '主要垫付：MAXIS网络光纤、TNB电费、Lembaga Air水费等公用事业账单'
-  },
-  {
-    id: 'PART LEAM',
-    name: 'LOR PART LEAM',
-    zhName: '博林',
-    role: '合伙人 / 教务主管',
-    accountName: 'PART LEAM',
-    keywords: ['PART LEAM', 'LOR PART LEAM', '博林'],
-    petrolAllowanceMonthly: 150,
-    avatar: '👨‍🏫',
-    color: 'indigo',
-    note: '固定汽油津贴 RM150/月；主要垫付：Coway净水机、Lotus日用消耗品、Petron加油等'
-  },
-  {
-    id: 'KEE THUANG',
-    name: 'HENG KEE THUANG',
-    zhName: '纪统',
-    role: '合伙人 / 总务主管',
-    accountName: 'KEE THUANG',
-    keywords: ['KEE THUANG', 'HENG KEE THUANG', '纪统'],
-    petrolAllowanceMonthly: 100,
-    avatar: '👨‍🔧',
-    color: 'amber',
-    note: '固定汽油津贴 RM100/月；主要协同总务与学生接送'
-  }
-];
-
-let partnerSettlementFilter = 'all';
-let partnerTypeFilter = 'all';
-let partnerSearchKeyword = '';
-
-function calculatePartnerSettlement() {
-  const expenses = appData.expenses || [];
-  
-  let grandAdvance = 0;
-  let grandClaim = 0;
-  let grandPetrol = 0;
-  let grandReimbursed = 0;
-
-  const partnerSummaries = PARTNER_PROFILES.map(p => {
-    const pId = p.id;
-    const acc = p.accountName;
-
-    // Out-of-pocket expenses: paid from partner account, excluding petrol if booked under account
-    const advanceItems = expenses.filter(e => {
-      const isAcc = e.account === acc;
-      const isPetrol = (e.category || '').includes('油津') || (e.item || '').includes('油津');
-      return isAcc && !isPetrol;
-    });
-    const totalAdvance = advanceItems.reduce((s, e) => s + (Number(e.amount) || 0), 0);
-
-    // Dividend claims: category is 提现 or item contains PARTNER CLAIM
-    const claimItems = expenses.filter(e => {
-      const isClaimCat = (e.category || '').includes('提现') || (e.item || '').toUpperCase().includes('PARTNER CLAIM');
-      const matchPartner = p.keywords.some(k => (e.counterparty || '').toUpperCase().includes(k) || (e.remark || '').toUpperCase().includes(k) || (e.item || '').toUpperCase().includes(k));
-      return isClaimCat && matchPartner;
-    });
-    const totalClaim = claimItems.reduce((s, e) => s + (Number(e.amount) || 0), 0);
-
-    // Petrol allowances: category is 油津 or item contains 油津
-    const petrolItems = expenses.filter(e => {
-      const isPetrol = (e.category || '').includes('油津') || (e.item || '').includes('油津') || (e.item || '').toUpperCase().includes('PETROL');
-      const matchPartner = p.keywords.some(k => (e.counterparty || '').toUpperCase().includes(k) || (e.remark || '').toUpperCase().includes(k) || (e.item || '').toUpperCase().includes(k)) || e.account === acc;
-      return isPetrol && matchPartner;
-    });
-    const totalPetrol = petrolItems.reduce((s, e) => s + (Number(e.amount) || 0), 0);
-
-    // Advance reimbursements already repaid to partner from Hong Leong
-    const reimbursementItems = expenses.filter(e => {
-      const isReimb = (e.category || '').includes('报销') || (e.item || '').includes('报销') || (e.remark || '').includes('报销');
-      const matchPartner = p.keywords.some(k => (e.counterparty || '').toUpperCase().includes(k));
-      return isReimb && matchPartner && e.account !== acc;
-    });
-    const totalReimbursed = reimbursementItems.reduce((s, e) => s + (Number(e.amount) || 0), 0);
-
-    const netOwed = Math.max(0, totalAdvance - totalReimbursed);
-
-    grandAdvance += totalAdvance;
-    grandClaim += totalClaim;
-    grandPetrol += totalPetrol;
-    grandReimbursed += totalReimbursed;
-
-    return {
-      ...p,
-      advanceItems,
-      totalAdvance,
-      claimItems,
-      totalClaim,
-      petrolItems,
-      totalPetrol,
-      reimbursementItems,
-      totalReimbursed,
-      netOwed
-    };
-  });
-
-  const grandNetDue = grandAdvance - grandReimbursed;
-
-  return {
-    partnerSummaries,
-    grandAdvance,
-    grandClaim,
-    grandPetrol,
-    grandReimbursed,
-    grandNetDue
-  };
-}
-
-function renderPartnersSettlement() {
-  const container = document.getElementById('view-partners');
-  if (!container) return;
-
-  const data = calculatePartnerSettlement();
-
-  // Top 4 Metric Cards
-  const totalAdvEl = document.getElementById('partnerTotalAdvance');
-  const totalClaimEl = document.getElementById('partnerTotalClaim');
-  const totalPetrolEl = document.getElementById('partnerTotalPetrol');
-  const totalNetDueEl = document.getElementById('partnerTotalNetDue');
-
-  if (totalAdvEl) totalAdvEl.textContent = formatMoney(data.grandAdvance);
-  if (totalClaimEl) totalClaimEl.textContent = formatMoney(data.grandClaim);
-  if (totalPetrolEl) totalPetrolEl.textContent = formatMoney(data.grandPetrol);
-  if (totalNetDueEl) totalNetDueEl.textContent = formatMoney(data.grandNetDue);
-
-  // 3 Partner Profile Cards
-  const cardsContainer = document.getElementById('partnerProfileCardsContainer');
-  if (cardsContainer) {
-    cardsContainer.innerHTML = data.partnerSummaries.map(p => {
-      return `
-        <div class="bg-white rounded-2xl p-5 border border-slate-200 shadow-sm space-y-4 hover:shadow-md transition">
-          <div class="flex items-start justify-between">
-            <div class="flex items-center space-x-3">
-              <span class="text-3xl">${p.avatar}</span>
-              <div>
-                <h4 class="text-base font-bold text-slate-900">${p.name}</h4>
-                <div class="flex items-center space-x-2 mt-0.5">
-                  <span class="text-xs font-semibold text-purple-700 bg-purple-50 px-2 py-0.5 rounded-md">${p.zhName}</span>
-                  <span class="text-[11px] text-slate-400 font-medium">${p.role}</span>
-                </div>
-              </div>
-            </div>
-            <button onclick="setPartnerFilter('${p.id}')" class="px-2.5 py-1 bg-slate-100 hover:bg-purple-50 hover:text-purple-700 text-slate-600 rounded-lg text-xs font-semibold transition cursor-pointer">
-              查明细 🔍
-            </button>
-          </div>
-
-          <!-- Numbers Grid -->
-          <div class="grid grid-cols-2 gap-2 p-3 rounded-xl bg-slate-50 border border-slate-100 text-xs">
-            <div>
-              <span class="text-slate-400 text-[11px]">个人累计垫付支出</span>
-              <div class="text-sm font-black text-purple-700 mt-0.5">${formatMoney(p.totalAdvance)}</div>
-              <span class="text-[10px] text-slate-400">共 ${p.advanceItems.length} 笔垫付款项</span>
-            </div>
-            <div>
-              <span class="text-slate-400 text-[11px]">中心待报销退还</span>
-              <div class="text-sm font-black text-blue-700 mt-0.5">${formatMoney(p.netOwed)}</div>
-              <span class="text-[10px] ${p.netOwed > 0 ? 'text-amber-600 font-semibold' : 'text-emerald-600'}">${p.netOwed > 0 ? '中心尚未退还' : '已结清'}</span>
-            </div>
-          </div>
-
-          <div class="grid grid-cols-2 gap-2 text-xs pt-1">
-            <div class="p-2.5 rounded-lg bg-emerald-50/60 border border-emerald-100">
-              <span class="text-emerald-800 text-[10px] font-bold block">分红提现已领</span>
-              <span class="text-xs font-bold text-emerald-700">${formatMoney(p.totalClaim)}</span>
-            </div>
-            <div class="p-2.5 rounded-lg bg-amber-50/60 border border-amber-100">
-              <span class="text-amber-800 text-[10px] font-bold block">汽油津贴累计</span>
-              <span class="text-xs font-bold text-amber-700">${formatMoney(p.totalPetrol)}</span>
-            </div>
-          </div>
-
-          <p class="text-[11px] text-slate-400 leading-relaxed border-t border-slate-100 pt-2.5">
-            ${p.note}
-          </p>
-        </div>
-      `;
-    }).join('');
-  }
-
-  // Settlement Advice Card
-  const adviceCard = document.getElementById('partnerSettlementAdviceCard');
-  if (adviceCard) {
-    const p1 = data.partnerSummaries.find(p => p.id === 'MING ZHOU');
-    const p2 = data.partnerSummaries.find(p => p.id === 'PART LEAM');
-    const p3 = data.partnerSummaries.find(p => p.id === 'KEE THUANG');
-
-    adviceCard.innerHTML = `
-      <div class="flex flex-col md:flex-row md:items-center justify-between gap-3 border-b border-indigo-900/60 pb-3">
-        <div class="flex items-center space-x-2">
-          <span class="text-xl">⚖️</span>
-          <h4 class="text-sm sm:text-base font-bold text-white">合伙人往来账目清算与报销结余建议</h4>
-        </div>
-        <span class="text-[11px] px-2.5 py-1 bg-indigo-900/80 text-indigo-200 rounded-lg font-mono">
-          截止对账日: 2026-09-30
-        </span>
-      </div>
-
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-3 text-xs pt-1">
-        <div class="bg-indigo-950/60 p-3 rounded-xl border border-indigo-800/40 space-y-1">
-          <div class="text-slate-300 font-bold flex items-center justify-between">
-            <span>HUAM MING ZHOU (明周)</span>
-            <span class="text-emerald-400 font-bold">待退款</span>
-          </div>
-          <div class="text-base font-black text-amber-300">${formatMoney(p1 ? p1.netOwed : 0)}</div>
-          <p class="text-[11px] text-slate-400">垫付 10 笔公用账单，建议中心由 Hong Leong 户口全额报销划拨至明周个人账户。</p>
-        </div>
-
-        <div class="bg-indigo-950/60 p-3 rounded-xl border border-indigo-800/40 space-y-1">
-          <div class="text-slate-300 font-bold flex items-center justify-between">
-            <span>LOR PART LEAM (博林)</span>
-            <span class="text-emerald-400 font-bold">待退款</span>
-          </div>
-          <div class="text-base font-black text-amber-300">${formatMoney(p2 ? p2.netOwed : 0)}</div>
-          <p class="text-[11px] text-slate-400">垫付 6 笔净水器与物资，津贴按月准时计发 RM150/月，建议报销垫付款项。</p>
-        </div>
-
-        <div class="bg-indigo-950/60 p-3 rounded-xl border border-indigo-800/40 space-y-1">
-          <div class="text-slate-300 font-bold flex items-center justify-between">
-            <span>HENG KEE THUANG (纪统)</span>
-            <span class="text-emerald-400 font-bold">已对齐</span>
-          </div>
-          <div class="text-base font-black text-slate-300">${formatMoney(p3 ? p3.netOwed : 0)}</div>
-          <p class="text-[11px] text-slate-400">个人暂无自费垫付款项，每月汽油津贴 RM100 均等发放，账目平衡清爽。</p>
-        </div>
-      </div>
-    `;
-  }
-
-  // Render Filtered Ledger Table & Cards
-  renderPartnerLedgerTable();
-}
-
-function renderPartnerLedgerTable() {
-  const tbody = document.getElementById('partnerLedgerTableBody');
-  const cardList = document.getElementById('partnerLedgerCardList');
-  const badge = document.getElementById('partnerLedgerCountBadge');
-
-  const expenses = appData.expenses || [];
-  const kw = (partnerSearchKeyword || (document.getElementById('partnerLedgerKeyword')?.value || '')).trim().toLowerCase();
-
-  let records = [];
-
-  expenses.forEach(e => {
-    PARTNER_PROFILES.forEach(p => {
-      const isAccount = e.account === p.accountName;
-      const isCp = p.keywords.some(k => (e.counterparty || '').toUpperCase().includes(k) || (e.remark || '').toUpperCase().includes(k) || (e.item || '').toUpperCase().includes(k));
-
-      if (isAccount || isCp) {
-        let type = 'advance';
-        let typeLabel = '💡 个人垫付';
-        let typeBadgeClass = 'bg-purple-100 text-purple-800 border-purple-200';
-        let settleStatus = '<span class="text-amber-600 font-bold text-[11px]">待报销</span>';
-
-        const isPetrol = (e.category || '').includes('油津') || (e.item || '').includes('油津') || (e.item || '').toUpperCase().includes('PETROL');
-        const isClaim = (e.category || '').includes('提现') || (e.item || '').toUpperCase().includes('PARTNER CLAIM');
-
-        if (isClaim) {
-          type = 'claim';
-          typeLabel = '💰 分红提现';
-          typeBadgeClass = 'bg-emerald-100 text-emerald-800 border-emerald-200';
-          settleStatus = '<span class="text-emerald-600 font-semibold text-[11px]">已划付</span>';
-        } else if (isPetrol) {
-          type = 'petrol';
-          typeLabel = '⛽ 汽油津贴';
-          typeBadgeClass = 'bg-amber-100 text-amber-800 border-amber-200';
-          settleStatus = '<span class="text-slate-500 font-semibold text-[11px]">已计发</span>';
-        }
-
-        records.push({
-          ...e,
-          partnerId: p.id,
-          partnerName: p.name,
-          partnerZh: p.zhName,
-          type,
-          typeLabel,
-          typeBadgeClass,
-          settleStatus
-        });
-      }
-    });
-  });
-
-  const seenIds = new Set();
-  records = records.filter(r => {
-    const key = `${r.id}_${r.partnerId}`;
-    if (seenIds.has(key)) return false;
-    seenIds.add(key);
-    return true;
-  });
-
-  let filtered = records.filter(r => {
-    if (partnerSettlementFilter !== 'all' && r.partnerId !== partnerSettlementFilter) return false;
-    if (partnerTypeFilter !== 'all' && r.type !== partnerTypeFilter) return false;
-    if (kw) {
-      const str = `${r.date} ${r.partnerName} ${r.partnerZh} ${r.item} ${r.remark || ''} ${r.category || ''} ${r.account || ''} ${r.counterparty || ''}`.toLowerCase();
-      if (!str.includes(kw)) return false;
-    }
-    return true;
-  });
-
-  filtered.sort((a, b) => new Date(b.date) - new Date(a.date));
-
-  if (badge) badge.textContent = `${filtered.length}笔`;
-
-  if (tbody) {
-    if (filtered.length === 0) {
-      tbody.innerHTML = '<tr><td colspan="10" class="text-center py-8 text-slate-400">未找到相关合伙人往来记录</td></tr>';
-    } else {
-      tbody.innerHTML = filtered.map(r => `
-        <tr class="hover:bg-slate-50 transition border-b border-slate-100">
-          <td class="px-3.5 py-3 whitespace-nowrap text-slate-700">${r.date}</td>
-          <td class="px-3.5 py-3 whitespace-nowrap">
-            <span class="font-bold text-slate-900">${r.partnerZh}</span>
-            <span class="text-[10px] text-slate-400 ml-1 font-mono">(${r.partnerId})</span>
-          </td>
-          <td class="px-3.5 py-3 whitespace-nowrap">
-            <span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-bold border ${r.typeBadgeClass}">
-              ${r.typeLabel}
-            </span>
-          </td>
-          <td class="px-3.5 py-3 whitespace-nowrap text-slate-600">${r.category || '-'}</td>
-          <td class="px-3.5 py-3 whitespace-nowrap font-mono text-slate-700">${r.account || '-'}</td>
-          <td class="px-3.5 py-3 whitespace-nowrap text-slate-800">${r.counterparty || '-'}</td>
-          <td class="px-3.5 py-3 text-slate-700 max-w-xs truncate" title="${r.item} ${r.remark ? '· ' + r.remark : ''}">
-            <span class="font-semibold text-slate-900">${r.item}</span>
-            ${r.remark ? `<span class="text-slate-400 text-[11px] block">${r.remark}</span>` : ''}
-          </td>
-          <td class="px-3.5 py-3 text-right font-black whitespace-nowrap text-slate-900">${formatMoney(r.amount)}</td>
-          <td class="px-3.5 py-3 text-center whitespace-nowrap">${r.settleStatus}</td>
-          <td class="px-3.5 py-3 text-center whitespace-nowrap space-x-1.5">
-            <button onclick="editExpense('${r.id}')" class="text-blue-600 hover:text-blue-800 font-semibold cursor-pointer">编辑</button>
-            <button onclick="openRecordAuditLogs('${r.id}', 'expense')" class="text-indigo-600 hover:text-indigo-800 font-semibold cursor-pointer">审计</button>
-          </td>
-        </tr>
-      `).join('');
-    }
-  }
-
-  if (cardList) {
-    if (filtered.length === 0) {
-      cardList.innerHTML = '<div class="bg-white rounded-2xl p-6 text-center text-xs text-slate-400 border border-slate-200">未找到相关合伙人往来记录</div>';
-    } else {
-      cardList.innerHTML = filtered.map(r => `
-        <div class="bg-white rounded-2xl p-4 border border-slate-200 shadow-xs space-y-3">
-          <div class="flex items-center justify-between">
-            <div class="flex items-center space-x-2">
-              <span class="font-bold text-slate-900 text-sm">${r.partnerZh}</span>
-              <span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold border ${r.typeBadgeClass}">
-                ${r.typeLabel}
-              </span>
-            </div>
-            <span class="text-base font-black text-slate-900">${formatMoney(r.amount)}</span>
-          </div>
-
-          <div class="text-xs">
-            <div class="font-bold text-slate-800">${r.item}</div>
-            <div class="text-slate-400 text-[11px] mt-0.5">${r.date} · 账户: ${r.account || '-'} · 商家: ${r.counterparty || '-'}</div>
-            ${r.remark ? `<div class="text-slate-500 mt-1 italic">${r.remark}</div>` : ''}
-          </div>
-
-          <div class="flex items-center justify-between pt-2 border-t border-slate-100 text-xs">
-            <span>状态: ${r.settleStatus}</span>
-            <div class="flex items-center space-x-2">
-              <button onclick="editExpense('${r.id}')" class="px-2 py-1 text-xs font-semibold text-blue-600 hover:bg-blue-50 rounded-lg">编辑</button>
-              <button onclick="openRecordAuditLogs('${r.id}', 'expense')" class="px-2 py-1 text-xs font-semibold text-indigo-600 hover:bg-indigo-50 rounded-lg">审计</button>
-            </div>
-          </div>
-        </div>
-      `).join('');
-    }
-  }
-}
-
-function setPartnerFilter(partnerId) {
-  partnerSettlementFilter = partnerId;
-  const pIds = ['all', 'MING_ZHOU', 'PART_LEAM', 'KEE_THUANG'];
-  pIds.forEach(id => {
-    const rawId = id.replace('_', ' ');
-    const btn = document.getElementById(`pfBtn-${id}`);
-    if (btn) {
-      if ((partnerId === 'all' && id === 'all') || partnerId === rawId) {
-        btn.className = 'px-2.5 py-1 rounded-lg text-xs font-bold bg-purple-600 text-white shadow-xs cursor-pointer';
-      } else {
-        btn.className = 'px-2.5 py-1 rounded-lg text-xs font-medium text-slate-600 hover:bg-slate-100 cursor-pointer';
-      }
-    }
-  });
-  renderPartnerLedgerTable();
-}
-
-function setPartnerTypeFilter(type) {
-  partnerTypeFilter = type;
-  const types = ['all', 'advance', 'claim', 'petrol'];
-  types.forEach(t => {
-    const btn = document.getElementById(`ptBtn-${t}`);
-    if (btn) {
-      if (type === t) {
-        btn.className = 'px-2.5 py-1 rounded-lg text-xs font-bold bg-slate-800 text-white cursor-pointer';
-      } else {
-        btn.className = 'px-2.5 py-1 rounded-lg text-xs font-medium text-slate-600 hover:bg-slate-100 cursor-pointer';
-      }
-    }
-  });
-  renderPartnerLedgerTable();
-}
-
-function onPartnerFilterChange() {
-  partnerSearchKeyword = (document.getElementById('partnerLedgerKeyword')?.value || '').trim();
-  renderPartnerLedgerTable();
-}
-
-function openNewExpenseForPartner() {
-  if (typeof triggerMobileNewExpense === 'function') {
-    triggerMobileNewExpense();
-  } else {
-    openModal('expenseModal');
-  }
-}
-
-function exportPartnerSettlementCSV() {
-  const expenses = appData.expenses || [];
-  let rows = [
-    ['日期', '合伙人姓名', '合伙人中文名', '往来类型', '科目分类', '支出账户', '交易商户', '明细摘要', '金额 (RM)', '结算状态', '备注']
-  ];
-
-  expenses.forEach(e => {
-    PARTNER_PROFILES.forEach(p => {
-      const isAccount = e.account === p.accountName;
-      const isCp = p.keywords.some(k => (e.counterparty || '').toUpperCase().includes(k) || (e.remark || '').toUpperCase().includes(k) || (e.item || '').toUpperCase().includes(k));
-
-      if (isAccount || isCp) {
-        let type = '个人垫付';
-        let settle = '待报销';
-        const isPetrol = (e.category || '').includes('油津') || (e.item || '').includes('油津');
-        const isClaim = (e.category || '').includes('提现') || (e.item || '').toUpperCase().includes('PARTNER CLAIM');
-        if (isClaim) { type = '分红提现'; settle = '已划付'; }
-        else if (isPetrol) { type = '汽油津贴'; settle = '已计发'; }
+else if (isPetrol) { type = '汽油津贴'; settle = '已计发'; }
 
         rows.push([
           e.date,
