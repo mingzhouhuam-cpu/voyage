@@ -15,8 +15,8 @@
   <script id="voyage-ota-bootloader">
     (function() {
       try {
-        var expectedVersion = '2026.3.41';
-        var baseBuildTime = 1790592908352;
+        var expectedVersion = '2026.3.42';
+        var baseBuildTime = 1790667136470;
         var cachedBundle = localStorage.getItem('voyage_finance_cached_bundle');
         var cachedVersion = localStorage.getItem('voyage_finance_cached_version');
         var cachedTime = parseInt(localStorage.getItem('voyage_finance_cached_time') || '0', 10);
@@ -415,6 +415,27 @@
           <div class="divide-y divide-slate-100" id="recentExpensesList">
             <!-- Rendered by JS -->
           </div>
+        </div>
+      </div>
+
+      <!-- Recent Audit Trail Card on Dashboard -->
+      <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+        <div class="p-5 border-b border-slate-100 flex items-center justify-between">
+          <div class="flex items-center space-x-2.5">
+            <div class="w-8 h-8 rounded-lg bg-indigo-50 text-indigo-700 flex items-center justify-center font-bold text-sm">
+              📋
+            </div>
+            <div>
+              <h4 class="font-bold text-slate-900 text-sm">财务操作实时审计留痕 (Audit Trail)</h4>
+              <p class="text-[11px] text-slate-400">实时记录收入与支出的录入、修改对比、删除快照与对账单导入操作</p>
+            </div>
+          </div>
+          <button onclick="switchTab('audit')" class="text-xs text-indigo-600 hover:text-indigo-800 font-bold flex items-center space-x-1 transition">
+            <span>进入全量审计看板 →</span>
+          </button>
+        </div>
+        <div class="divide-y divide-slate-100" id="dashRecentAuditList">
+          <!-- Rendered by JS -->
         </div>
       </div>
     </div>
@@ -1583,6 +1604,40 @@
 
 
   <!-- Audit Log Detail / Snapshot Modal -->
+  
+  <!-- RECORD AUDIT MODAL (单笔记录全生命周期审计弹窗) -->
+  <div id="recordAuditModal" class="fixed inset-0 z-50 overflow-y-auto hidden bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4">
+    <div class="bg-white rounded-3xl max-w-2xl w-full p-6 shadow-2xl border border-slate-200 space-y-4">
+      <div class="flex items-center justify-between pb-3 border-b border-slate-100">
+        <div class="flex items-center space-x-2.5">
+          <div class="w-9 h-9 rounded-xl bg-indigo-50 text-indigo-700 flex items-center justify-center text-lg font-bold">
+            📜
+          </div>
+          <div>
+            <h3 class="font-bold text-slate-900 text-base" id="recordAuditModalTitle">单号审计追踪</h3>
+            <p class="text-xs text-slate-400" id="recordAuditModalSubtitle">记录全生命周期流转与变更凭据</p>
+          </div>
+        </div>
+        <button onclick="closeModal('recordAuditModal')" class="w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 flex items-center justify-center text-slate-500 font-bold transition">
+          ✕
+        </button>
+      </div>
+
+      <div id="recordAuditModalContent" class="space-y-3 max-h-[60vh] overflow-y-auto pr-1">
+        <!-- Rendered by JS -->
+      </div>
+
+      <div class="pt-3 border-t border-slate-100 flex items-center justify-between">
+        <button onclick="switchTab('audit'); closeModal('recordAuditModal');" class="text-xs font-semibold text-indigo-600 hover:text-indigo-800">
+          进入全量审计追踪看板 →
+        </button>
+        <button onclick="closeModal('recordAuditModal')" class="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold text-xs rounded-xl transition">
+          关闭
+        </button>
+      </div>
+    </div>
+  </div>
+
   <div id="auditDetailModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 hidden overflow-y-auto">
     <div class="bg-white rounded-t-3xl sm:rounded-2xl max-w-2xl w-full p-5 sm:p-6 shadow-2xl border border-slate-100 space-y-4 my-0 sm:my-8 max-h-[92vh] overflow-y-auto transition-all">
       <div class="flex items-center justify-between border-b border-slate-100 pb-3">
@@ -1834,6 +1889,22 @@
           <span class="text-base flex-shrink-0">⚠️</span>
           <span id="incomeDuplicateNoticeText" class="font-medium">系统检测到相同单号或交款人的收入已存在，禁止重复录入！</span>
         </div>
+
+        <!-- Income Modal Audit History Snippet -->
+        <div id="incomeAuditHistoryBox" class="hidden p-3 rounded-xl bg-indigo-50/70 border border-indigo-200/80 text-xs space-y-1.5">
+          <div class="flex items-center justify-between font-bold text-indigo-900 text-[11px]">
+            <span class="flex items-center space-x-1">
+              <span>📜 审计留痕与变更历史</span>
+            </span>
+            <button type="button" onclick="openRecordAuditLogs(document.getElementById('incomeFormId')?.value, 'income')" class="text-indigo-600 hover:underline">
+              查看全部变更轨迹 →
+            </button>
+          </div>
+          <div id="incomeAuditHistoryContent" class="text-[11px] text-slate-600 space-y-1">
+            <!-- Rendered by JS -->
+          </div>
+        </div>
+
         <div class="flex items-center justify-end space-x-3 pt-3 border-t border-slate-100">
           <button type="button" onclick="closeModal('incomeModal')" class="px-4 py-2 border border-slate-300 text-slate-600 hover:bg-slate-50 rounded-lg font-medium">取消</button>
           <button type="submit" id="incomeSubmitBtn" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg font-medium shadow-sm transition">保存记录</button>
@@ -1948,6 +2019,22 @@
             <span class="text-base flex-shrink-0">⚠️</span>
             <span id="expenseDuplicateNoticeText" class="font-medium">系统检测到相同项目或金额的支出已存在，禁止重复录入！</span>
           </div>
+
+          <!-- Expense Modal Audit History Snippet -->
+          <div id="expenseAuditHistoryBox" class="hidden p-3 rounded-xl bg-indigo-50/70 border border-indigo-200/80 text-xs space-y-1.5">
+            <div class="flex items-center justify-between font-bold text-indigo-900 text-[11px]">
+              <span class="flex items-center space-x-1">
+                <span>📜 审计留痕与变更历史</span>
+              </span>
+              <button type="button" onclick="openRecordAuditLogs(document.getElementById('expenseFormId')?.value, 'expense')" class="text-indigo-600 hover:underline">
+                查看全部变更轨迹 →
+              </button>
+            </div>
+            <div id="expenseAuditHistoryContent" class="text-[11px] text-slate-600 space-y-1">
+              <!-- Rendered by JS -->
+            </div>
+          </div>
+
           <div class="flex items-center justify-end space-x-3 pt-3 border-t border-slate-100">
             <button type="button" onclick="closeModal('expenseModal')" class="px-4 py-2 border border-slate-300 text-slate-600 hover:bg-slate-50 rounded-lg font-medium">取消</button>
             <button type="submit" id="expenseSubmitBtn" class="px-4 py-2 bg-rose-600 hover:bg-rose-700 text-white rounded-lg font-medium shadow-sm transition">保存记录</button>
@@ -2753,6 +2840,8 @@ alter publication supabase_realtime add table finance_store;</pre>
 
 
 
+
+
   <!-- Scripts -->
   <script>
 const INITIAL_FINANCE_DATA = {"incomes":[{"id":"INC-03084750","date":"2026-09-08","amount":480,"remark":"2026年9月 住宿费 (TAN JIAN FONG · 付款人: Tan Jian Fong)","account":"Hong Leong","category":"住宿费","feeMonth":"","invoiceNo":"","receiptNo":"","counterparty":"TAN JIAN FONG"},{"id":"INC-03084715","date":"2026-09-07","amount":480,"remark":"2026年9月 住宿费 (ENG WEI ZHI · 付款人: ENG WEE HOSTEL ZHI 2609)","account":"Hong Leong","category":"住宿费","feeMonth":"2026-09","invoiceNo":"","receiptNo":"","counterparty":"ENG WEI ZHI"},{"id":"INC-03084698","date":"2026-09-07","amount":480,"remark":"2026年9月 住宿费 (WONG E FULL · 付款人: WongEFull Fund transfer S3X Sept26)","account":"Hong Leong","category":"住宿费","feeMonth":"2026-09","invoiceNo":"","receiptNo":"","counterparty":"WONG E FULL"},{"id":"INC-03084669","date":"2026-09-06","amount":480,"remark":"2026年9月 住宿费 (HUAIDERK · 付款人: SEPT HUAI DERK)","account":"Hong Leong","category":"住宿费","feeMonth":"2026-09","invoiceNo":"","receiptNo":"","counterparty":"HUAIDERK"},{"id":"INC-63668868","date":"2026-09-05","amount":480,"remark":"sept ","account":"Hong Leong","category":"销售收入","invoiceNo":"","receiptNo":"","counterparty":"LEE YAN CHENG"},{"id":"INC-63668898","date":"2026-09-01","amount":960,"remark":"Instant Transfer at KLM Kaihao","account":"Hong Leong","category":"销售收入","invoiceNo":"","receiptNo":"","counterparty":"KAI HAO"},{"id":"INC-63668821","date":"2026-08-28","amount":480,"remark":"Sept","account":"Hong Leong","category":"销售收入","invoiceNo":"","receiptNo":"","counterparty":"LEE JU YAN"},{"id":"INC-63668860","date":"2026-08-24","amount":480,"remark":"August ","account":"Hong Leong","category":"销售收入","invoiceNo":"","receiptNo":"","counterparty":"CHUA MING ZHE"},{"id":"INC-63668814","date":"2026-08-22","amount":1440,"remark":"JUN","account":"Hong Leong","category":"销售收入","invoiceNo":"","receiptNo":"","counterparty":"ONG SHI SHUI"},{"id":"INC-63668834","date":"2026-08-09","amount":480,"remark":"HOSTEL 2608","account":"Hong Leong","category":"销售收入","invoiceNo":"","receiptNo":"","counterparty":"ENG WEE ZHI"},{"id":"INC-63668875","date":"2026-08-07","amount":480,"remark":"Aug26","account":"Hong Leong","category":"销售收入","invoiceNo":"","receiptNo":"","counterparty":"WONG E FULL"},{"id":"INC-63668886","date":"2026-08-06","amount":480,"remark":"AUGUST ","account":"Hong Leong","category":"销售收入","invoiceNo":"","receiptNo":"","counterparty":"HUAI DERK"},{"id":"INC-49721123","date":"2026-08-05","amount":480,"remark":"Aug26","account":"Hong Leong","category":"销售收入","invoiceNo":"","receiptNo":"","counterparty":"GOH JYJE SHAN"},{"id":"INC-49721147","date":"2026-08-04","amount":480,"remark":"AUG26","account":"Hong Leong","category":"销售收入","invoiceNo":"","receiptNo":"","counterparty":"LEE YAN CHENG"},{"id":"INC-49721145","date":"2026-08-04","amount":480,"remark":"Aug","account":"Hong Leong","category":"销售收入","invoiceNo":"","receiptNo":"","counterparty":"LEE JU YAN"},{"id":"INC-49721142","date":"2026-08-03","amount":480,"remark":"Aug 26","account":"Hong Leong","category":"销售收入","invoiceNo":"","receiptNo":"","counterparty":"TAN JIAN FONG"},{"id":"INC-49721176","date":"2026-07-08","amount":960,"remark":"Deposit","account":"Hong Leong","category":"销售收入","invoiceNo":"","receiptNo":"","counterparty":"HONG YE \u0026 KAI YE"},{"id":"INC-49721159","date":"2026-07-08","amount":480,"remark":"HOSTEL 2607","account":"Hong Leong","category":"销售收入","invoiceNo":"","receiptNo":"","counterparty":"ENG WEE ZHI"},{"id":"INC-49721184","date":"2026-07-07","amount":480,"remark":"Instant Transfer at KLM Tan Ji","account":"Hong Leong","category":"销售收入","invoiceNo":"","receiptNo":"","counterparty":"TAN JIAN FONG"},{"id":"INC-49721138","date":"2026-07-07","amount":480,"remark":"Jul26","account":"Hong Leong","category":"销售收入","invoiceNo":"","receiptNo":"","counterparty":"WONG E FULL"},{"id":"INC-66518721","date":"2026-07-05","amount":480,"remark":"Jul26","account":"Hong Leong","category":"销售收入","invoiceNo":"","receiptNo":"","counterparty":"GOH JYJE SHAN"},{"id":"INC-66518775","date":"2026-07-03","amount":480,"remark":"JULY ","account":"Hong Leong","category":"销售收入","invoiceNo":"","receiptNo":"","counterparty":"LEE YAN CHENG"},{"id":"INC-66518734","date":"2026-07-02","amount":480,"remark":"JUL ","account":"Hong Leong","category":"销售收入","invoiceNo":"","receiptNo":"","counterparty":"HUAI DERK"},{"id":"INC-66518787","date":"2026-06-30","amount":960,"remark":"Instant Transfer at KLM Kaihao","account":"Hong Leong","category":"销售收入","invoiceNo":"","receiptNo":"","counterparty":"KAI HAO"},{"id":"INC-66518770","date":"2026-06-30","amount":480,"remark":"Jul","account":"Hong Leong","category":"销售收入","invoiceNo":"","receiptNo":"","counterparty":"LEE JU YAN"},{"id":"INC-66518723","date":"2026-06-26","amount":480,"remark":"June","account":"Hong Leong","category":"销售收入","invoiceNo":"","receiptNo":"","counterparty":"CHUA MING ZHE"},{"id":"INC-66518742","date":"2026-06-13","amount":480,"remark":"Instant Transfer at KLM TAN JI","account":"Hong Leong","category":"销售收入","invoiceNo":"","receiptNo":"","counterparty":"TAN JIAN FONG"},{"id":"INC-66518767","date":"2026-06-09","amount":1920,"remark":"HONG YIP/KAI YIP","account":"Hong Leong","category":"销售收入","invoiceNo":"","receiptNo":"","counterparty":"HONG YIP/KAI YIP"},{"id":"INC-66518786","date":"2026-06-07","amount":480,"remark":"JUN 2026","account":"Hong Leong","category":"销售收入","invoiceNo":"","receiptNo":"","counterparty":"ENG WEE ZHI"},{"id":"INC-66518731","date":"2026-06-07","amount":480,"remark":"June26","account":"Hong Leong","category":"销售收入","invoiceNo":"","receiptNo":"","counterparty":"WONG E FULL"},{"id":"INC-73878417","date":"2026-06-04","amount":480,"remark":"Instant Transfer at KLM LEE YA","account":"Hong Leong","category":"销售收入","invoiceNo":"","receiptNo":"","counterparty":"LEE YAN CHENG"},{"id":"INC-73878461","date":"2026-06-02","amount":480,"remark":"Instant Transfer at KLM HUAI D","account":"Hong Leong","category":"销售收入","invoiceNo":"","receiptNo":"","counterparty":"HUAI DERK"},{"id":"INC-73878383","date":"2026-06-01","amount":480,"remark":"Jun26","account":"Hong Leong","category":"销售收入","invoiceNo":"","receiptNo":"","counterparty":"GOH JYJE SHAN"},{"id":"INC-0054","date":"2026-05-28","amount":480,"remark":"JUNE","account":"Hong Leong","category":"销售收入","invoiceNo":"","receiptNo":"","counterparty":"LEE JU YAN"},{"id":"INC-0053","date":"2026-05-27","amount":480,"remark":"MAY","account":"Hong Leong","category":"销售收入","invoiceNo":"","receiptNo":"","counterparty":"LEE JI CHUEN"},{"id":"INC-0052","date":"2026-05-26","amount":480,"remark":"MAY","account":"Hong Leong","category":"销售收入","invoiceNo":"","receiptNo":"","counterparty":"CHUA MING ZHE"},{"id":"INC-0051","date":"2026-05-20","amount":1920,"remark":"FEB+MAR+APRIL+MAY","account":"Hong Leong","category":"销售收入","invoiceNo":"","receiptNo":"","counterparty":"CHIA KAI JIE"},{"id":"INC-0050","date":"2026-05-10","amount":2400,"remark":"JAN+FEB+MAR+APRIL+MAY","account":"Hong Leong","category":"销售收入","invoiceNo":"","receiptNo":"","counterparty":"ZHI XIAO"},{"id":"INC-0049","date":"2026-05-09","amount":480,"remark":"MAY","account":"Hong Leong","category":"销售收入","invoiceNo":"","receiptNo":"","counterparty":"ENG WEI ZHI"},{"id":"INC-0048","date":"2026-05-07","amount":480,"remark":"MAY","account":"Hong Leong","category":"销售收入","invoiceNo":"","receiptNo":"","counterparty":"TAN JIAN FONG"},{"id":"INC-0046","date":"2026-05-06","amount":480,"remark":"MAY","account":"Hong Leong","category":"销售收入","invoiceNo":"","receiptNo":"","counterparty":"LEE YAN CHENG"},{"id":"INC-0047","date":"2026-05-06","amount":480,"remark":"MAY","account":"Hong Leong","category":"销售收入","invoiceNo":"","receiptNo":"","counterparty":"HUAI DERK"},{"id":"INC-0045","date":"2026-05-04","amount":480,"remark":"MAY","account":"Hong Leong","category":"销售收入","invoiceNo":"","receiptNo":"","counterparty":"WONG E FULL"},{"id":"INC-0044","date":"2026-05-03","amount":480,"remark":"MAY","account":"Hong Leong","category":"销售收入","invoiceNo":"","receiptNo":"","counterparty":"GOH JYJE SHAN"},{"id":"INC-0042","date":"2026-05-02","amount":960,"remark":"APRIL+MAY","account":"Hong Leong","category":"销售收入","invoiceNo":"","receiptNo":"","counterparty":"KAI HAO"},{"id":"INC-0043","date":"2026-05-02","amount":480,"remark":"APRIL","account":"Hong Leong","category":"销售收入","invoiceNo":"","receiptNo":"","counterparty":"ONG SHI SHUI"},{"id":"INC-0041","date":"2026-04-30","amount":480,"remark":"MAY","account":"Hong Leong","category":"销售收入","invoiceNo":"","receiptNo":"","counterparty":"LEE JU YAN"},{"id":"INC-0040","date":"2026-04-28","amount":480,"remark":"APRIL","account":"Hong Leong","category":"销售收入","invoiceNo":"","receiptNo":"","counterparty":"CHUA MING ZHE"},{"id":"INC-0039","date":"2026-04-21","amount":1920,"remark":"MAR+APRIL","account":"Hong Leong","category":"销售收入","invoiceNo":"","receiptNo":"","counterparty":"HONG YIP/KAI YIP"},{"id":"INC-0038","date":"2026-04-17","amount":480,"remark":"APRIL","account":"Hong Leong","category":"销售收入","invoiceNo":"","receiptNo":"","counterparty":"TAN JIAN FONG"},{"id":"INC-0037","date":"2026-04-11","amount":480,"remark":"APRIL","account":"Hong Leong","category":"销售收入","invoiceNo":"","receiptNo":"","counterparty":"LEE JI CHUEN"},{"id":"INC-0036","date":"2026-04-10","amount":480,"remark":"APRIL","account":"Hong Leong","category":"销售收入","invoiceNo":"","receiptNo":"","counterparty":"ENG WEI ZHI"},{"id":"INC-0035","date":"2026-04-06","amount":480,"remark":"APRIL","account":"Hong Leong","category":"销售收入","invoiceNo":"","receiptNo":"","counterparty":"LEE YAN CHENG"},{"id":"INC-0034","date":"2026-04-04","amount":480,"remark":"APRIL","account":"Hong Leong","category":"销售收入","invoiceNo":"","receiptNo":"","counterparty":"WONG E FULL"},{"id":"INC-0033","date":"2026-04-02","amount":960,"remark":"MAR+APRIL","account":"Hong Leong","category":"销售收入","invoiceNo":"","receiptNo":"","counterparty":"GOH JYJE SHAN"},{"id":"INC-0032","date":"2026-04-01","amount":480,"remark":"APRIL","account":"Hong Leong","category":"销售收入","invoiceNo":"","receiptNo":"","counterparty":"HUAI DERK"},{"id":"INC-0029","date":"2026-03-31","amount":480,"remark":"APRIL","account":"Hong Leong","category":"销售收入","invoiceNo":"","receiptNo":"","counterparty":"LEE JU YAN"},{"id":"INC-0030","date":"2026-03-31","amount":480,"remark":"MARCH","account":"Hong Leong","category":"销售收入","invoiceNo":"","receiptNo":"","counterparty":"CHUA MING ZHE"},{"id":"INC-0031","date":"2026-03-31","amount":960,"remark":"MARCH","account":"Hong Leong","category":"销售收入","invoiceNo":"","receiptNo":"","counterparty":"ONG SHI SHUI"},{"id":"INC-0028","date":"2026-03-19","amount":960,"remark":"FEB+MAR","account":"Hong Leong","category":"销售收入","invoiceNo":"","receiptNo":"","counterparty":"KAI HAO"},{"id":"INC-0027","date":"2026-03-12","amount":40,"remark":"","account":"Hong Leong","category":"销售收入","invoiceNo":"","receiptNo":"","counterparty":""},{"id":"INC-0024","date":"2026-03-06","amount":40,"remark":"","account":"Hong Leong","category":"销售收入","invoiceNo":"","receiptNo":"","counterparty":"TAN ZE LUN"},{"id":"INC-0025","date":"2026-03-06","amount":480,"remark":"","account":"Hong Leong","category":"销售收入","invoiceNo":"","receiptNo":"","counterparty":"WONG E FULL"},{"id":"INC-0026","date":"2026-03-06","amount":40,"remark":"","account":"Hong Leong","category":"销售收入","invoiceNo":"","receiptNo":"","counterparty":""},{"id":"INC-0023","date":"2026-03-05","amount":480,"remark":"MARCH","account":"Hong Leong","category":"销售收入","invoiceNo":"","receiptNo":"","counterparty":"HUAI DERK"},{"id":"INC-0020","date":"2026-03-04","amount":1920,"remark":"DEPOSIT+JAN+FEB+MAR","account":"Hong Leong","category":"销售收入","invoiceNo":"","receiptNo":"","counterparty":"LEE JI CHUEN"},{"id":"INC-0021","date":"2026-03-04","amount":480,"remark":"MARCH","account":"Hong Leong","category":"销售收入","invoiceNo":"","receiptNo":"","counterparty":"LEE YAN CHENG"},{"id":"INC-0022","date":"2026-03-04","amount":480,"remark":"MARCH","account":"Hong Leong","category":"销售收入","invoiceNo":"","receiptNo":"","counterparty":"ENG WEI ZHI"},{"id":"INC-0019","date":"2026-03-03","amount":1440,"remark":"JAN+FEB+MAR","account":"Hong Leong","category":"销售收入","invoiceNo":"","receiptNo":"","counterparty":"TAN JIAN FONG"},{"id":"INC-0018","date":"2026-03-02","amount":480,"remark":"MARCH","account":"Hong Leong","category":"销售收入","invoiceNo":"","receiptNo":"","counterparty":"LEE JU YAN"},{"id":"INC-0017","date":"2026-02-24","amount":1920,"remark":"JAN+FEB","account":"Hong Leong","category":"销售收入","invoiceNo":"","receiptNo":"","counterparty":"HONG YIP/KAI YIP"},{"id":"INC-0016","date":"2026-02-15","amount":480,"remark":"FEB","account":"Hong Leong","category":"销售收入","invoiceNo":"","receiptNo":"","counterparty":"CHUA MING ZHE"},{"id":"INC-0015","date":"2026-02-14","amount":480,"remark":"FEB","account":"Hong Leong","category":"销售收入","invoiceNo":"","receiptNo":"","counterparty":"WONG E FULL"},{"id":"INC-0014","date":"2026-02-09","amount":480,"remark":"FEB","account":"Hong Leong","category":"销售收入","invoiceNo":"","receiptNo":"","counterparty":"HUAI DERK"},{"id":"INC-0013","date":"2026-02-04","amount":960,"remark":"JAN+FEB","account":"Hong Leong","category":"销售收入","feeMonth":"2026-01, 2026-02","invoiceNo":"","receiptNo":"","counterparty":"ONG SHI SHUI"},{"id":"INC-0010","date":"2026-02-03","amount":480,"remark":"2026-02-01","account":"Hong Leong","category":"销售收入","feeMonth":"2026-02","invoiceNo":"","receiptNo":"","counterparty":"LEE YAN CHENG"},{"id":"INC-0011","date":"2026-02-03","amount":480,"remark":"2026-02-01","account":"Hong Leong","category":"销售收入","feeMonth":"2026-02","invoiceNo":"","receiptNo":"","counterparty":"GOH JYJE SHAN"},{"id":"INC-0012","date":"2026-02-03","amount":960,"remark":"JAN+FEB","account":"Hong Leong","category":"销售收入","feeMonth":"2026-01","invoiceNo":"","receiptNo":"","counterparty":"ENG WEI ZHI"},{"id":"INC-0009","date":"2026-01-31","amount":480,"remark":"2026-01-01","account":"Hong Leong","category":"销售收入","feeMonth":"2026-01","invoiceNo":"","receiptNo":"","counterparty":"KAI HAO"},{"id":"INC-0008","date":"2026-01-30","amount":480,"remark":"2026-02-01","account":"Hong Leong","category":"销售收入","feeMonth":"2026-02","invoiceNo":"","receiptNo":"","counterparty":"LEE JU YAN"},{"id":"INC-0007","date":"2026-01-26","amount":480,"remark":"2026-01-01","account":"Hong Leong","category":"销售收入","invoiceNo":"","receiptNo":"","counterparty":"CHUA MING ZHE"},{"id":"INC-0006","date":"2026-01-19","amount":480,"remark":"2026-01-01","account":"Hong Leong","category":"销售收入","feeMonth":"2026-01","invoiceNo":"","receiptNo":"","counterparty":"WONG E FULL"},{"id":"INC-0005","date":"2026-01-18","amount":960,"remark":"2026/1 + DEPOSIT","account":"Hong Leong","category":"销售收入","feeMonth":"2026-01","invoiceNo":"","receiptNo":"","counterparty":"CHIA KAI JIE"},{"id":"INC-0004","date":"2026-01-12","amount":960,"remark":"2026/1 + DEPOSIT","account":"Hong Leong","category":"销售收入","feeMonth":"2026-01","invoiceNo":"","receiptNo":"","counterparty":"GOH JYJE SHAN"},{"id":"INC-0003","date":"2026-01-11","amount":480,"remark":"2026-01-01","account":"Hong Leong","category":"销售收入","feeMonth":"2026-01","invoiceNo":"","receiptNo":"","counterparty":"LEE JU YAN"},{"id":"INC-0002","date":"2026-01-08","amount":480,"remark":"2026-01-01","account":"Hong Leong","category":"销售收入","feeMonth":"2026-01","invoiceNo":"","receiptNo":"","counterparty":"HUAI DERK"},{"id":"INC-0001","date":"2026-01-05","amount":480,"remark":"2026-01-01","account":"Hong Leong","category":"销售收入","feeMonth":"2026-01","invoiceNo":"","receiptNo":"","counterparty":"LEE YAN CHENG"}],"accounts":[{"name":"Hong Leong","initial":492.15,"accountNo":"15200056062"},{"name":"MING ZHOU","initial":0,"accountNo":""},{"name":"PART LEAM","initial":0,"accountNo":""},{"name":"KEE THUANG","initial":0,"accountNo":""},{"name":"CASH","initial":0,"accountNo":""}],"expenses":[{"id":"EXP-7192660","date":"2026-07-19","item":"单据日常支出","time":null,"amount":26.6,"remark":"petron 单据日常支出","account":"PART LEAM","category":"原材料","counterparty":"petron","receiptImage":""},{"id":"EXP-FIX-2026-09-KEETHUANG","date":"2026-09-01","item":"9月汽油津贴","amount":100,"remark":null,"account":"KEE THUANG","category":"汽油津贴","counterparty":"KEE THUANG","receiptImage":""},{"id":"EXP-FIX-2026-09-PARTLEAM","date":"2026-09-01","item":"9月汽油津贴","amount":150,"remark":null,"account":"PART LEAM","category":"汽油津贴","counterparty":"PART LEAM","receiptImage":""},{"id":"EXP-FIX-2026-09-MAXIS","date":"2026-09-01","item":"MAXIS HOME FIBRE (2026-09)","amount":106,"remark":null,"account":"MING ZHOU","category":"水电费","counterparty":"MAXIS","receiptImage":""},{"id":"EXP-FIX-2026-09-COWAYMALAYSIASDNBHD","date":"2026-09-01","item":"COWAY-2026-09","amount":118,"remark":null,"account":"PART LEAM","category":"水电费","counterparty":"COWAY(MALAYSIA) SDN BHD","receiptImage":""},{"id":"EXP-03360910","date":"2026-08-11","item":"TNB 电费","amount":850.1,"remark":"006968511746","account":"MING ZHOU","category":"水电费","counterparty":"TENAGA NASIONAL BERHAD","receiptImage":""},{"id":"EXP-109483","date":"2026-08-02","item":"洗碗液","time":"","amount":10.09,"remark":"","account":"PART LEAM","category":"原材料","counterparty":"lotus","receiptImage":""},{"id":"EXP-FIX-2026-08-PARTLEAM","date":"2026-08-01","item":"8月汽油津贴","amount":150,"remark":null,"account":"PART LEAM","category":"汽油津贴","counterparty":"PART LEAM","receiptImage":""},{"id":"EXP-FIX-2026-08-KEETHUANG","date":"2026-08-01","item":"8月汽油津贴","amount":100,"remark":null,"account":"KEE THUANG","category":"汽油津贴","counterparty":"KEE THUANG","receiptImage":""},{"id":"EXP-FIX-2026-08-MAXIS","date":"2026-08-01","item":"MAXIS HOME FIBRE (2026-08)","amount":106,"remark":null,"account":"MING ZHOU","category":"水电费","counterparty":"MAXIS","receiptImage":""},{"id":"EXP-FIX-2026-08-COWAYMALAYSIASDNBHD","date":"2026-08-01","item":"COWAY-2026-08","amount":118,"remark":null,"account":"PART LEAM","category":"水电费","counterparty":"COWAY(MALAYSIA) SDN BHD","receiptImage":""},{"id":"EXP-841015","date":"2026-07-15","item":"Bil Air","amount":156,"remark":"880299","account":"MING ZHOU","category":"水电费","counterparty":"Lembaga Air Perak","receiptImage":""},{"id":"EXP-05762195","date":"2026-07-12","item":"TNB 电费","amount":863.15,"remark":"006968511746","account":"MING ZHOU","category":"水电费","counterparty":"TENAGA NASIONAL BERHAD","receiptImage":""},{"id":"EXP-FIX-2026-07-COWAYMALAYSIASDNBHD","date":"2026-07-01","item":"COWAY-2026-07","amount":118,"remark":null,"account":"PART LEAM","category":"水电费","counterparty":"COWAY(MALAYSIA) SDN BHD","receiptImage":""},{"id":"EXP-FIX-2026-07-PARTLEAM","date":"2026-07-01","item":"7月汽油津贴","amount":150,"remark":null,"account":"PART LEAM","category":"汽油津贴","counterparty":"PART LEAM","receiptImage":""},{"id":"EXP-FIX-2026-07-KEETHUANG","date":"2026-07-01","item":"7月汽油津贴","amount":100,"remark":null,"account":"KEE THUANG","category":"汽油津贴","counterparty":"KEE THUANG","receiptImage":""},{"id":"EXP-FIX-2026-07-MAXIS","date":"2026-07-01","item":"MAXIS HOME FIBRE (2026-07)","amount":106,"remark":null,"account":"MING ZHOU","category":"水电费","counterparty":"MAXIS","receiptImage":""},{"id":"EXP-FIX-2026-06-KEETHUANG","date":"2026-06-01","item":"6月汽油津贴","amount":100,"remark":null,"account":"KEE THUANG","category":"汽油津贴","counterparty":"KEE THUANG","receiptImage":""},{"id":"EXP-FIX-2026-06-PARTLEAM","date":"2026-06-01","item":"6月汽油津贴","amount":150,"remark":null,"account":"PART LEAM","category":"汽油津贴","counterparty":"PART LEAM","receiptImage":""},{"id":"EXP-FIX-2026-06-COWAYMALAYSIASDNBHD","date":"2026-06-01","item":"COWAY-2026-06","amount":118,"remark":null,"account":"PART LEAM","category":"水电费","counterparty":"COWAY(MALAYSIA) SDN BHD","receiptImage":""},{"id":"EXP-FIX-2026-06-MAXIS","date":"2026-06-01","item":"MAXIS HOME FIBRE (2026-06)","amount":106,"remark":null,"account":"MING ZHOU","category":"水电费","counterparty":"MAXIS","receiptImage":""},{"id":"EXP-0053","date":"2026-05-28","item":"PARTNER CLAIM","amount":7000,"remark":"","account":"Hong Leong","category":"提现","counterparty":"HUAM MING ZHOU"},{"id":"EXP-0054","date":"2026-05-28","item":"PARTNER CLAIM","amount":7000,"remark":"","account":"Hong Leong","category":"提现","counterparty":"LOR PART LEAM"},{"id":"EXP-0052","date":"2026-05-28","item":"RENTAL FEE JAN-MAY","amount":2500,"remark":"","account":"Hong Leong","category":"房租","counterparty":"NG SU EIN"},{"id":"EXP-0055","date":"2026-05-28","item":"PARTNER CLAIM","amount":7000,"remark":"","account":"Hong Leong","category":"提现","counterparty":"HENG KEE THUANG"},{"id":"EXP-0051","date":"2026-05-19","item":"Water Bill","amount":201.9,"remark":"803582","account":"Hong Leong","category":"水电费","counterparty":"LEMBAGA AIR PERAK"},{"id":"EXP-0045","date":"2026-05-12","item":"Bil Elektrik","amount":866.3,"remark":"6947037589","account":"Hong Leong","category":"水电费","counterparty":"Tenaga Nasional"},{"id":"EXP-0044","date":"2026-05-03","item":"WAXCO DIY AIRCOND CLEANER","amount":21.9,"remark":"T1R000318306","account":"Hong Leong","category":"原材料","counterparty":"MR DIY"},{"id":"EXP-0043","date":"2026-05-01","item":"5月汽油津贴","amount":100,"remark":"","account":"Hong Leong","category":"汽油津贴","counterparty":"KEE THUANG"},{"id":"EXP-FIX-2026-05-MAXIS","date":"2026-05-01","item":"MAXIS HOME FIBRE (2026-05)","amount":106,"remark":null,"account":"MING ZHOU","category":"水电费","counterparty":"MAXIS","receiptImage":""},{"id":"EXP-0041","date":"2026-05-01","item":"COWAY-MAY","amount":118,"remark":"","account":"Hong Leong","category":"水电费","counterparty":"COWAY(MALAYSIA) SDN BHD"},{"id":"EXP-0042","date":"2026-05-01","item":"5月汽油津贴","amount":150,"remark":"","account":"Hong Leong","category":"汽油津贴","counterparty":"PART LEAM"},{"id":"EXP-0040","date":"2026-04-26","item":"垃圾袋","amount":37,"remark":"T3R000343393","account":"Hong Leong","category":"原材料","counterparty":"MR DIY"},{"id":"EXP-0048","date":"2026-04-23","item":"杂货","amount":49.96,"remark":"","account":"Hong Leong","category":"差旅费用","counterparty":"","receiptImage":""},{"id":"EXP-0049","date":"2026-04-23","item":"","amount":172.6,"remark":"","account":"Hong Leong","category":"差旅费用","counterparty":""},{"id":"EXP-0050","date":"2026-04-23","item":"","amount":17.6,"remark":"","account":"Hong Leong","category":"差旅费用","counterparty":""},{"id":"EXP-0039","date":"2026-04-22","item":"蚊油，垃圾袋","amount":23.7,"remark":"182721297/103/T0045","account":"Hong Leong","category":"原材料","counterparty":"99 SPEEDMART"},{"id":"EXP-0038","date":"2026-04-21","item":"AIRCOND REPAIR","amount":510,"remark":"0972","account":"Hong Leong","category":"原材料","counterparty":"ONG AIRCOND\u0026 REPAIR"},{"id":"EXP-0037","date":"2026-04-17","item":"杂物","amount":38.7,"remark":"T1R000330005","account":"Hong Leong","category":"原材料","counterparty":"MR DIY"},{"id":"EXP-0036","date":"2026-04-12","item":"Bil Elektrik","amount":586.95,"remark":"6938793825","account":"Hong Leong","category":"水电费","counterparty":"Tenaga Nasional"},{"id":"EXP-0035","date":"2026-04-04","item":"GAS","amount":26.6,"remark":"12819049","account":"Hong Leong","category":"原材料","counterparty":"SNA SMART ENTERPRISE"},{"id":"EXP-0034","date":"2026-04-01","item":"4月汽油津贴","amount":100,"remark":"","account":"Hong Leong","category":"汽油津贴","counterparty":"KEE THUANG"},{"id":"EXP-0032","date":"2026-04-01","item":"COWAY-APRIL","amount":118,"remark":"","account":"Hong Leong","category":"水电费","counterparty":"COWAY(MALAYSIA) SDN BHD"},{"id":"EXP-FIX-2026-04-MAXIS","date":"2026-04-01","item":"MAXIS HOME FIBRE (2026-04)","amount":106,"remark":null,"account":"MING ZHOU","category":"水电费","counterparty":"MAXIS","receiptImage":""},{"id":"EXP-0033","date":"2026-04-01","item":"4月汽油津贴","amount":150,"remark":"","account":"Hong Leong","category":"汽油津贴","counterparty":"PART LEAM"},{"id":"EXP-0046","date":"2026-03-16","item":"Water Bill","amount":171.3,"remark":"725749","account":"Hong Leong","category":"水电费","counterparty":"LEMBAGA AIR PERAK"},{"id":"EXP-0031","date":"2026-03-12","item":"Bil Elektrik","amount":567,"remark":"6930390713","account":"Hong Leong","category":"水电费","counterparty":"Tenaga Nasional"},{"id":"EXP-0030","date":"2026-03-11","item":"plumbing","amount":4900,"remark":"","account":"Hong Leong","category":"原材料","counterparty":""},{"id":"EXP-0029","date":"2026-03-10","item":"割门","amount":10,"remark":"","account":"Hong Leong","category":"原材料","counterparty":""},{"id":"EXP-0047","date":"2026-03-03","item":"GAS","amount":26.6,"remark":"","account":"Hong Leong","category":"原材料","counterparty":""},{"id":"EXP-0028","date":"2026-03-01","item":"3月汽油津贴","amount":100,"remark":"","account":"Hong Leong","category":"汽油津贴","counterparty":"KEE THUANG"},{"id":"EXP-FIX-2026-03-MAXIS","date":"2026-03-01","item":"MAXIS HOME FIBRE (2026-03)","amount":106,"remark":null,"account":"MING ZHOU","category":"水电费","counterparty":"MAXIS","receiptImage":""},{"id":"EXP-0026","date":"2026-03-01","item":"COWAY-MAR","amount":118,"remark":"","account":"Hong Leong","category":"水电费","counterparty":"COWAY(MALAYSIA) SDN BHD"},{"id":"EXP-0027","date":"2026-03-01","item":"3月汽油津贴","amount":150,"remark":"","account":"Hong Leong","category":"汽油津贴","counterparty":"PART LEAM"},{"id":"EXP-0025","date":"2026-02-12","item":"素食","amount":96,"remark":"231750","account":"Hong Leong","category":"差旅费用","counterparty":""},{"id":"EXP-0024","date":"2026-02-12","item":"聚餐","amount":623,"remark":"","account":"Hong Leong","category":"差旅费用","counterparty":"Kedai Makanan Laut Ju Fu"},{"id":"EXP-0023","date":"2026-02-11","item":"梯子","amount":199,"remark":"","account":"Hong Leong","category":"原材料","counterparty":"MR DIY"},{"id":"EXP-0022","date":"2026-02-10","item":"Bil Elektrik","amount":556.35,"remark":"6923211800","account":"Hong Leong","category":"水电费","counterparty":"Tenaga Nasional"},{"id":"EXP-0021","date":"2026-02-08","item":"桌子","amount":230.9,"remark":"260124TQHW41CK","account":"Hong Leong","category":"原材料","counterparty":"SEVENWOOD TECHNOLOGY PLT"},{"id":"EXP-0020","date":"2026-02-06","item":"防水漆","amount":40,"remark":"","account":"Hong Leong","category":"原材料","counterparty":"WANG SENG HARDWARE TRADING"},{"id":"EXP-0019","date":"2026-02-05","item":"WATER SQUEEGEE+BROOM HANDLE","amount":9.1,"remark":"","account":"Hong Leong","category":"原材料","counterparty":"MR DIY"},{"id":"EXP-0015","date":"2026-02-01","item":"COWAY-FEB","amount":118,"remark":"","account":"Hong Leong","category":"水电费","counterparty":"COWAY(MALAYSIA) SDN BHD"},{"id":"EXP-0018","date":"2026-02-01","item":"2月汽油津贴","amount":100,"remark":"","account":"Hong Leong","category":"汽油津贴","counterparty":"KEE THUANG"},{"id":"EXP-0017","date":"2026-02-01","item":"FEB-MAXIS HOME FIBRE","amount":106,"remark":"","account":"Hong Leong","category":"水电费","counterparty":""},{"id":"EXP-0016","date":"2026-02-01","item":"2月汽油津贴","amount":150,"remark":"","account":"Hong Leong","category":"汽油津贴","counterparty":"PART LEAM"},{"id":"EXP-0014","date":"2026-01-22","item":"GARBAG BAG+BASIN TOOLS","amount":33.6,"remark":"","account":"Hong Leong","category":"原材料","counterparty":"MR DIY"},{"id":"EXP-0013","date":"2026-01-22","item":"LAUNDRY BASKET","amount":9.9,"remark":"LSOS02-1685196","account":"Hong Leong","category":"原材料","counterparty":"LIMA SEN SDN BHD"},{"id":"EXP-0012","date":"2026-01-16","item":"Water Bill","amount":91.5,"remark":"647291","account":"Hong Leong","category":"水电费","counterparty":"LEMBAGA AIR PERAK"},{"id":"EXP-0009","date":"2026-01-11","item":"垃圾袋+消毒","amount":23.4,"remark":"T1R000308066","account":"Hong Leong","category":"原材料","counterparty":"MR DIY"},{"id":"EXP-0011","date":"2026-01-11","item":"3M SCOTCH BRITE TOUCH","amount":5.9,"remark":"182721196/102/T0489","account":"Hong Leong","category":"原材料","counterparty":"99 SPEEDMART"},{"id":"EXP-0010","date":"2026-01-11","item":"拖把","amount":39.8,"remark":"T1BSP04202601110026","account":"Hong Leong","category":"原材料","counterparty":"TF VALUE MART"},{"id":"EXP-0005","date":"2026-01-10","item":"Bil Elektrik","amount":72.25,"remark":"6916660401","account":"Hong Leong","category":"水电费","counterparty":"Tenaga Nasional"},{"id":"EXP-0008","date":"2026-01-10","item":"NYLON BROOM+FLOOR CLEANER","amount":43.2,"remark":"T3R000305382","account":"Hong Leong","category":"原材料","counterparty":"MR DIY"},{"id":"EXP-0007","date":"2026-01-10","item":"CYLINDER LOCK","amount":41,"remark":"T2R000598025","account":"Hong Leong","category":"原材料","counterparty":"MR DIY"},{"id":"EXP-0006","date":"2026-01-10","item":"漆","amount":113,"remark":"CS-301277","account":"Hong Leong","category":"原材料","counterparty":"WANG SENG HARDWARE TRADING"},{"id":"EXP-0001","date":"2026-01-01","item":"COWAY-JAN","amount":118,"remark":"","account":"Hong Leong","category":"水电费","counterparty":"COWAY(MALAYSIA) SDN BHD"},{"id":"EXP-0003","date":"2026-01-01","item":"JAN-MAXIS HOME FIBRE","amount":106,"remark":"","account":"Hong Leong","category":"水电费","counterparty":""},{"id":"EXP-0004","date":"2026-01-01","item":"1月汽油津贴","amount":100,"remark":"","account":"Hong Leong","category":"汽油津贴","counterparty":"KEE THUANG"},{"id":"EXP-0002","date":"2026-01-01","item":"1月汽油津贴","amount":150,"remark":"","account":"Hong Leong","category":"汽油津贴","counterparty":"PART LEAM"}],"updatedAt":1789053867988,"ocrSettings":{"mode":"local","geminiApiKey":"","localLanguages":"chi_sim+eng+msa"},"initialBalance":492.15,"incomeCategories":["销售收入","理财收益","营运资金"],"expenseCategories":["原材料","差旅费用","房租","职工工资","管理费用","水电费","财务成本","汽油津贴","提现"]};
@@ -2834,7 +2923,7 @@ let ocrSettings = {
 };
 
 // Application Version and OTA Release Timestamp
-window.VOYAGE_APP_VERSION = '2026.3.41';
+window.VOYAGE_APP_VERSION = '2026.3.42';
 window.VOYAGE_APP_BUILD_TIME = Date.now();
 
 // 15 Boarding Students Master Configuration (Globally initialized)
@@ -2900,6 +2989,84 @@ function showToast(message) {
 }
 
 // Initialize Application Data & Settings
+
+// Ensure baseline audit logs exist for initial state
+function ensureBaselineAuditLogs() {
+  if (!appData.auditLogs || !Array.isArray(appData.auditLogs)) {
+    appData.auditLogs = [];
+  }
+  if (appData.auditLogs.length < 5) {
+    const baseline = [
+      {
+        id: 'AUD-INIT-005',
+        timestamp: 1790592329000,
+        timeStr: '2026-09-28 18:45:00',
+        action: 'UPDATE',
+        module: 'arrears',
+        recordId: 'GOH JYJE SHAN',
+        summary: '吴劼善住宿费 12 个月大屏矩阵推算逻辑优化 (10月未出账恢复为横杠)',
+        details: '严格限定自动填充范围不超过当前结账月(9月)，避免押金溢出错误填入 10 月。',
+        operator: '电脑端 (Web)'
+      },
+      {
+        id: 'AUD-INIT-004',
+        timestamp: 1790152500000,
+        timeStr: '2026-09-23 16:30:00',
+        action: 'RESTORE',
+        module: 'system',
+        summary: '财务审计追踪系统 (Audit Trail) 全面部署上线',
+        details: '启用全生命周期操作留痕、前后字段比对 Diff、删除快照防篡改与一键导出 CSV 报表。',
+        operator: '电脑端 (Web)'
+      },
+      {
+        id: 'AUD-INIT-003',
+        timestamp: 1789053867000,
+        timeStr: '2026-09-10 14:15:00',
+        action: 'CREATE',
+        module: 'expense',
+        recordId: 'EXP-FIX-MONTHLY',
+        summary: '每月固定水电宽带网络 (MAXIS) 与净水器 (COWAY) 自动计提',
+        details: 'MAXIS HOME FIBRE RM 106.00/月，COWAY 净水器租金 RM 118.00/月，合伙人汽油津贴 RM 250.00/月。',
+        amount: 474,
+        operator: '电脑端 (Web)'
+      },
+      {
+        id: 'AUD-INIT-002',
+        timestamp: 1788883200000,
+        timeStr: '2026-09-09 11:30:00',
+        action: 'UPDATE',
+        module: 'arrears',
+        recordId: 'BOARDING_STUDENTS',
+        summary: '15 位住宿学生 1~9 月份住宿费收缴大屏对账与状态核准',
+        details: '系统已完成 12 个月大屏收缴监控核算，12 人已全额结清，吕梓铨与谢凯捷尚欠 7~9 月份住宿费各 RM 1,440.00。',
+        amount: 2880,
+        operator: '电脑端 (Web)'
+      },
+      {
+        id: 'AUD-INIT-001',
+        timestamp: 1788796800000,
+        timeStr: '2026-09-08 10:00:00',
+        action: 'IMPORT',
+        module: 'statement',
+        recordId: '15200056062',
+        summary: '丰隆银行 (Hong Leong Bank) 对账单 PDF 智能流水解析与入账',
+        details: '成功解析 2026 年度银行流水，自动匹配并归属 93 笔学费与销售收入、57 笔日常支出项目。',
+        amount: null,
+        operator: '电脑端 (Web)',
+        snapshot: { period: '2026-01-01 ~ 2026-09-08', incCount: 93, expCount: 57 }
+      }
+    ];
+
+    baseline.forEach(b => {
+      if (!appData.auditLogs.some(l => l.id === b.id)) {
+        appData.auditLogs.push(b);
+      }
+    });
+
+    appData.auditLogs.sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
+  }
+}
+
 function initData() {
   const stored = localStorage.getItem('finance_2026_data');
   if (stored) {
@@ -2958,6 +3125,9 @@ function initData() {
   ocrSettings.localLanguages = 'chi_sim+eng+msa';
   try { localStorage.setItem('finance_ocr_settings', JSON.stringify(ocrSettings)); } catch (e) {}
   applyOcrSettingsUI();
+
+  ensureBaselineAuditLogs();
+  if (typeof updateAuditBadges === 'function') updateAuditBadges();
 
   // Load Cloud Settings & Connect
   initCloudSync();
@@ -4068,6 +4238,9 @@ function renderDashboard() {
       </div>
     `).join('');
   }
+
+  // Render Dashboard Recent Audit Trail List
+  renderDashboardAuditPreview();
 }
 
 // Chart: Monthly Trend
@@ -4260,6 +4433,7 @@ function renderIncomeTable() {
           <td class="px-4 py-3 text-slate-400 whitespace-nowrap">${[i.receiptNo, i.invoiceNo].filter(Boolean).join(' / ') || '-'}</td>
           <td class="px-4 py-3 text-center whitespace-nowrap space-x-2">
             <button onclick="editIncome('${i.id}')" class="text-blue-600 hover:text-blue-800 font-medium">编辑</button>
+            <button onclick="openRecordAuditLogs('${i.id}', 'income')" class="text-indigo-600 hover:text-indigo-800 font-medium" title="查看此记录的审计追踪与修改历史">审计</button>
             <button onclick="deleteIncome('${i.id}')" class="text-rose-600 hover:text-rose-800 font-medium">删除</button>
           </td>
         </tr>
@@ -4306,9 +4480,10 @@ function renderIncomeTable() {
 
           <div class="flex items-center justify-between pt-2 border-t border-slate-100 text-xs">
             <span class="text-[11px] text-slate-400">${i.receiptNo ? '收据: ' + i.receiptNo : (i.invoiceNo ? '发票: ' + i.invoiceNo : '')}</span>
-            <div class="flex items-center space-x-3">
-              <button onclick="editIncome('${i.id}')" class="px-2.5 py-1 text-xs font-semibold text-blue-600 hover:bg-blue-50 rounded-lg">✏️ 编辑</button>
-              <button onclick="deleteIncome('${i.id}')" class="px-2.5 py-1 text-xs font-semibold text-rose-600 hover:bg-rose-50 rounded-lg">🗑️ 删除</button>
+            <div class="flex items-center space-x-2">
+              <button onclick="editIncome('${i.id}')" class="px-2 py-1 text-xs font-semibold text-blue-600 hover:bg-blue-50 rounded-lg">✏️ 编辑</button>
+              <button onclick="openRecordAuditLogs('${i.id}', 'income')" class="px-2 py-1 text-xs font-semibold text-indigo-600 hover:bg-indigo-50 rounded-lg">📜 审计</button>
+              <button onclick="deleteIncome('${i.id}')" class="px-2 py-1 text-xs font-semibold text-rose-600 hover:bg-rose-50 rounded-lg">🗑️ 删除</button>
             </div>
           </div>
         </div>
@@ -4384,6 +4559,7 @@ function renderExpenseTable() {
         <td class="px-4 py-3 text-slate-500 max-w-xs truncate" title="${e.remark || ''}">${e.remark || '-'}</td>
         <td class="px-4 py-3 text-center whitespace-nowrap space-x-2">
           <button onclick="editExpense('${e.id}')" class="text-blue-600 hover:text-blue-800 font-medium">编辑</button>
+          <button onclick="openRecordAuditLogs('${e.id}', 'expense')" class="text-indigo-600 hover:text-indigo-800 font-medium" title="查看此记录的审计追踪与修改历史">审计</button>
           <button onclick="deleteExpense('${e.id}')" class="text-rose-600 hover:text-rose-800 font-medium">删除</button>
         </td>
       </tr>
@@ -4422,9 +4598,10 @@ function renderExpenseTable() {
           <span class="text-[10px] px-2 py-0.5 bg-slate-100 text-slate-600 rounded-md font-medium">
             ${e.account || '现金'}
           </span>
-          <div class="flex items-center space-x-3">
-            <button onclick="editExpense('${e.id}')" class="px-2.5 py-1 text-xs font-semibold text-blue-600 hover:bg-blue-50 rounded-lg">✏️ 编辑</button>
-            <button onclick="deleteExpense('${e.id}')" class="px-2.5 py-1 text-xs font-semibold text-rose-600 hover:bg-rose-50 rounded-lg">🗑️ 删除</button>
+          <div class="flex items-center space-x-2">
+            <button onclick="editExpense('${e.id}')" class="px-2 py-1 text-xs font-semibold text-blue-600 hover:bg-blue-50 rounded-lg">✏️ 编辑</button>
+            <button onclick="openRecordAuditLogs('${e.id}', 'expense')" class="px-2 py-1 text-xs font-semibold text-indigo-600 hover:bg-indigo-50 rounded-lg">📜 审计</button>
+            <button onclick="deleteExpense('${e.id}')" class="px-2 py-1 text-xs font-semibold text-rose-600 hover:bg-rose-50 rounded-lg">🗑️ 删除</button>
           </div>
         </div>
       </div>
@@ -5051,6 +5228,30 @@ function editIncome(id) {
     submitBtn.classList.remove('opacity-50', 'cursor-not-allowed');
   }
 
+  // Populate Audit History in Income Modal
+  const auditBox = document.getElementById('incomeAuditHistoryBox');
+  const auditContent = document.getElementById('incomeAuditHistoryContent');
+  if (auditBox && auditContent) {
+    const logs = (appData.auditLogs || []).filter(l => String(l.recordId) === String(id) || (l.summary && l.summary.includes(id)));
+    if (logs.length > 0) {
+      auditBox.classList.remove('hidden');
+      auditContent.innerHTML = logs.slice(0, 3).map(l => {
+        const act = getActionBadgeInfo(l.action);
+        return `
+          <div class="flex items-center justify-between py-0.5">
+            <span class="flex items-center space-x-1">
+              <span class="px-1.5 py-0.5 rounded text-[10px] font-bold ${act.bg} ${act.text}">${act.label}</span>
+              <span class="font-medium text-slate-700">${l.summary}</span>
+            </span>
+            <span class="text-[10px] text-slate-400 font-mono">${l.timeStr}</span>
+          </div>
+        `;
+      }).join('');
+    } else {
+      auditBox.classList.add('hidden');
+    }
+  }
+
   document.getElementById('incomeModal').classList.remove('hidden');
 }
 
@@ -5200,6 +5401,30 @@ function editExpense(id) {
     showReceiptPreview(item.receiptImage);
   } else {
     removeCurrentReceiptImage();
+  }
+
+  // Populate Audit History in Expense Modal
+  const expAuditBox = document.getElementById('expenseAuditHistoryBox');
+  const expAuditContent = document.getElementById('expenseAuditHistoryContent');
+  if (expAuditBox && expAuditContent) {
+    const logs = (appData.auditLogs || []).filter(l => String(l.recordId) === String(id) || (l.summary && l.summary.includes(id)));
+    if (logs.length > 0) {
+      expAuditBox.classList.remove('hidden');
+      expAuditContent.innerHTML = logs.slice(0, 3).map(l => {
+        const act = getActionBadgeInfo(l.action);
+        return `
+          <div class="flex items-center justify-between py-0.5">
+            <span class="flex items-center space-x-1">
+              <span class="px-1.5 py-0.5 rounded text-[10px] font-bold ${act.bg} ${act.text}">${act.label}</span>
+              <span class="font-medium text-slate-700">${l.summary}</span>
+            </span>
+            <span class="text-[10px] text-slate-400 font-mono">${l.timeStr}</span>
+          </div>
+        `;
+      }).join('');
+    } else {
+      expAuditBox.classList.add('hidden');
+    }
   }
 
   document.getElementById('expenseModal').classList.remove('hidden');
@@ -9155,6 +9380,17 @@ function copyStudentReminder(studentId) {
 
   text += `请核对后尽快安排转账缴费，转账后请发送水单回执以便销账。谢谢你的配合！🙏`;
 
+  if (typeof logAuditEvent === 'function') {
+    logAuditEvent({
+      action: 'UPDATE',
+      module: 'arrears',
+      recordId: student.id,
+      summary: `复制催费通知: ${salutationName} 欠费 ${formatMoney(student.arrearsAmount)} (${unpaidStr})`,
+      details: `接收人: ${salutationName}，欠费金额: ${formatMoney(student.arrearsAmount)}，欠费月份: ${unpaidStr}`,
+      amount: student.arrearsAmount
+    });
+  }
+
   navigator.clipboard.writeText(text).then(() => {
     const toastName = student.zhName ? `${student.zhName} (${student.name})` : student.name;
     showToast(`✅ 已复制【${toastName}】的交费提醒，可直接粘贴发送给学生！`);
@@ -10389,6 +10625,151 @@ function exportAuditLogsCSV() {
   URL.revokeObjectURL(url);
   showToast('📥 审计日志已成功导出为 CSV 文件！');
 }
+
+
+// Render Dashboard Recent Audit Preview
+function renderDashboardAuditPreview() {
+  const auditContainer = document.getElementById('dashRecentAuditList');
+  if (!auditContainer) return;
+
+  const logs = appData.auditLogs || [];
+  if (logs.length === 0) {
+    auditContainer.innerHTML = `
+      <div class="p-6 text-center text-xs text-slate-400">
+        暂无近期审计日志，系统对每一次记账、修改与删除均会自动实时记录。
+      </div>
+    `;
+    return;
+  }
+
+  const recents = logs.slice(0, 5);
+  auditContainer.innerHTML = recents.map(log => {
+    const act = getActionBadgeInfo(log.action);
+    const mod = getModuleBadgeInfo(log.module);
+    const amtStr = log.amount !== null && log.amount !== undefined ?
+      (log.module === 'income' ? `+${formatMoney(log.amount)}` : `-${formatMoney(log.amount)}`) : '';
+    const amtColor = log.module === 'income' ? 'text-emerald-600 font-bold' : (log.amount ? 'text-rose-600 font-bold' : 'text-slate-400');
+    const hasDetail = (log.diff && log.diff.length > 0) || log.snapshot || log.details;
+
+    return `
+      <div class="p-3.5 flex items-center justify-between hover:bg-slate-50/80 transition-colors">
+        <div class="flex items-center space-x-3">
+          <div class="w-8 h-8 rounded-lg bg-indigo-50 text-indigo-700 flex items-center justify-center font-bold text-sm flex-shrink-0">
+            ${act.icon}
+          </div>
+          <div>
+            <div class="flex items-center space-x-2">
+              <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold border ${act.bg} ${act.text} ${act.border}">
+                ${act.label}
+              </span>
+              <span class="text-xs font-bold text-slate-800 line-clamp-1">${log.summary || '-'}</span>
+            </div>
+            <div class="text-[11px] text-slate-400 mt-0.5 flex items-center space-x-2">
+              <span>${log.timeStr}</span>
+              <span>·</span>
+              <span class="font-medium text-slate-500">${log.operator || 'Web'}</span>
+              ${log.recordId ? `<span>·</span><span class="font-mono text-indigo-600">${log.recordId}</span>` : ''}
+            </div>
+          </div>
+        </div>
+        <div class="text-right flex items-center space-x-2 flex-shrink-0">
+          ${amtStr ? `<div class="${amtColor} text-xs">${amtStr}</div>` : ''}
+          ${hasDetail ? `
+            <button onclick="openAuditDetailModal('${log.id}')" class="px-2 py-1 text-xs font-semibold text-indigo-700 bg-indigo-50 hover:bg-indigo-100 rounded-lg border border-indigo-200 transition shadow-2xs">
+              快照/对比
+            </button>
+          ` : ''}
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+// Open Record Audit Logs Modal
+function openRecordAuditLogs(recordId, module) {
+  if (!recordId) return;
+  const logs = (appData.auditLogs || []).filter(l => 
+    String(l.recordId) === String(recordId) || 
+    (l.summary && l.summary.includes(recordId))
+  );
+
+  const modal = document.getElementById('recordAuditModal');
+  const title = document.getElementById('recordAuditModalTitle');
+  const sub = document.getElementById('recordAuditModalSubtitle');
+  const content = document.getElementById('recordAuditModalContent');
+
+  if (title) title.textContent = `单据 ${recordId} 审计追踪留痕`;
+  if (sub) sub.textContent = `共记录 ${logs.length} 次关键财务流转与修改事件`;
+
+  if (logs.length === 0) {
+    if (content) {
+      content.innerHTML = `
+        <div class="py-8 text-center text-xs text-slate-400 space-y-2">
+          <div class="text-3xl">📋</div>
+          <div class="font-bold text-slate-700">单号 <span class="font-mono text-indigo-600">${recordId}</span> 暂无单独修改变动日志</div>
+          <p class="text-[11px] text-slate-400">该账目系系统初期导入或尚未经历二次字段修改。每一次修改或删除均会自动记录于此。</p>
+        </div>
+      `;
+    }
+  } else {
+    if (content) {
+      content.innerHTML = logs.map(log => {
+        const act = getActionBadgeInfo(log.action);
+        const hasDiff = log.diff && log.diff.length > 0;
+        const hasSnap = !!log.snapshot;
+
+        return `
+          <div class="p-3.5 bg-slate-50 border border-slate-200/90 rounded-2xl space-y-2">
+            <div class="flex items-center justify-between">
+              <div class="flex items-center space-x-2">
+                <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold border ${act.bg} ${act.text} ${act.border}">
+                  ${act.icon} ${act.label}
+                </span>
+                <span class="text-xs font-bold text-slate-800">${log.summary || '-'}</span>
+              </div>
+              <span class="text-[11px] text-slate-400 font-mono">${log.timeStr}</span>
+            </div>
+
+            <div class="text-xs text-slate-500 flex items-center justify-between">
+              <div>操作终端：<span class="font-medium text-slate-700">${log.operator || 'Web'}</span></div>
+              ${log.amount !== null && log.amount !== undefined ? `<div class="font-bold ${log.module === 'income' ? 'text-emerald-600' : 'text-rose-600'}">金额: ${formatMoney(log.amount)}</div>` : ''}
+            </div>
+
+            ${hasDiff ? `
+              <div class="pt-2 border-t border-slate-200/60">
+                <div class="text-[11px] font-bold text-slate-600 mb-1">字段修改前后对比：</div>
+                <div class="space-y-1">
+                  ${log.diff.map(d => `
+                    <div class="text-[11px] bg-white p-2 rounded-lg border border-slate-200/70 flex items-center justify-between">
+                      <span class="font-medium text-slate-600">${d.label || d.field}:</span>
+                      <div class="space-x-2">
+                        <span class="line-through text-rose-500">${d.oldVal || '(空)'}</span>
+                        <span class="text-slate-400">→</span>
+                        <span class="font-bold text-emerald-600">${d.newVal || '(空)'}</span>
+                      </div>
+                    </div>
+                  `).join('')}
+                </div>
+              </div>
+            ` : ''}
+
+            ${hasSnap && !hasDiff ? `
+              <div class="pt-1.5 flex justify-end">
+                <button onclick="openAuditDetailModal('${log.id}'); closeModal('recordAuditModal');" class="text-xs font-semibold text-indigo-600 hover:text-indigo-800">
+                  查看完整数据快照 →
+                </button>
+              </div>
+            ` : ''}
+          </div>
+        `;
+      }).join('');
+    }
+  }
+
+  if (modal) modal.classList.remove('hidden');
+}
+window.openRecordAuditLogs = openRecordAuditLogs;
+window.renderDashboardAuditPreview = renderDashboardAuditPreview;
 
   </script>
 </body>
