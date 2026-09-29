@@ -16,7 +16,7 @@
     (function() {
       try {
         var expectedVersion = '2026.3.44';
-        var baseBuildTime = 1790671020335;
+        var baseBuildTime = 1790671814624;
         var cachedBundle = localStorage.getItem('voyage_finance_cached_bundle');
         var cachedVersion = localStorage.getItem('voyage_finance_cached_version');
         var cachedTime = parseInt(localStorage.getItem('voyage_finance_cached_time') || '0', 10);
@@ -5466,7 +5466,13 @@ function initData() {
 
   // Load Cloud Settings & Connect
   initCloudSync();
-  window.appData = appData;
+  // Auto-tag 6-9 petrol allowances as unreimbursed if not marked
+  (appData.expenses || []).forEach(e => {
+    if (((e.category && e.category.includes('油津')) || (e.item && e.item.includes('油津'))) && e.date >= '2026-06-01') {
+      if (!e.remark) e.remark = '尚未报销';
+    }
+  });
+    window.appData = appData;
 }
 
 function applyOcrSettingsUI() {
@@ -6298,7 +6304,13 @@ function clearHotUpdateCache() {
 }
 
 function saveDataLocalOnly() {
-  window.appData = appData;
+  // Auto-tag 6-9 petrol allowances as unreimbursed if not marked
+  (appData.expenses || []).forEach(e => {
+    if (((e.category && e.category.includes('油津')) || (e.item && e.item.includes('油津'))) && e.date >= '2026-06-01') {
+      if (!e.remark) e.remark = '尚未报销';
+    }
+  });
+    window.appData = appData;
   try {
     localStorage.setItem('finance_2026_data', JSON.stringify(appData));
   } catch (e) {
@@ -6375,7 +6387,8 @@ function switchTab(tabId) {
   } else if (tabId === 'monthly') {
     renderMonthlyReport();
   } else if (tabId === 'arrears') {
-    renderArrearsTracker();} else if (tabId === 'accounts') {
+    renderArrearsTracker();
+  } else if (tabId === 'accounts') {
     renderAccountsAndCategories();
   } else if (tabId === 'audit') {
     renderAuditLogs();
@@ -13722,41 +13735,6 @@ function shareReceiptWhatsApp() {
 
   const waUrl = `https://wa.me/${cleanPhone}?text=${encodeURIComponent(msg)}`;
   window.open(waUrl, '_blank');
-}
-
-
-else if (isPetrol) { type = '汽油津贴'; settle = '已计发'; }
-
-        rows.push([
-          e.date,
-          p.name,
-          p.zhName,
-          type,
-          e.category || '',
-          e.account || '',
-          e.counterparty || '',
-          e.item || '',
-          Number(e.amount || 0).toFixed(2),
-          settle,
-          e.remark || ''
-        ]);
-      }
-    });
-  });
-
-  const csvContent = '\uFEFF' + rows.map(r => r.map(cell => `"${String(cell).replace(/"/g, '""')}"`).join(',')).join('\n');
-  const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = `启航合伙人往来结算对账单_${new Date().toISOString().slice(0, 10)}.csv`;
-  document.body.appendChild(a);
-  a.click();
-  document.body.removeChild(a);
-  URL.revokeObjectURL(url);
-  if (typeof showToast === 'function') {
-    showToast('📥 合伙人往来对账单 CSV 已成功导出！');
-  }
 }
 
   </script>
