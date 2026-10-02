@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
   <meta charset="UTF-8">
@@ -15,8 +15,8 @@
   <script id="voyage-ota-bootloader">
     (function() {
       try {
-        var expectedVersion = '2026.3.44';
-        var baseBuildTime = 1790671814624;
+        var expectedVersion = '2026.3.45';
+        var baseBuildTime = 1790961825554;
         var cachedBundle = localStorage.getItem('voyage_finance_cached_bundle');
         var cachedVersion = localStorage.getItem('voyage_finance_cached_version');
         var cachedTime = parseInt(localStorage.getItem('voyage_finance_cached_time') || '0', 10);
@@ -976,7 +976,7 @@
                 <option value="6">2026年 6月</option>
                 <option value="7">2026年 7月</option>
                 <option value="8">2026年 8月</option>
-                <option value="9" selected>2026年 9月 (当前月)</option>
+                <option value="9">2026年 9月</option>
                 <option value="10">2026年 10月</option>
                 <option value="11">2026年 11月</option>
                 <option value="12">2026年 12月 (全年)</option>
@@ -3059,6 +3059,90 @@ alter publication supabase_realtime add table finance_store;</pre>
 const INITIAL_FINANCE_DATA = {
   "incomes": [
     {
+      "id": "INC-666011",
+      "date": "2026-09-29",
+      "amount": 1440,
+      "remark": "",
+      "account": "Hong Leong",
+      "category": "销售收入",
+      "feeMonth": "2026-07, 2026-08, 2026-09",
+      "invoiceNo": "",
+      "receiptNo": "",
+      "counterparty": "LEE JI CHUEN"
+    },
+    {
+      "id": "INC-796239",
+      "date": "2026-09-28",
+      "amount": 1920,
+      "remark": "",
+      "account": "Hong Leong",
+      "category": "销售收入",
+      "feeMonth": "2026-06, 2026-07, 2026-08, 2026-09",
+      "invoiceNo": "",
+      "receiptNo": "",
+      "counterparty": "ZHI XIAO"
+    },
+    {
+      "id": "INC-25966799",
+      "date": "2026-09-22",
+      "amount": 480,
+      "remark": "2026年7月 住宿费 (蔡旻哲 · 付款人: MR FOO POH HAR)",
+      "account": "Hong Leong",
+      "category": "住宿费",
+      "feeMonth": "2026-07",
+      "invoiceNo": "",
+      "receiptNo": "",
+      "counterparty": "CHUA MING ZHE"
+    },
+    {
+      "id": "INC-25966765",
+      "date": "2026-09-21",
+      "amount": 480,
+      "remark": "2026年9月 住宿费 (蔡旻哲 · 付款人: MR FOO POH HAR)",
+      "account": "Hong Leong",
+      "category": "住宿费",
+      "feeMonth": "2026-09",
+      "invoiceNo": "",
+      "receiptNo": "",
+      "counterparty": "CHUA MING ZHE"
+    },
+    {
+      "id": "INC-46311692",
+      "date": "2026-09-17",
+      "amount": 480,
+      "remark": "2026年9月 住宿费 (翁诗岁 · 付款人: MR ONG CHAU LEANG)",
+      "account": "Hong Leong",
+      "category": "住宿费",
+      "feeMonth": "2026-09",
+      "invoiceNo": "",
+      "receiptNo": "",
+      "counterparty": "ONG SHI SHUI"
+    },
+    {
+      "id": "INC-46311657",
+      "date": "2026-09-15",
+      "amount": 1920,
+      "remark": "2026年9月 住宿费 (邹宏业 & 邹楷业)",
+      "account": "Hong Leong",
+      "category": "住宿费",
+      "feeMonth": "2026-09",
+      "invoiceNo": "",
+      "receiptNo": "",
+      "counterparty": "HONG YE & KAI YE"
+    },
+    {
+      "id": "INC-06262921",
+      "date": "2026-09-13",
+      "amount": 480,
+      "remark": "2026年9月 住宿费 (GOH JYJE SHAN · 付款人: GohJyieShan n Sep26)",
+      "account": "Hong Leong",
+      "category": "住宿费",
+      "feeMonth": "2026-09",
+      "invoiceNo": "",
+      "receiptNo": "",
+      "counterparty": "GOH JYJE SHAN"
+    },
+    {
       "id": "INC-03084750",
       "date": "2026-09-08",
       "amount": 480,
@@ -3124,6 +3208,7 @@ const INITIAL_FINANCE_DATA = {
       "remark": "Instant Transfer at KLM Kaihao",
       "account": "Hong Leong",
       "category": "销售收入",
+      "feeMonth": "2026-08, 2026-09",
       "invoiceNo": "",
       "receiptNo": "",
       "counterparty": "KAI HAO"
@@ -3366,6 +3451,7 @@ const INITIAL_FINANCE_DATA = {
       "remark": "HONG YIP/KAI YIP",
       "account": "Hong Leong",
       "category": "销售收入",
+      "feeMonth": "2026-05, 2026-06",
       "invoiceNo": "",
       "receiptNo": "",
       "counterparty": "HONG YIP/KAI YIP"
@@ -3465,6 +3551,7 @@ const INITIAL_FINANCE_DATA = {
       "remark": "FEB+MAR+APRIL+MAY",
       "account": "Hong Leong",
       "category": "销售收入",
+      "feeMonth": "2026-02, 2026-03, 2026-04, 2026-05",
       "invoiceNo": "",
       "receiptNo": "",
       "counterparty": "CHIA KAI JIE"
@@ -3476,6 +3563,7 @@ const INITIAL_FINANCE_DATA = {
       "remark": "JAN+FEB+MAR+APRIL+MAY",
       "account": "Hong Leong",
       "category": "销售收入",
+      "feeMonth": "2026-01, 2026-02, 2026-03, 2026-04, 2026-05",
       "invoiceNo": "",
       "receiptNo": "",
       "counterparty": "ZHI XIAO"
@@ -3553,6 +3641,7 @@ const INITIAL_FINANCE_DATA = {
       "remark": "APRIL+MAY",
       "account": "Hong Leong",
       "category": "销售收入",
+      "feeMonth": "2026-04, 2026-05",
       "invoiceNo": "",
       "receiptNo": "",
       "counterparty": "KAI HAO"
@@ -3597,6 +3686,7 @@ const INITIAL_FINANCE_DATA = {
       "remark": "MAR+APRIL",
       "account": "Hong Leong",
       "category": "销售收入",
+      "feeMonth": "2026-03, 2026-04",
       "invoiceNo": "",
       "receiptNo": "",
       "counterparty": "HONG YIP/KAI YIP"
@@ -3663,6 +3753,7 @@ const INITIAL_FINANCE_DATA = {
       "remark": "MAR+APRIL",
       "account": "Hong Leong",
       "category": "销售收入",
+      "feeMonth": "2026-03, 2026-04",
       "invoiceNo": "",
       "receiptNo": "",
       "counterparty": "GOH JYJE SHAN"
@@ -3718,6 +3809,7 @@ const INITIAL_FINANCE_DATA = {
       "remark": "FEB+MAR",
       "account": "Hong Leong",
       "category": "销售收入",
+      "feeMonth": "2026-02, 2026-03",
       "invoiceNo": "",
       "receiptNo": "",
       "counterparty": "KAI HAO"
@@ -3729,6 +3821,7 @@ const INITIAL_FINANCE_DATA = {
       "remark": "",
       "account": "Hong Leong",
       "category": "销售收入",
+      "feeMonth": "",
       "invoiceNo": "",
       "receiptNo": "",
       "counterparty": ""
@@ -3740,6 +3833,7 @@ const INITIAL_FINANCE_DATA = {
       "remark": "",
       "account": "Hong Leong",
       "category": "销售收入",
+      "feeMonth": "",
       "invoiceNo": "",
       "receiptNo": "",
       "counterparty": "TAN ZE LUN"
@@ -3762,6 +3856,7 @@ const INITIAL_FINANCE_DATA = {
       "remark": "",
       "account": "Hong Leong",
       "category": "销售收入",
+      "feeMonth": "",
       "invoiceNo": "",
       "receiptNo": "",
       "counterparty": ""
@@ -3784,6 +3879,7 @@ const INITIAL_FINANCE_DATA = {
       "remark": "DEPOSIT+JAN+FEB+MAR",
       "account": "Hong Leong",
       "category": "销售收入",
+      "feeMonth": "2026-01, 2026-02, 2026-03",
       "invoiceNo": "",
       "receiptNo": "",
       "counterparty": "LEE JI CHUEN"
@@ -3817,6 +3913,7 @@ const INITIAL_FINANCE_DATA = {
       "remark": "JAN+FEB+MAR",
       "account": "Hong Leong",
       "category": "销售收入",
+      "feeMonth": "2026-01, 2026-02, 2026-03",
       "invoiceNo": "",
       "receiptNo": "",
       "counterparty": "TAN JIAN FONG"
@@ -3828,6 +3925,7 @@ const INITIAL_FINANCE_DATA = {
       "remark": "MARCH",
       "account": "Hong Leong",
       "category": "销售收入",
+      "feeMonth": "2026-03",
       "invoiceNo": "",
       "receiptNo": "",
       "counterparty": "LEE JU YAN"
@@ -3839,6 +3937,7 @@ const INITIAL_FINANCE_DATA = {
       "remark": "JAN+FEB",
       "account": "Hong Leong",
       "category": "销售收入",
+      "feeMonth": "2026-01, 2026-02",
       "invoiceNo": "",
       "receiptNo": "",
       "counterparty": "HONG YIP/KAI YIP"
@@ -3850,6 +3949,7 @@ const INITIAL_FINANCE_DATA = {
       "remark": "FEB",
       "account": "Hong Leong",
       "category": "销售收入",
+      "feeMonth": "2026-02",
       "invoiceNo": "",
       "receiptNo": "",
       "counterparty": "CHUA MING ZHE"
@@ -3861,6 +3961,7 @@ const INITIAL_FINANCE_DATA = {
       "remark": "FEB",
       "account": "Hong Leong",
       "category": "销售收入",
+      "feeMonth": "2026-02",
       "invoiceNo": "",
       "receiptNo": "",
       "counterparty": "WONG E FULL"
@@ -3872,6 +3973,7 @@ const INITIAL_FINANCE_DATA = {
       "remark": "FEB",
       "account": "Hong Leong",
       "category": "销售收入",
+      "feeMonth": "2026-02",
       "invoiceNo": "",
       "receiptNo": "",
       "counterparty": "HUAI DERK"
@@ -4061,15 +4163,39 @@ const INITIAL_FINANCE_DATA = {
   ],
   "expenses": [
     {
-      "id": "EXP-7192660",
-      "date": "2026-07-19",
-      "item": "单据日常支出",
-      "time": null,
+      "id": "EXP-393639",
+      "date": "2026-09-23",
+      "item": "缴税费用",
+      "time": "",
+      "amount": 900,
+      "remark": "20260008",
+      "account": "Hong Leong",
+      "category": "财务成本",
+      "counterparty": "CHOO CHAI LING",
+      "receiptImage": ""
+    },
+    {
+      "id": "EXP-165727",
+      "date": "2026-09-23",
+      "item": "Gas",
+      "time": "18:20",
       "amount": 26.6,
-      "remark": "petron 单据日常支出",
-      "account": "PART LEAM",
+      "remark": "12909438",
+      "account": "KEE THUANG",
       "category": "原材料",
-      "counterparty": "petron",
+      "counterparty": "Petron Changkat Jong",
+      "receiptImage": ""
+    },
+    {
+      "id": "EXP-902451",
+      "date": "2026-09-15",
+      "item": "Water bill",
+      "time": "",
+      "amount": 191.7,
+      "remark": "960260",
+      "account": "MING ZHOU",
+      "category": "水电费",
+      "counterparty": "Lembaga Air Perak",
       "receiptImage": ""
     },
     {
@@ -4181,6 +4307,18 @@ const INITIAL_FINANCE_DATA = {
       "account": "PART LEAM",
       "category": "水电费",
       "counterparty": "COWAY(MALAYSIA) SDN BHD",
+      "receiptImage": ""
+    },
+    {
+      "id": "EXP-7192660",
+      "date": "2026-07-19",
+      "item": "单据日常支出",
+      "time": null,
+      "amount": 26.6,
+      "remark": "petron 单据日常支出",
+      "account": "PART LEAM",
+      "category": "原材料",
+      "counterparty": "petron",
       "receiptImage": ""
     },
     {
@@ -4878,7 +5016,97 @@ const INITIAL_FINANCE_DATA = {
       "counterparty": "PART LEAM"
     }
   ],
-  "updatedAt": 1789053867988,
+  "auditLogs": [
+    {
+      "id": "AUD-1790694666011-UE2Z",
+      "diff": null,
+      "action": "CREATE",
+      "amount": 1440,
+      "module": "income",
+      "details": "",
+      "summary": "录入新收入: 2026-09-29 销售收入 RM 1440 (LEE JI CHUEN)",
+      "timeStr": "2026-09-29 23:11:06",
+      "operator": "电脑端 (Web)",
+      "recordId": "INC-666011",
+      "snapshot": {
+        "id": "INC-666011",
+        "date": "2026-09-29",
+        "amount": 1440,
+        "remark": "",
+        "account": "Hong Leong",
+        "category": "销售收入",
+        "feeMonth": "2026-07, 2026-08, 2026-09",
+        "invoiceNo": "",
+        "receiptNo": "",
+        "counterparty": "LEE JI CHUEN"
+      },
+      "timestamp": 1790694666011
+    },
+    {
+      "id": "AUD-INIT-005",
+      "action": "UPDATE",
+      "module": "arrears",
+      "details": "严格限定自动填充范围不超过当前结账月(9月)，避免押金溢出错误填入 10 月。",
+      "summary": "吴劼善住宿费 12 个月大屏矩阵推算逻辑优化 (10月未出账恢复为横杠)",
+      "timeStr": "2026-09-28 18:45:00",
+      "operator": "电脑端 (Web)",
+      "recordId": "GOH JYJE SHAN",
+      "timestamp": 1790592329000
+    },
+    {
+      "id": "AUD-INIT-004",
+      "action": "RESTORE",
+      "module": "system",
+      "details": "启用全生命周期操作留痕、前后字段比对 Diff、删除快照防篡改与一键导出 CSV 报表。",
+      "summary": "财务审计追踪系统 (Audit Trail) 全面部署上线",
+      "timeStr": "2026-09-23 16:30:00",
+      "operator": "电脑端 (Web)",
+      "timestamp": 1790152500000
+    },
+    {
+      "id": "AUD-INIT-003",
+      "action": "CREATE",
+      "amount": 474,
+      "module": "expense",
+      "details": "MAXIS HOME FIBRE RM 106.00/月，COWAY 净水器租金 RM 118.00/月，合伙人汽油津贴 RM 250.00/月。",
+      "summary": "每月固定水电宽带网络 (MAXIS) 与净水器 (COWAY) 自动计提",
+      "timeStr": "2026-09-10 14:15:00",
+      "operator": "电脑端 (Web)",
+      "recordId": "EXP-FIX-MONTHLY",
+      "timestamp": 1789053867000
+    },
+    {
+      "id": "AUD-INIT-002",
+      "action": "UPDATE",
+      "amount": 2880,
+      "module": "arrears",
+      "details": "系统已完成 12 个月大屏收缴监控核算，12 人已全额结清，吕梓铨与谢凯捷尚欠 7~9 月份住宿费各 RM 1,440.00。",
+      "summary": "15 位住宿学生 1~9 月份住宿费收缴大屏对账与状态核准",
+      "timeStr": "2026-09-09 11:30:00",
+      "operator": "电脑端 (Web)",
+      "recordId": "BOARDING_STUDENTS",
+      "timestamp": 1788883200000
+    },
+    {
+      "id": "AUD-INIT-001",
+      "action": "IMPORT",
+      "amount": null,
+      "module": "statement",
+      "details": "成功解析 2026 年度银行流水，自动匹配并归属 93 笔学费与销售收入、57 笔日常支出项目。",
+      "summary": "丰隆银行 (Hong Leong Bank) 对账单 PDF 智能流水解析与入账",
+      "timeStr": "2026-09-08 10:00:00",
+      "operator": "电脑端 (Web)",
+      "recordId": "15200056062",
+      "snapshot": {
+        "period": "2026-01-01 ~ 2026-09-08",
+        "expCount": 57,
+        "incCount": 93
+      },
+      "timestamp": 1788796800000
+    }
+  ],
+  "updatedAt": 1790694666622,
+  "deletedIds": [],
   "ocrSettings": {
     "mode": "local",
     "geminiApiKey": "",
@@ -4900,283 +5128,6 @@ const INITIAL_FINANCE_DATA = {
     "财务成本",
     "汽油津贴",
     "提现"
-  ],
-  "boardingStudents": [
-    {
-      "id": "LEE YAN CHENG",
-      "zhName": "李晏丞",
-      "name": "LEE YAN CHENG",
-      "aliases": [
-        "李晏丞",
-        "LEE YAN CHENG",
-        "LEE YAN",
-        "LEE YA",
-        "晏丞",
-        "LIM YEE LING"
-      ],
-      "count": 1,
-      "fee": 480,
-      "room": "201房",
-      "phone": "012-7896541",
-      "active": true,
-      "note": ""
-    },
-    {
-      "id": "KAIHAO",
-      "zhName": "蔡凯皓",
-      "name": "KAIHAO",
-      "aliases": [
-        "蔡凯皓",
-        "KAI HAO",
-        "KAIHAO",
-        "凯皓",
-        "CHUA HEE SIANG"
-      ],
-      "count": 1,
-      "fee": 480,
-      "room": "202房",
-      "phone": "016-8891234",
-      "active": true,
-      "note": ""
-    },
-    {
-      "id": "LEE JU YAN",
-      "zhName": "李居彦",
-      "name": "LEE JU YAN",
-      "aliases": [
-        "李居彦",
-        "LEE JU YAN",
-        "JU YAN",
-        "居彦",
-        "WONG PIK WOON"
-      ],
-      "count": 1,
-      "fee": 480,
-      "room": "203房",
-      "phone": "019-3321567",
-      "active": true,
-      "note": ""
-    },
-    {
-      "id": "CHUA MING ZHE",
-      "zhName": "蔡旻哲",
-      "name": "CHUA MING ZHE",
-      "aliases": [
-        "蔡旻哲",
-        "CHUA MING ZHE",
-        "MING ZHE",
-        "旻哲",
-        "CHUA MIN ZHE",
-        "MIN ZHE",
-        "MR FOO POH HAR"
-      ],
-      "count": 1,
-      "fee": 480,
-      "room": "204房",
-      "phone": "012-6549871",
-      "active": true,
-      "note": ""
-    },
-    {
-      "id": "ONG SHI SHUI",
-      "zhName": "翁诗岁",
-      "name": "ONG SHI SHUI",
-      "aliases": [
-        "翁诗岁",
-        "ONG SHI SHUI",
-        "ONG SHI SUI",
-        "BEH SIEW SIEW",
-        "SHI SHUI",
-        "SHI SUI",
-        "诗岁",
-        "MR ONG CHAU LEANG"
-      ],
-      "count": 1,
-      "fee": 480,
-      "room": "205房",
-      "phone": "017-4561238",
-      "active": true,
-      "note": ""
-    },
-    {
-      "id": "ENG WEI ZHI",
-      "zhName": "黄炜智",
-      "name": "ENG WEI ZHI",
-      "aliases": [
-        "黄炜智",
-        "ENG WEI ZHI",
-        "ENG WEE ZHI",
-        "ENG WEE HOSTEL ZHI",
-        "WEI ZHI",
-        "炜智",
-        "黄伟智",
-        "TEE LEK TING"
-      ],
-      "count": 1,
-      "fee": 480,
-      "room": "206房",
-      "phone": "012-3216549",
-      "active": true,
-      "note": ""
-    },
-    {
-      "id": "WONG E FULL",
-      "zhName": "黄益富",
-      "name": "WONG E FULL",
-      "aliases": [
-        "黄益富",
-        "WONG E FULL",
-        "E FULL",
-        "益富",
-        "黄益福",
-        "RAINBOW ZONE VENTURES"
-      ],
-      "count": 1,
-      "fee": 480,
-      "room": "207房",
-      "phone": "018-9874561",
-      "active": true,
-      "note": ""
-    },
-    {
-      "id": "HUAIDERK",
-      "zhName": "陈怀德",
-      "name": "HUAIDERK",
-      "aliases": [
-        "陈怀德",
-        "HUAIDERK",
-        "HUAI DERK",
-        "HUAI D",
-        "怀德",
-        "CHONG MEI KOON"
-      ],
-      "count": 1,
-      "fee": 480,
-      "room": "208房",
-      "phone": "016-5412369",
-      "active": true,
-      "note": ""
-    },
-    {
-      "id": "GOH JYJE SHAN",
-      "zhName": "吴劼善",
-      "name": "GOH JYJE SHAN",
-      "aliases": [
-        "吴劼善",
-        "GOH JYJE SHAN",
-        "GOHJYIESHANN",
-        "JYJE SHAN",
-        "JYIE SHAN",
-        "劼善",
-        "TAN HOOI P",
-        "GOH HOCK G"
-      ],
-      "count": 1,
-      "fee": 480,
-      "room": "209房",
-      "phone": "011-2365478",
-      "active": true,
-      "note": ""
-    },
-    {
-      "id": "TAN JIAN FONG",
-      "zhName": "陈剑锋",
-      "name": "TAN JIAN FONG",
-      "aliases": [
-        "陈剑锋",
-        "TAN JIAN FONG",
-        "JIAN FONG",
-        "TAN JI",
-        "剑锋",
-        "WONG MEI NGUK"
-      ],
-      "count": 1,
-      "fee": 480,
-      "room": "210房",
-      "phone": "013-9871235",
-      "active": true,
-      "note": ""
-    },
-    {
-      "id": "LEE JI CHUEN",
-      "zhName": "吕梓铨",
-      "name": "LEE JI CHUEN",
-      "aliases": [
-        "吕梓铨",
-        "LEE JI CHUEN",
-        "JI CHUEN",
-        "梓铨",
-        "吕子铨",
-        "LEE YENG MAN"
-      ],
-      "count": 1,
-      "fee": 480,
-      "room": "211房",
-      "phone": "012-8745123",
-      "active": true,
-      "note": ""
-    },
-    {
-      "id": "CHIA KAI JIE",
-      "zhName": "谢凯捷",
-      "name": "CHIA KAI JIE",
-      "aliases": [
-        "谢凯捷",
-        "CHIA KAI JIE",
-        "KAI JIE",
-        "凯捷"
-      ],
-      "count": 1,
-      "fee": 480,
-      "room": "212房",
-      "phone": "014-6523987",
-      "active": true,
-      "note": ""
-    },
-    {
-      "id": "ZHI XIAO",
-      "zhName": "侯智逍",
-      "name": "ZHI XIAO",
-      "aliases": [
-        "侯智逍",
-        "ZHI XIAO",
-        "HOW ZHI XIAO",
-        "智逍",
-        "侯智宵",
-        "CHONG CHEE YENG"
-      ],
-      "count": 1,
-      "fee": 480,
-      "room": "213房",
-      "phone": "019-8521479",
-      "active": true,
-      "note": ""
-    },
-    {
-      "id": "HONG YE & KAI YE",
-      "zhName": "邹宏业 & 邹楷业",
-      "name": "HONG YE & KAI YE",
-      "aliases": [
-        "邹宏业",
-        "邹楷业",
-        "HONG YE",
-        "KAI YE",
-        "HONG YIP",
-        "KAI YIP",
-        "宏业",
-        "楷业",
-        "邹宏业 & 邹楷业",
-        "HONG YE & KAI YE",
-        "HONG YIP/KAI YIP"
-      ],
-      "count": 2,
-      "fee": 960,
-      "isBrothers": true,
-      "room": "214房",
-      "phone": "012-4455667",
-      "active": true,
-      "note": "邹宏业 & 邹楷业 两兄弟合并转账（母：RM960/月）"
-    }
   ]
 };
 
@@ -5257,7 +5208,7 @@ let ocrSettings = {
 };
 
 // Application Version and OTA Release Timestamp
-window.VOYAGE_APP_VERSION = '2026.3.44';
+window.VOYAGE_APP_VERSION = '2026.3.45';
 window.VOYAGE_APP_BUILD_TIME = Date.now();
 
 // 15 Boarding Students Master Configuration (Globally initialized)
@@ -5279,7 +5230,17 @@ const DEFAULT_BOARDING_STUDENTS = [
 ];
 window.DEFAULT_BOARDING_STUDENTS = DEFAULT_BOARDING_STUDENTS;
 
-let arrearsCutoffMonth = 9;
+// Dynamic current cutoff month helper based on real-world system calendar
+function getDefaultArrearsCutoffMonth() {
+  const now = new Date();
+  const year = now.getFullYear();
+  if (year > 2026) return 12; // In 2027+, all 2026 months are due
+  if (year < 2026) return 1;
+  const m = now.getMonth() + 1;
+  return Math.min(12, Math.max(1, m)); // e.g. 10 in October
+}
+
+let arrearsCutoffMonth = getDefaultArrearsCutoffMonth();
 let arrearsMonthlyFeePerPerson = 480;
 let arrearsViewMode = 'cards';
 let arrearsStatusFilter = 'all';
@@ -5331,6 +5292,17 @@ function ensureBaselineAuditLogs() {
   }
   if (appData.auditLogs.length < 5) {
     const baseline = [
+      {
+        id: 'AUD-INIT-006',
+        timestamp: 1790967000000,
+        timeStr: '2026-10-03 01:15:00',
+        action: 'UPDATE',
+        module: 'arrears',
+        recordId: 'SYSTEM',
+        summary: '系统进入10月份：启用对账截止月份动态自动滚动与押金抵扣精准隔离',
+        details: '将固定9月结账升级为按实际自然月（10月）动态对账，全自动更新14位学生10月份待缴账单与欠费总额，同时精准区分押金与租金，杜绝吴劼善等押金误填10月绿勾。',
+        operator: '系统自动审计'
+      },
       {
         id: 'AUD-INIT-005',
         timestamp: 1790592329000,
@@ -5939,7 +5911,7 @@ function subscribeToCloudRealtime() {
       }, payload => {
         if (payload.new && payload.new.data) {
           const cloudData = payload.new.data;
-          const { hasNewFromCloud, hasLocalUnpushed, mergedData } = smartMergeCloudAndLocal(appData, cloudData);
+          const { hasNewFromCloud, hasNewItemsFromCloud, hasNewDeletionsFromCloud, hasLocalUnpushed, mergedData } = smartMergeCloudAndLocal(appData, cloudData);
 
           if (hasNewFromCloud) {
             appData = mergedData;
@@ -6073,7 +6045,7 @@ async function pullFromCloud(isStartup = false, isUserInitiated = false) {
 
     if (data && data.data) {
       const cloudData = data.data;
-      const { hasNewFromCloud, hasLocalUnpushed, mergedData } = smartMergeCloudAndLocal(appData, cloudData);
+      const { hasNewFromCloud, hasNewItemsFromCloud, hasNewDeletionsFromCloud, hasLocalUnpushed, mergedData } = smartMergeCloudAndLocal(appData, cloudData);
 
       if (hasNewFromCloud || isStartup) {
         appData = mergedData;
@@ -11177,10 +11149,33 @@ function calculateStudentArrears(cutoffMonth = arrearsCutoffMonth, feePerPerson 
       }
     });
 
-    // Fill remaining months based on total amount paid (capped at cutoffMonth)
+    // Calculate deposit surplus from transactions that combined regular fee + security deposit
+    let depositSurplus = 0;
+    matchedIncomes.forEach(inc => {
+      const rem = (inc.remark || '').toUpperCase();
+      const amt = Number(inc.amount) || 0;
+      if (rem.includes('DEPOSIT') || rem.includes('押金') || inc.category === '住宿押金') {
+        const explicitMonth = inc.feeMonth || getIncomeFeeMonth(inc);
+        let numExplicit = 0;
+        if (explicitMonth) {
+          const mMatches = explicitMonth.match(/2026[-/](\d{1,2})/g);
+          if (mMatches) numExplicit = mMatches.length;
+        }
+        if (!numExplicit && (rem.includes('/') || rem.includes('月') || rem.includes('+'))) {
+          const matchedWords = rem.match(/\b(JAN|FEB|MAR|APR|MAY|JUN|JUL|AUG|SEP|OCT|NOV|DEC)\b|\d{1,2}月/gi);
+          if (matchedWords) numExplicit = matchedWords.length;
+        }
+        if (numExplicit > 0 && amt > (numExplicit * monthlyFee)) {
+          depositSurplus += (amt - (numExplicit * monthlyFee));
+        }
+      }
+    });
+
+    // Fill remaining months based on total fee paid (excluding security deposits)
     // Future unbilled months (> cutoffMonth) must NEVER be auto-filled by surplus/deposits
     // Future months should ONLY be marked as paid if explicitly specified via feeMonth or remark (e.g. 10月/OCT)
-    const numMonthsPaid = Math.floor(totalPaid / monthlyFee);
+    const feePaid = Math.max(0, totalPaid - depositSurplus);
+    const numMonthsPaid = Math.floor(feePaid / monthlyFee);
     let curAssigned = 0;
     for (let m = 1; m <= 12; m++) {
       if (monthsPaidMap[m]) curAssigned++;
@@ -11220,6 +11215,8 @@ function calculateStudentArrears(cutoffMonth = arrearsCutoffMonth, feePerPerson 
       monthlyFee,
       expectedTotal,
       totalPaid,
+      feePaid,
+      depositSurplus,
       arrearsAmount,
       monthsPaidMap,
       paidMonths,
@@ -11311,7 +11308,17 @@ function renderArrearsTracker() {
     barEl.style.width = `${rateVal.toFixed(1)}%`;
   }
 
-  if (cutoffSelect) cutoffSelect.value = String(report.cutoffMonth);
+  if (cutoffSelect) {
+    cutoffSelect.value = String(report.cutoffMonth);
+    const curM = getDefaultArrearsCutoffMonth();
+    Array.from(cutoffSelect.options).forEach(opt => {
+      const val = parseInt(opt.value, 10);
+      let label = `2026年 ${val}月`;
+      if (val === 12) label += ' (全年)';
+      if (val === curM) label += ' (当前月)';
+      opt.textContent = label;
+    });
+  }
   if (feeInput) feeInput.value = report.feePerPerson;
 
   // Update filter pills count badge
@@ -11665,7 +11672,7 @@ function setArrearsStatusFilter(status) {
 
 // Cutoff month change
 function handleArrearsCutoffChange(val) {
-  arrearsCutoffMonth = parseInt(val, 10) || 9;
+  arrearsCutoffMonth = parseInt(val, 10) || getDefaultArrearsCutoffMonth();
   renderArrearsTracker();
 }
 
@@ -11961,6 +11968,7 @@ window.calculateStudentArrears = calculateStudentArrears;
 window.renderArrearsTracker = renderArrearsTracker;
 window.setArrearsViewMode = setArrearsViewMode;
 window.setArrearsStatusFilter = setArrearsStatusFilter;
+window.getDefaultArrearsCutoffMonth = getDefaultArrearsCutoffMonth;
 window.handleArrearsCutoffChange = handleArrearsCutoffChange;
 window.handleArrearsFeeChange = handleArrearsFeeChange;
 window.handleArrearsSearch = handleArrearsSearch;
@@ -12184,7 +12192,7 @@ function renderFeeMonthSelector(initialSelection = '', studentName = '', exclude
   if (!gridContainer) return;
 
   const paidDetails = getStudentMonthPaymentDetails(currentModalStudentName, currentEditingIncomeId);
-  const cutoff = (typeof arrearsCutoffMonth !== 'undefined') ? arrearsCutoffMonth : 9;
+  const cutoff = (typeof arrearsCutoffMonth !== 'undefined') ? arrearsCutoffMonth : getDefaultArrearsCutoffMonth();
 
   const monthConfigs = [
     { num: 1, zh: '1月', en: 'Jan', code: '2026-01' },
@@ -12451,7 +12459,7 @@ function renderQuickMonthGrid(item) {
   if (!grid) return;
 
   const paymentDetails = getStudentMonthPaymentDetails(item.counterparty || '', item.id);
-  const cutoff = (typeof arrearsCutoffMonth !== 'undefined') ? arrearsCutoffMonth : 9;
+  const cutoff = (typeof arrearsCutoffMonth !== 'undefined') ? arrearsCutoffMonth : getDefaultArrearsCutoffMonth();
   const monthNames = [
     { num: 1, zh: '1月', en: 'Jan' },
     { num: 2, zh: '2月', en: 'Feb' },
