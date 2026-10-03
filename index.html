@@ -15,8 +15,8 @@
   <script id="voyage-ota-bootloader">
     (function() {
       try {
-        var expectedVersion = '2026.3.48';
-        var baseBuildTime = 1790967652126;
+        var expectedVersion = '2026.3.50';
+        var baseBuildTime = 1790994457803;
         var cachedBundle = localStorage.getItem('voyage_finance_cached_bundle');
         var cachedVersion = localStorage.getItem('voyage_finance_cached_version');
         var cachedTime = parseInt(localStorage.getItem('voyage_finance_cached_time') || '0', 10);
@@ -333,7 +333,7 @@
         <!-- Current Balance -->
         <div class="bg-white rounded-2xl p-5 border border-slate-200 shadow-sm relative overflow-hidden">
           <div class="flex items-center justify-between">
-            <span class="text-xs font-semibold uppercase tracking-wider text-slate-500">当前总结余</span>
+            <span id="dashboardBalanceTitle" class="text-xs font-semibold uppercase tracking-wider text-slate-500">当前总结余</span>
             <span class="p-2 rounded-lg bg-emerald-50 text-emerald-600">
               <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
             </span>
@@ -1179,8 +1179,8 @@
           <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-1">
             <div class="p-3 bg-white/90 rounded-xl border border-blue-100 shadow-2xs space-y-1">
               <div class="text-[11px] text-slate-400 font-medium">Google Drive 同步路径</div>
-              <div id="gdriveFolderPath" class="text-xs font-bold text-slate-800 truncate" title="G:\我的云端硬盘\Voyage_财务系统自动备份">
-                G:\我的云端硬盘\Voyage_财务系统自动备份
+              <div id="gdriveFolderPath" class="text-xs font-bold text-slate-800 truncate" title="H:\我的云端硬盘\Voyage_财务系统自动备份">
+                H:\我的云端硬盘\Voyage_财务系统自动备份
               </div>
             </div>
             <div class="p-3 bg-white/90 rounded-xl border border-blue-100 shadow-2xs space-y-1">
@@ -2982,7 +2982,7 @@ alter publication supabase_realtime add table finance_store;</pre>
         <div class="p-4 bg-blue-50/70 border border-blue-200 rounded-xl flex items-center justify-between text-xs">
           <div>
             <div class="font-bold text-slate-800">当前同步路径：</div>
-            <div id="modalGdrivePath" class="text-slate-600 mt-0.5">G:\我的云端硬盘\Voyage_财务系统自动备份</div>
+            <div id="modalGdrivePath" class="text-slate-600 mt-0.5">H:\我的云端硬盘\Voyage_财务系统自动备份</div>
           </div>
           <span id="modalGdriveBadge" class="px-2.5 py-1 bg-emerald-100 text-emerald-800 border border-emerald-300 rounded-full font-bold">● 已连接实时同步</span>
         </div>
@@ -3151,936 +3151,1575 @@ alter publication supabase_realtime add table finance_store;</pre>
 const INITIAL_FINANCE_DATA = {
   "incomes": [
     {
-      "id": "INC-666011",
-      "date": "2026-09-29",
-      "amount": 1440,
-      "remark": "",
-      "account": "Hong Leong",
-      "category": "销售收入",
-      "feeMonth": "2026-07, 2026-08, 2026-09",
-      "invoiceNo": "",
-      "receiptNo": "",
-      "counterparty": "LEE JI CHUEN"
-    },
-    {
-      "id": "INC-796239",
-      "date": "2026-09-28",
-      "amount": 1920,
-      "remark": "",
-      "account": "Hong Leong",
-      "category": "销售收入",
-      "feeMonth": "2026-06, 2026-07, 2026-08, 2026-09",
-      "invoiceNo": "",
-      "receiptNo": "",
-      "counterparty": "ZHI XIAO"
-    },
-    {
-      "id": "INC-25966799",
-      "date": "2026-09-22",
-      "amount": 480,
-      "remark": "2026年7月 住宿费 (蔡旻哲 · 付款人: MR FOO POH HAR)",
-      "account": "Hong Leong",
+      "id": "INC-2025-001",
+      "date": "2025-02-03",
       "category": "住宿费",
-      "feeMonth": "2026-07",
-      "invoiceNo": "",
-      "receiptNo": "",
-      "counterparty": "CHUA MING ZHE"
+      "account": "Hong Leong",
+      "amount": 760.0,
+      "remark": "FEB+DEPOSIT",
+      "counterparty": "TAN ZE LUN",
+      "feeMonth": "2025-02",
+      "receiptNo": "74001",
+      "invoiceNo": ""
     },
     {
-      "id": "INC-25966765",
-      "date": "2026-09-21",
-      "amount": 480,
-      "remark": "2026年9月 住宿费 (蔡旻哲 · 付款人: MR FOO POH HAR)",
-      "account": "Hong Leong",
+      "id": "INC-2025-002",
+      "date": "2025-02-16",
       "category": "住宿费",
-      "feeMonth": "2026-09",
-      "invoiceNo": "",
-      "receiptNo": "",
-      "counterparty": "CHUA MING ZHE"
+      "account": "Hong Leong",
+      "amount": 760.0,
+      "remark": "FEB+DEPOSIT",
+      "counterparty": "BAI HONG HAO",
+      "feeMonth": "2025-02",
+      "receiptNo": "74002",
+      "invoiceNo": ""
     },
     {
-      "id": "INC-46311692",
-      "date": "2026-09-17",
-      "amount": 480,
-      "remark": "2026年9月 住宿费 (翁诗岁 · 付款人: MR ONG CHAU LEANG)",
-      "account": "Hong Leong",
+      "id": "INC-2025-003",
+      "date": "2025-02-25",
       "category": "住宿费",
-      "feeMonth": "2026-09",
-      "invoiceNo": "",
-      "receiptNo": "",
-      "counterparty": "ONG SHI SHUI"
+      "account": "Hong Leong",
+      "amount": 480.0,
+      "remark": "MAC",
+      "counterparty": "TAN ZE LUN",
+      "feeMonth": "2025-03",
+      "receiptNo": "74003",
+      "invoiceNo": ""
     },
     {
-      "id": "INC-46311657",
-      "date": "2026-09-15",
-      "amount": 1920,
-      "remark": "2026年9月 住宿费 (邹宏业 & 邹楷业)",
-      "account": "Hong Leong",
+      "id": "INC-2025-004",
+      "date": "2025-02-25",
       "category": "住宿费",
-      "feeMonth": "2026-09",
-      "invoiceNo": "",
-      "receiptNo": "",
-      "counterparty": "HONG YE & KAI YE"
+      "account": "Hong Leong",
+      "amount": 660.0,
+      "remark": "FEB+DEPOSIT",
+      "counterparty": "ONG SHI SHUI",
+      "feeMonth": "2025-02",
+      "receiptNo": "74005",
+      "invoiceNo": ""
     },
     {
-      "id": "INC-06262921",
-      "date": "2026-09-13",
-      "amount": 480,
-      "remark": "2026年9月 住宿费 (GOH JYJE SHAN · 付款人: GohJyieShan n Sep26)",
-      "account": "Hong Leong",
+      "id": "INC-2025-005",
+      "date": "2025-02-25",
       "category": "住宿费",
-      "feeMonth": "2026-09",
-      "invoiceNo": "",
-      "receiptNo": "",
-      "counterparty": "GOH JYJE SHAN"
+      "account": "Hong Leong",
+      "amount": 760.0,
+      "remark": "FEB+DEPOSIT",
+      "counterparty": "ENG WEI ZHI",
+      "feeMonth": "2025-02",
+      "receiptNo": "74004",
+      "invoiceNo": ""
     },
     {
-      "id": "INC-03084750",
-      "date": "2026-09-08",
-      "amount": 480,
-      "remark": "2026年9月 住宿费 (TAN JIAN FONG · 付款人: Tan Jian Fong)",
-      "account": "Hong Leong",
+      "id": "INC-2025-011",
+      "date": "2025-02-25",
       "category": "住宿费",
-      "feeMonth": "",
-      "invoiceNo": "",
-      "receiptNo": "",
-      "counterparty": "TAN JIAN FONG"
+      "account": "Hong Leong",
+      "amount": 100.0,
+      "remark": "JAN",
+      "counterparty": "ENG WEI ZHI",
+      "feeMonth": "2025-01",
+      "receiptNo": "74011",
+      "invoiceNo": ""
     },
     {
-      "id": "INC-03084715",
-      "date": "2026-09-07",
-      "amount": 480,
-      "remark": "2026年9月 住宿费 (ENG WEI ZHI · 付款人: ENG WEE HOSTEL ZHI 2609)",
-      "account": "Hong Leong",
+      "id": "INC-2025-006",
+      "date": "2025-02-26",
       "category": "住宿费",
-      "feeMonth": "2026-09",
-      "invoiceNo": "",
-      "receiptNo": "",
-      "counterparty": "ENG WEI ZHI"
+      "account": "Hong Leong",
+      "amount": 760.0,
+      "remark": "FEB+DEPOSIT",
+      "counterparty": "KAIHAO",
+      "feeMonth": "2025-02",
+      "receiptNo": "74006",
+      "invoiceNo": ""
     },
     {
-      "id": "INC-03084698",
-      "date": "2026-09-07",
-      "amount": 480,
-      "remark": "2026年9月 住宿费 (WONG E FULL · 付款人: WongEFull Fund transfer S3X Sept26)",
-      "account": "Hong Leong",
+      "id": "INC-2025-007",
+      "date": "2025-03-04",
       "category": "住宿费",
-      "feeMonth": "2026-09",
-      "invoiceNo": "",
-      "receiptNo": "",
-      "counterparty": "WONG E FULL"
+      "account": "Hong Leong",
+      "amount": 760.0,
+      "remark": "FEB+DEPOSIT",
+      "counterparty": "WONG E FULL",
+      "feeMonth": "2025-02",
+      "receiptNo": "74007",
+      "invoiceNo": ""
     },
     {
-      "id": "INC-03084669",
-      "date": "2026-09-06",
-      "amount": 480,
-      "remark": "2026年9月 住宿费 (HUAIDERK · 付款人: SEPT HUAI DERK)",
-      "account": "Hong Leong",
+      "id": "INC-2025-008",
+      "date": "2025-03-04",
       "category": "住宿费",
-      "feeMonth": "2026-09",
-      "invoiceNo": "",
-      "receiptNo": "",
-      "counterparty": "HUAIDERK"
-    },
-    {
-      "id": "INC-63668868",
-      "date": "2026-09-05",
-      "amount": 480,
-      "remark": "sept ",
       "account": "Hong Leong",
-      "category": "销售收入",
-      "invoiceNo": "",
-      "receiptNo": "",
-      "counterparty": "LEE YAN CHENG"
+      "amount": 480.0,
+      "remark": "MAC",
+      "counterparty": "WONG E FULL",
+      "feeMonth": "2025-03",
+      "receiptNo": "74008",
+      "invoiceNo": ""
     },
     {
-      "id": "INC-63668898",
-      "date": "2026-09-01",
-      "amount": 960,
-      "remark": "Instant Transfer at KLM Kaihao",
+      "id": "INC-2025-009",
+      "date": "2025-03-04",
+      "category": "住宿费",
       "account": "Hong Leong",
-      "category": "销售收入",
-      "feeMonth": "2026-08, 2026-09",
-      "invoiceNo": "",
-      "receiptNo": "",
-      "counterparty": "KAI HAO"
+      "amount": 480.0,
+      "remark": "DEPOSIT",
+      "counterparty": "LEE JU YAN",
+      "feeMonth": "DEPOSIT (押金)",
+      "receiptNo": "74009",
+      "invoiceNo": ""
     },
     {
-      "id": "INC-63668821",
-      "date": "2026-08-28",
-      "amount": 480,
-      "remark": "Sept",
+      "id": "INC-2025-010",
+      "date": "2025-03-04",
+      "category": "住宿费",
       "account": "Hong Leong",
-      "category": "销售收入",
-      "invoiceNo": "",
-      "receiptNo": "",
-      "counterparty": "LEE JU YAN"
+      "amount": 480.0,
+      "remark": "MAC",
+      "counterparty": "LEE JU YAN",
+      "feeMonth": "2025-03",
+      "receiptNo": "74010",
+      "invoiceNo": ""
     },
     {
-      "id": "INC-63668860",
-      "date": "2026-08-24",
-      "amount": 480,
-      "remark": "August ",
+      "id": "INC-2025-013",
+      "date": "2025-03-08",
+      "category": "住宿费",
       "account": "Hong Leong",
-      "category": "销售收入",
-      "invoiceNo": "",
-      "receiptNo": "",
-      "counterparty": "CHUA MING ZHE"
+      "amount": 480.0,
+      "remark": "DEPOSIT",
+      "counterparty": "TAN JIAN FONG",
+      "feeMonth": "DEPOSIT (押金)",
+      "receiptNo": "74013",
+      "invoiceNo": ""
     },
     {
-      "id": "INC-63668814",
-      "date": "2026-08-22",
-      "amount": 1440,
-      "remark": "JUN",
+      "id": "INC-2025-014",
+      "date": "2025-03-08",
+      "category": "住宿费",
       "account": "Hong Leong",
-      "category": "销售收入",
-      "invoiceNo": "",
-      "receiptNo": "",
-      "counterparty": "ONG SHI SHUI"
+      "amount": 480.0,
+      "remark": "MAC",
+      "counterparty": "TAN JIAN FONG",
+      "feeMonth": "2025-03",
+      "receiptNo": "74014",
+      "invoiceNo": ""
     },
     {
-      "id": "INC-63668834",
-      "date": "2026-08-09",
-      "amount": 480,
-      "remark": "HOSTEL 2608",
+      "id": "INC-2025-012",
+      "date": "2025-03-09",
+      "category": "住宿费",
       "account": "Hong Leong",
-      "category": "销售收入",
-      "invoiceNo": "",
-      "receiptNo": "",
-      "counterparty": "ENG WEE ZHI"
+      "amount": 480.0,
+      "remark": "MAC",
+      "counterparty": "KAIHAO",
+      "feeMonth": "2025-03",
+      "receiptNo": "74012",
+      "invoiceNo": ""
     },
     {
-      "id": "INC-63668875",
-      "date": "2026-08-07",
-      "amount": 480,
-      "remark": "Aug26",
+      "id": "INC-2025-015",
+      "date": "2025-03-09",
+      "category": "住宿费",
       "account": "Hong Leong",
-      "category": "销售收入",
-      "invoiceNo": "",
-      "receiptNo": "",
-      "counterparty": "WONG E FULL"
+      "amount": 480.0,
+      "remark": "DEPOSIT",
+      "counterparty": "LEE YAN CHENG",
+      "feeMonth": "DEPOSIT (押金)",
+      "receiptNo": "74015",
+      "invoiceNo": ""
     },
     {
-      "id": "INC-63668886",
-      "date": "2026-08-06",
-      "amount": 480,
-      "remark": "AUGUST ",
+      "id": "INC-2025-016",
+      "date": "2025-03-09",
+      "category": "住宿费",
       "account": "Hong Leong",
-      "category": "销售收入",
-      "invoiceNo": "",
-      "receiptNo": "",
-      "counterparty": "HUAI DERK"
+      "amount": 480.0,
+      "remark": "MAC",
+      "counterparty": "LEE YAN CHENG",
+      "feeMonth": "2025-03",
+      "receiptNo": "74016",
+      "invoiceNo": ""
     },
     {
-      "id": "INC-49721123",
-      "date": "2026-08-05",
-      "amount": 480,
-      "remark": "Aug26",
+      "id": "INC-2025-017",
+      "date": "2025-03-11",
+      "category": "住宿费",
       "account": "Hong Leong",
-      "category": "销售收入",
-      "invoiceNo": "",
-      "receiptNo": "",
-      "counterparty": "GOH JYJE SHAN"
+      "amount": 480.0,
+      "remark": "DEPOSIT",
+      "counterparty": "HUAIDERK",
+      "feeMonth": "DEPOSIT (押金)",
+      "receiptNo": "74017",
+      "invoiceNo": ""
     },
     {
-      "id": "INC-49721147",
-      "date": "2026-08-04",
-      "amount": 480,
-      "remark": "AUG26",
+      "id": "INC-2025-018",
+      "date": "2025-03-11",
+      "category": "住宿费",
       "account": "Hong Leong",
-      "category": "销售收入",
-      "invoiceNo": "",
-      "receiptNo": "",
-      "counterparty": "LEE YAN CHENG"
+      "amount": 480.0,
+      "remark": "MAC",
+      "counterparty": "HUAIDERK",
+      "feeMonth": "2025-03",
+      "receiptNo": "74018",
+      "invoiceNo": ""
     },
     {
-      "id": "INC-49721145",
-      "date": "2026-08-04",
-      "amount": 480,
-      "remark": "Aug",
+      "id": "INC-2025-019",
+      "date": "2025-03-11",
+      "category": "住宿费",
       "account": "Hong Leong",
-      "category": "销售收入",
-      "invoiceNo": "",
-      "receiptNo": "",
-      "counterparty": "LEE JU YAN"
+      "amount": 480.0,
+      "remark": "DEPOSIT",
+      "counterparty": "NGIAM JIE SHENG",
+      "feeMonth": "DEPOSIT (押金)",
+      "receiptNo": "74019",
+      "invoiceNo": ""
     },
     {
-      "id": "INC-49721142",
-      "date": "2026-08-03",
-      "amount": 480,
-      "remark": "Aug 26",
+      "id": "INC-2025-020",
+      "date": "2025-03-22",
+      "category": "住宿费",
       "account": "Hong Leong",
-      "category": "销售收入",
-      "invoiceNo": "",
-      "receiptNo": "",
-      "counterparty": "TAN JIAN FONG"
+      "amount": 480.0,
+      "remark": "MAC",
+      "counterparty": "ONG SHI SHUI",
+      "feeMonth": "2025-03",
+      "receiptNo": "74020",
+      "invoiceNo": ""
     },
     {
-      "id": "INC-49721176",
-      "date": "2026-07-08",
-      "amount": 960,
-      "remark": "Deposit",
+      "id": "INC-2025-021",
+      "date": "2025-03-22",
+      "category": "住宿费",
       "account": "Hong Leong",
-      "category": "销售收入",
-      "invoiceNo": "",
-      "receiptNo": "",
-      "counterparty": "HONG YE & KAI YE"
+      "amount": 480.0,
+      "remark": "MAC",
+      "counterparty": "BAI HONG HAO",
+      "feeMonth": "2025-03",
+      "receiptNo": "74021",
+      "invoiceNo": ""
     },
     {
-      "id": "INC-49721159",
-      "date": "2026-07-08",
-      "amount": 480,
-      "remark": "HOSTEL 2607",
+      "id": "INC-2025-022",
+      "date": "2025-03-22",
+      "category": "营运资金",
       "account": "Hong Leong",
-      "category": "销售收入",
-      "invoiceNo": "",
+      "amount": 240.0,
+      "remark": "一张桌子",
+      "counterparty": "HENG KEE THUANG",
+      "feeMonth": "2025-03",
       "receiptNo": "",
-      "counterparty": "ENG WEE ZHI"
+      "invoiceNo": ""
     },
     {
-      "id": "INC-49721184",
-      "date": "2026-07-07",
-      "amount": 480,
-      "remark": "Instant Transfer at KLM Tan Ji",
+      "id": "INC-2025-023",
+      "date": "2025-03-22",
+      "category": "住宿费",
       "account": "Hong Leong",
-      "category": "销售收入",
-      "invoiceNo": "",
-      "receiptNo": "",
-      "counterparty": "TAN JIAN FONG"
+      "amount": 760.0,
+      "remark": "FEB+DEPOSIT",
+      "counterparty": "ZHI XIAO",
+      "feeMonth": "2025-02",
+      "receiptNo": "74023",
+      "invoiceNo": ""
     },
     {
-      "id": "INC-49721138",
-      "date": "2026-07-07",
-      "amount": 480,
-      "remark": "Jul26",
+      "id": "INC-2025-024",
+      "date": "2025-03-22",
+      "category": "住宿费",
       "account": "Hong Leong",
-      "category": "销售收入",
-      "invoiceNo": "",
-      "receiptNo": "",
-      "counterparty": "WONG E FULL"
+      "amount": 480.0,
+      "remark": "MAC",
+      "counterparty": "ZHI XIAO",
+      "feeMonth": "2025-03",
+      "receiptNo": "74022",
+      "invoiceNo": ""
     },
     {
-      "id": "INC-66518721",
-      "date": "2026-07-05",
-      "amount": 480,
-      "remark": "Jul26",
+      "id": "INC-2025-025",
+      "date": "2025-03-22",
+      "category": "住宿费",
       "account": "Hong Leong",
-      "category": "销售收入",
-      "invoiceNo": "",
-      "receiptNo": "",
-      "counterparty": "GOH JYJE SHAN"
+      "amount": 100.0,
+      "remark": "JAN",
+      "counterparty": "ZHI XIAO",
+      "feeMonth": "2025-01",
+      "receiptNo": "74024",
+      "invoiceNo": ""
     },
     {
-      "id": "INC-66518775",
-      "date": "2026-07-03",
-      "amount": 480,
-      "remark": "JULY ",
+      "id": "INC-2025-026",
+      "date": "2025-03-24",
+      "category": "住宿费",
       "account": "Hong Leong",
-      "category": "销售收入",
-      "invoiceNo": "",
-      "receiptNo": "",
-      "counterparty": "LEE YAN CHENG"
+      "amount": 480.0,
+      "remark": "APRIL",
+      "counterparty": "TAN ZE LUN",
+      "feeMonth": "2025-04",
+      "receiptNo": "74025",
+      "invoiceNo": ""
     },
     {
-      "id": "INC-66518734",
-      "date": "2026-07-02",
-      "amount": 480,
-      "remark": "JUL ",
+      "id": "INC-2025-027",
+      "date": "2025-03-24",
+      "category": "住宿费",
       "account": "Hong Leong",
-      "category": "销售收入",
-      "invoiceNo": "",
-      "receiptNo": "",
-      "counterparty": "HUAI DERK"
+      "amount": 480.0,
+      "remark": "MAC",
+      "counterparty": "ENG WEI ZHI",
+      "feeMonth": "2025-03",
+      "receiptNo": "74026",
+      "invoiceNo": ""
     },
     {
-      "id": "INC-66518787",
-      "date": "2026-06-30",
-      "amount": 960,
-      "remark": "Instant Transfer at KLM Kaihao",
+      "id": "INC-2025-028",
+      "date": "2025-03-31",
+      "category": "住宿费",
       "account": "Hong Leong",
-      "category": "销售收入",
-      "invoiceNo": "",
-      "receiptNo": "",
-      "counterparty": "KAI HAO"
+      "amount": 480.0,
+      "remark": "APRIL",
+      "counterparty": "LEE YAN CHENG",
+      "feeMonth": "2025-04",
+      "receiptNo": "74027",
+      "invoiceNo": ""
     },
     {
-      "id": "INC-66518770",
-      "date": "2026-06-30",
-      "amount": 480,
-      "remark": "Jul",
+      "id": "INC-2025-029",
+      "date": "2025-04-06",
+      "category": "住宿费",
       "account": "Hong Leong",
-      "category": "销售收入",
-      "invoiceNo": "",
-      "receiptNo": "",
-      "counterparty": "LEE JU YAN"
+      "amount": 480.0,
+      "remark": "DEPOSIT",
+      "counterparty": "CHUA MING ZHE",
+      "feeMonth": "DEPOSIT (押金)",
+      "receiptNo": "74028",
+      "invoiceNo": ""
     },
     {
-      "id": "INC-66518723",
-      "date": "2026-06-26",
-      "amount": 480,
-      "remark": "June",
+      "id": "INC-2025-030",
+      "date": "2025-04-06",
+      "category": "住宿费",
       "account": "Hong Leong",
-      "category": "销售收入",
-      "invoiceNo": "",
-      "receiptNo": "",
-      "counterparty": "CHUA MING ZHE"
+      "amount": 480.0,
+      "remark": "MAC",
+      "counterparty": "CHUA MING ZHE",
+      "feeMonth": "2025-03",
+      "receiptNo": "74029",
+      "invoiceNo": ""
     },
     {
-      "id": "INC-66518742",
-      "date": "2026-06-13",
-      "amount": 480,
-      "remark": "Instant Transfer at KLM TAN JI",
+      "id": "INC-2025-031",
+      "date": "2025-04-09",
+      "category": "住宿费",
       "account": "Hong Leong",
-      "category": "销售收入",
-      "invoiceNo": "",
-      "receiptNo": "",
-      "counterparty": "TAN JIAN FONG"
+      "amount": 480.0,
+      "remark": "APRIL",
+      "counterparty": "HUAIDERK",
+      "feeMonth": "2025-04",
+      "receiptNo": "74030",
+      "invoiceNo": ""
     },
     {
-      "id": "INC-66518767",
-      "date": "2026-06-09",
-      "amount": 1920,
-      "remark": "HONG YIP/KAI YIP",
+      "id": "INC-2025-032",
+      "date": "2025-04-14",
+      "category": "住宿费",
       "account": "Hong Leong",
-      "category": "销售收入",
-      "feeMonth": "2026-05, 2026-06",
-      "invoiceNo": "",
-      "receiptNo": "",
-      "counterparty": "HONG YIP/KAI YIP"
+      "amount": 480.0,
+      "remark": "APRIL",
+      "counterparty": "LEE JU YAN",
+      "feeMonth": "2025-04",
+      "receiptNo": "74031",
+      "invoiceNo": ""
     },
     {
-      "id": "INC-66518786",
-      "date": "2026-06-07",
-      "amount": 480,
-      "remark": "JUN 2026",
+      "id": "INC-2025-033",
+      "date": "2025-04-15",
+      "category": "住宿费",
       "account": "Hong Leong",
-      "category": "销售收入",
-      "invoiceNo": "",
-      "receiptNo": "",
-      "counterparty": "ENG WEE ZHI"
+      "amount": 960.0,
+      "remark": "APRIL+Deposit",
+      "counterparty": "HONG YE",
+      "feeMonth": "2025-04",
+      "receiptNo": "74032",
+      "invoiceNo": ""
     },
     {
-      "id": "INC-66518731",
-      "date": "2026-06-07",
-      "amount": 480,
-      "remark": "June26",
+      "id": "INC-2025-034",
+      "date": "2025-04-17",
+      "category": "住宿费",
       "account": "Hong Leong",
-      "category": "销售收入",
-      "invoiceNo": "",
-      "receiptNo": "",
-      "counterparty": "WONG E FULL"
+      "amount": 480.0,
+      "remark": "APRIL",
+      "counterparty": "TAN JIAN FONG",
+      "feeMonth": "2025-04",
+      "receiptNo": "74033",
+      "invoiceNo": ""
     },
     {
-      "id": "INC-73878417",
-      "date": "2026-06-04",
-      "amount": 480,
-      "remark": "Instant Transfer at KLM LEE YA",
+      "id": "INC-2025-035",
+      "date": "2025-04-25",
+      "category": "住宿费",
       "account": "Hong Leong",
-      "category": "销售收入",
-      "invoiceNo": "",
-      "receiptNo": "",
-      "counterparty": "LEE YAN CHENG"
+      "amount": 480.0,
+      "remark": "MAY",
+      "counterparty": "TAN ZE LUN",
+      "feeMonth": "2025-05",
+      "receiptNo": "74034",
+      "invoiceNo": ""
     },
     {
-      "id": "INC-73878461",
-      "date": "2026-06-02",
-      "amount": 480,
-      "remark": "Instant Transfer at KLM HUAI D",
+      "id": "INC-2025-036",
+      "date": "2025-04-30",
+      "category": "住宿费",
       "account": "Hong Leong",
-      "category": "销售收入",
-      "invoiceNo": "",
-      "receiptNo": "",
-      "counterparty": "HUAI DERK"
+      "amount": 480.0,
+      "remark": "APRIL",
+      "counterparty": "KAIHAO",
+      "feeMonth": "2025-04",
+      "receiptNo": "74035",
+      "invoiceNo": ""
     },
     {
-      "id": "INC-73878383",
-      "date": "2026-06-01",
-      "amount": 480,
-      "remark": "Jun26",
+      "id": "INC-2025-037",
+      "date": "2025-04-30",
+      "category": "住宿费",
       "account": "Hong Leong",
-      "category": "销售收入",
-      "invoiceNo": "",
-      "receiptNo": "",
-      "counterparty": "GOH JYJE SHAN"
+      "amount": 480.0,
+      "remark": "APRIL",
+      "counterparty": "ENG WEI ZHI",
+      "feeMonth": "2025-04",
+      "receiptNo": "74036",
+      "invoiceNo": ""
     },
     {
-      "id": "INC-0054",
-      "date": "2026-05-28",
-      "amount": 480,
+      "id": "INC-2025-038",
+      "date": "2025-05-02",
+      "category": "住宿费",
+      "account": "Hong Leong",
+      "amount": 480.0,
+      "remark": "APRIL",
+      "counterparty": "ONG SHI SHUI",
+      "feeMonth": "2025-04",
+      "receiptNo": "74037",
+      "invoiceNo": ""
+    },
+    {
+      "id": "INC-2025-039",
+      "date": "2025-05-04",
+      "category": "住宿费",
+      "account": "Hong Leong",
+      "amount": 960.0,
+      "remark": "APRIL+MAY",
+      "counterparty": "ZHI XIAO",
+      "feeMonth": "2025-04, 2025-05",
+      "receiptNo": "74038",
+      "invoiceNo": ""
+    },
+    {
+      "id": "INC-2025-041",
+      "date": "2025-05-05",
+      "category": "住宿费",
+      "account": "Hong Leong",
+      "amount": 480.0,
+      "remark": "MAY",
+      "counterparty": "ENG WEI ZHI",
+      "feeMonth": "2025-05",
+      "receiptNo": "74040",
+      "invoiceNo": ""
+    },
+    {
+      "id": "INC-2025-040",
+      "date": "2025-05-06",
+      "category": "住宿费",
+      "account": "Hong Leong",
+      "amount": 480.0,
+      "remark": "APRIL",
+      "counterparty": "CHUA MING ZHE",
+      "feeMonth": "2025-04",
+      "receiptNo": "74039",
+      "invoiceNo": ""
+    },
+    {
+      "id": "INC-2025-042",
+      "date": "2025-05-06",
+      "category": "住宿费",
+      "account": "Hong Leong",
+      "amount": 480.0,
+      "remark": "MAY",
+      "counterparty": "LEE YAN CHENG",
+      "feeMonth": "2025-05",
+      "receiptNo": "74041",
+      "invoiceNo": ""
+    },
+    {
+      "id": "INC-2025-043",
+      "date": "2025-05-06",
+      "category": "住宿费",
+      "account": "Hong Leong",
+      "amount": 960.0,
+      "remark": "APRIL+MAY",
+      "counterparty": "BAI HONG HAO",
+      "feeMonth": "2025-04, 2025-05",
+      "receiptNo": "74042",
+      "invoiceNo": ""
+    },
+    {
+      "id": "INC-2025-044",
+      "date": "2025-05-06",
+      "category": "住宿费",
+      "account": "Hong Leong",
+      "amount": 480.0,
+      "remark": "MAY",
+      "counterparty": "HUAIDERK",
+      "feeMonth": "2025-05",
+      "receiptNo": "74043",
+      "invoiceNo": ""
+    },
+    {
+      "id": "INC-2025-045",
+      "date": "2025-05-15",
+      "category": "住宿费",
+      "account": "Hong Leong",
+      "amount": 960.0,
+      "remark": "APRIL+MAY",
+      "counterparty": "WONG E FULL",
+      "feeMonth": "2025-04, 2025-05",
+      "receiptNo": "74044",
+      "invoiceNo": ""
+    },
+    {
+      "id": "INC-2025-046",
+      "date": "2025-05-22",
+      "category": "住宿费",
+      "account": "Hong Leong",
+      "amount": 480.0,
       "remark": "JUNE",
+      "counterparty": "TAN ZE LUN",
+      "feeMonth": "2025-06",
+      "receiptNo": "74045",
+      "invoiceNo": ""
+    },
+    {
+      "id": "INC-2025-047",
+      "date": "2025-05-30",
+      "category": "住宿费",
+      "account": "Hong Leong",
+      "amount": 480.0,
+      "remark": "MAY",
+      "counterparty": "CHUA MING ZHE",
+      "feeMonth": "2025-05",
+      "receiptNo": "74046",
+      "invoiceNo": ""
+    },
+    {
+      "id": "INC-2025-048",
+      "date": "2025-05-31",
+      "category": "住宿费",
+      "account": "Hong Leong",
+      "amount": 480.0,
+      "remark": "MAY",
+      "counterparty": "KAIHAO",
+      "feeMonth": "2025-05",
+      "receiptNo": "74047",
+      "invoiceNo": ""
+    },
+    {
+      "id": "INC-2025-049",
+      "date": "2025-06-03",
+      "category": "住宿费",
+      "account": "Hong Leong",
+      "amount": 480.0,
+      "remark": "MAY",
+      "counterparty": "LEE JU YAN",
+      "feeMonth": "2025-05",
+      "receiptNo": "74048",
+      "invoiceNo": ""
+    },
+    {
+      "id": "INC-2025-050",
+      "date": "2025-06-03",
+      "category": "住宿费",
+      "account": "Hong Leong",
+      "amount": 480.0,
+      "remark": "JUNE",
+      "counterparty": "LEE YAN CHENG",
+      "feeMonth": "2025-06",
+      "receiptNo": "74049",
+      "invoiceNo": ""
+    },
+    {
+      "id": "INC-2025-052",
+      "date": "2025-06-03",
+      "category": "住宿费",
+      "account": "Hong Leong",
+      "amount": 480.0,
+      "remark": "JUNE",
+      "counterparty": "LEE JU YAN",
+      "feeMonth": "2025-06",
+      "receiptNo": "74451",
+      "invoiceNo": ""
+    },
+    {
+      "id": "INC-2025-051",
+      "date": "2025-06-04",
+      "category": "住宿费",
+      "account": "Hong Leong",
+      "amount": 480.0,
+      "remark": "MAY",
+      "counterparty": "ONG SHI SHUI",
+      "feeMonth": "2025-05",
+      "receiptNo": "74050",
+      "invoiceNo": ""
+    },
+    {
+      "id": "INC-2025-053",
+      "date": "2025-06-05",
+      "category": "住宿费",
+      "account": "Hong Leong",
+      "amount": 480.0,
+      "remark": "JUNE",
+      "counterparty": "ENG WEI ZHI",
+      "feeMonth": "2025-06",
+      "receiptNo": "74452",
+      "invoiceNo": ""
+    },
+    {
+      "id": "INC-2025-054",
+      "date": "2025-06-10",
+      "category": "住宿费",
+      "account": "Hong Leong",
+      "amount": 480.0,
+      "remark": "JUNE",
+      "counterparty": "HUAIDERK",
+      "feeMonth": "2025-06",
+      "receiptNo": "74453",
+      "invoiceNo": ""
+    },
+    {
+      "id": "INC-2025-055",
+      "date": "2025-06-10",
+      "category": "住宿费",
+      "account": "Hong Leong",
+      "amount": 960.0,
+      "remark": "MAY+JUNE",
+      "counterparty": "TAN JIAN FONG",
+      "feeMonth": "2025-05, 2025-06",
+      "receiptNo": "74454",
+      "invoiceNo": ""
+    },
+    {
+      "id": "INC-2025-056",
+      "date": "2025-06-11",
+      "category": "住宿费",
+      "account": "Hong Leong",
+      "amount": 1440.0,
+      "remark": "MAC+APRIL+MAY",
+      "counterparty": "NGIAM JIE SHENG",
+      "feeMonth": "2025-03, 2025-04, 2025-05",
+      "receiptNo": "74455",
+      "invoiceNo": ""
+    },
+    {
+      "id": "INC-2025-057",
+      "date": "2025-06-11",
+      "category": "住宿费",
+      "account": "Hong Leong",
+      "amount": 860.0,
+      "remark": "JAN+FEB",
+      "counterparty": "NGIAM JIE SHENG",
+      "feeMonth": "2025-01, 2025-02",
+      "receiptNo": "74456",
+      "invoiceNo": ""
+    },
+    {
+      "id": "INC-2025-058",
+      "date": "2025-06-26",
+      "category": "住宿费",
+      "account": "Hong Leong",
+      "amount": 480.0,
+      "remark": "JUNE",
+      "counterparty": "ZHI XIAO",
+      "feeMonth": "2025-06",
+      "receiptNo": "74457",
+      "invoiceNo": ""
+    },
+    {
+      "id": "INC-2025-059",
+      "date": "2025-06-30",
+      "category": "住宿费",
+      "account": "Hong Leong",
+      "amount": 480.0,
+      "remark": "JULY",
+      "counterparty": "LEE JU YAN",
+      "feeMonth": "2025-07",
+      "receiptNo": "74458",
+      "invoiceNo": ""
+    },
+    {
+      "id": "INC-2025-060",
+      "date": "2025-06-30",
+      "category": "住宿费",
+      "account": "Hong Leong",
+      "amount": 480.0,
+      "remark": "JUNE",
+      "counterparty": "KAIHAO",
+      "feeMonth": "2025-06",
+      "receiptNo": "74459",
+      "invoiceNo": ""
+    },
+    {
+      "id": "INC-2025-061",
+      "date": "2025-07-01",
+      "category": "住宿费",
+      "account": "Hong Leong",
+      "amount": 1440.0,
+      "remark": "MAY+JUNE+JULY",
+      "counterparty": "HONG YE",
+      "feeMonth": "2025-05, 2025-06, 2025-07",
+      "receiptNo": "74460",
+      "invoiceNo": ""
+    },
+    {
+      "id": "INC-2025-062",
+      "date": "2025-07-01",
+      "category": "住宿费",
+      "account": "Hong Leong",
+      "amount": 960.0,
+      "remark": "DEPOSIT+JULY",
+      "counterparty": "KAI YE",
+      "feeMonth": "2025-07",
+      "receiptNo": "74461",
+      "invoiceNo": ""
+    },
+    {
+      "id": "INC-2025-063",
+      "date": "2025-07-01",
+      "category": "住宿费",
+      "account": "Hong Leong",
+      "amount": 480.0,
+      "remark": "JUNE",
+      "counterparty": "CHUA MING ZHE",
+      "feeMonth": "2025-06",
+      "receiptNo": "74462",
+      "invoiceNo": ""
+    },
+    {
+      "id": "INC-2025-064",
+      "date": "2025-07-04",
+      "category": "住宿费",
+      "account": "Hong Leong",
+      "amount": 480.0,
+      "remark": "JULY",
+      "counterparty": "LEE YAN CHENG",
+      "feeMonth": "2025-07",
+      "receiptNo": "74463",
+      "invoiceNo": ""
+    },
+    {
+      "id": "INC-2025-065",
+      "date": "2025-07-04",
+      "category": "住宿费",
+      "account": "Hong Leong",
+      "amount": 480.0,
+      "remark": "JUNE",
+      "counterparty": "ONG SHI SHUI",
+      "feeMonth": "2025-06",
+      "receiptNo": "74464",
+      "invoiceNo": ""
+    },
+    {
+      "id": "INC-2025-066",
+      "date": "2025-07-05",
+      "category": "住宿费",
+      "account": "Hong Leong",
+      "amount": 480.0,
+      "remark": "JULY",
+      "counterparty": "TAN ZE LUN",
+      "feeMonth": "2025-07",
+      "receiptNo": "74465",
+      "invoiceNo": ""
+    },
+    {
+      "id": "INC-2025-067",
+      "date": "2025-07-06",
+      "category": "住宿费",
+      "account": "Hong Leong",
+      "amount": 960.0,
+      "remark": "JUNE+JULY",
+      "counterparty": "WONG E FULL",
+      "feeMonth": "2025-06, 2025-07",
+      "receiptNo": "74466",
+      "invoiceNo": ""
+    },
+    {
+      "id": "INC-2025-068",
+      "date": "2025-07-07",
+      "category": "住宿费",
+      "account": "Hong Leong",
+      "amount": 480.0,
+      "remark": "JULY",
+      "counterparty": "HUAIDERK",
+      "feeMonth": "2025-07",
+      "receiptNo": "74467",
+      "invoiceNo": ""
+    },
+    {
+      "id": "INC-2025-069",
+      "date": "2025-07-09",
+      "category": "住宿费",
+      "account": "Hong Leong",
+      "amount": 480.0,
+      "remark": "JULY",
+      "counterparty": "ENG WEI ZHI",
+      "feeMonth": "2025-07",
+      "receiptNo": "74468",
+      "invoiceNo": ""
+    },
+    {
+      "id": "INC-2025-070",
+      "date": "2025-07-11",
+      "category": "住宿费",
+      "account": "Hong Leong",
+      "amount": 480.0,
+      "remark": "JULY",
+      "counterparty": "TAN JIAN FONG",
+      "feeMonth": "2025-07",
+      "receiptNo": "",
+      "invoiceNo": ""
+    },
+    {
+      "id": "INC-2025-071",
+      "date": "2025-07-14",
+      "category": "住宿费",
+      "account": "Hong Leong",
+      "amount": 480.0,
+      "remark": "JULY",
+      "counterparty": "ZHI XIAO",
+      "feeMonth": "2025-07",
+      "receiptNo": "",
+      "invoiceNo": ""
+    },
+    {
+      "id": "INC-2025-072",
+      "date": "2025-07-24",
+      "category": "住宿费",
+      "account": "Hong Leong",
+      "amount": 480.0,
+      "remark": "AUG",
+      "counterparty": "TAN ZE LUN",
+      "feeMonth": "2025-08",
+      "receiptNo": "",
+      "invoiceNo": ""
+    },
+    {
+      "id": "INC-2025-073",
+      "date": "2025-07-28",
+      "category": "住宿费",
+      "account": "Hong Leong",
+      "amount": 480.0,
+      "remark": "JULY",
+      "counterparty": "CHUA MING ZHE",
+      "feeMonth": "2025-07",
+      "receiptNo": "",
+      "invoiceNo": ""
+    },
+    {
+      "id": "INC-2025-074",
+      "date": "2025-07-30",
+      "category": "住宿费",
+      "account": "Hong Leong",
+      "amount": 480.0,
+      "remark": "JULY",
+      "counterparty": "KAIHAO",
+      "feeMonth": "2025-07",
+      "receiptNo": "",
+      "invoiceNo": ""
+    },
+    {
+      "id": "INC-2025-075",
+      "date": "2025-07-31",
+      "category": "住宿费",
+      "account": "Hong Leong",
+      "amount": 480.0,
+      "remark": "AUG",
+      "counterparty": "LEE JU YAN",
+      "feeMonth": "2025-08",
+      "receiptNo": "",
+      "invoiceNo": ""
+    },
+    {
+      "id": "INC-2025-076",
+      "date": "2025-08-02",
+      "category": "住宿费",
+      "account": "Hong Leong",
+      "amount": 480.0,
+      "remark": "AUG",
+      "counterparty": "LEE YAN CHENG",
+      "feeMonth": "2025-08",
+      "receiptNo": "",
+      "invoiceNo": ""
+    },
+    {
+      "id": "INC-2025-077",
+      "date": "2025-08-05",
+      "category": "住宿费",
+      "account": "Hong Leong",
+      "amount": 480.0,
+      "remark": "JULY",
+      "counterparty": "TAN JIAN FONG",
+      "feeMonth": "2025-07",
+      "receiptNo": "",
+      "invoiceNo": ""
+    },
+    {
+      "id": "INC-2025-078",
+      "date": "2025-08-05",
+      "category": "住宿费",
+      "account": "Hong Leong",
+      "amount": 960.0,
+      "remark": "JULY+AUG",
+      "counterparty": "NGIAM JIE SHENG",
+      "feeMonth": "2025-07, 2025-08",
+      "receiptNo": "",
+      "invoiceNo": ""
+    },
+    {
+      "id": "INC-2025-079",
+      "date": "2025-08-06",
+      "category": "住宿费",
+      "account": "Hong Leong",
+      "amount": 480.0,
+      "remark": "AUG",
+      "counterparty": "HUAIDERK",
+      "feeMonth": "2025-08",
+      "receiptNo": "",
+      "invoiceNo": ""
+    },
+    {
+      "id": "INC-2025-080",
+      "date": "2025-08-06",
+      "category": "住宿费",
+      "account": "Hong Leong",
+      "amount": 480.0,
+      "remark": "AUG",
+      "counterparty": "ENG WEI ZHI",
+      "feeMonth": "2025-08",
+      "receiptNo": "",
+      "invoiceNo": ""
+    },
+    {
+      "id": "INC-2025-081",
+      "date": "2025-08-06",
+      "category": "住宿费",
+      "account": "Hong Leong",
+      "amount": 480.0,
+      "remark": "AUG",
+      "counterparty": "WONG E FULL",
+      "feeMonth": "2025-08",
+      "receiptNo": "",
+      "invoiceNo": ""
+    },
+    {
+      "id": "INC-2025-082",
+      "date": "2025-08-09",
+      "category": "住宿费",
+      "account": "Hong Leong",
+      "amount": 480.0,
+      "remark": "AUG",
+      "counterparty": "ZHI XIAO",
+      "feeMonth": "2025-08",
+      "receiptNo": "",
+      "invoiceNo": ""
+    },
+    {
+      "id": "INC-2025-083",
+      "date": "2025-08-14",
+      "category": "营运资金",
+      "account": "Hong Leong",
+      "amount": 5000.0,
+      "remark": "",
+      "counterparty": "LOH PART LEAM",
+      "feeMonth": "2025-08",
+      "receiptNo": "",
+      "invoiceNo": ""
+    },
+    {
+      "id": "INC-2025-084",
+      "date": "2025-08-16",
+      "category": "住宿费",
+      "account": "Hong Leong",
+      "amount": 960.0,
+      "remark": "JULY+AUG",
+      "counterparty": "ONG SHI SHUI",
+      "feeMonth": "2025-07, 2025-08",
+      "receiptNo": "",
+      "invoiceNo": ""
+    },
+    {
+      "id": "INC-2025-085",
+      "date": "2025-08-25",
+      "category": "住宿费",
+      "account": "Hong Leong",
+      "amount": 480.0,
+      "remark": "AUG",
+      "counterparty": "CHUA MING ZHE",
+      "feeMonth": "2025-08",
+      "receiptNo": "",
+      "invoiceNo": ""
+    },
+    {
+      "id": "INC-2025-086",
+      "date": "2025-08-29",
+      "category": "住宿费",
+      "account": "Hong Leong",
+      "amount": 480.0,
+      "remark": "SEP",
+      "counterparty": "LEE JU YAN",
+      "feeMonth": "2025-09",
+      "receiptNo": "",
+      "invoiceNo": ""
+    },
+    {
+      "id": "INC-2025-087",
+      "date": "2025-09-01",
+      "category": "住宿费",
+      "account": "Hong Leong",
+      "amount": 480.0,
+      "remark": "AUG",
+      "counterparty": "KAIHAO",
+      "feeMonth": "2025-08",
+      "receiptNo": "",
+      "invoiceNo": ""
+    },
+    {
+      "id": "INC-2025-088",
+      "date": "2025-09-02",
+      "category": "住宿费",
+      "account": "Hong Leong",
+      "amount": 480.0,
+      "remark": "SEP",
+      "counterparty": "LEE YAN CHENG",
+      "feeMonth": "2025-09",
+      "receiptNo": "",
+      "invoiceNo": ""
+    },
+    {
+      "id": "INC-2025-089",
+      "date": "2025-09-04",
+      "category": "住宿费",
+      "account": "Hong Leong",
+      "amount": 480.0,
+      "remark": "SEP",
+      "counterparty": "WONG E FULL",
+      "feeMonth": "2025-09",
+      "receiptNo": "",
+      "invoiceNo": ""
+    },
+    {
+      "id": "INC-2025-090",
+      "date": "2025-09-05",
+      "category": "住宿费",
+      "account": "Hong Leong",
+      "amount": 480.0,
+      "remark": "SEP",
+      "counterparty": "ENG WEI ZHI",
+      "feeMonth": "2025-09",
+      "receiptNo": "",
+      "invoiceNo": ""
+    },
+    {
+      "id": "INC-2025-091",
+      "date": "2025-09-06",
+      "category": "住宿费",
+      "account": "Hong Leong",
+      "amount": 480.0,
+      "remark": "SEP",
+      "counterparty": "HUAIDERK",
+      "feeMonth": "2025-09",
+      "receiptNo": "",
+      "invoiceNo": ""
+    },
+    {
+      "id": "INC-2025-092",
+      "date": "2025-09-07",
+      "category": "住宿费",
+      "account": "Hong Leong",
+      "amount": 60.0,
+      "remark": "2 days",
+      "counterparty": "TAN ZE LUN",
+      "feeMonth": "2025-09",
+      "receiptNo": "",
+      "invoiceNo": ""
+    },
+    {
+      "id": "INC-2025-093",
+      "date": "2025-09-10",
+      "category": "住宿费",
+      "account": "Hong Leong",
+      "amount": 480.0,
+      "remark": "AUG",
+      "counterparty": "TAN JIAN FONG",
+      "feeMonth": "2025-08",
+      "receiptNo": "",
+      "invoiceNo": ""
+    },
+    {
+      "id": "INC-2025-094",
+      "date": "2025-09-11",
+      "category": "住宿费",
+      "account": "Hong Leong",
+      "amount": 960.0,
+      "remark": "AUG+SEP",
+      "counterparty": "HONG YE",
+      "feeMonth": "2025-08, 2025-09",
+      "receiptNo": "",
+      "invoiceNo": ""
+    },
+    {
+      "id": "INC-2025-095",
+      "date": "2025-09-11",
+      "category": "住宿费",
+      "account": "Hong Leong",
+      "amount": 960.0,
+      "remark": "AUG+SEP",
+      "counterparty": "KAI YE",
+      "feeMonth": "2025-08, 2025-09",
+      "receiptNo": "",
+      "invoiceNo": ""
+    },
+    {
+      "id": "INC-2025-096",
+      "date": "2025-09-24",
+      "category": "住宿费",
+      "account": "Hong Leong",
+      "amount": 480.0,
+      "remark": "SEP",
+      "counterparty": "CHUA MING ZHE",
+      "feeMonth": "2025-09",
+      "receiptNo": "",
+      "invoiceNo": ""
+    },
+    {
+      "id": "INC-2025-097",
+      "date": "2025-09-29",
+      "category": "住宿费",
+      "account": "Hong Leong",
+      "amount": 480.0,
+      "remark": "SEP",
+      "counterparty": "KAIHAO",
+      "feeMonth": "2025-09",
+      "receiptNo": "",
+      "invoiceNo": ""
+    },
+    {
+      "id": "INC-2025-098",
+      "date": "2025-09-30",
+      "category": "住宿费",
+      "account": "Hong Leong",
+      "amount": 480.0,
+      "remark": "OCT",
+      "counterparty": "LEE JU YAN",
+      "feeMonth": "2025-10",
+      "receiptNo": "",
+      "invoiceNo": ""
+    },
+    {
+      "id": "INC-2025-099",
+      "date": "2025-09-30",
+      "category": "住宿费",
+      "account": "Hong Leong",
+      "amount": 480.0,
+      "remark": "SEP",
+      "counterparty": "NGIAM JIE SHENG",
+      "feeMonth": "2025-09",
+      "receiptNo": "",
+      "invoiceNo": ""
+    },
+    {
+      "id": "INC-2025-100",
+      "date": "2025-09-30",
+      "category": "住宿费",
+      "account": "Hong Leong",
+      "amount": 480.0,
+      "remark": "SEP",
+      "counterparty": "ONG SHI SHUI",
+      "feeMonth": "2025-09",
+      "receiptNo": "",
+      "invoiceNo": ""
+    },
+    {
+      "id": "INC-2025-101",
+      "date": "2025-10-02",
+      "category": "住宿费",
+      "account": "Hong Leong",
+      "amount": 480.0,
+      "remark": "OCT",
+      "counterparty": "LEE YAN CHENG",
+      "feeMonth": "2025-10",
+      "receiptNo": "",
+      "invoiceNo": ""
+    },
+    {
+      "id": "INC-2025-102",
+      "date": "2025-10-06",
+      "category": "住宿费",
+      "account": "Hong Leong",
+      "amount": 480.0,
+      "remark": "OCT",
+      "counterparty": "HUAIDERK",
+      "feeMonth": "2025-10",
+      "receiptNo": "",
+      "invoiceNo": ""
+    },
+    {
+      "id": "INC-2025-103",
+      "date": "2025-10-06",
+      "category": "住宿费",
+      "account": "Hong Leong",
+      "amount": 480.0,
+      "remark": "OCT",
+      "counterparty": "WONG E FULL",
+      "feeMonth": "2025-10",
+      "receiptNo": "",
+      "invoiceNo": ""
+    },
+    {
+      "id": "INC-2025-104",
+      "date": "2025-10-08",
+      "category": "住宿费",
+      "account": "Hong Leong",
+      "amount": 480.0,
+      "remark": "SEP",
+      "counterparty": "TAN JIAN FONG",
+      "feeMonth": "2025-09",
+      "receiptNo": "",
+      "invoiceNo": ""
+    },
+    {
+      "id": "INC-2025-109",
+      "date": "2025-10-10",
+      "category": "住宿费",
+      "account": "Hong Leong",
+      "amount": 480.0,
+      "remark": "OCT",
+      "counterparty": "KAI YE",
+      "feeMonth": "2025-10",
+      "receiptNo": "",
+      "invoiceNo": ""
+    },
+    {
+      "id": "INC-2025-110",
+      "date": "2025-10-10",
+      "category": "住宿费",
+      "account": "Hong Leong",
+      "amount": 480.0,
+      "remark": "OCT",
+      "counterparty": "HONG YE",
+      "feeMonth": "2025-10",
+      "receiptNo": "",
+      "invoiceNo": ""
+    },
+    {
+      "id": "INC-2025-108",
+      "date": "2025-10-15",
+      "category": "住宿费",
+      "account": "Hong Leong",
+      "amount": 480.0,
+      "remark": "OCT",
+      "counterparty": "CHUA MING ZHE",
+      "feeMonth": "2025-10",
+      "receiptNo": "",
+      "invoiceNo": ""
+    },
+    {
+      "id": "INC-2025-111",
+      "date": "2025-10-21",
+      "category": "住宿费",
+      "account": "Hong Leong",
+      "amount": 480.0,
+      "remark": "OCT",
+      "counterparty": "ENG WEI ZHI",
+      "feeMonth": "2025-10",
+      "receiptNo": "",
+      "invoiceNo": ""
+    },
+    {
+      "id": "INC-2025-105",
+      "date": "2025-10-31",
+      "category": "住宿费",
+      "account": "Hong Leong",
+      "amount": 480.0,
+      "remark": "OCT",
+      "counterparty": "ONG SHI SHUI",
+      "feeMonth": "2025-10",
+      "receiptNo": "",
+      "invoiceNo": ""
+    },
+    {
+      "id": "INC-2025-106",
+      "date": "2025-10-31",
+      "category": "住宿费",
+      "account": "Hong Leong",
+      "amount": 480.0,
+      "remark": "NOV",
+      "counterparty": "LEE JU YAN",
+      "feeMonth": "2025-11",
+      "receiptNo": "",
+      "invoiceNo": ""
+    },
+    {
+      "id": "INC-2025-107",
+      "date": "2025-10-31",
+      "category": "住宿费",
+      "account": "Hong Leong",
+      "amount": 480.0,
+      "remark": "OCT",
+      "counterparty": "KAIHAO",
+      "feeMonth": "2025-10",
+      "receiptNo": "",
+      "invoiceNo": ""
+    },
+    {
+      "id": "INC-2025-112",
+      "date": "2025-11-06",
+      "category": "住宿费",
+      "account": "Hong Leong",
+      "amount": 480.0,
+      "remark": "NOV",
+      "counterparty": "WONG E FULL",
+      "feeMonth": "2025-11",
+      "receiptNo": "",
+      "invoiceNo": ""
+    },
+    {
+      "id": "INC-2025-113",
+      "date": "2025-11-07",
+      "category": "住宿费",
+      "account": "Hong Leong",
+      "amount": 480.0,
+      "remark": "NOV",
+      "counterparty": "ENG WEI ZHI",
+      "feeMonth": "2025-11",
+      "receiptNo": "",
+      "invoiceNo": ""
+    },
+    {
+      "id": "INC-2025-114",
+      "date": "2025-11-07",
+      "category": "住宿费",
+      "account": "Hong Leong",
+      "amount": 480.0,
+      "remark": "NOV",
+      "counterparty": "HUAIDERK",
+      "feeMonth": "2025-11",
+      "receiptNo": "",
+      "invoiceNo": ""
+    },
+    {
+      "id": "INC-2025-115",
+      "date": "2025-11-07",
+      "category": "住宿费",
+      "account": "Hong Leong",
+      "amount": 480.0,
+      "remark": "OCT",
+      "counterparty": "TAN JIAN FONG",
+      "feeMonth": "2025-10",
+      "receiptNo": "",
+      "invoiceNo": ""
+    },
+    {
+      "id": "INC-2025-116",
+      "date": "2025-11-19",
+      "category": "住宿费",
+      "account": "Hong Leong",
+      "amount": 480.0,
+      "remark": "NOV",
+      "counterparty": "CHUA MING ZHE",
+      "feeMonth": "2025-11",
+      "receiptNo": "",
+      "invoiceNo": ""
+    },
+    {
+      "id": "INC-2025-117",
+      "date": "2025-12-01",
+      "category": "住宿费",
+      "account": "Hong Leong",
+      "amount": 480.0,
+      "remark": "NOV",
+      "counterparty": "KAIHAO",
+      "feeMonth": "2025-11",
+      "receiptNo": "",
+      "invoiceNo": ""
+    },
+    {
+      "id": "INC-2025-118",
+      "date": "2025-12-02",
+      "category": "住宿费",
+      "account": "Hong Leong",
+      "amount": 480.0,
+      "remark": "NOV",
+      "counterparty": "ONG SHI SHUI",
+      "feeMonth": "2025-11",
+      "receiptNo": "",
+      "invoiceNo": ""
+    },
+    {
+      "id": "INC-2025-119",
+      "date": "2025-12-03",
+      "category": "住宿费",
+      "account": "Hong Leong",
+      "amount": 480.0,
+      "remark": "NOV",
+      "counterparty": "LEE YAN CHENG",
+      "feeMonth": "2025-11",
+      "receiptNo": "",
+      "invoiceNo": ""
+    },
+    {
+      "id": "INC-2025-120",
+      "date": "2025-12-04",
+      "category": "住宿费",
+      "account": "Hong Leong",
+      "amount": 480.0,
+      "remark": "NOV",
+      "counterparty": "HONG YE",
+      "feeMonth": "2025-11",
+      "receiptNo": "",
+      "invoiceNo": ""
+    },
+    {
+      "id": "INC-2025-121",
+      "date": "2025-12-04",
+      "category": "住宿费",
+      "account": "Hong Leong",
+      "amount": 480.0,
+      "remark": "NOV",
+      "counterparty": "KAI YE",
+      "feeMonth": "2025-11",
+      "receiptNo": "",
+      "invoiceNo": ""
+    },
+    {
+      "id": "INC-2025-122",
+      "date": "2025-12-07",
+      "category": "住宿费",
+      "account": "Hong Leong",
+      "amount": 1440.0,
+      "remark": "SEP,OCT,NOV",
+      "counterparty": "ZHI XIAO",
+      "feeMonth": "2025-09, 2025-10, 2025-11",
+      "receiptNo": "",
+      "invoiceNo": ""
+    },
+    {
+      "id": "INC-0001",
+      "date": "2026-01-05",
+      "amount": 480,
+      "remark": "2026-01-01",
       "account": "Hong Leong",
       "category": "销售收入",
+      "feeMonth": "2026-01",
+      "invoiceNo": "",
+      "receiptNo": "",
+      "counterparty": "LEE YAN CHENG"
+    },
+    {
+      "id": "INC-0002",
+      "date": "2026-01-08",
+      "amount": 480,
+      "remark": "2026-01-01",
+      "account": "Hong Leong",
+      "category": "销售收入",
+      "feeMonth": "2026-01",
+      "invoiceNo": "",
+      "receiptNo": "",
+      "counterparty": "HUAI DERK"
+    },
+    {
+      "id": "INC-0003",
+      "date": "2026-01-11",
+      "amount": 480,
+      "remark": "2026-01-01",
+      "account": "Hong Leong",
+      "category": "销售收入",
+      "feeMonth": "2026-01",
       "invoiceNo": "",
       "receiptNo": "",
       "counterparty": "LEE JU YAN"
     },
     {
-      "id": "INC-0053",
-      "date": "2026-05-27",
-      "amount": 480,
-      "remark": "MAY",
+      "id": "INC-0004",
+      "date": "2026-01-12",
+      "amount": 960,
+      "remark": "2026/1 + DEPOSIT",
       "account": "Hong Leong",
       "category": "销售收入",
+      "feeMonth": "2026-01",
       "invoiceNo": "",
       "receiptNo": "",
-      "counterparty": "LEE JI CHUEN"
+      "counterparty": "GOH JYJE SHAN"
     },
     {
-      "id": "INC-0052",
-      "date": "2026-05-26",
-      "amount": 480,
-      "remark": "MAY",
+      "id": "INC-0005",
+      "date": "2026-01-18",
+      "amount": 960,
+      "remark": "2026/1 + DEPOSIT",
       "account": "Hong Leong",
       "category": "销售收入",
-      "invoiceNo": "",
-      "receiptNo": "",
-      "counterparty": "CHUA MING ZHE"
-    },
-    {
-      "id": "INC-0051",
-      "date": "2026-05-20",
-      "amount": 1920,
-      "remark": "FEB+MAR+APRIL+MAY",
-      "account": "Hong Leong",
-      "category": "销售收入",
-      "feeMonth": "2026-02, 2026-03, 2026-04, 2026-05",
+      "feeMonth": "2026-01",
       "invoiceNo": "",
       "receiptNo": "",
       "counterparty": "CHIA KAI JIE"
     },
     {
-      "id": "INC-0050",
-      "date": "2026-05-10",
-      "amount": 2400,
-      "remark": "JAN+FEB+MAR+APRIL+MAY",
-      "account": "Hong Leong",
-      "category": "销售收入",
-      "feeMonth": "2026-01, 2026-02, 2026-03, 2026-04, 2026-05",
-      "invoiceNo": "",
-      "receiptNo": "",
-      "counterparty": "ZHI XIAO"
-    },
-    {
-      "id": "INC-0049",
-      "date": "2026-05-09",
+      "id": "INC-0006",
+      "date": "2026-01-19",
       "amount": 480,
-      "remark": "MAY",
+      "remark": "2026-01-01",
       "account": "Hong Leong",
       "category": "销售收入",
-      "invoiceNo": "",
-      "receiptNo": "",
-      "counterparty": "ENG WEI ZHI"
-    },
-    {
-      "id": "INC-0048",
-      "date": "2026-05-07",
-      "amount": 480,
-      "remark": "MAY",
-      "account": "Hong Leong",
-      "category": "销售收入",
-      "invoiceNo": "",
-      "receiptNo": "",
-      "counterparty": "TAN JIAN FONG"
-    },
-    {
-      "id": "INC-0046",
-      "date": "2026-05-06",
-      "amount": 480,
-      "remark": "MAY",
-      "account": "Hong Leong",
-      "category": "销售收入",
-      "invoiceNo": "",
-      "receiptNo": "",
-      "counterparty": "LEE YAN CHENG"
-    },
-    {
-      "id": "INC-0047",
-      "date": "2026-05-06",
-      "amount": 480,
-      "remark": "MAY",
-      "account": "Hong Leong",
-      "category": "销售收入",
-      "invoiceNo": "",
-      "receiptNo": "",
-      "counterparty": "HUAI DERK"
-    },
-    {
-      "id": "INC-0045",
-      "date": "2026-05-04",
-      "amount": 480,
-      "remark": "MAY",
-      "account": "Hong Leong",
-      "category": "销售收入",
+      "feeMonth": "2026-01",
       "invoiceNo": "",
       "receiptNo": "",
       "counterparty": "WONG E FULL"
     },
     {
-      "id": "INC-0044",
-      "date": "2026-05-03",
+      "id": "INC-0007",
+      "date": "2026-01-26",
       "amount": 480,
-      "remark": "MAY",
+      "remark": "2026-01-01",
       "account": "Hong Leong",
       "category": "销售收入",
       "invoiceNo": "",
       "receiptNo": "",
-      "counterparty": "GOH JYJE SHAN"
+      "counterparty": "CHUA MING ZHE"
     },
     {
-      "id": "INC-0042",
-      "date": "2026-05-02",
-      "amount": 960,
-      "remark": "APRIL+MAY",
+      "id": "INC-0008",
+      "date": "2026-01-30",
+      "amount": 480,
+      "remark": "2026-02-01",
       "account": "Hong Leong",
       "category": "销售收入",
-      "feeMonth": "2026-04, 2026-05",
+      "feeMonth": "2026-02",
+      "invoiceNo": "",
+      "receiptNo": "",
+      "counterparty": "LEE JU YAN"
+    },
+    {
+      "id": "INC-0009",
+      "date": "2026-01-31",
+      "amount": 480,
+      "remark": "2026-01-01",
+      "account": "Hong Leong",
+      "category": "销售收入",
+      "feeMonth": "2026-01",
       "invoiceNo": "",
       "receiptNo": "",
       "counterparty": "KAI HAO"
-    },
-    {
-      "id": "INC-0043",
-      "date": "2026-05-02",
-      "amount": 480,
-      "remark": "APRIL",
-      "account": "Hong Leong",
-      "category": "销售收入",
-      "invoiceNo": "",
-      "receiptNo": "",
-      "counterparty": "ONG SHI SHUI"
-    },
-    {
-      "id": "INC-0041",
-      "date": "2026-04-30",
-      "amount": 480,
-      "remark": "MAY",
-      "account": "Hong Leong",
-      "category": "销售收入",
-      "invoiceNo": "",
-      "receiptNo": "",
-      "counterparty": "LEE JU YAN"
-    },
-    {
-      "id": "INC-0040",
-      "date": "2026-04-28",
-      "amount": 480,
-      "remark": "APRIL",
-      "account": "Hong Leong",
-      "category": "销售收入",
-      "invoiceNo": "",
-      "receiptNo": "",
-      "counterparty": "CHUA MING ZHE"
-    },
-    {
-      "id": "INC-0039",
-      "date": "2026-04-21",
-      "amount": 1920,
-      "remark": "MAR+APRIL",
-      "account": "Hong Leong",
-      "category": "销售收入",
-      "feeMonth": "2026-03, 2026-04",
-      "invoiceNo": "",
-      "receiptNo": "",
-      "counterparty": "HONG YIP/KAI YIP"
-    },
-    {
-      "id": "INC-0038",
-      "date": "2026-04-17",
-      "amount": 480,
-      "remark": "APRIL",
-      "account": "Hong Leong",
-      "category": "销售收入",
-      "invoiceNo": "",
-      "receiptNo": "",
-      "counterparty": "TAN JIAN FONG"
-    },
-    {
-      "id": "INC-0037",
-      "date": "2026-04-11",
-      "amount": 480,
-      "remark": "APRIL",
-      "account": "Hong Leong",
-      "category": "销售收入",
-      "invoiceNo": "",
-      "receiptNo": "",
-      "counterparty": "LEE JI CHUEN"
-    },
-    {
-      "id": "INC-0036",
-      "date": "2026-04-10",
-      "amount": 480,
-      "remark": "APRIL",
-      "account": "Hong Leong",
-      "category": "销售收入",
-      "invoiceNo": "",
-      "receiptNo": "",
-      "counterparty": "ENG WEI ZHI"
-    },
-    {
-      "id": "INC-0035",
-      "date": "2026-04-06",
-      "amount": 480,
-      "remark": "APRIL",
-      "account": "Hong Leong",
-      "category": "销售收入",
-      "invoiceNo": "",
-      "receiptNo": "",
-      "counterparty": "LEE YAN CHENG"
-    },
-    {
-      "id": "INC-0034",
-      "date": "2026-04-04",
-      "amount": 480,
-      "remark": "APRIL",
-      "account": "Hong Leong",
-      "category": "销售收入",
-      "invoiceNo": "",
-      "receiptNo": "",
-      "counterparty": "WONG E FULL"
-    },
-    {
-      "id": "INC-0033",
-      "date": "2026-04-02",
-      "amount": 960,
-      "remark": "MAR+APRIL",
-      "account": "Hong Leong",
-      "category": "销售收入",
-      "feeMonth": "2026-03, 2026-04",
-      "invoiceNo": "",
-      "receiptNo": "",
-      "counterparty": "GOH JYJE SHAN"
-    },
-    {
-      "id": "INC-0032",
-      "date": "2026-04-01",
-      "amount": 480,
-      "remark": "APRIL",
-      "account": "Hong Leong",
-      "category": "销售收入",
-      "invoiceNo": "",
-      "receiptNo": "",
-      "counterparty": "HUAI DERK"
-    },
-    {
-      "id": "INC-0029",
-      "date": "2026-03-31",
-      "amount": 480,
-      "remark": "APRIL",
-      "account": "Hong Leong",
-      "category": "销售收入",
-      "invoiceNo": "",
-      "receiptNo": "",
-      "counterparty": "LEE JU YAN"
-    },
-    {
-      "id": "INC-0030",
-      "date": "2026-03-31",
-      "amount": 480,
-      "remark": "MARCH",
-      "account": "Hong Leong",
-      "category": "销售收入",
-      "invoiceNo": "",
-      "receiptNo": "",
-      "counterparty": "CHUA MING ZHE"
-    },
-    {
-      "id": "INC-0031",
-      "date": "2026-03-31",
-      "amount": 960,
-      "remark": "MARCH",
-      "account": "Hong Leong",
-      "category": "销售收入",
-      "invoiceNo": "",
-      "receiptNo": "",
-      "counterparty": "ONG SHI SHUI"
-    },
-    {
-      "id": "INC-0028",
-      "date": "2026-03-19",
-      "amount": 960,
-      "remark": "FEB+MAR",
-      "account": "Hong Leong",
-      "category": "销售收入",
-      "feeMonth": "2026-02, 2026-03",
-      "invoiceNo": "",
-      "receiptNo": "",
-      "counterparty": "KAI HAO"
-    },
-    {
-      "id": "INC-0027",
-      "date": "2026-03-12",
-      "amount": 40,
-      "remark": "",
-      "account": "Hong Leong",
-      "category": "销售收入",
-      "feeMonth": "",
-      "invoiceNo": "",
-      "receiptNo": "",
-      "counterparty": ""
-    },
-    {
-      "id": "INC-0024",
-      "date": "2026-03-06",
-      "amount": 40,
-      "remark": "",
-      "account": "Hong Leong",
-      "category": "销售收入",
-      "feeMonth": "",
-      "invoiceNo": "",
-      "receiptNo": "",
-      "counterparty": "TAN ZE LUN"
-    },
-    {
-      "id": "INC-0025",
-      "date": "2026-03-06",
-      "amount": 480,
-      "remark": "",
-      "account": "Hong Leong",
-      "category": "销售收入",
-      "invoiceNo": "",
-      "receiptNo": "",
-      "counterparty": "WONG E FULL"
-    },
-    {
-      "id": "INC-0026",
-      "date": "2026-03-06",
-      "amount": 40,
-      "remark": "",
-      "account": "Hong Leong",
-      "category": "销售收入",
-      "feeMonth": "",
-      "invoiceNo": "",
-      "receiptNo": "",
-      "counterparty": ""
-    },
-    {
-      "id": "INC-0023",
-      "date": "2026-03-05",
-      "amount": 480,
-      "remark": "MARCH",
-      "account": "Hong Leong",
-      "category": "销售收入",
-      "invoiceNo": "",
-      "receiptNo": "",
-      "counterparty": "HUAI DERK"
-    },
-    {
-      "id": "INC-0020",
-      "date": "2026-03-04",
-      "amount": 1920,
-      "remark": "DEPOSIT+JAN+FEB+MAR",
-      "account": "Hong Leong",
-      "category": "销售收入",
-      "feeMonth": "2026-01, 2026-02, 2026-03",
-      "invoiceNo": "",
-      "receiptNo": "",
-      "counterparty": "LEE JI CHUEN"
-    },
-    {
-      "id": "INC-0021",
-      "date": "2026-03-04",
-      "amount": 480,
-      "remark": "MARCH",
-      "account": "Hong Leong",
-      "category": "销售收入",
-      "invoiceNo": "",
-      "receiptNo": "",
-      "counterparty": "LEE YAN CHENG"
-    },
-    {
-      "id": "INC-0022",
-      "date": "2026-03-04",
-      "amount": 480,
-      "remark": "MARCH",
-      "account": "Hong Leong",
-      "category": "销售收入",
-      "invoiceNo": "",
-      "receiptNo": "",
-      "counterparty": "ENG WEI ZHI"
-    },
-    {
-      "id": "INC-0019",
-      "date": "2026-03-03",
-      "amount": 1440,
-      "remark": "JAN+FEB+MAR",
-      "account": "Hong Leong",
-      "category": "销售收入",
-      "feeMonth": "2026-01, 2026-02, 2026-03",
-      "invoiceNo": "",
-      "receiptNo": "",
-      "counterparty": "TAN JIAN FONG"
-    },
-    {
-      "id": "INC-0018",
-      "date": "2026-03-02",
-      "amount": 480,
-      "remark": "MARCH",
-      "account": "Hong Leong",
-      "category": "销售收入",
-      "feeMonth": "2026-03",
-      "invoiceNo": "",
-      "receiptNo": "",
-      "counterparty": "LEE JU YAN"
-    },
-    {
-      "id": "INC-0017",
-      "date": "2026-02-24",
-      "amount": 1920,
-      "remark": "JAN+FEB",
-      "account": "Hong Leong",
-      "category": "销售收入",
-      "feeMonth": "2026-01, 2026-02",
-      "invoiceNo": "",
-      "receiptNo": "",
-      "counterparty": "HONG YIP/KAI YIP"
-    },
-    {
-      "id": "INC-0016",
-      "date": "2026-02-15",
-      "amount": 480,
-      "remark": "FEB",
-      "account": "Hong Leong",
-      "category": "销售收入",
-      "feeMonth": "2026-02",
-      "invoiceNo": "",
-      "receiptNo": "",
-      "counterparty": "CHUA MING ZHE"
-    },
-    {
-      "id": "INC-0015",
-      "date": "2026-02-14",
-      "amount": 480,
-      "remark": "FEB",
-      "account": "Hong Leong",
-      "category": "销售收入",
-      "feeMonth": "2026-02",
-      "invoiceNo": "",
-      "receiptNo": "",
-      "counterparty": "WONG E FULL"
-    },
-    {
-      "id": "INC-0014",
-      "date": "2026-02-09",
-      "amount": 480,
-      "remark": "FEB",
-      "account": "Hong Leong",
-      "category": "销售收入",
-      "feeMonth": "2026-02",
-      "invoiceNo": "",
-      "receiptNo": "",
-      "counterparty": "HUAI DERK"
-    },
-    {
-      "id": "INC-0013",
-      "date": "2026-02-04",
-      "amount": 960,
-      "remark": "JAN+FEB",
-      "account": "Hong Leong",
-      "category": "销售收入",
-      "feeMonth": "2026-01, 2026-02",
-      "invoiceNo": "",
-      "receiptNo": "",
-      "counterparty": "ONG SHI SHUI"
     },
     {
       "id": "INC-0010",
@@ -4119,34 +4758,209 @@ const INITIAL_FINANCE_DATA = {
       "counterparty": "ENG WEI ZHI"
     },
     {
-      "id": "INC-0009",
-      "date": "2026-01-31",
-      "amount": 480,
-      "remark": "2026-01-01",
+      "id": "INC-0013",
+      "date": "2026-02-04",
+      "amount": 960,
+      "remark": "JAN+FEB",
       "account": "Hong Leong",
       "category": "销售收入",
-      "feeMonth": "2026-01",
+      "feeMonth": "2026-01, 2026-02",
       "invoiceNo": "",
       "receiptNo": "",
-      "counterparty": "KAI HAO"
+      "counterparty": "ONG SHI SHUI"
     },
     {
-      "id": "INC-0008",
-      "date": "2026-01-30",
+      "id": "INC-0014",
+      "date": "2026-02-09",
       "amount": 480,
-      "remark": "2026-02-01",
+      "remark": "FEB",
       "account": "Hong Leong",
       "category": "销售收入",
       "feeMonth": "2026-02",
       "invoiceNo": "",
       "receiptNo": "",
+      "counterparty": "HUAI DERK"
+    },
+    {
+      "id": "INC-0015",
+      "date": "2026-02-14",
+      "amount": 480,
+      "remark": "FEB",
+      "account": "Hong Leong",
+      "category": "销售收入",
+      "feeMonth": "2026-02",
+      "invoiceNo": "",
+      "receiptNo": "",
+      "counterparty": "WONG E FULL"
+    },
+    {
+      "id": "INC-0016",
+      "date": "2026-02-15",
+      "amount": 480,
+      "remark": "FEB",
+      "account": "Hong Leong",
+      "category": "销售收入",
+      "feeMonth": "2026-02",
+      "invoiceNo": "",
+      "receiptNo": "",
+      "counterparty": "CHUA MING ZHE"
+    },
+    {
+      "id": "INC-0017",
+      "date": "2026-02-24",
+      "amount": 1920,
+      "remark": "JAN+FEB",
+      "account": "Hong Leong",
+      "category": "销售收入",
+      "feeMonth": "2026-01, 2026-02",
+      "invoiceNo": "",
+      "receiptNo": "",
+      "counterparty": "HONG YIP/KAI YIP"
+    },
+    {
+      "id": "INC-0018",
+      "date": "2026-03-02",
+      "amount": 480,
+      "remark": "MARCH",
+      "account": "Hong Leong",
+      "category": "销售收入",
+      "feeMonth": "2026-03",
+      "invoiceNo": "",
+      "receiptNo": "",
       "counterparty": "LEE JU YAN"
     },
     {
-      "id": "INC-0007",
-      "date": "2026-01-26",
+      "id": "INC-0019",
+      "date": "2026-03-03",
+      "amount": 1440,
+      "remark": "JAN+FEB+MAR",
+      "account": "Hong Leong",
+      "category": "销售收入",
+      "feeMonth": "2026-01, 2026-02, 2026-03",
+      "invoiceNo": "",
+      "receiptNo": "",
+      "counterparty": "TAN JIAN FONG"
+    },
+    {
+      "id": "INC-0020",
+      "date": "2026-03-04",
+      "amount": 1920,
+      "remark": "DEPOSIT+JAN+FEB+MAR",
+      "account": "Hong Leong",
+      "category": "销售收入",
+      "feeMonth": "2026-01, 2026-02, 2026-03",
+      "invoiceNo": "",
+      "receiptNo": "",
+      "counterparty": "LEE JI CHUEN"
+    },
+    {
+      "id": "INC-0021",
+      "date": "2026-03-04",
       "amount": 480,
-      "remark": "2026-01-01",
+      "remark": "MARCH",
+      "account": "Hong Leong",
+      "category": "销售收入",
+      "invoiceNo": "",
+      "receiptNo": "",
+      "counterparty": "LEE YAN CHENG"
+    },
+    {
+      "id": "INC-0022",
+      "date": "2026-03-04",
+      "amount": 480,
+      "remark": "MARCH",
+      "account": "Hong Leong",
+      "category": "销售收入",
+      "invoiceNo": "",
+      "receiptNo": "",
+      "counterparty": "ENG WEI ZHI"
+    },
+    {
+      "id": "INC-0023",
+      "date": "2026-03-05",
+      "amount": 480,
+      "remark": "MARCH",
+      "account": "Hong Leong",
+      "category": "销售收入",
+      "invoiceNo": "",
+      "receiptNo": "",
+      "counterparty": "HUAI DERK"
+    },
+    {
+      "id": "INC-0024",
+      "date": "2026-03-06",
+      "amount": 40,
+      "remark": "",
+      "account": "Hong Leong",
+      "category": "销售收入",
+      "feeMonth": "",
+      "invoiceNo": "",
+      "receiptNo": "",
+      "counterparty": "TAN ZE LUN"
+    },
+    {
+      "id": "INC-0025",
+      "date": "2026-03-06",
+      "amount": 480,
+      "remark": "",
+      "account": "Hong Leong",
+      "category": "销售收入",
+      "invoiceNo": "",
+      "receiptNo": "",
+      "counterparty": "WONG E FULL"
+    },
+    {
+      "id": "INC-0026",
+      "date": "2026-03-06",
+      "amount": 40,
+      "remark": "",
+      "account": "Hong Leong",
+      "category": "销售收入",
+      "feeMonth": "",
+      "invoiceNo": "",
+      "receiptNo": "",
+      "counterparty": ""
+    },
+    {
+      "id": "INC-0027",
+      "date": "2026-03-12",
+      "amount": 40,
+      "remark": "",
+      "account": "Hong Leong",
+      "category": "销售收入",
+      "feeMonth": "",
+      "invoiceNo": "",
+      "receiptNo": "",
+      "counterparty": ""
+    },
+    {
+      "id": "INC-0028",
+      "date": "2026-03-19",
+      "amount": 960,
+      "remark": "FEB+MAR",
+      "account": "Hong Leong",
+      "category": "销售收入",
+      "feeMonth": "2026-02, 2026-03",
+      "invoiceNo": "",
+      "receiptNo": "",
+      "counterparty": "KAI HAO"
+    },
+    {
+      "id": "INC-0029",
+      "date": "2026-03-31",
+      "amount": 480,
+      "remark": "APRIL",
+      "account": "Hong Leong",
+      "category": "销售收入",
+      "invoiceNo": "",
+      "receiptNo": "",
+      "counterparty": "LEE JU YAN"
+    },
+    {
+      "id": "INC-0030",
+      "date": "2026-03-31",
+      "amount": 480,
+      "remark": "MARCH",
       "account": "Hong Leong",
       "category": "销售收入",
       "invoiceNo": "",
@@ -4154,82 +4968,732 @@ const INITIAL_FINANCE_DATA = {
       "counterparty": "CHUA MING ZHE"
     },
     {
-      "id": "INC-0006",
-      "date": "2026-01-19",
-      "amount": 480,
-      "remark": "2026-01-01",
-      "account": "Hong Leong",
-      "category": "销售收入",
-      "feeMonth": "2026-01",
-      "invoiceNo": "",
-      "receiptNo": "",
-      "counterparty": "WONG E FULL"
-    },
-    {
-      "id": "INC-0005",
-      "date": "2026-01-18",
+      "id": "INC-0031",
+      "date": "2026-03-31",
       "amount": 960,
-      "remark": "2026/1 + DEPOSIT",
+      "remark": "MARCH",
       "account": "Hong Leong",
       "category": "销售收入",
-      "feeMonth": "2026-01",
       "invoiceNo": "",
       "receiptNo": "",
-      "counterparty": "CHIA KAI JIE"
+      "counterparty": "ONG SHI SHUI"
     },
     {
-      "id": "INC-0004",
-      "date": "2026-01-12",
-      "amount": 960,
-      "remark": "2026/1 + DEPOSIT",
-      "account": "Hong Leong",
-      "category": "销售收入",
-      "feeMonth": "2026-01",
-      "invoiceNo": "",
-      "receiptNo": "",
-      "counterparty": "GOH JYJE SHAN"
-    },
-    {
-      "id": "INC-0003",
-      "date": "2026-01-11",
+      "id": "INC-0032",
+      "date": "2026-04-01",
       "amount": 480,
-      "remark": "2026-01-01",
+      "remark": "APRIL",
       "account": "Hong Leong",
       "category": "销售收入",
-      "feeMonth": "2026-01",
-      "invoiceNo": "",
-      "receiptNo": "",
-      "counterparty": "LEE JU YAN"
-    },
-    {
-      "id": "INC-0002",
-      "date": "2026-01-08",
-      "amount": 480,
-      "remark": "2026-01-01",
-      "account": "Hong Leong",
-      "category": "销售收入",
-      "feeMonth": "2026-01",
       "invoiceNo": "",
       "receiptNo": "",
       "counterparty": "HUAI DERK"
     },
     {
-      "id": "INC-0001",
-      "date": "2026-01-05",
-      "amount": 480,
-      "remark": "2026-01-01",
+      "id": "INC-0033",
+      "date": "2026-04-02",
+      "amount": 960,
+      "remark": "MAR+APRIL",
       "account": "Hong Leong",
       "category": "销售收入",
-      "feeMonth": "2026-01",
+      "feeMonth": "2026-03, 2026-04",
+      "invoiceNo": "",
+      "receiptNo": "",
+      "counterparty": "GOH JYJE SHAN"
+    },
+    {
+      "id": "INC-0034",
+      "date": "2026-04-04",
+      "amount": 480,
+      "remark": "APRIL",
+      "account": "Hong Leong",
+      "category": "销售收入",
+      "invoiceNo": "",
+      "receiptNo": "",
+      "counterparty": "WONG E FULL"
+    },
+    {
+      "id": "INC-0035",
+      "date": "2026-04-06",
+      "amount": 480,
+      "remark": "APRIL",
+      "account": "Hong Leong",
+      "category": "销售收入",
       "invoiceNo": "",
       "receiptNo": "",
       "counterparty": "LEE YAN CHENG"
+    },
+    {
+      "id": "INC-0036",
+      "date": "2026-04-10",
+      "amount": 480,
+      "remark": "APRIL",
+      "account": "Hong Leong",
+      "category": "销售收入",
+      "invoiceNo": "",
+      "receiptNo": "",
+      "counterparty": "ENG WEI ZHI"
+    },
+    {
+      "id": "INC-0037",
+      "date": "2026-04-11",
+      "amount": 480,
+      "remark": "APRIL",
+      "account": "Hong Leong",
+      "category": "销售收入",
+      "invoiceNo": "",
+      "receiptNo": "",
+      "counterparty": "LEE JI CHUEN"
+    },
+    {
+      "id": "INC-0038",
+      "date": "2026-04-17",
+      "amount": 480,
+      "remark": "APRIL",
+      "account": "Hong Leong",
+      "category": "销售收入",
+      "invoiceNo": "",
+      "receiptNo": "",
+      "counterparty": "TAN JIAN FONG"
+    },
+    {
+      "id": "INC-0039",
+      "date": "2026-04-21",
+      "amount": 1920,
+      "remark": "MAR+APRIL",
+      "account": "Hong Leong",
+      "category": "销售收入",
+      "feeMonth": "2026-03, 2026-04",
+      "invoiceNo": "",
+      "receiptNo": "",
+      "counterparty": "HONG YIP/KAI YIP"
+    },
+    {
+      "id": "INC-0040",
+      "date": "2026-04-28",
+      "amount": 480,
+      "remark": "APRIL",
+      "account": "Hong Leong",
+      "category": "销售收入",
+      "invoiceNo": "",
+      "receiptNo": "",
+      "counterparty": "CHUA MING ZHE"
+    },
+    {
+      "id": "INC-0041",
+      "date": "2026-04-30",
+      "amount": 480,
+      "remark": "MAY",
+      "account": "Hong Leong",
+      "category": "销售收入",
+      "invoiceNo": "",
+      "receiptNo": "",
+      "counterparty": "LEE JU YAN"
+    },
+    {
+      "id": "INC-0042",
+      "date": "2026-05-02",
+      "amount": 960,
+      "remark": "APRIL+MAY",
+      "account": "Hong Leong",
+      "category": "销售收入",
+      "feeMonth": "2026-04, 2026-05",
+      "invoiceNo": "",
+      "receiptNo": "",
+      "counterparty": "KAI HAO"
+    },
+    {
+      "id": "INC-0043",
+      "date": "2026-05-02",
+      "amount": 480,
+      "remark": "APRIL",
+      "account": "Hong Leong",
+      "category": "销售收入",
+      "invoiceNo": "",
+      "receiptNo": "",
+      "counterparty": "ONG SHI SHUI"
+    },
+    {
+      "id": "INC-0044",
+      "date": "2026-05-03",
+      "amount": 480,
+      "remark": "MAY",
+      "account": "Hong Leong",
+      "category": "销售收入",
+      "invoiceNo": "",
+      "receiptNo": "",
+      "counterparty": "GOH JYJE SHAN"
+    },
+    {
+      "id": "INC-0045",
+      "date": "2026-05-04",
+      "amount": 480,
+      "remark": "MAY",
+      "account": "Hong Leong",
+      "category": "销售收入",
+      "invoiceNo": "",
+      "receiptNo": "",
+      "counterparty": "WONG E FULL"
+    },
+    {
+      "id": "INC-0046",
+      "date": "2026-05-06",
+      "amount": 480,
+      "remark": "MAY",
+      "account": "Hong Leong",
+      "category": "销售收入",
+      "invoiceNo": "",
+      "receiptNo": "",
+      "counterparty": "LEE YAN CHENG"
+    },
+    {
+      "id": "INC-0047",
+      "date": "2026-05-06",
+      "amount": 480,
+      "remark": "MAY",
+      "account": "Hong Leong",
+      "category": "销售收入",
+      "invoiceNo": "",
+      "receiptNo": "",
+      "counterparty": "HUAI DERK"
+    },
+    {
+      "id": "INC-0048",
+      "date": "2026-05-07",
+      "amount": 480,
+      "remark": "MAY",
+      "account": "Hong Leong",
+      "category": "销售收入",
+      "invoiceNo": "",
+      "receiptNo": "",
+      "counterparty": "TAN JIAN FONG"
+    },
+    {
+      "id": "INC-0049",
+      "date": "2026-05-09",
+      "amount": 480,
+      "remark": "MAY",
+      "account": "Hong Leong",
+      "category": "销售收入",
+      "invoiceNo": "",
+      "receiptNo": "",
+      "counterparty": "ENG WEI ZHI"
+    },
+    {
+      "id": "INC-0050",
+      "date": "2026-05-10",
+      "amount": 2400,
+      "remark": "JAN+FEB+MAR+APRIL+MAY",
+      "account": "Hong Leong",
+      "category": "销售收入",
+      "feeMonth": "2026-01, 2026-02, 2026-03, 2026-04, 2026-05",
+      "invoiceNo": "",
+      "receiptNo": "",
+      "counterparty": "ZHI XIAO"
+    },
+    {
+      "id": "INC-0051",
+      "date": "2026-05-20",
+      "amount": 1920,
+      "remark": "FEB+MAR+APRIL+MAY",
+      "account": "Hong Leong",
+      "category": "销售收入",
+      "feeMonth": "2026-02, 2026-03, 2026-04, 2026-05",
+      "invoiceNo": "",
+      "receiptNo": "",
+      "counterparty": "CHIA KAI JIE"
+    },
+    {
+      "id": "INC-0052",
+      "date": "2026-05-26",
+      "amount": 480,
+      "remark": "MAY",
+      "account": "Hong Leong",
+      "category": "销售收入",
+      "invoiceNo": "",
+      "receiptNo": "",
+      "counterparty": "CHUA MING ZHE"
+    },
+    {
+      "id": "INC-0053",
+      "date": "2026-05-27",
+      "amount": 480,
+      "remark": "MAY",
+      "account": "Hong Leong",
+      "category": "销售收入",
+      "invoiceNo": "",
+      "receiptNo": "",
+      "counterparty": "LEE JI CHUEN"
+    },
+    {
+      "id": "INC-0054",
+      "date": "2026-05-28",
+      "amount": 480,
+      "remark": "JUNE",
+      "account": "Hong Leong",
+      "category": "销售收入",
+      "invoiceNo": "",
+      "receiptNo": "",
+      "counterparty": "LEE JU YAN"
+    },
+    {
+      "id": "INC-73878383",
+      "date": "2026-06-01",
+      "amount": 480,
+      "remark": "Jun26",
+      "account": "Hong Leong",
+      "category": "销售收入",
+      "invoiceNo": "",
+      "receiptNo": "",
+      "counterparty": "GOH JYJE SHAN"
+    },
+    {
+      "id": "INC-73878461",
+      "date": "2026-06-02",
+      "amount": 480,
+      "remark": "Instant Transfer at KLM HUAI D",
+      "account": "Hong Leong",
+      "category": "销售收入",
+      "invoiceNo": "",
+      "receiptNo": "",
+      "counterparty": "HUAI DERK"
+    },
+    {
+      "id": "INC-73878417",
+      "date": "2026-06-04",
+      "amount": 480,
+      "remark": "Instant Transfer at KLM LEE YA",
+      "account": "Hong Leong",
+      "category": "销售收入",
+      "invoiceNo": "",
+      "receiptNo": "",
+      "counterparty": "LEE YAN CHENG"
+    },
+    {
+      "id": "INC-66518786",
+      "date": "2026-06-07",
+      "amount": 480,
+      "remark": "JUN 2026",
+      "account": "Hong Leong",
+      "category": "销售收入",
+      "invoiceNo": "",
+      "receiptNo": "",
+      "counterparty": "ENG WEE ZHI"
+    },
+    {
+      "id": "INC-66518731",
+      "date": "2026-06-07",
+      "amount": 480,
+      "remark": "June26",
+      "account": "Hong Leong",
+      "category": "销售收入",
+      "invoiceNo": "",
+      "receiptNo": "",
+      "counterparty": "WONG E FULL"
+    },
+    {
+      "id": "INC-66518767",
+      "date": "2026-06-09",
+      "amount": 1920,
+      "remark": "HONG YIP/KAI YIP",
+      "account": "Hong Leong",
+      "category": "销售收入",
+      "feeMonth": "2026-05, 2026-06",
+      "invoiceNo": "",
+      "receiptNo": "",
+      "counterparty": "HONG YIP/KAI YIP"
+    },
+    {
+      "id": "INC-66518742",
+      "date": "2026-06-13",
+      "amount": 480,
+      "remark": "Instant Transfer at KLM TAN JI",
+      "account": "Hong Leong",
+      "category": "销售收入",
+      "invoiceNo": "",
+      "receiptNo": "",
+      "counterparty": "TAN JIAN FONG"
+    },
+    {
+      "id": "INC-66518723",
+      "date": "2026-06-26",
+      "amount": 480,
+      "remark": "June",
+      "account": "Hong Leong",
+      "category": "销售收入",
+      "invoiceNo": "",
+      "receiptNo": "",
+      "counterparty": "CHUA MING ZHE"
+    },
+    {
+      "id": "INC-66518787",
+      "date": "2026-06-30",
+      "amount": 960,
+      "remark": "Instant Transfer at KLM Kaihao",
+      "account": "Hong Leong",
+      "category": "销售收入",
+      "invoiceNo": "",
+      "receiptNo": "",
+      "counterparty": "KAI HAO"
+    },
+    {
+      "id": "INC-66518770",
+      "date": "2026-06-30",
+      "amount": 480,
+      "remark": "Jul",
+      "account": "Hong Leong",
+      "category": "销售收入",
+      "invoiceNo": "",
+      "receiptNo": "",
+      "counterparty": "LEE JU YAN"
+    },
+    {
+      "id": "INC-66518734",
+      "date": "2026-07-02",
+      "amount": 480,
+      "remark": "JUL ",
+      "account": "Hong Leong",
+      "category": "销售收入",
+      "invoiceNo": "",
+      "receiptNo": "",
+      "counterparty": "HUAI DERK"
+    },
+    {
+      "id": "INC-66518775",
+      "date": "2026-07-03",
+      "amount": 480,
+      "remark": "JULY ",
+      "account": "Hong Leong",
+      "category": "销售收入",
+      "invoiceNo": "",
+      "receiptNo": "",
+      "counterparty": "LEE YAN CHENG"
+    },
+    {
+      "id": "INC-66518721",
+      "date": "2026-07-05",
+      "amount": 480,
+      "remark": "Jul26",
+      "account": "Hong Leong",
+      "category": "销售收入",
+      "invoiceNo": "",
+      "receiptNo": "",
+      "counterparty": "GOH JYJE SHAN"
+    },
+    {
+      "id": "INC-49721184",
+      "date": "2026-07-07",
+      "amount": 480,
+      "remark": "Instant Transfer at KLM Tan Ji",
+      "account": "Hong Leong",
+      "category": "销售收入",
+      "invoiceNo": "",
+      "receiptNo": "",
+      "counterparty": "TAN JIAN FONG"
+    },
+    {
+      "id": "INC-49721138",
+      "date": "2026-07-07",
+      "amount": 480,
+      "remark": "Jul26",
+      "account": "Hong Leong",
+      "category": "销售收入",
+      "invoiceNo": "",
+      "receiptNo": "",
+      "counterparty": "WONG E FULL"
+    },
+    {
+      "id": "INC-49721176",
+      "date": "2026-07-08",
+      "amount": 960,
+      "remark": "Deposit",
+      "account": "Hong Leong",
+      "category": "销售收入",
+      "invoiceNo": "",
+      "receiptNo": "",
+      "counterparty": "HONG YE & KAI YE"
+    },
+    {
+      "id": "INC-49721159",
+      "date": "2026-07-08",
+      "amount": 480,
+      "remark": "HOSTEL 2607",
+      "account": "Hong Leong",
+      "category": "销售收入",
+      "invoiceNo": "",
+      "receiptNo": "",
+      "counterparty": "ENG WEE ZHI"
+    },
+    {
+      "id": "INC-49721142",
+      "date": "2026-08-03",
+      "amount": 480,
+      "remark": "Aug 26",
+      "account": "Hong Leong",
+      "category": "销售收入",
+      "invoiceNo": "",
+      "receiptNo": "",
+      "counterparty": "TAN JIAN FONG"
+    },
+    {
+      "id": "INC-49721147",
+      "date": "2026-08-04",
+      "amount": 480,
+      "remark": "AUG26",
+      "account": "Hong Leong",
+      "category": "销售收入",
+      "invoiceNo": "",
+      "receiptNo": "",
+      "counterparty": "LEE YAN CHENG"
+    },
+    {
+      "id": "INC-49721145",
+      "date": "2026-08-04",
+      "amount": 480,
+      "remark": "Aug",
+      "account": "Hong Leong",
+      "category": "销售收入",
+      "invoiceNo": "",
+      "receiptNo": "",
+      "counterparty": "LEE JU YAN"
+    },
+    {
+      "id": "INC-49721123",
+      "date": "2026-08-05",
+      "amount": 480,
+      "remark": "Aug26",
+      "account": "Hong Leong",
+      "category": "销售收入",
+      "invoiceNo": "",
+      "receiptNo": "",
+      "counterparty": "GOH JYJE SHAN"
+    },
+    {
+      "id": "INC-63668886",
+      "date": "2026-08-06",
+      "amount": 480,
+      "remark": "AUGUST ",
+      "account": "Hong Leong",
+      "category": "销售收入",
+      "invoiceNo": "",
+      "receiptNo": "",
+      "counterparty": "HUAI DERK"
+    },
+    {
+      "id": "INC-63668875",
+      "date": "2026-08-07",
+      "amount": 480,
+      "remark": "Aug26",
+      "account": "Hong Leong",
+      "category": "销售收入",
+      "invoiceNo": "",
+      "receiptNo": "",
+      "counterparty": "WONG E FULL"
+    },
+    {
+      "id": "INC-63668834",
+      "date": "2026-08-09",
+      "amount": 480,
+      "remark": "HOSTEL 2608",
+      "account": "Hong Leong",
+      "category": "销售收入",
+      "invoiceNo": "",
+      "receiptNo": "",
+      "counterparty": "ENG WEE ZHI"
+    },
+    {
+      "id": "INC-63668814",
+      "date": "2026-08-22",
+      "amount": 1440,
+      "remark": "JUN",
+      "account": "Hong Leong",
+      "category": "销售收入",
+      "invoiceNo": "",
+      "receiptNo": "",
+      "counterparty": "ONG SHI SHUI"
+    },
+    {
+      "id": "INC-63668860",
+      "date": "2026-08-24",
+      "amount": 480,
+      "remark": "August ",
+      "account": "Hong Leong",
+      "category": "销售收入",
+      "invoiceNo": "",
+      "receiptNo": "",
+      "counterparty": "CHUA MING ZHE"
+    },
+    {
+      "id": "INC-63668821",
+      "date": "2026-08-28",
+      "amount": 480,
+      "remark": "Sept",
+      "account": "Hong Leong",
+      "category": "销售收入",
+      "invoiceNo": "",
+      "receiptNo": "",
+      "counterparty": "LEE JU YAN"
+    },
+    {
+      "id": "INC-63668898",
+      "date": "2026-09-01",
+      "amount": 960,
+      "remark": "Instant Transfer at KLM Kaihao",
+      "account": "Hong Leong",
+      "category": "销售收入",
+      "feeMonth": "2026-08, 2026-09",
+      "invoiceNo": "",
+      "receiptNo": "",
+      "counterparty": "KAI HAO"
+    },
+    {
+      "id": "INC-63668868",
+      "date": "2026-09-05",
+      "amount": 480,
+      "remark": "sept ",
+      "account": "Hong Leong",
+      "category": "销售收入",
+      "invoiceNo": "",
+      "receiptNo": "",
+      "counterparty": "LEE YAN CHENG"
+    },
+    {
+      "id": "INC-03084669",
+      "date": "2026-09-06",
+      "amount": 480,
+      "remark": "2026年9月 住宿费 (HUAIDERK · 付款人: SEPT HUAI DERK)",
+      "account": "Hong Leong",
+      "category": "住宿费",
+      "feeMonth": "2026-09",
+      "invoiceNo": "",
+      "receiptNo": "",
+      "counterparty": "HUAIDERK"
+    },
+    {
+      "id": "INC-03084715",
+      "date": "2026-09-07",
+      "amount": 480,
+      "remark": "2026年9月 住宿费 (ENG WEI ZHI · 付款人: ENG WEE HOSTEL ZHI 2609)",
+      "account": "Hong Leong",
+      "category": "住宿费",
+      "feeMonth": "2026-09",
+      "invoiceNo": "",
+      "receiptNo": "",
+      "counterparty": "ENG WEI ZHI"
+    },
+    {
+      "id": "INC-03084698",
+      "date": "2026-09-07",
+      "amount": 480,
+      "remark": "2026年9月 住宿费 (WONG E FULL · 付款人: WongEFull Fund transfer S3X Sept26)",
+      "account": "Hong Leong",
+      "category": "住宿费",
+      "feeMonth": "2026-09",
+      "invoiceNo": "",
+      "receiptNo": "",
+      "counterparty": "WONG E FULL"
+    },
+    {
+      "id": "INC-03084750",
+      "date": "2026-09-08",
+      "amount": 480,
+      "remark": "2026年9月 住宿费 (TAN JIAN FONG · 付款人: Tan Jian Fong)",
+      "account": "Hong Leong",
+      "category": "住宿费",
+      "feeMonth": "",
+      "invoiceNo": "",
+      "receiptNo": "",
+      "counterparty": "TAN JIAN FONG"
+    },
+    {
+      "id": "INC-06262921",
+      "date": "2026-09-13",
+      "amount": 480,
+      "remark": "2026年9月 住宿费 (GOH JYJE SHAN · 付款人: GohJyieShan n Sep26)",
+      "account": "Hong Leong",
+      "category": "住宿费",
+      "feeMonth": "2026-09",
+      "invoiceNo": "",
+      "receiptNo": "",
+      "counterparty": "GOH JYJE SHAN"
+    },
+    {
+      "id": "INC-46311657",
+      "date": "2026-09-15",
+      "amount": 1920,
+      "remark": "2026年9月 住宿费 (邹宏业 & 邹楷业)",
+      "account": "Hong Leong",
+      "category": "住宿费",
+      "feeMonth": "2026-09",
+      "invoiceNo": "",
+      "receiptNo": "",
+      "counterparty": "HONG YE & KAI YE"
+    },
+    {
+      "id": "INC-46311692",
+      "date": "2026-09-17",
+      "amount": 480,
+      "remark": "2026年9月 住宿费 (翁诗岁 · 付款人: MR ONG CHAU LEANG)",
+      "account": "Hong Leong",
+      "category": "住宿费",
+      "feeMonth": "2026-09",
+      "invoiceNo": "",
+      "receiptNo": "",
+      "counterparty": "ONG SHI SHUI"
+    },
+    {
+      "id": "INC-25966765",
+      "date": "2026-09-21",
+      "amount": 480,
+      "remark": "2026年9月 住宿费 (蔡旻哲 · 付款人: MR FOO POH HAR)",
+      "account": "Hong Leong",
+      "category": "住宿费",
+      "feeMonth": "2026-09",
+      "invoiceNo": "",
+      "receiptNo": "",
+      "counterparty": "CHUA MING ZHE"
+    },
+    {
+      "id": "INC-25966799",
+      "date": "2026-09-22",
+      "amount": 480,
+      "remark": "2026年7月 住宿费 (蔡旻哲 · 付款人: MR FOO POH HAR)",
+      "account": "Hong Leong",
+      "category": "住宿费",
+      "feeMonth": "2026-07",
+      "invoiceNo": "",
+      "receiptNo": "",
+      "counterparty": "CHUA MING ZHE"
+    },
+    {
+      "id": "INC-796239",
+      "date": "2026-09-28",
+      "amount": 1920,
+      "remark": "",
+      "account": "Hong Leong",
+      "category": "销售收入",
+      "feeMonth": "2026-06, 2026-07, 2026-08, 2026-09",
+      "invoiceNo": "",
+      "receiptNo": "",
+      "counterparty": "ZHI XIAO"
+    },
+    {
+      "id": "INC-666011",
+      "date": "2026-09-29",
+      "amount": 1440,
+      "remark": "",
+      "account": "Hong Leong",
+      "category": "销售收入",
+      "feeMonth": "2026-07, 2026-08, 2026-09",
+      "invoiceNo": "",
+      "receiptNo": "",
+      "counterparty": "LEE JI CHUEN"
     }
   ],
   "accounts": [
     {
       "name": "Hong Leong",
-      "initial": 492.15,
+      "initial": 1363.91,
       "accountNo": "15200056062"
     },
     {
@@ -4255,134 +5719,2045 @@ const INITIAL_FINANCE_DATA = {
   ],
   "expenses": [
     {
-      "id": "EXP-393639",
-      "date": "2026-09-23",
-      "item": "缴税费用",
-      "time": "",
-      "amount": 900,
-      "remark": "20260008",
+      "id": "EXP-2025-001",
+      "date": "2025-01-01",
+      "category": "原材料",
       "account": "Hong Leong",
-      "category": "财务成本",
-      "counterparty": "CHOO CHAI LING",
+      "item": "2* 5L EPOXY",
+      "amount": 303.16,
+      "remark": "241226TG26RADP",
+      "counterparty": "SANcora paints Industries Sdn Bhd",
+      "time": "",
       "receiptImage": ""
     },
     {
-      "id": "EXP-165727",
-      "date": "2026-09-23",
-      "item": "Gas",
-      "time": "18:20",
-      "amount": 26.6,
-      "remark": "12909438",
-      "account": "KEE THUANG",
+      "id": "EXP-2025-002",
+      "date": "2025-01-01",
       "category": "原材料",
-      "counterparty": "Petron Changkat Jong",
-      "receiptImage": ""
-    },
-    {
-      "id": "EXP-902451",
-      "date": "2026-09-15",
-      "item": "Water bill",
+      "account": "Hong Leong",
+      "item": "杂物",
+      "amount": 183.1,
+      "remark": "R000463794",
+      "counterparty": "MR DIY (KK) SDN BHD",
       "time": "",
-      "amount": 191.7,
-      "remark": "960260",
-      "account": "MING ZHOU",
-      "category": "水电费",
-      "counterparty": "Lembaga Air Perak",
       "receiptImage": ""
     },
     {
-      "id": "EXP-FIX-2026-09-KEETHUANG",
-      "date": "2026-09-01",
-      "item": "9月汽油津贴",
-      "amount": 100,
-      "remark": "尚未报销",
-      "account": "KEE THUANG",
-      "category": "汽油津贴",
-      "counterparty": "KEE THUANG",
-      "receiptImage": ""
-    },
-    {
-      "id": "EXP-FIX-2026-09-PARTLEAM",
-      "date": "2026-09-01",
-      "item": "9月汽油津贴",
-      "amount": 150,
-      "remark": "尚未报销",
-      "account": "PART LEAM",
-      "category": "汽油津贴",
-      "counterparty": "PART LEAM",
-      "receiptImage": ""
-    },
-    {
-      "id": "EXP-FIX-2026-09-MAXIS",
-      "date": "2026-09-01",
-      "item": "MAXIS HOME FIBRE (2026-09)",
-      "amount": 106,
-      "remark": null,
-      "account": "MING ZHOU",
-      "category": "水电费",
-      "counterparty": "MAXIS",
-      "receiptImage": ""
-    },
-    {
-      "id": "EXP-FIX-2026-09-COWAYMALAYSIASDNBHD",
-      "date": "2026-09-01",
-      "item": "COWAY-2026-09",
-      "amount": 118,
-      "remark": null,
-      "account": "PART LEAM",
-      "category": "水电费",
-      "counterparty": "COWAY(MALAYSIA) SDN BHD",
-      "receiptImage": ""
-    },
-    {
-      "id": "EXP-03360910",
-      "date": "2026-08-11",
-      "item": "TNB 电费",
-      "amount": 850.1,
-      "remark": "006968511746",
-      "account": "MING ZHOU",
-      "category": "水电费",
-      "counterparty": "TENAGA NASIONAL BERHAD",
-      "receiptImage": ""
-    },
-    {
-      "id": "EXP-109483",
-      "date": "2026-08-02",
-      "item": "洗碗液",
+      "id": "EXP-2025-008",
+      "date": "2025-01-04",
+      "category": "原材料",
+      "account": "Hong Leong",
+      "item": "床架",
+      "amount": 3690.0,
+      "remark": "A6784",
+      "counterparty": "KIAN HENG IRON & STAINLESS STEEL WORKS SDN BHD",
       "time": "",
-      "amount": 10.09,
+      "receiptImage": ""
+    },
+    {
+      "id": "EXP-2025-003",
+      "date": "2025-01-10",
+      "category": "原材料",
+      "account": "Hong Leong",
+      "item": "Paint Brush and roller",
+      "amount": 23.5,
+      "remark": "CSP0127057",
+      "counterparty": "CHOP CHEN PIN SDN BHD",
+      "time": "",
+      "receiptImage": ""
+    },
+    {
+      "id": "EXP-2025-004",
+      "date": "2025-01-10",
+      "category": "原材料",
+      "account": "Hong Leong",
+      "item": "1L Epoxy",
+      "amount": 38.64,
+      "remark": "2412306KJ5ER0Y",
+      "counterparty": "Y.A.Y TRADING",
+      "time": "",
+      "receiptImage": ""
+    },
+    {
+      "id": "EXP-2025-005",
+      "date": "2025-01-10",
+      "category": "原材料",
+      "account": "Hong Leong",
+      "item": "Haier 2-Door Refrigerator (418L)",
+      "amount": 1294.17,
+      "remark": "250101CBXT9BQ7",
+      "counterparty": "SMART LIFESTYLE DISTRIBUTOR",
+      "time": "",
+      "receiptImage": ""
+    },
+    {
+      "id": "EXP-2025-006",
+      "date": "2025-01-10",
+      "category": "原材料",
+      "account": "Hong Leong",
+      "item": "Philips Classic Dry Iron (1000W)",
+      "amount": 59.99,
+      "remark": "SPWMS2025010172789",
+      "counterparty": "SCOMMERCE TRADING MALAYSIA SND. BHD",
+      "time": "",
+      "receiptImage": ""
+    },
+    {
+      "id": "EXP-2025-007",
+      "date": "2025-01-10",
+      "category": "原材料",
+      "account": "Hong Leong",
+      "item": "Mirror Wall",
+      "amount": 53.08,
+      "remark": "250107TRG3610S",
+      "counterparty": "ZHONGNAN VIENTIANE TRADING (MALAYSIA) SDN.BHD.",
+      "time": "",
+      "receiptImage": ""
+    },
+    {
+      "id": "EXP-2025-009",
+      "date": "2025-01-13",
+      "category": "原材料",
+      "account": "Hong Leong",
+      "item": "PVC Door Seal Strip",
+      "amount": 8.61,
+      "remark": "250107TRGUYVMG",
+      "counterparty": "GADGET BASE PLT",
+      "time": "",
+      "receiptImage": ""
+    },
+    {
+      "id": "EXP-2025-011",
+      "date": "2025-01-13",
+      "category": "原材料",
+      "account": "Hong Leong",
+      "item": "1*5L Epoxy",
+      "amount": 148.95,
+      "remark": "2501080YND05TY",
+      "counterparty": "SANcora paints Industries Sdn Bhd",
+      "time": "",
+      "receiptImage": ""
+    },
+    {
+      "id": "EXP-2025-012",
+      "date": "2025-01-13",
+      "category": "原材料",
+      "account": "Hong Leong",
+      "item": "3*5L Epoxy",
+      "amount": 449.97,
+      "remark": "2501080YND05U0",
+      "counterparty": "SANcora paints Industries Sdn Bhd",
+      "time": "",
+      "receiptImage": ""
+    },
+    {
+      "id": "EXP-2025-013",
+      "date": "2025-01-17",
+      "category": "水电费",
+      "account": "Hong Leong",
+      "item": "Water Bill",
+      "amount": 18.0,
+      "remark": "194427",
+      "counterparty": "LEMBAGA AIR PERAK",
+      "time": "",
+      "receiptImage": ""
+    },
+    {
+      "id": "EXP-2025-010",
+      "date": "2025-01-19",
+      "category": "原材料",
+      "account": "Hong Leong",
+      "item": "Roller Blind Shutter Sunshade",
+      "amount": 370.9,
+      "remark": "2501105CJ4F7RH",
+      "counterparty": "ALTAS HOME LIVINGS MY",
+      "time": "",
+      "receiptImage": ""
+    },
+    {
+      "id": "EXP-2025-044",
+      "date": "2025-01-21",
+      "category": "水电费",
+      "account": "Hong Leong",
+      "item": "JAN-MAXIS HOME FIBRE",
+      "amount": 25.5,
       "remark": "",
-      "account": "PART LEAM",
+      "counterparty": "",
+      "time": "",
+      "receiptImage": ""
+    },
+    {
+      "id": "EXP-2025-014",
+      "date": "2025-01-23",
+      "category": "职工工资",
+      "account": "Hong Leong",
+      "item": "Labour fee",
+      "amount": 500.0,
+      "remark": "",
+      "counterparty": "GOLAM KIBRIA",
+      "time": "",
+      "receiptImage": ""
+    },
+    {
+      "id": "EXP-2025-015",
+      "date": "2025-01-23",
+      "category": "职工工资",
+      "account": "Hong Leong",
+      "item": "Labour fee",
+      "amount": 1500.0,
+      "remark": "",
+      "counterparty": "GOLAM KIBRIA",
+      "time": "",
+      "receiptImage": ""
+    },
+    {
+      "id": "EXP-2025-016",
+      "date": "2025-01-23",
       "category": "原材料",
-      "counterparty": "lotus",
+      "account": "Hong Leong",
+      "item": "电钻的头",
+      "amount": 8.0,
+      "remark": "",
+      "counterparty": "CHOP CHEN PIN SDN BHD",
+      "time": "",
       "receiptImage": ""
     },
     {
-      "id": "EXP-FIX-2026-08-PARTLEAM",
-      "date": "2026-08-01",
-      "item": "8月汽油津贴",
-      "amount": 150,
-      "remark": "尚未报销",
-      "account": "PART LEAM",
+      "id": "EXP-2025-047",
+      "date": "2025-02-02",
+      "category": "水电费",
+      "account": "Hong Leong",
+      "item": "coway-FEB 2025",
+      "amount": 118.0,
+      "remark": "BR4371122877",
+      "counterparty": "COWAY(MALAYSIA) SDN BHD",
+      "time": "",
+      "receiptImage": ""
+    },
+    {
+      "id": "EXP-2025-017",
+      "date": "2025-02-11",
+      "category": "水电费",
+      "account": "Hong Leong",
+      "item": "Bil Elektrik",
+      "amount": 82.1,
+      "remark": "6815184083",
+      "counterparty": "Tenaga Nasional",
+      "time": "",
+      "receiptImage": ""
+    },
+    {
+      "id": "EXP-2025-019",
+      "date": "2025-02-14",
+      "category": "原材料",
+      "account": "Hong Leong",
+      "item": "Gas Stove Set",
+      "amount": 234.3,
+      "remark": "T01-045991",
+      "counterparty": "ONE STOP HARDWARE",
+      "time": "",
+      "receiptImage": ""
+    },
+    {
+      "id": "EXP-2025-020",
+      "date": "2025-02-14",
+      "category": "原材料",
+      "account": "Hong Leong",
+      "item": "杂物",
+      "amount": 344.5,
+      "remark": "T01-045990",
+      "counterparty": "ONE STOP HARDWARE",
+      "time": "",
+      "receiptImage": ""
+    },
+    {
+      "id": "EXP-2025-018",
+      "date": "2025-02-15",
+      "category": "原材料",
+      "account": "Hong Leong",
+      "item": "Cylindrical lock",
+      "amount": 6.0,
+      "remark": "CS2502/00918",
+      "counterparty": "WONG JOO HUP HARDWARE SDN BHD",
+      "time": "",
+      "receiptImage": ""
+    },
+    {
+      "id": "EXP-2025-059",
+      "date": "2025-02-19",
+      "category": "原材料",
+      "account": "Hong Leong",
+      "item": "4PCS BEAN BAG COVER",
+      "amount": 101.15,
+      "remark": "250217E123WDRW",
+      "counterparty": "KK-OUTDOOR LIGHTNING",
+      "time": "",
+      "receiptImage": ""
+    },
+    {
+      "id": "EXP-2025-060",
+      "date": "2025-02-19",
+      "category": "原材料",
+      "account": "Hong Leong",
+      "item": "1PCS BEAN BAG COVER",
+      "amount": 29.0,
+      "remark": "250217E132BTND",
+      "counterparty": "KK-OUTDOOR LIGHTNING",
+      "time": "",
+      "receiptImage": ""
+    },
+    {
+      "id": "EXP-2025-021",
+      "date": "2025-02-21",
+      "category": "原材料",
+      "account": "Hong Leong",
+      "item": "3 unit Metal High Chair",
+      "amount": 152.35,
+      "remark": "25021599CDKYPA",
+      "counterparty": "YI JIA LI TRADING SDN BHD",
+      "time": "",
+      "receiptImage": ""
+    },
+    {
+      "id": "EXP-2025-022",
+      "date": "2025-02-21",
+      "category": "原材料",
+      "account": "Hong Leong",
+      "item": "2 unit Metal High Chair",
+      "amount": 138.0,
+      "remark": "25021599PX8V7C",
+      "counterparty": "YI JIA LI TRADING SDN BHD",
+      "time": "",
+      "receiptImage": ""
+    },
+    {
+      "id": "EXP-2025-023",
+      "date": "2025-02-21",
+      "category": "原材料",
+      "account": "Hong Leong",
+      "item": "XIAOMI SMART CAMERA C5000 DUAL",
+      "amount": 337.29,
+      "remark": "250216BN425NED",
+      "counterparty": "DM DASHER SDN BHD",
+      "time": "",
+      "receiptImage": ""
+    },
+    {
+      "id": "EXP-2025-024",
+      "date": "2025-02-21",
+      "category": "原材料",
+      "account": "Hong Leong",
+      "item": "Cloths Hanger",
+      "amount": 52.84,
+      "remark": "250216BN273NQS",
+      "counterparty": "ATP BUSINESS SOLUTION SDN BHD",
+      "time": "",
+      "receiptImage": ""
+    },
+    {
+      "id": "EXP-2025-025",
+      "date": "2025-02-21",
+      "category": "原材料",
+      "account": "Hong Leong",
+      "item": "Cloths Hanger",
+      "amount": 60.18,
+      "remark": "250217E1519629",
+      "counterparty": "ATP BUSINESS SOLUTION SDN BHD",
+      "time": "",
+      "receiptImage": ""
+    },
+    {
+      "id": "EXP-2025-026",
+      "date": "2025-02-21",
+      "category": "原材料",
+      "account": "Hong Leong",
+      "item": "水喉",
+      "amount": 30.9,
+      "remark": "",
+      "counterparty": "MR DIY (KK) SDN BHD",
+      "time": "",
+      "receiptImage": ""
+    },
+    {
+      "id": "EXP-2025-045",
+      "date": "2025-02-21",
+      "category": "水电费",
+      "account": "Hong Leong",
+      "item": "FEB-MAXIS HOME FIBRE",
+      "amount": 105.0,
+      "remark": "",
+      "counterparty": "",
+      "time": "",
+      "receiptImage": ""
+    },
+    {
+      "id": "EXP-2025-032",
+      "date": "2025-02-22",
+      "category": "原材料",
+      "account": "Hong Leong",
+      "item": "6KG BEAN BAG REFILL",
+      "amount": 75.54,
+      "remark": "250220N32U3J1E",
+      "counterparty": "POLYFOAMSTORE (M) SDN BHD",
+      "time": "",
+      "receiptImage": ""
+    },
+    {
+      "id": "EXP-2025-027",
+      "date": "2025-02-23",
+      "category": "原材料",
+      "account": "Hong Leong",
+      "item": "gas 桶",
+      "amount": 156.6,
+      "remark": "",
+      "counterparty": "PETRON",
+      "time": "",
+      "receiptImage": ""
+    },
+    {
+      "id": "EXP-2025-028",
+      "date": "2025-02-23",
+      "category": "原材料",
+      "account": "Hong Leong",
+      "item": "杂货",
+      "amount": 152.9,
+      "remark": "",
+      "counterparty": "MR DIY (KK) SDN BHD",
+      "time": "",
+      "receiptImage": ""
+    },
+    {
+      "id": "EXP-2025-029",
+      "date": "2025-02-24",
+      "category": "原材料",
+      "account": "Hong Leong",
+      "item": "5 pcs inner bag for bean bag",
+      "amount": 46.29,
+      "remark": "250219K54WVEAJ",
+      "counterparty": "KK-OUTDOOR LIGHTNING",
+      "time": "",
+      "receiptImage": ""
+    },
+    {
+      "id": "EXP-2025-030",
+      "date": "2025-02-24",
+      "category": "原材料",
+      "account": "Hong Leong",
+      "item": "PVC DOOR",
+      "amount": 144.17,
+      "remark": "250217DD894XNR",
+      "counterparty": "SHON SHENG DOOR TRADING",
+      "time": "",
+      "receiptImage": ""
+    },
+    {
+      "id": "EXP-2025-031",
+      "date": "2025-02-24",
+      "category": "原材料",
+      "account": "Hong Leong",
+      "item": "4KG BEAN BAG REFILL",
+      "amount": 74.14,
+      "remark": "250220N31J3DNQ",
+      "counterparty": "POLYFOAMSTORE (M) SDN BHD",
+      "time": "",
+      "receiptImage": ""
+    },
+    {
+      "id": "EXP-2025-033",
+      "date": "2025-02-28",
+      "category": "原材料",
+      "account": "Hong Leong",
+      "item": "SHOE RACK",
+      "amount": 62.8,
+      "remark": "250218GYPKARKK",
+      "counterparty": "TARU MALAI TRADING SDN BHD",
+      "time": "",
+      "receiptImage": ""
+    },
+    {
+      "id": "EXP-2025-034",
+      "date": "2025-02-28",
+      "category": "原材料",
+      "account": "Hong Leong",
+      "item": "WALL SHELF RACK",
+      "amount": 28.24,
+      "remark": "250221QE5XK0U7",
+      "counterparty": "UNIQUE HOUSE SDN BHD",
+      "time": "",
+      "receiptImage": ""
+    },
+    {
+      "id": "EXP-2025-056",
+      "date": "2025-02-28",
+      "category": "原材料",
+      "account": "Hong Leong",
+      "item": "8pcs toothbrush holder",
+      "amount": 42.9,
+      "remark": "250228D3Y23YHH",
+      "counterparty": "CANVAS HOME STORE",
+      "time": "",
+      "receiptImage": ""
+    },
+    {
+      "id": "EXP-2025-048",
+      "date": "2025-03-02",
+      "category": "水电费",
+      "account": "Hong Leong",
+      "item": "coway-MAR 2025",
+      "amount": 118.0,
+      "remark": "BR4374471264",
+      "counterparty": "COWAY(MALAYSIA) SDN BHD",
+      "time": "",
+      "receiptImage": ""
+    },
+    {
+      "id": "EXP-2025-035",
+      "date": "2025-03-03",
+      "category": "房租",
+      "account": "Hong Leong",
+      "item": "2-3 month rental fee",
+      "amount": 1000.0,
+      "remark": "",
+      "counterparty": "NG SU EIN",
+      "time": "",
+      "receiptImage": ""
+    },
+    {
+      "id": "EXP-2025-036",
+      "date": "2025-03-04",
       "category": "汽油津贴",
+      "account": "Hong Leong",
+      "item": "1-2月汽油津贴",
+      "amount": 250.0,
+      "remark": "",
       "counterparty": "PART LEAM",
+      "time": "",
       "receiptImage": ""
     },
     {
-      "id": "EXP-FIX-2026-08-KEETHUANG",
-      "date": "2026-08-01",
-      "item": "8月汽油津贴",
-      "amount": 100,
-      "remark": "尚未报销",
-      "account": "KEE THUANG",
+      "id": "EXP-2025-037",
+      "date": "2025-03-04",
       "category": "汽油津贴",
-      "counterparty": "KEE THUANG",
+      "account": "Hong Leong",
+      "item": "1-2月汽油津贴",
+      "amount": 50.0,
+      "remark": "",
+      "counterparty": "HUAM MING ZHOU",
+      "time": "",
       "receiptImage": ""
     },
     {
-      "id": "EXP-FIX-2026-08-MAXIS",
-      "date": "2026-08-01",
-      "item": "MAXIS HOME FIBRE (2026-08)",
+      "id": "EXP-2025-038",
+      "date": "2025-03-04",
+      "category": "汽油津贴",
+      "account": "Hong Leong",
+      "item": "1-2月汽油津贴",
+      "amount": 50.0,
+      "remark": "",
+      "counterparty": "HENG KEE THUANG",
+      "time": "",
+      "receiptImage": ""
+    },
+    {
+      "id": "EXP-2025-042",
+      "date": "2025-03-04",
+      "category": "原材料",
+      "account": "Hong Leong",
+      "item": "3 tier plastic trolley",
+      "amount": 25.07,
+      "remark": "250304P153B547",
+      "counterparty": "JS HOME LIVING SDN BHD",
+      "time": "",
+      "receiptImage": ""
+    },
+    {
+      "id": "EXP-2025-043",
+      "date": "2025-03-07",
+      "category": "原材料",
+      "account": "Hong Leong",
+      "item": "STAINLESS STELL KITCHEN RACK",
+      "amount": 77.6,
+      "remark": "25030705A1W5EH",
+      "counterparty": "GRAVITY PEER TRADING (MALAYSIA) SDN BHD",
+      "time": "",
+      "receiptImage": ""
+    },
+    {
+      "id": "EXP-2025-039",
+      "date": "2025-03-10",
+      "category": "原材料",
+      "account": "Hong Leong",
+      "item": "打钥匙",
+      "amount": 32.0,
+      "remark": "",
+      "counterparty": "",
+      "time": "",
+      "receiptImage": ""
+    },
+    {
+      "id": "EXP-2025-040",
+      "date": "2025-03-12",
+      "category": "水电费",
+      "account": "Hong Leong",
+      "item": "Bil Elektrik",
+      "amount": 418.7,
+      "remark": "6822403175",
+      "counterparty": "Tenaga Nasional",
+      "time": "",
+      "receiptImage": ""
+    },
+    {
+      "id": "EXP-2025-041",
+      "date": "2025-03-19",
+      "category": "水电费",
+      "account": "Hong Leong",
+      "item": "Water Bill",
+      "amount": 58.5,
+      "remark": "267196",
+      "counterparty": "LEMBAGA AIR PERAK",
+      "time": "",
+      "receiptImage": ""
+    },
+    {
+      "id": "EXP-2025-050",
+      "date": "2025-03-19",
+      "category": "原材料",
+      "account": "Hong Leong",
+      "item": "杂货",
+      "amount": 165.9,
+      "remark": "R000313070",
+      "counterparty": "MR DIY (KK) SDN BHD",
+      "time": "",
+      "receiptImage": ""
+    },
+    {
+      "id": "EXP-2025-046",
+      "date": "2025-03-21",
+      "category": "水电费",
+      "account": "Hong Leong",
+      "item": "MAR-MAXIS HOME FIBRE",
+      "amount": 105.0,
+      "remark": "",
+      "counterparty": "",
+      "time": "",
+      "receiptImage": ""
+    },
+    {
+      "id": "EXP-2025-052",
+      "date": "2025-03-22",
+      "category": "原材料",
+      "account": "Hong Leong",
+      "item": "书架",
+      "amount": 360.0,
+      "remark": "25069022401837832772",
+      "counterparty": "淘宝",
+      "time": "",
+      "receiptImage": ""
+    },
+    {
+      "id": "EXP-2025-053",
+      "date": "2025-03-22",
+      "category": "原材料",
+      "account": "Hong Leong",
+      "item": "桌子",
+      "amount": 141.0,
+      "remark": "2506902241838832772",
+      "counterparty": "淘宝",
+      "time": "",
+      "receiptImage": ""
+    },
+    {
+      "id": "EXP-2025-049",
+      "date": "2025-03-24",
+      "category": "原材料",
+      "account": "Hong Leong",
+      "item": "床架",
+      "amount": 650.0,
+      "remark": "A6974",
+      "counterparty": "KIAN HENG IRON & STAINLESS STEEL WORKS SDN BHD",
+      "time": "",
+      "receiptImage": ""
+    },
+    {
+      "id": "EXP-2025-055",
+      "date": "2025-03-25",
+      "category": "原材料",
+      "account": "Hong Leong",
+      "item": "10 pcs Bean Bag cover and inner bag",
+      "amount": 133.29,
+      "remark": "250325HF69RT01",
+      "counterparty": "KK-OUTDOOR LIGHTNING",
+      "time": "",
+      "receiptImage": ""
+    },
+    {
+      "id": "EXP-2025-054",
+      "date": "2025-03-28",
+      "category": "原材料",
+      "account": "Hong Leong",
+      "item": "书架和桌子的运费",
+      "amount": 195.0,
+      "remark": "INV-00685",
+      "counterparty": "海通express",
+      "time": "",
+      "receiptImage": ""
+    },
+    {
+      "id": "EXP-2025-062",
+      "date": "2025-03-31",
+      "category": "汽油津贴",
+      "account": "Hong Leong",
+      "item": "3月汽油津贴",
+      "amount": 50.0,
+      "remark": "",
+      "counterparty": "HUAM MING ZHOU",
+      "time": "",
+      "receiptImage": ""
+    },
+    {
+      "id": "EXP-2025-063",
+      "date": "2025-03-31",
+      "category": "汽油津贴",
+      "account": "Hong Leong",
+      "item": "3月汽油津贴",
+      "amount": 150.0,
+      "remark": "",
+      "counterparty": "HENG KEE THUANG",
+      "time": "",
+      "receiptImage": ""
+    },
+    {
+      "id": "EXP-2025-064",
+      "date": "2025-03-31",
+      "category": "汽油津贴",
+      "account": "Hong Leong",
+      "item": "3月汽油津贴",
+      "amount": 50.0,
+      "remark": "",
+      "counterparty": "PART LEAM",
+      "time": "",
+      "receiptImage": ""
+    },
+    {
+      "id": "EXP-2025-081",
+      "date": "2025-04-01",
+      "category": "水电费",
+      "account": "Hong Leong",
+      "item": "COWAY-APRIL 2025",
+      "amount": 118.0,
+      "remark": "BR4379354636",
+      "counterparty": "COWAY(MALAYSIA) SDN BHD",
+      "time": "",
+      "receiptImage": ""
+    },
+    {
+      "id": "EXP-2025-057",
+      "date": "2025-04-02",
+      "category": "原材料",
+      "account": "Hong Leong",
+      "item": "6KG BEAN BAG REFILL",
+      "amount": 73.24,
+      "remark": "250328RVYX4MRU",
+      "counterparty": "POLYFOAMSTORE (M) SDN BHD",
+      "time": "",
+      "receiptImage": ""
+    },
+    {
+      "id": "EXP-2025-058",
+      "date": "2025-04-02",
+      "category": "原材料",
+      "account": "Hong Leong",
+      "item": "6KG BEAN BAG REFILL",
+      "amount": 73.24,
+      "remark": "250328RVXK5QMC",
+      "counterparty": "POLYFOAMSTORE (M) SDN BHD",
+      "time": "",
+      "receiptImage": ""
+    },
+    {
+      "id": "EXP-2025-061",
+      "date": "2025-04-07",
+      "category": "原材料",
+      "account": "Hong Leong",
+      "item": "RECEIPT BOOK AND PLATIC BAG",
+      "amount": 14.04,
+      "remark": "250407MUPR1UXV",
+      "counterparty": "T REX METALWARE SDN BHD",
+      "time": "",
+      "receiptImage": ""
+    },
+    {
+      "id": "EXP-2025-051",
+      "date": "2025-04-08",
+      "category": "房租",
+      "account": "Hong Leong",
+      "item": "April rental fee",
+      "amount": 500.0,
+      "remark": "",
+      "counterparty": "NG SU EIN",
+      "time": "",
+      "receiptImage": ""
+    },
+    {
+      "id": "EXP-2025-085",
+      "date": "2025-04-21",
+      "category": "水电费",
+      "account": "Hong Leong",
+      "item": "APR-MAXIS HOME FIBRE",
+      "amount": 105.0,
+      "remark": "",
+      "counterparty": "",
+      "time": "",
+      "receiptImage": ""
+    },
+    {
+      "id": "EXP-2025-065",
+      "date": "2025-04-30",
+      "category": "汽油津贴",
+      "account": "Hong Leong",
+      "item": "4月汽油津贴",
+      "amount": 50.0,
+      "remark": "",
+      "counterparty": "HUAM MING ZHOU",
+      "time": "",
+      "receiptImage": ""
+    },
+    {
+      "id": "EXP-2025-066",
+      "date": "2025-04-30",
+      "category": "汽油津贴",
+      "account": "Hong Leong",
+      "item": "4月汽油津贴",
+      "amount": 150.0,
+      "remark": "",
+      "counterparty": "HENG KEE THUANG",
+      "time": "",
+      "receiptImage": ""
+    },
+    {
+      "id": "EXP-2025-067",
+      "date": "2025-04-30",
+      "category": "汽油津贴",
+      "account": "Hong Leong",
+      "item": "4月汽油津贴",
+      "amount": 50.0,
+      "remark": "",
+      "counterparty": "PART LEAM",
+      "time": "",
+      "receiptImage": ""
+    },
+    {
+      "id": "EXP-2025-082",
+      "date": "2025-05-01",
+      "category": "水电费",
+      "account": "Hong Leong",
+      "item": "COWAY-MAY 2025",
+      "amount": 118.0,
+      "remark": "BR4381311458",
+      "counterparty": "COWAY(MALAYSIA) SDN BHD",
+      "time": "",
+      "receiptImage": ""
+    },
+    {
+      "id": "EXP-2025-069",
+      "date": "2025-05-04",
+      "category": "原材料",
+      "account": "Hong Leong",
+      "item": "NYLON FLEIXBLE HOSE",
+      "amount": 16.9,
+      "remark": "TIB01202505040494",
+      "counterparty": "TF VALUE MART SDN BHD",
+      "time": "",
+      "receiptImage": ""
+    },
+    {
+      "id": "EXP-2025-068",
+      "date": "2025-05-06",
+      "category": "水电费",
+      "account": "Hong Leong",
+      "item": "Bil Elektrik",
+      "amount": 430.05,
+      "remark": "001314925350",
+      "counterparty": "Tenaga Nasional",
+      "time": "",
+      "receiptImage": ""
+    },
+    {
+      "id": "EXP-2025-071",
+      "date": "2025-05-06",
+      "category": "原材料",
+      "account": "Hong Leong",
+      "item": "5 Tiers Adjustable Pot and Pan Rack",
+      "amount": 33.92,
+      "remark": "250429HHRPMRSJ",
+      "counterparty": "STARKE PLUS SDN. BHD",
+      "time": "",
+      "receiptImage": ""
+    },
+    {
+      "id": "EXP-2025-070",
+      "date": "2025-05-09",
+      "category": "原材料",
+      "account": "Hong Leong",
+      "item": "2*Stainless Stell bathroom shelf",
+      "amount": 44.32,
+      "remark": "250429HDTQFCF7",
+      "counterparty": "totopop.my (shopee)",
+      "time": "",
+      "receiptImage": ""
+    },
+    {
+      "id": "EXP-2025-075",
+      "date": "2025-05-12",
+      "category": "水电费",
+      "account": "Hong Leong",
+      "item": "Bil Elektrik",
+      "amount": 510.6,
+      "remark": "1437103961",
+      "counterparty": "Tenaga Nasional",
+      "time": "",
+      "receiptImage": ""
+    },
+    {
+      "id": "EXP-2025-078",
+      "date": "2025-05-20",
+      "category": "水电费",
+      "account": "Hong Leong",
+      "item": "Water Bill",
+      "amount": 154.3,
+      "remark": "342874",
+      "counterparty": "LEMBAGA AIR PERAK",
+      "time": "",
+      "receiptImage": ""
+    },
+    {
+      "id": "EXP-2025-086",
+      "date": "2025-05-21",
+      "category": "水电费",
+      "account": "Hong Leong",
+      "item": "MAY-MAXIS HOME FIBRE",
+      "amount": 105.0,
+      "remark": "",
+      "counterparty": "",
+      "time": "",
+      "receiptImage": ""
+    },
+    {
+      "id": "EXP-2025-072",
+      "date": "2025-05-30",
+      "category": "汽油津贴",
+      "account": "Hong Leong",
+      "item": "5月汽油津贴",
+      "amount": 50.0,
+      "remark": "",
+      "counterparty": "HUAM MING ZHOU",
+      "time": "",
+      "receiptImage": ""
+    },
+    {
+      "id": "EXP-2025-073",
+      "date": "2025-05-30",
+      "category": "汽油津贴",
+      "account": "Hong Leong",
+      "item": "5月汽油津贴",
+      "amount": 150.0,
+      "remark": "",
+      "counterparty": "HENG KEE THUANG",
+      "time": "",
+      "receiptImage": ""
+    },
+    {
+      "id": "EXP-2025-074",
+      "date": "2025-05-30",
+      "category": "汽油津贴",
+      "account": "Hong Leong",
+      "item": "5月汽油津贴",
+      "amount": 50.0,
+      "remark": "",
+      "counterparty": "PART LEAM",
+      "time": "",
+      "receiptImage": ""
+    },
+    {
+      "id": "EXP-2025-083",
+      "date": "2025-06-01",
+      "category": "水电费",
+      "account": "Hong Leong",
+      "item": "COWAY-JUN 2025",
+      "amount": 118.0,
+      "remark": "BR4385948133",
+      "counterparty": "COWAY(MALAYSIA) SDN BHD",
+      "time": "",
+      "receiptImage": ""
+    },
+    {
+      "id": "EXP-2025-097",
+      "date": "2025-06-01",
+      "category": "汽油津贴",
+      "account": "Hong Leong",
+      "item": "6月汽油津贴",
+      "amount": 50.0,
+      "remark": "",
+      "counterparty": "HUAM MING ZHOU",
+      "time": "",
+      "receiptImage": ""
+    },
+    {
+      "id": "EXP-2025-098",
+      "date": "2025-06-01",
+      "category": "汽油津贴",
+      "account": "Hong Leong",
+      "item": "6月汽油津贴",
+      "amount": 50.0,
+      "remark": "",
+      "counterparty": "HENG KEE THUANG",
+      "time": "",
+      "receiptImage": ""
+    },
+    {
+      "id": "EXP-2025-099",
+      "date": "2025-06-01",
+      "category": "汽油津贴",
+      "account": "Hong Leong",
+      "item": "6月汽油津贴",
+      "amount": 150.0,
+      "remark": "",
+      "counterparty": "PART LEAM",
+      "time": "",
+      "receiptImage": ""
+    },
+    {
+      "id": "EXP-2025-076",
+      "date": "2025-06-03",
+      "category": "原材料",
+      "account": "Hong Leong",
+      "item": "2 unit Fujibin 20'' Wall Fan",
+      "amount": 500.0,
+      "remark": "XLE-HQ-CS212845",
+      "counterparty": "XING LEE ELECTRICAL & HIFI CENTRE SDN BHD",
+      "time": "",
+      "receiptImage": ""
+    },
+    {
+      "id": "EXP-2025-077",
+      "date": "2025-06-11",
+      "category": "水电费",
+      "account": "Hong Leong",
+      "item": "Bil Elektrik",
+      "amount": 358.79,
+      "remark": "006858613728",
+      "counterparty": "Tenaga Nasional",
+      "time": "",
+      "receiptImage": ""
+    },
+    {
+      "id": "EXP-2025-079",
+      "date": "2025-06-12",
+      "category": "房租",
+      "account": "Hong Leong",
+      "item": "MAY AND JUNE RENTAL FEE",
+      "amount": 1000.0,
+      "remark": "",
+      "counterparty": "NG SU EIN",
+      "time": "",
+      "receiptImage": ""
+    },
+    {
+      "id": "EXP-2025-080",
+      "date": "2025-06-14",
+      "category": "原材料",
+      "account": "Hong Leong",
+      "item": "2*EXPANDABLE SINK RACK",
+      "amount": 46.0,
+      "remark": "250614HFKSSJPU",
+      "counterparty": "FANTASIC ONLINE TRADING",
+      "time": "",
+      "receiptImage": ""
+    },
+    {
+      "id": "EXP-2025-087",
+      "date": "2025-06-21",
+      "category": "水电费",
+      "account": "Hong Leong",
+      "item": "JUNE-MAXIS HOME FIBRE",
+      "amount": 105.0,
+      "remark": "",
+      "counterparty": "",
+      "time": "",
+      "receiptImage": ""
+    },
+    {
+      "id": "EXP-2025-084",
+      "date": "2025-07-01",
+      "category": "水电费",
+      "account": "Hong Leong",
+      "item": "COWAY-JUL 2025",
+      "amount": 118.0,
+      "remark": "BR4388467602",
+      "counterparty": "COWAY(MALAYSIA) SDN BHD",
+      "time": "",
+      "receiptImage": ""
+    },
+    {
+      "id": "EXP-2025-100",
+      "date": "2025-07-01",
+      "category": "汽油津贴",
+      "account": "Hong Leong",
+      "item": "7月汽油津贴",
+      "amount": 50.0,
+      "remark": "",
+      "counterparty": "HUAM MING ZHOU",
+      "time": "",
+      "receiptImage": ""
+    },
+    {
+      "id": "EXP-2025-101",
+      "date": "2025-07-01",
+      "category": "汽油津贴",
+      "account": "Hong Leong",
+      "item": "7月汽油津贴",
+      "amount": 50.0,
+      "remark": "",
+      "counterparty": "HENG KEE THUANG",
+      "time": "",
+      "receiptImage": ""
+    },
+    {
+      "id": "EXP-2025-102",
+      "date": "2025-07-01",
+      "category": "汽油津贴",
+      "account": "Hong Leong",
+      "item": "7月汽油津贴",
+      "amount": 150.0,
+      "remark": "",
+      "counterparty": "PART LEAM",
+      "time": "",
+      "receiptImage": ""
+    },
+    {
+      "id": "EXP-2025-091",
+      "date": "2025-07-05",
+      "category": "原材料",
+      "account": "Hong Leong",
+      "item": "CURTAIN ROD",
+      "amount": 141.05,
+      "remark": "250625G8JY013U",
+      "counterparty": "SHOPEE",
+      "time": "",
+      "receiptImage": ""
+    },
+    {
+      "id": "EXP-2025-089",
+      "date": "2025-07-06",
+      "category": "原材料",
+      "account": "Hong Leong",
+      "item": "AIR CONDITIONING WINDSHIELD DOOR",
+      "amount": 97.56,
+      "remark": "250625G8AE845R",
+      "counterparty": "CURTAIN LIFE 8",
+      "time": "",
+      "receiptImage": ""
+    },
+    {
+      "id": "EXP-2025-090",
+      "date": "2025-07-06",
+      "category": "原材料",
+      "account": "Hong Leong",
+      "item": "AIR CONDITIONING WINDSHIELD DOOR",
+      "amount": 172.33,
+      "remark": "250625G8PN9UEK",
+      "counterparty": "CURTAIN LIFE 8",
+      "time": "",
+      "receiptImage": ""
+    },
+    {
+      "id": "EXP-2025-092",
+      "date": "2025-07-10",
+      "category": "原材料",
+      "account": "Hong Leong",
+      "item": "水龙头",
+      "amount": 41.9,
+      "remark": "",
+      "counterparty": "MR DIY (KK) SDN BHD",
+      "time": "",
+      "receiptImage": ""
+    },
+    {
+      "id": "EXP-2025-093",
+      "date": "2025-07-12",
+      "category": "水电费",
+      "account": "Hong Leong",
+      "item": "Bil Elektrik",
+      "amount": 725.2,
+      "remark": "001485271787",
+      "counterparty": "Tenaga Nasional",
+      "time": "",
+      "receiptImage": ""
+    },
+    {
+      "id": "EXP-2025-133",
+      "date": "2025-07-17",
+      "category": "原材料",
+      "account": "Hong Leong",
+      "item": "gas",
+      "amount": 26.6,
+      "remark": "21683268",
+      "counterparty": "PETRON JALAN CHANGKAT JONG",
+      "time": "",
+      "receiptImage": ""
+    },
+    {
+      "id": "EXP-2025-107",
+      "date": "2025-07-18",
+      "category": "水电费",
+      "account": "Hong Leong",
+      "item": "Water Bill",
+      "amount": 154.3,
+      "remark": "420725",
+      "counterparty": "LEMBAGA AIR PERAK",
+      "time": "",
+      "receiptImage": ""
+    },
+    {
+      "id": "EXP-2025-088",
+      "date": "2025-07-21",
+      "category": "水电费",
+      "account": "Hong Leong",
+      "item": "JULY-MAXIS HOME FIBRE",
+      "amount": 105.0,
+      "remark": "",
+      "counterparty": "",
+      "time": "",
+      "receiptImage": ""
+    },
+    {
+      "id": "EXP-2025-094",
+      "date": "2025-07-21",
+      "category": "原材料",
+      "account": "Hong Leong",
+      "item": "2 pcs Door Bottom Windproof Dustproof",
+      "amount": 13.11,
+      "remark": "250718F5J0FJ0B",
+      "counterparty": "ARANCIA HOME",
+      "time": "",
+      "receiptImage": ""
+    },
+    {
+      "id": "EXP-2025-095",
+      "date": "2025-08-01",
+      "category": "水电费",
+      "account": "Hong Leong",
+      "item": "COWAY-AUG 2025",
+      "amount": 118.0,
+      "remark": "BR4390678063",
+      "counterparty": "COWAY(MALAYSIA) SDN BHD",
+      "time": "",
+      "receiptImage": ""
+    },
+    {
+      "id": "EXP-2025-096",
+      "date": "2025-08-01",
+      "category": "水电费",
+      "account": "Hong Leong",
+      "item": "AUG-MAXIS HOME FIBRE",
+      "amount": 105.0,
+      "remark": "",
+      "counterparty": "",
+      "time": "",
+      "receiptImage": ""
+    },
+    {
+      "id": "EXP-2025-103",
+      "date": "2025-08-01",
+      "category": "汽油津贴",
+      "account": "Hong Leong",
+      "item": "8月汽油津贴",
+      "amount": 50.0,
+      "remark": "",
+      "counterparty": "HUAM MING ZHOU",
+      "time": "",
+      "receiptImage": ""
+    },
+    {
+      "id": "EXP-2025-104",
+      "date": "2025-08-01",
+      "category": "汽油津贴",
+      "account": "Hong Leong",
+      "item": "8月汽油津贴",
+      "amount": 50.0,
+      "remark": "",
+      "counterparty": "HENG KEE THUANG",
+      "time": "",
+      "receiptImage": ""
+    },
+    {
+      "id": "EXP-2025-105",
+      "date": "2025-08-01",
+      "category": "汽油津贴",
+      "account": "Hong Leong",
+      "item": "8月汽油津贴",
+      "amount": 150.0,
+      "remark": "",
+      "counterparty": "PART LEAM",
+      "time": "",
+      "receiptImage": ""
+    },
+    {
+      "id": "EXP-2025-123",
+      "date": "2025-08-11",
+      "category": "水电费",
+      "account": "Hong Leong",
+      "item": "Bil Elektrik",
+      "amount": 847.35,
+      "remark": "6876650848",
+      "counterparty": "Tenaga Nasional",
+      "time": "",
+      "receiptImage": ""
+    },
+    {
+      "id": "EXP-2025-106",
+      "date": "2025-08-12",
+      "category": "原材料",
+      "account": "Hong Leong",
+      "item": "SANDISK MICROSD 64GB",
+      "amount": 43.86,
+      "remark": "250810F31YUAAM",
+      "counterparty": "TICK TECH GO SDN BHD",
+      "time": "",
+      "receiptImage": ""
+    },
+    {
+      "id": "EXP-2025-108",
+      "date": "2025-08-14",
+      "category": "房租",
+      "account": "Hong Leong",
+      "item": "JULY AND AUGUST RENTAL FEE",
+      "amount": 1000.0,
+      "remark": "",
+      "counterparty": "NG SU EIN",
+      "time": "",
+      "receiptImage": ""
+    },
+    {
+      "id": "EXP-2025-109",
+      "date": "2025-08-14",
+      "category": "提现",
+      "account": "Hong Leong",
+      "item": "Partner Drawings-Heng Kee Thuang",
+      "amount": 7000.0,
+      "remark": "",
+      "counterparty": "HENG KEE THUANG",
+      "time": "",
+      "receiptImage": ""
+    },
+    {
+      "id": "EXP-2025-110",
+      "date": "2025-08-14",
+      "category": "提现",
+      "account": "Hong Leong",
+      "item": "Partner Drawings-Huam Ming Zhou",
+      "amount": 7000.0,
+      "remark": "",
+      "counterparty": "HUAM MING ZHOU",
+      "time": "",
+      "receiptImage": ""
+    },
+    {
+      "id": "EXP-2025-111",
+      "date": "2025-08-14",
+      "category": "提现",
+      "account": "Hong Leong",
+      "item": "Partner Drawings-Loh Part Leam",
+      "amount": 7000.0,
+      "remark": "",
+      "counterparty": "PART LEAM",
+      "time": "",
+      "receiptImage": ""
+    },
+    {
+      "id": "EXP-2025-132",
+      "date": "2025-08-14",
+      "category": "差旅费用",
+      "account": "Hong Leong",
+      "item": "餐费",
+      "amount": 552.0,
+      "remark": "",
+      "counterparty": "",
+      "time": "",
+      "receiptImage": ""
+    },
+    {
+      "id": "EXP-2025-113",
+      "date": "2025-08-16",
+      "category": "原材料",
+      "account": "Hong Leong",
+      "item": "DOOR LOCK",
+      "amount": 120.3,
+      "remark": "R000279521",
+      "counterparty": "MR DIY (KK) SDN BHD",
+      "time": "",
+      "receiptImage": ""
+    },
+    {
+      "id": "EXP-2025-115",
+      "date": "2025-09-01",
+      "category": "汽油津贴",
+      "account": "Hong Leong",
+      "item": "9月汽油津贴",
+      "amount": 50.0,
+      "remark": "",
+      "counterparty": "HUAM MING ZHOU",
+      "time": "",
+      "receiptImage": ""
+    },
+    {
+      "id": "EXP-2025-116",
+      "date": "2025-09-01",
+      "category": "汽油津贴",
+      "account": "Hong Leong",
+      "item": "9月汽油津贴",
+      "amount": 50.0,
+      "remark": "",
+      "counterparty": "HENG KEE THUANG",
+      "time": "",
+      "receiptImage": ""
+    },
+    {
+      "id": "EXP-2025-117",
+      "date": "2025-09-01",
+      "category": "汽油津贴",
+      "account": "Hong Leong",
+      "item": "9月汽油津贴",
+      "amount": 150.0,
+      "remark": "",
+      "counterparty": "PART LEAM",
+      "time": "",
+      "receiptImage": ""
+    },
+    {
+      "id": "EXP-2025-121",
+      "date": "2025-09-01",
+      "category": "水电费",
+      "account": "Hong Leong",
+      "item": "COWAY-SEP",
+      "amount": 118.0,
+      "remark": "",
+      "counterparty": "COWAY(MALAYSIA) SDN BHD",
+      "time": "",
+      "receiptImage": ""
+    },
+    {
+      "id": "EXP-2025-124",
+      "date": "2025-09-01",
+      "category": "水电费",
+      "account": "Hong Leong",
+      "item": "SEP-MAXIS HOME FIBRE",
+      "amount": 105.0,
+      "remark": "",
+      "counterparty": "",
+      "time": "",
+      "receiptImage": ""
+    },
+    {
+      "id": "EXP-2025-112",
+      "date": "2025-09-02",
+      "category": "财务成本",
+      "account": "Hong Leong",
+      "item": "Return Deposit",
+      "amount": 480.0,
+      "remark": "",
+      "counterparty": "Tan Ze Lun",
+      "time": "",
+      "receiptImage": ""
+    },
+    {
+      "id": "EXP-2025-131",
+      "date": "2025-09-10",
+      "category": "水电费",
+      "account": "Hong Leong",
+      "item": "Bil Elektrik",
+      "amount": 654.5,
+      "remark": "6884266968",
+      "counterparty": "Tenaga Nasional",
+      "time": "",
+      "receiptImage": ""
+    },
+    {
+      "id": "EXP-2025-114",
+      "date": "2025-09-14",
+      "category": "原材料",
+      "account": "Hong Leong",
+      "item": "KITCHEN SINK WATER STOPPER",
+      "amount": 27.91,
+      "remark": "2509129P50FM9Y",
+      "counterparty": "CARTELO.MY.MY",
+      "time": "",
+      "receiptImage": ""
+    },
+    {
+      "id": "EXP-2025-141",
+      "date": "2025-09-18",
+      "category": "水电费",
+      "account": "Hong Leong",
+      "item": "Water Bill",
+      "amount": 167.9,
+      "remark": "501923",
+      "counterparty": "LEMBAGA AIR PERAK",
+      "time": "",
+      "receiptImage": ""
+    },
+    {
+      "id": "EXP-2025-118",
+      "date": "2025-10-01",
+      "category": "汽油津贴",
+      "account": "Hong Leong",
+      "item": "10月汽油津贴",
+      "amount": 50.0,
+      "remark": "",
+      "counterparty": "HUAM MING ZHOU",
+      "time": "",
+      "receiptImage": ""
+    },
+    {
+      "id": "EXP-2025-119",
+      "date": "2025-10-01",
+      "category": "汽油津贴",
+      "account": "Hong Leong",
+      "item": "10月汽油津贴",
+      "amount": 50.0,
+      "remark": "",
+      "counterparty": "HENG KEE THUANG",
+      "time": "",
+      "receiptImage": ""
+    },
+    {
+      "id": "EXP-2025-120",
+      "date": "2025-10-01",
+      "category": "汽油津贴",
+      "account": "Hong Leong",
+      "item": "10月汽油津贴",
+      "amount": 150.0,
+      "remark": "",
+      "counterparty": "PART LEAM",
+      "time": "",
+      "receiptImage": ""
+    },
+    {
+      "id": "EXP-2025-122",
+      "date": "2025-10-01",
+      "category": "水电费",
+      "account": "Hong Leong",
+      "item": "COWAY-OCT",
+      "amount": 118.0,
+      "remark": "",
+      "counterparty": "COWAY(MALAYSIA) SDN BHD",
+      "time": "",
+      "receiptImage": ""
+    },
+    {
+      "id": "EXP-2025-125",
+      "date": "2025-10-01",
+      "category": "水电费",
+      "account": "Hong Leong",
+      "item": "OCT-MAXIS HOME FIBRE",
+      "amount": 105.0,
+      "remark": "",
+      "counterparty": "",
+      "time": "",
+      "receiptImage": ""
+    },
+    {
+      "id": "EXP-2025-127",
+      "date": "2025-10-09",
+      "category": "财务成本",
+      "account": "Hong Leong",
+      "item": "Xiaomi C300 CCTV",
+      "amount": 95.68,
+      "remark": "251009MJT1KP8M",
+      "counterparty": "Xiaomi Technologies Malaysia Sdn Bhd",
+      "time": "",
+      "receiptImage": ""
+    },
+    {
+      "id": "EXP-2025-143",
+      "date": "2025-10-10",
+      "category": "水电费",
+      "account": "Hong Leong",
+      "item": "Bil Elektrik",
+      "amount": 563.55,
+      "remark": "6892477993",
+      "counterparty": "Tenaga Nasional",
+      "time": "",
+      "receiptImage": ""
+    },
+    {
+      "id": "EXP-2025-126",
+      "date": "2025-10-17",
+      "category": "财务成本",
+      "account": "Hong Leong",
+      "item": "SD card 32gb",
+      "amount": 41.99,
+      "remark": "251017ADNPFYEX",
+      "counterparty": "Tick Tech Go Sdn Bhd",
+      "time": "",
+      "receiptImage": ""
+    },
+    {
+      "id": "EXP-2025-129",
+      "date": "2025-11-01",
+      "category": "水电费",
+      "account": "Hong Leong",
+      "item": "COWAY-NOV",
+      "amount": 118.0,
+      "remark": "",
+      "counterparty": "COWAY(MALAYSIA) SDN BHD",
+      "time": "",
+      "receiptImage": ""
+    },
+    {
+      "id": "EXP-2025-134",
+      "date": "2025-11-01",
+      "category": "汽油津贴",
+      "account": "Hong Leong",
+      "item": "11月汽油津贴",
+      "amount": 150.0,
+      "remark": "",
+      "counterparty": "PART LEAM",
+      "time": "",
+      "receiptImage": ""
+    },
+    {
+      "id": "EXP-2025-137",
+      "date": "2025-11-01",
+      "category": "汽油津贴",
+      "account": "Hong Leong",
+      "item": "11月汽油津贴",
+      "amount": 100.0,
+      "remark": "",
+      "counterparty": "HENG KEE THUANG",
+      "time": "",
+      "receiptImage": ""
+    },
+    {
+      "id": "EXP-2025-139",
+      "date": "2025-11-01",
+      "category": "水电费",
+      "account": "Hong Leong",
+      "item": "NOV-MAXIS HOME FIBRE",
+      "amount": 105.0,
+      "remark": "",
+      "counterparty": "",
+      "time": "",
+      "receiptImage": ""
+    },
+    {
+      "id": "EXP-2025-128",
+      "date": "2025-11-10",
+      "category": "财务成本",
+      "account": "Hong Leong",
+      "item": "EXTENSION ADAPTOR 3G",
+      "amount": 17.9,
+      "remark": "",
+      "counterparty": "MR DIY (KK) SDN BHD",
+      "time": "",
+      "receiptImage": ""
+    },
+    {
+      "id": "EXP-2025-144",
+      "date": "2025-11-10",
+      "category": "水电费",
+      "account": "Hong Leong",
+      "item": "Bil Elektrik",
+      "amount": 423.6,
+      "remark": "6901287920",
+      "counterparty": "Tenaga Nasional",
+      "time": "",
+      "receiptImage": ""
+    },
+    {
+      "id": "EXP-2025-142",
+      "date": "2025-11-18",
+      "category": "水电费",
+      "account": "Hong Leong",
+      "item": "Water Bill",
+      "amount": 154.3,
+      "remark": "576273",
+      "counterparty": "LEMBAGA AIR PERAK",
+      "time": "",
+      "receiptImage": ""
+    },
+    {
+      "id": "EXP-2025-130",
+      "date": "2025-12-01",
+      "category": "水电费",
+      "account": "Hong Leong",
+      "item": "COWAY-DEC",
+      "amount": 118.0,
+      "remark": "",
+      "counterparty": "COWAY(MALAYSIA) SDN BHD",
+      "time": "",
+      "receiptImage": ""
+    },
+    {
+      "id": "EXP-2025-135",
+      "date": "2025-12-01",
+      "category": "汽油津贴",
+      "account": "Hong Leong",
+      "item": "12月汽油津贴",
+      "amount": 150.0,
+      "remark": "",
+      "counterparty": "PART LEAM",
+      "time": "",
+      "receiptImage": ""
+    },
+    {
+      "id": "EXP-2025-138",
+      "date": "2025-12-01",
+      "category": "汽油津贴",
+      "account": "Hong Leong",
+      "item": "12月汽油津贴",
+      "amount": 100.0,
+      "remark": "",
+      "counterparty": "HENG KEE THUANG",
+      "time": "",
+      "receiptImage": ""
+    },
+    {
+      "id": "EXP-2025-140",
+      "date": "2025-12-01",
+      "category": "水电费",
+      "account": "Hong Leong",
+      "item": "DEC-MAXIS HOME FIBRE",
+      "amount": 105.0,
+      "remark": "",
+      "counterparty": "",
+      "time": "",
+      "receiptImage": ""
+    },
+    {
+      "id": "EXP-2025-146",
+      "date": "2025-12-03",
+      "category": "提现",
+      "account": "Hong Leong",
+      "item": "Partner Drawings-Loh Part Leam",
+      "amount": 6500.0,
+      "remark": "",
+      "counterparty": "",
+      "time": "",
+      "receiptImage": ""
+    },
+    {
+      "id": "EXP-2025-145",
+      "date": "2025-12-10",
+      "category": "水电费",
+      "account": "Hong Leong",
+      "item": "Bil Elektrik",
+      "amount": 525.65,
+      "remark": "6908412575",
+      "counterparty": "Tenaga Nasional",
+      "time": "",
+      "receiptImage": ""
+    },
+    {
+      "id": "EXP-2025-136",
+      "date": "2025-12-27",
+      "category": "房租",
+      "account": "Hong Leong",
+      "item": "OCT,SEP,NOV,DEC RENTAL FEE",
+      "amount": 2000.0,
+      "remark": "",
+      "counterparty": "NG SU EIN",
+      "time": "",
+      "receiptImage": ""
+    },
+    {
+      "id": "EXP-2025-147",
+      "date": "2025-12-27",
+      "category": "提现",
+      "account": "Hong Leong",
+      "item": "Partner Drawings-Huam Ming Zhou",
+      "amount": 6500.0,
+      "remark": "",
+      "counterparty": "",
+      "time": "",
+      "receiptImage": ""
+    },
+    {
+      "id": "EXP-2025-148",
+      "date": "2025-12-27",
+      "category": "提现",
+      "account": "Hong Leong",
+      "item": "Partner Drawings-Heng Kee Thuang",
+      "amount": 6500.0,
+      "remark": "",
+      "counterparty": "",
+      "time": "",
+      "receiptImage": ""
+    },
+    {
+      "id": "EXP-0001",
+      "date": "2026-01-01",
+      "item": "COWAY-JAN",
+      "amount": 118,
+      "remark": "",
+      "account": "Hong Leong",
+      "category": "水电费",
+      "counterparty": "COWAY(MALAYSIA) SDN BHD"
+    },
+    {
+      "id": "EXP-0003",
+      "date": "2026-01-01",
+      "item": "JAN-MAXIS HOME FIBRE",
+      "amount": 106,
+      "remark": "",
+      "account": "Hong Leong",
+      "category": "水电费",
+      "counterparty": ""
+    },
+    {
+      "id": "EXP-0004",
+      "date": "2026-01-01",
+      "item": "1月汽油津贴",
+      "amount": 100,
+      "remark": "",
+      "account": "Hong Leong",
+      "category": "汽油津贴",
+      "counterparty": "KEE THUANG"
+    },
+    {
+      "id": "EXP-0002",
+      "date": "2026-01-01",
+      "item": "1月汽油津贴",
+      "amount": 150,
+      "remark": "",
+      "account": "Hong Leong",
+      "category": "汽油津贴",
+      "counterparty": "PART LEAM"
+    },
+    {
+      "id": "EXP-0005",
+      "date": "2026-01-10",
+      "item": "Bil Elektrik",
+      "amount": 72.25,
+      "remark": "6916660401",
+      "account": "Hong Leong",
+      "category": "水电费",
+      "counterparty": "Tenaga Nasional"
+    },
+    {
+      "id": "EXP-0008",
+      "date": "2026-01-10",
+      "item": "NYLON BROOM+FLOOR CLEANER",
+      "amount": 43.2,
+      "remark": "T3R000305382",
+      "account": "Hong Leong",
+      "category": "原材料",
+      "counterparty": "MR DIY"
+    },
+    {
+      "id": "EXP-0007",
+      "date": "2026-01-10",
+      "item": "CYLINDER LOCK",
+      "amount": 41,
+      "remark": "T2R000598025",
+      "account": "Hong Leong",
+      "category": "原材料",
+      "counterparty": "MR DIY"
+    },
+    {
+      "id": "EXP-0006",
+      "date": "2026-01-10",
+      "item": "漆",
+      "amount": 113,
+      "remark": "CS-301277",
+      "account": "Hong Leong",
+      "category": "原材料",
+      "counterparty": "WANG SENG HARDWARE TRADING"
+    },
+    {
+      "id": "EXP-0009",
+      "date": "2026-01-11",
+      "item": "垃圾袋+消毒",
+      "amount": 23.4,
+      "remark": "T1R000308066",
+      "account": "Hong Leong",
+      "category": "原材料",
+      "counterparty": "MR DIY"
+    },
+    {
+      "id": "EXP-0011",
+      "date": "2026-01-11",
+      "item": "3M SCOTCH BRITE TOUCH",
+      "amount": 5.9,
+      "remark": "182721196/102/T0489",
+      "account": "Hong Leong",
+      "category": "原材料",
+      "counterparty": "99 SPEEDMART"
+    },
+    {
+      "id": "EXP-0010",
+      "date": "2026-01-11",
+      "item": "拖把",
+      "amount": 39.8,
+      "remark": "T1BSP04202601110026",
+      "account": "Hong Leong",
+      "category": "原材料",
+      "counterparty": "TF VALUE MART"
+    },
+    {
+      "id": "EXP-0012",
+      "date": "2026-01-16",
+      "item": "Water Bill",
+      "amount": 91.5,
+      "remark": "647291",
+      "account": "Hong Leong",
+      "category": "水电费",
+      "counterparty": "LEMBAGA AIR PERAK"
+    },
+    {
+      "id": "EXP-0014",
+      "date": "2026-01-22",
+      "item": "GARBAG BAG+BASIN TOOLS",
+      "amount": 33.6,
+      "remark": "",
+      "account": "Hong Leong",
+      "category": "原材料",
+      "counterparty": "MR DIY"
+    },
+    {
+      "id": "EXP-0013",
+      "date": "2026-01-22",
+      "item": "LAUNDRY BASKET",
+      "amount": 9.9,
+      "remark": "LSOS02-1685196",
+      "account": "Hong Leong",
+      "category": "原材料",
+      "counterparty": "LIMA SEN SDN BHD"
+    },
+    {
+      "id": "EXP-0015",
+      "date": "2026-02-01",
+      "item": "COWAY-FEB",
+      "amount": 118,
+      "remark": "",
+      "account": "Hong Leong",
+      "category": "水电费",
+      "counterparty": "COWAY(MALAYSIA) SDN BHD"
+    },
+    {
+      "id": "EXP-0018",
+      "date": "2026-02-01",
+      "item": "2月汽油津贴",
+      "amount": 100,
+      "remark": "",
+      "account": "Hong Leong",
+      "category": "汽油津贴",
+      "counterparty": "KEE THUANG"
+    },
+    {
+      "id": "EXP-0017",
+      "date": "2026-02-01",
+      "item": "FEB-MAXIS HOME FIBRE",
+      "amount": 106,
+      "remark": "",
+      "account": "Hong Leong",
+      "category": "水电费",
+      "counterparty": ""
+    },
+    {
+      "id": "EXP-0016",
+      "date": "2026-02-01",
+      "item": "2月汽油津贴",
+      "amount": 150,
+      "remark": "",
+      "account": "Hong Leong",
+      "category": "汽油津贴",
+      "counterparty": "PART LEAM"
+    },
+    {
+      "id": "EXP-0019",
+      "date": "2026-02-05",
+      "item": "WATER SQUEEGEE+BROOM HANDLE",
+      "amount": 9.1,
+      "remark": "",
+      "account": "Hong Leong",
+      "category": "原材料",
+      "counterparty": "MR DIY"
+    },
+    {
+      "id": "EXP-0020",
+      "date": "2026-02-06",
+      "item": "防水漆",
+      "amount": 40,
+      "remark": "",
+      "account": "Hong Leong",
+      "category": "原材料",
+      "counterparty": "WANG SENG HARDWARE TRADING"
+    },
+    {
+      "id": "EXP-0021",
+      "date": "2026-02-08",
+      "item": "桌子",
+      "amount": 230.9,
+      "remark": "260124TQHW41CK",
+      "account": "Hong Leong",
+      "category": "原材料",
+      "counterparty": "SEVENWOOD TECHNOLOGY PLT"
+    },
+    {
+      "id": "EXP-0022",
+      "date": "2026-02-10",
+      "item": "Bil Elektrik",
+      "amount": 556.35,
+      "remark": "6923211800",
+      "account": "Hong Leong",
+      "category": "水电费",
+      "counterparty": "Tenaga Nasional"
+    },
+    {
+      "id": "EXP-0023",
+      "date": "2026-02-11",
+      "item": "梯子",
+      "amount": 199,
+      "remark": "",
+      "account": "Hong Leong",
+      "category": "原材料",
+      "counterparty": "MR DIY"
+    },
+    {
+      "id": "EXP-0025",
+      "date": "2026-02-12",
+      "item": "素食",
+      "amount": 96,
+      "remark": "231750",
+      "account": "Hong Leong",
+      "category": "差旅费用",
+      "counterparty": ""
+    },
+    {
+      "id": "EXP-0024",
+      "date": "2026-02-12",
+      "item": "聚餐",
+      "amount": 623,
+      "remark": "",
+      "account": "Hong Leong",
+      "category": "差旅费用",
+      "counterparty": "Kedai Makanan Laut Ju Fu"
+    },
+    {
+      "id": "EXP-0028",
+      "date": "2026-03-01",
+      "item": "3月汽油津贴",
+      "amount": 100,
+      "remark": "",
+      "account": "Hong Leong",
+      "category": "汽油津贴",
+      "counterparty": "KEE THUANG"
+    },
+    {
+      "id": "EXP-FIX-2026-03-MAXIS",
+      "date": "2026-03-01",
+      "item": "MAXIS HOME FIBRE (2026-03)",
       "amount": 106,
       "remark": null,
       "account": "MING ZHOU",
@@ -4391,9 +7766,344 @@ const INITIAL_FINANCE_DATA = {
       "receiptImage": ""
     },
     {
-      "id": "EXP-FIX-2026-08-COWAYMALAYSIASDNBHD",
-      "date": "2026-08-01",
-      "item": "COWAY-2026-08",
+      "id": "EXP-0026",
+      "date": "2026-03-01",
+      "item": "COWAY-MAR",
+      "amount": 118,
+      "remark": "",
+      "account": "Hong Leong",
+      "category": "水电费",
+      "counterparty": "COWAY(MALAYSIA) SDN BHD"
+    },
+    {
+      "id": "EXP-0027",
+      "date": "2026-03-01",
+      "item": "3月汽油津贴",
+      "amount": 150,
+      "remark": "",
+      "account": "Hong Leong",
+      "category": "汽油津贴",
+      "counterparty": "PART LEAM"
+    },
+    {
+      "id": "EXP-0047",
+      "date": "2026-03-03",
+      "item": "GAS",
+      "amount": 26.6,
+      "remark": "",
+      "account": "Hong Leong",
+      "category": "原材料",
+      "counterparty": ""
+    },
+    {
+      "id": "EXP-0029",
+      "date": "2026-03-10",
+      "item": "割门",
+      "amount": 10,
+      "remark": "",
+      "account": "Hong Leong",
+      "category": "原材料",
+      "counterparty": ""
+    },
+    {
+      "id": "EXP-0030",
+      "date": "2026-03-11",
+      "item": "plumbing",
+      "amount": 4900,
+      "remark": "",
+      "account": "Hong Leong",
+      "category": "原材料",
+      "counterparty": ""
+    },
+    {
+      "id": "EXP-0031",
+      "date": "2026-03-12",
+      "item": "Bil Elektrik",
+      "amount": 567,
+      "remark": "6930390713",
+      "account": "Hong Leong",
+      "category": "水电费",
+      "counterparty": "Tenaga Nasional"
+    },
+    {
+      "id": "EXP-0046",
+      "date": "2026-03-16",
+      "item": "Water Bill",
+      "amount": 171.3,
+      "remark": "725749",
+      "account": "Hong Leong",
+      "category": "水电费",
+      "counterparty": "LEMBAGA AIR PERAK"
+    },
+    {
+      "id": "EXP-0034",
+      "date": "2026-04-01",
+      "item": "4月汽油津贴",
+      "amount": 100,
+      "remark": "",
+      "account": "Hong Leong",
+      "category": "汽油津贴",
+      "counterparty": "KEE THUANG"
+    },
+    {
+      "id": "EXP-0032",
+      "date": "2026-04-01",
+      "item": "COWAY-APRIL",
+      "amount": 118,
+      "remark": "",
+      "account": "Hong Leong",
+      "category": "水电费",
+      "counterparty": "COWAY(MALAYSIA) SDN BHD"
+    },
+    {
+      "id": "EXP-FIX-2026-04-MAXIS",
+      "date": "2026-04-01",
+      "item": "MAXIS HOME FIBRE (2026-04)",
+      "amount": 106,
+      "remark": null,
+      "account": "MING ZHOU",
+      "category": "水电费",
+      "counterparty": "MAXIS",
+      "receiptImage": ""
+    },
+    {
+      "id": "EXP-0033",
+      "date": "2026-04-01",
+      "item": "4月汽油津贴",
+      "amount": 150,
+      "remark": "",
+      "account": "Hong Leong",
+      "category": "汽油津贴",
+      "counterparty": "PART LEAM"
+    },
+    {
+      "id": "EXP-0035",
+      "date": "2026-04-04",
+      "item": "GAS",
+      "amount": 26.6,
+      "remark": "12819049",
+      "account": "Hong Leong",
+      "category": "原材料",
+      "counterparty": "SNA SMART ENTERPRISE"
+    },
+    {
+      "id": "EXP-0036",
+      "date": "2026-04-12",
+      "item": "Bil Elektrik",
+      "amount": 586.95,
+      "remark": "6938793825",
+      "account": "Hong Leong",
+      "category": "水电费",
+      "counterparty": "Tenaga Nasional"
+    },
+    {
+      "id": "EXP-0037",
+      "date": "2026-04-17",
+      "item": "杂物",
+      "amount": 38.7,
+      "remark": "T1R000330005",
+      "account": "Hong Leong",
+      "category": "原材料",
+      "counterparty": "MR DIY"
+    },
+    {
+      "id": "EXP-0038",
+      "date": "2026-04-21",
+      "item": "AIRCOND REPAIR",
+      "amount": 510,
+      "remark": "0972",
+      "account": "Hong Leong",
+      "category": "原材料",
+      "counterparty": "ONG AIRCOND& REPAIR"
+    },
+    {
+      "id": "EXP-0039",
+      "date": "2026-04-22",
+      "item": "蚊油，垃圾袋",
+      "amount": 23.7,
+      "remark": "182721297/103/T0045",
+      "account": "Hong Leong",
+      "category": "原材料",
+      "counterparty": "99 SPEEDMART"
+    },
+    {
+      "id": "EXP-0048",
+      "date": "2026-04-23",
+      "item": "杂货",
+      "amount": 49.96,
+      "remark": "",
+      "account": "Hong Leong",
+      "category": "差旅费用",
+      "counterparty": "",
+      "receiptImage": ""
+    },
+    {
+      "id": "EXP-0049",
+      "date": "2026-04-23",
+      "item": "",
+      "amount": 172.6,
+      "remark": "",
+      "account": "Hong Leong",
+      "category": "差旅费用",
+      "counterparty": ""
+    },
+    {
+      "id": "EXP-0050",
+      "date": "2026-04-23",
+      "item": "",
+      "amount": 17.6,
+      "remark": "",
+      "account": "Hong Leong",
+      "category": "差旅费用",
+      "counterparty": ""
+    },
+    {
+      "id": "EXP-0040",
+      "date": "2026-04-26",
+      "item": "垃圾袋",
+      "amount": 37,
+      "remark": "T3R000343393",
+      "account": "Hong Leong",
+      "category": "原材料",
+      "counterparty": "MR DIY"
+    },
+    {
+      "id": "EXP-0043",
+      "date": "2026-05-01",
+      "item": "5月汽油津贴",
+      "amount": 100,
+      "remark": "",
+      "account": "Hong Leong",
+      "category": "汽油津贴",
+      "counterparty": "KEE THUANG"
+    },
+    {
+      "id": "EXP-FIX-2026-05-MAXIS",
+      "date": "2026-05-01",
+      "item": "MAXIS HOME FIBRE (2026-05)",
+      "amount": 106,
+      "remark": null,
+      "account": "MING ZHOU",
+      "category": "水电费",
+      "counterparty": "MAXIS",
+      "receiptImage": ""
+    },
+    {
+      "id": "EXP-0041",
+      "date": "2026-05-01",
+      "item": "COWAY-MAY",
+      "amount": 118,
+      "remark": "",
+      "account": "Hong Leong",
+      "category": "水电费",
+      "counterparty": "COWAY(MALAYSIA) SDN BHD"
+    },
+    {
+      "id": "EXP-0042",
+      "date": "2026-05-01",
+      "item": "5月汽油津贴",
+      "amount": 150,
+      "remark": "",
+      "account": "Hong Leong",
+      "category": "汽油津贴",
+      "counterparty": "PART LEAM"
+    },
+    {
+      "id": "EXP-0044",
+      "date": "2026-05-03",
+      "item": "WAXCO DIY AIRCOND CLEANER",
+      "amount": 21.9,
+      "remark": "T1R000318306",
+      "account": "Hong Leong",
+      "category": "原材料",
+      "counterparty": "MR DIY"
+    },
+    {
+      "id": "EXP-0045",
+      "date": "2026-05-12",
+      "item": "Bil Elektrik",
+      "amount": 866.3,
+      "remark": "6947037589",
+      "account": "Hong Leong",
+      "category": "水电费",
+      "counterparty": "Tenaga Nasional"
+    },
+    {
+      "id": "EXP-0051",
+      "date": "2026-05-19",
+      "item": "Water Bill",
+      "amount": 201.9,
+      "remark": "803582",
+      "account": "Hong Leong",
+      "category": "水电费",
+      "counterparty": "LEMBAGA AIR PERAK"
+    },
+    {
+      "id": "EXP-0053",
+      "date": "2026-05-28",
+      "item": "PARTNER CLAIM",
+      "amount": 7000,
+      "remark": "",
+      "account": "Hong Leong",
+      "category": "提现",
+      "counterparty": "HUAM MING ZHOU"
+    },
+    {
+      "id": "EXP-0054",
+      "date": "2026-05-28",
+      "item": "PARTNER CLAIM",
+      "amount": 7000,
+      "remark": "",
+      "account": "Hong Leong",
+      "category": "提现",
+      "counterparty": "LOR PART LEAM"
+    },
+    {
+      "id": "EXP-0052",
+      "date": "2026-05-28",
+      "item": "RENTAL FEE JAN-MAY",
+      "amount": 2500,
+      "remark": "",
+      "account": "Hong Leong",
+      "category": "房租",
+      "counterparty": "NG SU EIN"
+    },
+    {
+      "id": "EXP-0055",
+      "date": "2026-05-28",
+      "item": "PARTNER CLAIM",
+      "amount": 7000,
+      "remark": "",
+      "account": "Hong Leong",
+      "category": "提现",
+      "counterparty": "HENG KEE THUANG"
+    },
+    {
+      "id": "EXP-FIX-2026-06-KEETHUANG",
+      "date": "2026-06-01",
+      "item": "6月汽油津贴",
+      "amount": 100,
+      "remark": "尚未报销",
+      "account": "KEE THUANG",
+      "category": "汽油津贴",
+      "counterparty": "KEE THUANG",
+      "receiptImage": ""
+    },
+    {
+      "id": "EXP-FIX-2026-06-PARTLEAM",
+      "date": "2026-06-01",
+      "item": "6月汽油津贴",
+      "amount": 150,
+      "remark": "尚未报销",
+      "account": "PART LEAM",
+      "category": "汽油津贴",
+      "counterparty": "PART LEAM",
+      "receiptImage": ""
+    },
+    {
+      "id": "EXP-FIX-2026-06-COWAYMALAYSIASDNBHD",
+      "date": "2026-06-01",
+      "item": "COWAY-2026-06",
       "amount": 118,
       "remark": null,
       "account": "PART LEAM",
@@ -4402,37 +8112,14 @@ const INITIAL_FINANCE_DATA = {
       "receiptImage": ""
     },
     {
-      "id": "EXP-7192660",
-      "date": "2026-07-19",
-      "item": "单据日常支出",
-      "time": null,
-      "amount": 26.6,
-      "remark": "petron 单据日常支出",
-      "account": "PART LEAM",
-      "category": "原材料",
-      "counterparty": "petron",
-      "receiptImage": ""
-    },
-    {
-      "id": "EXP-841015",
-      "date": "2026-07-15",
-      "item": "Bil Air",
-      "amount": 156,
-      "remark": "880299",
+      "id": "EXP-FIX-2026-06-MAXIS",
+      "date": "2026-06-01",
+      "item": "MAXIS HOME FIBRE (2026-06)",
+      "amount": 106,
+      "remark": null,
       "account": "MING ZHOU",
       "category": "水电费",
-      "counterparty": "Lembaga Air Perak",
-      "receiptImage": ""
-    },
-    {
-      "id": "EXP-05762195",
-      "date": "2026-07-12",
-      "item": "TNB 电费",
-      "amount": 863.15,
-      "remark": "006968511746",
-      "account": "MING ZHOU",
-      "category": "水电费",
-      "counterparty": "TENAGA NASIONAL BERHAD",
+      "counterparty": "MAXIS",
       "receiptImage": ""
     },
     {
@@ -4480,20 +8167,43 @@ const INITIAL_FINANCE_DATA = {
       "receiptImage": ""
     },
     {
-      "id": "EXP-FIX-2026-06-KEETHUANG",
-      "date": "2026-06-01",
-      "item": "6月汽油津贴",
-      "amount": 100,
-      "remark": "尚未报销",
-      "account": "KEE THUANG",
-      "category": "汽油津贴",
-      "counterparty": "KEE THUANG",
+      "id": "EXP-05762195",
+      "date": "2026-07-12",
+      "item": "TNB 电费",
+      "amount": 863.15,
+      "remark": "006968511746",
+      "account": "MING ZHOU",
+      "category": "水电费",
+      "counterparty": "TENAGA NASIONAL BERHAD",
       "receiptImage": ""
     },
     {
-      "id": "EXP-FIX-2026-06-PARTLEAM",
-      "date": "2026-06-01",
-      "item": "6月汽油津贴",
+      "id": "EXP-841015",
+      "date": "2026-07-15",
+      "item": "Bil Air",
+      "amount": 156,
+      "remark": "880299",
+      "account": "MING ZHOU",
+      "category": "水电费",
+      "counterparty": "Lembaga Air Perak",
+      "receiptImage": ""
+    },
+    {
+      "id": "EXP-7192660",
+      "date": "2026-07-19",
+      "item": "单据日常支出",
+      "time": null,
+      "amount": 26.6,
+      "remark": "petron 单据日常支出",
+      "account": "PART LEAM",
+      "category": "原材料",
+      "counterparty": "petron",
+      "receiptImage": ""
+    },
+    {
+      "id": "EXP-FIX-2026-08-PARTLEAM",
+      "date": "2026-08-01",
+      "item": "8月汽油津贴",
       "amount": 150,
       "remark": "尚未报销",
       "account": "PART LEAM",
@@ -4502,9 +8212,31 @@ const INITIAL_FINANCE_DATA = {
       "receiptImage": ""
     },
     {
-      "id": "EXP-FIX-2026-06-COWAYMALAYSIASDNBHD",
-      "date": "2026-06-01",
-      "item": "COWAY-2026-06",
+      "id": "EXP-FIX-2026-08-KEETHUANG",
+      "date": "2026-08-01",
+      "item": "8月汽油津贴",
+      "amount": 100,
+      "remark": "尚未报销",
+      "account": "KEE THUANG",
+      "category": "汽油津贴",
+      "counterparty": "KEE THUANG",
+      "receiptImage": ""
+    },
+    {
+      "id": "EXP-FIX-2026-08-MAXIS",
+      "date": "2026-08-01",
+      "item": "MAXIS HOME FIBRE (2026-08)",
+      "amount": 106,
+      "remark": null,
+      "account": "MING ZHOU",
+      "category": "水电费",
+      "counterparty": "MAXIS",
+      "receiptImage": ""
+    },
+    {
+      "id": "EXP-FIX-2026-08-COWAYMALAYSIASDNBHD",
+      "date": "2026-08-01",
+      "item": "COWAY-2026-08",
       "amount": 118,
       "remark": null,
       "account": "PART LEAM",
@@ -4513,100 +8245,54 @@ const INITIAL_FINANCE_DATA = {
       "receiptImage": ""
     },
     {
-      "id": "EXP-FIX-2026-06-MAXIS",
-      "date": "2026-06-01",
-      "item": "MAXIS HOME FIBRE (2026-06)",
-      "amount": 106,
-      "remark": null,
-      "account": "MING ZHOU",
-      "category": "水电费",
-      "counterparty": "MAXIS",
+      "id": "EXP-109483",
+      "date": "2026-08-02",
+      "item": "洗碗液",
+      "time": "",
+      "amount": 10.09,
+      "remark": "",
+      "account": "PART LEAM",
+      "category": "原材料",
+      "counterparty": "lotus",
       "receiptImage": ""
     },
     {
-      "id": "EXP-0053",
-      "date": "2026-05-28",
-      "item": "PARTNER CLAIM",
-      "amount": 7000,
-      "remark": "",
-      "account": "Hong Leong",
-      "category": "提现",
-      "counterparty": "HUAM MING ZHOU"
-    },
-    {
-      "id": "EXP-0054",
-      "date": "2026-05-28",
-      "item": "PARTNER CLAIM",
-      "amount": 7000,
-      "remark": "",
-      "account": "Hong Leong",
-      "category": "提现",
-      "counterparty": "LOR PART LEAM"
-    },
-    {
-      "id": "EXP-0052",
-      "date": "2026-05-28",
-      "item": "RENTAL FEE JAN-MAY",
-      "amount": 2500,
-      "remark": "",
-      "account": "Hong Leong",
-      "category": "房租",
-      "counterparty": "NG SU EIN"
-    },
-    {
-      "id": "EXP-0055",
-      "date": "2026-05-28",
-      "item": "PARTNER CLAIM",
-      "amount": 7000,
-      "remark": "",
-      "account": "Hong Leong",
-      "category": "提现",
-      "counterparty": "HENG KEE THUANG"
-    },
-    {
-      "id": "EXP-0051",
-      "date": "2026-05-19",
-      "item": "Water Bill",
-      "amount": 201.9,
-      "remark": "803582",
-      "account": "Hong Leong",
+      "id": "EXP-03360910",
+      "date": "2026-08-11",
+      "item": "TNB 电费",
+      "amount": 850.1,
+      "remark": "006968511746",
+      "account": "MING ZHOU",
       "category": "水电费",
-      "counterparty": "LEMBAGA AIR PERAK"
+      "counterparty": "TENAGA NASIONAL BERHAD",
+      "receiptImage": ""
     },
     {
-      "id": "EXP-0045",
-      "date": "2026-05-12",
-      "item": "Bil Elektrik",
-      "amount": 866.3,
-      "remark": "6947037589",
-      "account": "Hong Leong",
-      "category": "水电费",
-      "counterparty": "Tenaga Nasional"
-    },
-    {
-      "id": "EXP-0044",
-      "date": "2026-05-03",
-      "item": "WAXCO DIY AIRCOND CLEANER",
-      "amount": 21.9,
-      "remark": "T1R000318306",
-      "account": "Hong Leong",
-      "category": "原材料",
-      "counterparty": "MR DIY"
-    },
-    {
-      "id": "EXP-0043",
-      "date": "2026-05-01",
-      "item": "5月汽油津贴",
+      "id": "EXP-FIX-2026-09-KEETHUANG",
+      "date": "2026-09-01",
+      "item": "9月汽油津贴",
       "amount": 100,
-      "remark": "",
-      "account": "Hong Leong",
+      "remark": "尚未报销",
+      "account": "KEE THUANG",
       "category": "汽油津贴",
-      "counterparty": "KEE THUANG"
+      "counterparty": "KEE THUANG",
+      "receiptImage": ""
     },
     {
-      "id": "EXP-FIX-2026-05-MAXIS",
-      "date": "2026-05-01",
-      "item": "MAXIS HOME FIBRE (2026-05)",
+      "id": "EXP-FIX-2026-09-PARTLEAM",
+      "date": "2026-09-01",
+      "item": "9月汽油津贴",
+      "amount": 150,
+      "remark": "尚未报销",
+      "account": "PART LEAM",
+      "category": "汽油津贴",
+      "counterparty": "PART LEAM",
+      "receiptImage": ""
+    },
+    {
+      "id": "EXP-FIX-2026-09-MAXIS",
+      "date": "2026-09-01",
+      "item": "MAXIS HOME FIBRE (2026-09)",
       "amount": 106,
       "remark": null,
       "account": "MING ZHOU",
@@ -4615,497 +8301,51 @@ const INITIAL_FINANCE_DATA = {
       "receiptImage": ""
     },
     {
-      "id": "EXP-0041",
-      "date": "2026-05-01",
-      "item": "COWAY-MAY",
+      "id": "EXP-FIX-2026-09-COWAYMALAYSIASDNBHD",
+      "date": "2026-09-01",
+      "item": "COWAY-2026-09",
       "amount": 118,
-      "remark": "",
-      "account": "Hong Leong",
+      "remark": null,
+      "account": "PART LEAM",
       "category": "水电费",
-      "counterparty": "COWAY(MALAYSIA) SDN BHD"
-    },
-    {
-      "id": "EXP-0042",
-      "date": "2026-05-01",
-      "item": "5月汽油津贴",
-      "amount": 150,
-      "remark": "",
-      "account": "Hong Leong",
-      "category": "汽油津贴",
-      "counterparty": "PART LEAM"
-    },
-    {
-      "id": "EXP-0040",
-      "date": "2026-04-26",
-      "item": "垃圾袋",
-      "amount": 37,
-      "remark": "T3R000343393",
-      "account": "Hong Leong",
-      "category": "原材料",
-      "counterparty": "MR DIY"
-    },
-    {
-      "id": "EXP-0048",
-      "date": "2026-04-23",
-      "item": "杂货",
-      "amount": 49.96,
-      "remark": "",
-      "account": "Hong Leong",
-      "category": "差旅费用",
-      "counterparty": "",
+      "counterparty": "COWAY(MALAYSIA) SDN BHD",
       "receiptImage": ""
     },
     {
-      "id": "EXP-0049",
-      "date": "2026-04-23",
-      "item": "",
-      "amount": 172.6,
-      "remark": "",
-      "account": "Hong Leong",
-      "category": "差旅费用",
-      "counterparty": ""
-    },
-    {
-      "id": "EXP-0050",
-      "date": "2026-04-23",
-      "item": "",
-      "amount": 17.6,
-      "remark": "",
-      "account": "Hong Leong",
-      "category": "差旅费用",
-      "counterparty": ""
-    },
-    {
-      "id": "EXP-0039",
-      "date": "2026-04-22",
-      "item": "蚊油，垃圾袋",
-      "amount": 23.7,
-      "remark": "182721297/103/T0045",
-      "account": "Hong Leong",
-      "category": "原材料",
-      "counterparty": "99 SPEEDMART"
-    },
-    {
-      "id": "EXP-0038",
-      "date": "2026-04-21",
-      "item": "AIRCOND REPAIR",
-      "amount": 510,
-      "remark": "0972",
-      "account": "Hong Leong",
-      "category": "原材料",
-      "counterparty": "ONG AIRCOND& REPAIR"
-    },
-    {
-      "id": "EXP-0037",
-      "date": "2026-04-17",
-      "item": "杂物",
-      "amount": 38.7,
-      "remark": "T1R000330005",
-      "account": "Hong Leong",
-      "category": "原材料",
-      "counterparty": "MR DIY"
-    },
-    {
-      "id": "EXP-0036",
-      "date": "2026-04-12",
-      "item": "Bil Elektrik",
-      "amount": 586.95,
-      "remark": "6938793825",
-      "account": "Hong Leong",
+      "id": "EXP-902451",
+      "date": "2026-09-15",
+      "item": "Water bill",
+      "time": "",
+      "amount": 191.7,
+      "remark": "960260",
+      "account": "MING ZHOU",
       "category": "水电费",
-      "counterparty": "Tenaga Nasional"
+      "counterparty": "Lembaga Air Perak",
+      "receiptImage": ""
     },
     {
-      "id": "EXP-0035",
-      "date": "2026-04-04",
-      "item": "GAS",
+      "id": "EXP-393639",
+      "date": "2026-09-23",
+      "item": "缴税费用",
+      "time": "",
+      "amount": 900,
+      "remark": "20260008",
+      "account": "Hong Leong",
+      "category": "财务成本",
+      "counterparty": "CHOO CHAI LING",
+      "receiptImage": ""
+    },
+    {
+      "id": "EXP-165727",
+      "date": "2026-09-23",
+      "item": "Gas",
+      "time": "18:20",
       "amount": 26.6,
-      "remark": "12819049",
-      "account": "Hong Leong",
+      "remark": "12909438",
+      "account": "KEE THUANG",
       "category": "原材料",
-      "counterparty": "SNA SMART ENTERPRISE"
-    },
-    {
-      "id": "EXP-0034",
-      "date": "2026-04-01",
-      "item": "4月汽油津贴",
-      "amount": 100,
-      "remark": "",
-      "account": "Hong Leong",
-      "category": "汽油津贴",
-      "counterparty": "KEE THUANG"
-    },
-    {
-      "id": "EXP-0032",
-      "date": "2026-04-01",
-      "item": "COWAY-APRIL",
-      "amount": 118,
-      "remark": "",
-      "account": "Hong Leong",
-      "category": "水电费",
-      "counterparty": "COWAY(MALAYSIA) SDN BHD"
-    },
-    {
-      "id": "EXP-FIX-2026-04-MAXIS",
-      "date": "2026-04-01",
-      "item": "MAXIS HOME FIBRE (2026-04)",
-      "amount": 106,
-      "remark": null,
-      "account": "MING ZHOU",
-      "category": "水电费",
-      "counterparty": "MAXIS",
+      "counterparty": "Petron Changkat Jong",
       "receiptImage": ""
-    },
-    {
-      "id": "EXP-0033",
-      "date": "2026-04-01",
-      "item": "4月汽油津贴",
-      "amount": 150,
-      "remark": "",
-      "account": "Hong Leong",
-      "category": "汽油津贴",
-      "counterparty": "PART LEAM"
-    },
-    {
-      "id": "EXP-0046",
-      "date": "2026-03-16",
-      "item": "Water Bill",
-      "amount": 171.3,
-      "remark": "725749",
-      "account": "Hong Leong",
-      "category": "水电费",
-      "counterparty": "LEMBAGA AIR PERAK"
-    },
-    {
-      "id": "EXP-0031",
-      "date": "2026-03-12",
-      "item": "Bil Elektrik",
-      "amount": 567,
-      "remark": "6930390713",
-      "account": "Hong Leong",
-      "category": "水电费",
-      "counterparty": "Tenaga Nasional"
-    },
-    {
-      "id": "EXP-0030",
-      "date": "2026-03-11",
-      "item": "plumbing",
-      "amount": 4900,
-      "remark": "",
-      "account": "Hong Leong",
-      "category": "原材料",
-      "counterparty": ""
-    },
-    {
-      "id": "EXP-0029",
-      "date": "2026-03-10",
-      "item": "割门",
-      "amount": 10,
-      "remark": "",
-      "account": "Hong Leong",
-      "category": "原材料",
-      "counterparty": ""
-    },
-    {
-      "id": "EXP-0047",
-      "date": "2026-03-03",
-      "item": "GAS",
-      "amount": 26.6,
-      "remark": "",
-      "account": "Hong Leong",
-      "category": "原材料",
-      "counterparty": ""
-    },
-    {
-      "id": "EXP-0028",
-      "date": "2026-03-01",
-      "item": "3月汽油津贴",
-      "amount": 100,
-      "remark": "",
-      "account": "Hong Leong",
-      "category": "汽油津贴",
-      "counterparty": "KEE THUANG"
-    },
-    {
-      "id": "EXP-FIX-2026-03-MAXIS",
-      "date": "2026-03-01",
-      "item": "MAXIS HOME FIBRE (2026-03)",
-      "amount": 106,
-      "remark": null,
-      "account": "MING ZHOU",
-      "category": "水电费",
-      "counterparty": "MAXIS",
-      "receiptImage": ""
-    },
-    {
-      "id": "EXP-0026",
-      "date": "2026-03-01",
-      "item": "COWAY-MAR",
-      "amount": 118,
-      "remark": "",
-      "account": "Hong Leong",
-      "category": "水电费",
-      "counterparty": "COWAY(MALAYSIA) SDN BHD"
-    },
-    {
-      "id": "EXP-0027",
-      "date": "2026-03-01",
-      "item": "3月汽油津贴",
-      "amount": 150,
-      "remark": "",
-      "account": "Hong Leong",
-      "category": "汽油津贴",
-      "counterparty": "PART LEAM"
-    },
-    {
-      "id": "EXP-0025",
-      "date": "2026-02-12",
-      "item": "素食",
-      "amount": 96,
-      "remark": "231750",
-      "account": "Hong Leong",
-      "category": "差旅费用",
-      "counterparty": ""
-    },
-    {
-      "id": "EXP-0024",
-      "date": "2026-02-12",
-      "item": "聚餐",
-      "amount": 623,
-      "remark": "",
-      "account": "Hong Leong",
-      "category": "差旅费用",
-      "counterparty": "Kedai Makanan Laut Ju Fu"
-    },
-    {
-      "id": "EXP-0023",
-      "date": "2026-02-11",
-      "item": "梯子",
-      "amount": 199,
-      "remark": "",
-      "account": "Hong Leong",
-      "category": "原材料",
-      "counterparty": "MR DIY"
-    },
-    {
-      "id": "EXP-0022",
-      "date": "2026-02-10",
-      "item": "Bil Elektrik",
-      "amount": 556.35,
-      "remark": "6923211800",
-      "account": "Hong Leong",
-      "category": "水电费",
-      "counterparty": "Tenaga Nasional"
-    },
-    {
-      "id": "EXP-0021",
-      "date": "2026-02-08",
-      "item": "桌子",
-      "amount": 230.9,
-      "remark": "260124TQHW41CK",
-      "account": "Hong Leong",
-      "category": "原材料",
-      "counterparty": "SEVENWOOD TECHNOLOGY PLT"
-    },
-    {
-      "id": "EXP-0020",
-      "date": "2026-02-06",
-      "item": "防水漆",
-      "amount": 40,
-      "remark": "",
-      "account": "Hong Leong",
-      "category": "原材料",
-      "counterparty": "WANG SENG HARDWARE TRADING"
-    },
-    {
-      "id": "EXP-0019",
-      "date": "2026-02-05",
-      "item": "WATER SQUEEGEE+BROOM HANDLE",
-      "amount": 9.1,
-      "remark": "",
-      "account": "Hong Leong",
-      "category": "原材料",
-      "counterparty": "MR DIY"
-    },
-    {
-      "id": "EXP-0015",
-      "date": "2026-02-01",
-      "item": "COWAY-FEB",
-      "amount": 118,
-      "remark": "",
-      "account": "Hong Leong",
-      "category": "水电费",
-      "counterparty": "COWAY(MALAYSIA) SDN BHD"
-    },
-    {
-      "id": "EXP-0018",
-      "date": "2026-02-01",
-      "item": "2月汽油津贴",
-      "amount": 100,
-      "remark": "",
-      "account": "Hong Leong",
-      "category": "汽油津贴",
-      "counterparty": "KEE THUANG"
-    },
-    {
-      "id": "EXP-0017",
-      "date": "2026-02-01",
-      "item": "FEB-MAXIS HOME FIBRE",
-      "amount": 106,
-      "remark": "",
-      "account": "Hong Leong",
-      "category": "水电费",
-      "counterparty": ""
-    },
-    {
-      "id": "EXP-0016",
-      "date": "2026-02-01",
-      "item": "2月汽油津贴",
-      "amount": 150,
-      "remark": "",
-      "account": "Hong Leong",
-      "category": "汽油津贴",
-      "counterparty": "PART LEAM"
-    },
-    {
-      "id": "EXP-0014",
-      "date": "2026-01-22",
-      "item": "GARBAG BAG+BASIN TOOLS",
-      "amount": 33.6,
-      "remark": "",
-      "account": "Hong Leong",
-      "category": "原材料",
-      "counterparty": "MR DIY"
-    },
-    {
-      "id": "EXP-0013",
-      "date": "2026-01-22",
-      "item": "LAUNDRY BASKET",
-      "amount": 9.9,
-      "remark": "LSOS02-1685196",
-      "account": "Hong Leong",
-      "category": "原材料",
-      "counterparty": "LIMA SEN SDN BHD"
-    },
-    {
-      "id": "EXP-0012",
-      "date": "2026-01-16",
-      "item": "Water Bill",
-      "amount": 91.5,
-      "remark": "647291",
-      "account": "Hong Leong",
-      "category": "水电费",
-      "counterparty": "LEMBAGA AIR PERAK"
-    },
-    {
-      "id": "EXP-0009",
-      "date": "2026-01-11",
-      "item": "垃圾袋+消毒",
-      "amount": 23.4,
-      "remark": "T1R000308066",
-      "account": "Hong Leong",
-      "category": "原材料",
-      "counterparty": "MR DIY"
-    },
-    {
-      "id": "EXP-0011",
-      "date": "2026-01-11",
-      "item": "3M SCOTCH BRITE TOUCH",
-      "amount": 5.9,
-      "remark": "182721196/102/T0489",
-      "account": "Hong Leong",
-      "category": "原材料",
-      "counterparty": "99 SPEEDMART"
-    },
-    {
-      "id": "EXP-0010",
-      "date": "2026-01-11",
-      "item": "拖把",
-      "amount": 39.8,
-      "remark": "T1BSP04202601110026",
-      "account": "Hong Leong",
-      "category": "原材料",
-      "counterparty": "TF VALUE MART"
-    },
-    {
-      "id": "EXP-0005",
-      "date": "2026-01-10",
-      "item": "Bil Elektrik",
-      "amount": 72.25,
-      "remark": "6916660401",
-      "account": "Hong Leong",
-      "category": "水电费",
-      "counterparty": "Tenaga Nasional"
-    },
-    {
-      "id": "EXP-0008",
-      "date": "2026-01-10",
-      "item": "NYLON BROOM+FLOOR CLEANER",
-      "amount": 43.2,
-      "remark": "T3R000305382",
-      "account": "Hong Leong",
-      "category": "原材料",
-      "counterparty": "MR DIY"
-    },
-    {
-      "id": "EXP-0007",
-      "date": "2026-01-10",
-      "item": "CYLINDER LOCK",
-      "amount": 41,
-      "remark": "T2R000598025",
-      "account": "Hong Leong",
-      "category": "原材料",
-      "counterparty": "MR DIY"
-    },
-    {
-      "id": "EXP-0006",
-      "date": "2026-01-10",
-      "item": "漆",
-      "amount": 113,
-      "remark": "CS-301277",
-      "account": "Hong Leong",
-      "category": "原材料",
-      "counterparty": "WANG SENG HARDWARE TRADING"
-    },
-    {
-      "id": "EXP-0001",
-      "date": "2026-01-01",
-      "item": "COWAY-JAN",
-      "amount": 118,
-      "remark": "",
-      "account": "Hong Leong",
-      "category": "水电费",
-      "counterparty": "COWAY(MALAYSIA) SDN BHD"
-    },
-    {
-      "id": "EXP-0003",
-      "date": "2026-01-01",
-      "item": "JAN-MAXIS HOME FIBRE",
-      "amount": 106,
-      "remark": "",
-      "account": "Hong Leong",
-      "category": "水电费",
-      "counterparty": ""
-    },
-    {
-      "id": "EXP-0004",
-      "date": "2026-01-01",
-      "item": "1月汽油津贴",
-      "amount": 100,
-      "remark": "",
-      "account": "Hong Leong",
-      "category": "汽油津贴",
-      "counterparty": "KEE THUANG"
-    },
-    {
-      "id": "EXP-0002",
-      "date": "2026-01-01",
-      "item": "1月汽油津贴",
-      "amount": 150,
-      "remark": "",
-      "account": "Hong Leong",
-      "category": "汽油津贴",
-      "counterparty": "PART LEAM"
     }
   ],
   "auditLogs": [
@@ -5204,7 +8444,7 @@ const INITIAL_FINANCE_DATA = {
     "geminiApiKey": "",
     "localLanguages": "chi_sim+eng+msa"
   },
-  "initialBalance": 492.15,
+  "initialBalance": 1363.91,
   "incomeCategories": [
     "销售收入",
     "理财收益",
@@ -5220,9 +8460,510 @@ const INITIAL_FINANCE_DATA = {
     "财务成本",
     "汽油津贴",
     "提现"
+  ],
+  "boardingStudents": [
+    {
+      "id": "LEE YAN CHENG",
+      "zhName": "李晏丞",
+      "name": "LEE YAN CHENG",
+      "aliases": [
+        "李晏丞",
+        "LEE YAN CHENG",
+        "LEE YAN",
+        "LEE YA",
+        "晏丞",
+        "LIM YEE LING"
+      ],
+      "count": 1,
+      "fee": 480,
+      "deposit": 480,
+      "billableMonths": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11
+      ],
+      "active": true
+    },
+    {
+      "id": "KAIHAO",
+      "zhName": "蔡凯皓",
+      "name": "KAIHAO",
+      "aliases": [
+        "蔡凯皓",
+        "KAI HAO",
+        "KAIHAO",
+        "凯皓",
+        "CHUA HEE SIANG"
+      ],
+      "count": 1,
+      "fee": 480,
+      "deposit": 480,
+      "billableMonths": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11
+      ],
+      "active": true
+    },
+    {
+      "id": "LEE JU YAN",
+      "zhName": "李居彦",
+      "name": "LEE JU YAN",
+      "aliases": [
+        "李居彦",
+        "LEE JU YAN",
+        "JU YAN",
+        "居彦",
+        "WONG PIK WOON"
+      ],
+      "count": 1,
+      "fee": 480,
+      "deposit": 480,
+      "billableMonths": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11
+      ],
+      "active": true
+    },
+    {
+      "id": "CHUA MING ZHE",
+      "zhName": "蔡旻哲",
+      "name": "CHUA MING ZHE",
+      "aliases": [
+        "蔡旻哲",
+        "CHUA MING ZHE",
+        "MING ZHE",
+        "旻哲",
+        "CHUA MIN ZHE",
+        "MIN ZHE",
+        "MR FOO POH HAR"
+      ],
+      "count": 1,
+      "fee": 480,
+      "deposit": 480,
+      "billableMonths": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11
+      ],
+      "active": true
+    },
+    {
+      "id": "ONG SHI SHUI",
+      "zhName": "翁诗岁",
+      "name": "ONG SHI SHUI",
+      "aliases": [
+        "翁诗岁",
+        "ONG SHI SHUI",
+        "ONG SHI SUI",
+        "BEH SIEW SIEW",
+        "SHI SHUI",
+        "SHI SUI",
+        "诗岁",
+        "MR ONG CHAU LEANG"
+      ],
+      "count": 1,
+      "fee": 480,
+      "deposit": 480,
+      "billableMonths": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11
+      ],
+      "active": true
+    },
+    {
+      "id": "ENG WEI ZHI",
+      "zhName": "黄炜智",
+      "name": "ENG WEI ZHI",
+      "aliases": [
+        "黄炜智",
+        "ENG WEI ZHI",
+        "ENG WEE ZHI",
+        "ENG WEE HOSTEL ZHI",
+        "WEI ZHI",
+        "炜智",
+        "黄伟智",
+        "TEE LEK TING"
+      ],
+      "count": 1,
+      "fee": 480,
+      "deposit": 480,
+      "billableMonths": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11
+      ],
+      "active": true
+    },
+    {
+      "id": "WONG E FULL",
+      "zhName": "黄益富",
+      "name": "WONG E FULL",
+      "aliases": [
+        "黄益富",
+        "WONG E FULL",
+        "E FULL",
+        "益富",
+        "黄益福",
+        "RAINBOW ZONE VENTURES"
+      ],
+      "count": 1,
+      "fee": 480,
+      "deposit": 480,
+      "billableMonths": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11
+      ],
+      "active": true
+    },
+    {
+      "id": "HUAIDERK",
+      "zhName": "陈怀德",
+      "name": "HUAIDERK",
+      "aliases": [
+        "陈怀德",
+        "HUAIDERK",
+        "HUAI DERK",
+        "HUAI D",
+        "怀德",
+        "CHONG MEI KOON"
+      ],
+      "count": 1,
+      "fee": 480,
+      "deposit": 480,
+      "billableMonths": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11
+      ],
+      "active": true
+    },
+    {
+      "id": "GOH JYJE SHAN",
+      "zhName": "吴劼善",
+      "name": "GOH JYJE SHAN",
+      "aliases": [
+        "吴劼善",
+        "GOH JYJE SHAN",
+        "GOHJYIESHANN",
+        "JYJE SHAN",
+        "JYIE SHAN",
+        "劼善",
+        "TAN HOOI P",
+        "GOH HOCK G"
+      ],
+      "count": 1,
+      "fee": 480,
+      "deposit": 480,
+      "billableMonths": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11
+      ],
+      "active": true
+    },
+    {
+      "id": "TAN JIAN FONG",
+      "zhName": "陈剑锋",
+      "name": "TAN JIAN FONG",
+      "aliases": [
+        "陈剑锋",
+        "TAN JIAN FONG",
+        "JIAN FONG",
+        "TAN JI",
+        "剑锋",
+        "WONG MEI NGUK"
+      ],
+      "count": 1,
+      "fee": 480,
+      "deposit": 480,
+      "billableMonths": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11
+      ],
+      "active": true
+    },
+    {
+      "id": "LEE JI CHUEN",
+      "zhName": "吕梓铨",
+      "name": "LEE JI CHUEN",
+      "aliases": [
+        "吕梓铨",
+        "LEE JI CHUEN",
+        "JI CHUEN",
+        "梓铨",
+        "吕子铨",
+        "LEE YENG MAN"
+      ],
+      "count": 1,
+      "fee": 480,
+      "deposit": 480,
+      "billableMonths": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11
+      ],
+      "active": true
+    },
+    {
+      "id": "CHIA KAI JIE",
+      "zhName": "谢凯捷",
+      "name": "CHIA KAI JIE",
+      "aliases": [
+        "谢凯捷",
+        "CHIA KAI JIE",
+        "KAI JIE",
+        "凯捷"
+      ],
+      "count": 1,
+      "fee": 480,
+      "deposit": 480,
+      "billableMonths": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11
+      ],
+      "active": true
+    },
+    {
+      "id": "ZHI XIAO",
+      "zhName": "侯智逍",
+      "name": "ZHI XIAO",
+      "aliases": [
+        "侯智逍",
+        "ZHI XIAO",
+        "HOW ZHI XIAO",
+        "智逍",
+        "侯智宵",
+        "CHONG CHEE YENG"
+      ],
+      "count": 1,
+      "fee": 480,
+      "deposit": 480,
+      "billableMonths": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11
+      ],
+      "active": true
+    },
+    {
+      "id": "HONG YE & KAI YE",
+      "zhName": "邹宏业 & 邹楷业",
+      "name": "HONG YE & KAI YE",
+      "aliases": [
+        "邹宏业",
+        "邹楷业",
+        "HONG YE",
+        "KAI YE",
+        "HONG YIP",
+        "KAI YIP",
+        "宏业",
+        "楷业",
+        "邹宏业 & 邹楷业",
+        "HONG YE & KAI YE",
+        "HONG YIP/KAI YIP"
+      ],
+      "count": 2,
+      "fee": 960,
+      "isBrothers": true,
+      "deposit": 960,
+      "billableMonths": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11
+      ],
+      "note": "邹宏业 & 邹楷业 两兄弟合并转账（母：RM960/月）",
+      "active": true
+    },
+    {
+      "id": "TAN ZE LUN",
+      "zhName": "陈泽伦",
+      "name": "TAN ZE LUN",
+      "aliases": [
+        "陈泽伦",
+        "TAN ZE LUN",
+        "ZE LUN"
+      ],
+      "count": 1,
+      "fee": 480,
+      "deposit": 0,
+      "active": false,
+      "billableMonths": [
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+      ],
+      "note": "2025年9月退宿，押金RM480已退还"
+    },
+    {
+      "id": "BAI HONG HAO",
+      "zhName": "白宏豪",
+      "name": "BAI HONG HAO",
+      "aliases": [
+        "白宏豪",
+        "BAI HONG HAO",
+        "HONG HAO"
+      ],
+      "count": 1,
+      "fee": 480,
+      "deposit": 480,
+      "active": false,
+      "billableMonths": [
+        2,
+        3,
+        4,
+        5
+      ],
+      "note": "2025届住宿生"
+    },
+    {
+      "id": "NGIAM JIE SHENG",
+      "zhName": "严捷胜",
+      "name": "NGIAM JIE SHENG",
+      "aliases": [
+        "严捷胜",
+        "NGIAM JIE SHENG",
+        "JIE SHENG"
+      ],
+      "count": 1,
+      "fee": 480,
+      "deposit": 480,
+      "active": false,
+      "billableMonths": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9
+      ],
+      "note": "2025届住宿生"
+    }
   ]
 };
-
 
 // 2026 Financial Bookkeeping Application Controller
 // Features: Supabase Real-Time Cloud Sync, Hong Leong Bank Statement PDF Auto-Parsing, Learned Auto-Categorization & OCR Receipt Recognition
@@ -5300,7 +9041,7 @@ let ocrSettings = {
 };
 
 // Application Version and OTA Release Timestamp
-window.VOYAGE_APP_VERSION = '2026.3.48';
+window.VOYAGE_APP_VERSION = '2026.3.50';
 window.VOYAGE_APP_BUILD_TIME = Date.now();
 
 // Multi-Year Financial State (2025, 2026, 2027, etc.)
@@ -5379,8 +9120,8 @@ function changeFiscalYear(newYear) {
   updateFiscalYearUI();
   if (typeof renderDashboard === 'function') renderDashboard();
   if (typeof renderMonthlyReport === 'function') renderMonthlyReport();
-  if (typeof renderIncomesTable === 'function') renderIncomesTable();
-  if (typeof renderExpensesTable === 'function') renderExpensesTable();
+  if (typeof renderIncomeTable === 'function') renderIncomeTable();
+  if (typeof renderExpenseTable === 'function') renderExpenseTable();
   if (typeof renderArrearsTracker === 'function') renderArrearsTracker();
   if (typeof updateArrearsBadge === 'function') updateArrearsBadge();
 
@@ -5485,7 +9226,7 @@ function ensureBaselineAuditLogs() {
         module: 'system',
         recordId: 'GOOGLE_DRIVE',
         summary: '部署 Google Drive 专属实时全自动防丢备份与 AI 冷还原协议',
-        details: '每次增删改查或多端同步后全自动备份 HTML 独立完整镜像与 JSON 主数据包至 Google Drive (G:\\我的云端硬盘\\Voyage_财务系统自动备份)，支持直接向 AI 交付文件 10 秒 100% 完整原样恢复系统。',
+        details: '每次增删改查或多端同步后全自动备份 HTML 独立完整镜像与 JSON 主数据包至 Google Drive (H:\\我的云端硬盘\\Voyage_财务系统自动备份)，支持直接向 AI 交付文件 10 秒 100% 完整原样恢复系统。',
         operator: '系统自动审计'
       },
       {
@@ -6423,7 +10164,7 @@ async function publishCurrentAppToCloud() {
     // Update baseTime and build time inside the bundle
     rawHtml = rawHtml.replace(/var baseTime = \d+;/, `var baseTime = ${newTimestamp};`);
     rawHtml = rawHtml.replace(/window\.VOYAGE_APP_BUILD_TIME = \d+;/, `window.VOYAGE_APP_BUILD_TIME = ${newTimestamp};`);
-    rawHtml = rawHtml.replace(/window\.VOYAGE_APP_VERSION = '[^']+';/, `window.VOYAGE_APP_VERSION = '2026.3.48';`);
+    rawHtml = rawHtml.replace(/window\.VOYAGE_APP_VERSION = '[^']+';/, `window.VOYAGE_APP_VERSION = '2026.3.50';`);
 
     const payload = {
       id: 'voyage_finance_app_release',
@@ -6578,35 +10319,43 @@ function calculateMetrics(targetYear = (typeof currentFiscalYear !== 'undefined'
   const totalLifetimeIncome = (appData.incomes || []).reduce((acc, curr) => acc + (Number(curr.amount) || 0), 0);
   const totalLifetimeExpense = (appData.expenses || []).reduce((acc, curr) => acc + (Number(curr.amount) || 0), 0);
 
-  let initialBalance = Number(appData.initialBalance) || 0;
-  const accountsInitialSum = (appData.accounts || []).reduce((sum, a) => {
-    let init = Number(a.initial);
-    if (isNaN(init) || init === 0) {
-      if (a.name && a.name.trim().toLowerCase() === 'hong leong') {
-        init = Number(appData.initialBalance) || 492.15;
-      } else {
-        init = 0;
-      }
-    }
-    return sum + init;
-  }, 0);
+  // Baseline initial balance at 2025-01-01 is RM 1,363.91
+  const BASE_2025_INITIAL = 1363.91;
+  let initialBalance = BASE_2025_INITIAL;
+  let yearClosingBalance = 0;
 
-  if (accountsInitialSum > 0) {
-    initialBalance = accountsInitialSum;
-  } else if (initialBalance === 0) {
-    initialBalance = 492.15;
+  // 2025 annual sums
+  const inc2025 = (appData.incomes || []).filter(i => i.date && i.date.startsWith('2025-')).reduce((s, i) => s + (Number(i.amount) || 0), 0);
+  const exp2025 = (appData.expenses || []).filter(e => e.date && e.date.startsWith('2025-')).reduce((s, e) => s + (Number(e.amount) || 0), 0);
+  const closing2025 = BASE_2025_INITIAL + inc2025 - exp2025; // exactly RM 492.15
+
+  if (targetYear === '2025') {
+    initialBalance = BASE_2025_INITIAL;
+    yearClosingBalance = closing2025;
+  } else if (targetYear === '2026') {
+    initialBalance = closing2025; // RM 492.15 carried over
+    const inc2026 = (appData.incomes || []).filter(i => i.date && i.date.startsWith('2026-')).reduce((s, i) => s + (Number(i.amount) || 0), 0);
+    const exp2026 = (appData.expenses || []).filter(e => e.date && e.date.startsWith('2026-')).reduce((s, e) => s + (Number(e.amount) || 0), 0);
+    yearClosingBalance = initialBalance + inc2026 - exp2026; // RM 23,205.90
+  } else if (targetYear === 'all') {
+    initialBalance = BASE_2025_INITIAL;
+    yearClosingBalance = BASE_2025_INITIAL + totalLifetimeIncome - totalLifetimeExpense; // RM 23,205.90
+  } else {
+    // Future years e.g. 2027
+    initialBalance = BASE_2025_INITIAL + totalLifetimeIncome - totalLifetimeExpense;
+    yearClosingBalance = initialBalance;
   }
 
-  const totalBalance = initialBalance + totalLifetimeIncome - totalLifetimeExpense;
+  const totalBalance = (targetYear === '2025') ? yearClosingBalance : (BASE_2025_INITIAL + totalLifetimeIncome - totalLifetimeExpense);
 
   // Filter incomes and expenses by target fiscal year
   const filteredIncomes = isAllYears
     ? (appData.incomes || [])
-    : (appData.incomes || []).filter(inc => inc.date && inc.date.startsWith(yearPrefix));
+    : (appData.incomes || []).filter(inc => inc.date && inc.date.startsWith(yearPrefix + '-'));
 
   const filteredExpenses = isAllYears
     ? (appData.expenses || [])
-    : (appData.expenses || []).filter(exp => exp.date && exp.date.startsWith(yearPrefix));
+    : (appData.expenses || []).filter(exp => exp.date && exp.date.startsWith(yearPrefix + '-'));
 
   const totalIncome = filteredIncomes.reduce((acc, curr) => acc + (Number(curr.amount) || 0), 0);
   const totalExpense = filteredExpenses.reduce((acc, curr) => acc + (Number(curr.amount) || 0), 0);
@@ -6655,21 +10404,17 @@ function calculateMetrics(targetYear = (typeof currentFiscalYear !== 'undefined'
     expenseByCategory[cat] = (expenseByCategory[cat] || 0) + (Number(exp.amount) || 0);
   });
 
-  // Account Balances (Lifetime real bank balances)
+  // Account Balances
   const accountStats = (appData.accounts || []).map(acc => {
     const accName = acc.name;
-    let initial = Number(acc.initial);
-    if (isNaN(initial) || initial === 0) {
-      if (accName && accName.trim().toLowerCase() === 'hong leong') {
-        initial = Number(appData.initialBalance) || 492.15;
-      } else {
-        initial = 0;
-      }
+    let initial = (targetYear === '2025' || targetYear === 'all') ? BASE_2025_INITIAL : closing2025;
+    if (accName && accName.trim().toLowerCase() !== 'hong leong') {
+      initial = Number(acc.initial) || 0;
     }
-    const inSum = (appData.incomes || [])
+    const inSum = filteredIncomes
       .filter(i => (i.account || '').trim().toLowerCase() === accName.trim().toLowerCase())
       .reduce((sum, i) => sum + (Number(i.amount) || 0), 0);
-    const outSum = (appData.expenses || [])
+    const outSum = filteredExpenses
       .filter(e => (e.account || '').trim().toLowerCase() === accName.trim().toLowerCase())
       .reduce((sum, e) => sum + (Number(e.amount) || 0), 0);
     return {
@@ -6710,13 +10455,32 @@ function renderDashboard() {
   if (navExp) navExp.textContent = appData.expenses.length;
   if (typeof updateArrearsBadge === 'function') updateArrearsBadge();
 
-  // Stat Cards
-  document.getElementById('statTotalBalance').textContent = formatMoney(metrics.totalBalance);
-  document.getElementById('statInitialBal').textContent = formatMoney(metrics.initialBalance);
+  // Stat Cards & Dynamic Multi-Year Header
+  const titleEl = document.getElementById('dashboardBalanceTitle');
+  const subEl = document.getElementById('statInitialBal');
+  
+  if (targetYear === '2025') {
+    if (titleEl) titleEl.textContent = '2025 年末结存';
+    if (subEl) subEl.textContent = 'RM 1,363.91 (2025开账)';
+    document.getElementById('statTotalBalance').textContent = formatMoney(metrics.yearClosingBalance || metrics.totalBalance);
+  } else if (targetYear === 'all') {
+    if (titleEl) titleEl.textContent = '当前总结余 (历年)';
+    if (subEl) subEl.textContent = 'RM 1,363.91 (2025开账)';
+    document.getElementById('statTotalBalance').textContent = formatMoney(metrics.totalBalance);
+  } else {
+    if (titleEl) titleEl.textContent = '当前总结余';
+    if (subEl) subEl.textContent = 'RM 492.15 (2025结转)';
+    document.getElementById('statTotalBalance').textContent = formatMoney(metrics.totalBalance);
+  }
+
+  // Update Badge Counts to reflect selected year!
+  if (navInc) navInc.textContent = metrics.filteredIncomes.length;
+  if (navExp) navExp.textContent = metrics.filteredExpenses.length;
+
   document.getElementById('statTotalIncome').textContent = formatMoney(metrics.totalIncome);
-  document.getElementById('statIncomeCount').textContent = appData.incomes.length;
+  document.getElementById('statIncomeCount').textContent = metrics.filteredIncomes.length;
   document.getElementById('statTotalExpense').textContent = formatMoney(metrics.totalExpense);
-  document.getElementById('statExpenseCount').textContent = appData.expenses.length;
+  document.getElementById('statExpenseCount').textContent = metrics.filteredExpenses.length;
 
   const netEl = document.getElementById('statNetProfit');
   netEl.textContent = (metrics.netProfit >= 0 ? '+' : '') + formatMoney(metrics.netProfit);
@@ -6912,6 +10676,11 @@ function renderIncomeTable() {
   const keyword = (document.getElementById('filterIncomeKeyword').value || '').trim().toLowerCase();
 
   let filtered = appData.incomes.filter(item => {
+    if (typeof currentFiscalYear !== 'undefined' && currentFiscalYear !== 'all') {
+      if (!startDate && !endDate && item.date && !item.date.startsWith(currentFiscalYear + '-')) {
+        return false;
+      }
+    }
     if (startDate && item.date < startDate) return false;
     if (endDate && item.date > endDate) return false;
     if (category && item.category !== category) return false;
@@ -7046,6 +10815,11 @@ function renderExpenseTable() {
   const keyword = (document.getElementById('filterExpenseKeyword').value || '').trim().toLowerCase();
 
   let filtered = appData.expenses.filter(item => {
+    if (typeof currentFiscalYear !== 'undefined' && currentFiscalYear !== 'all') {
+      if (!startDate && !endDate && item.date && !item.date.startsWith(currentFiscalYear + '-')) {
+        return false;
+      }
+    }
     if (startDate && item.date < startDate) return false;
     if (endDate && item.date > endDate) return false;
     if (category && item.category !== category) return false;
@@ -14130,7 +17904,7 @@ let gdriveFolderHandle = null;
 let gdriveBackupSettings = {
   connected: false,
   folderName: 'Voyage_财务系统自动备份',
-  defaultPath: 'G:\\我的云端硬盘\\Voyage_财务系统自动备份',
+  defaultPath: 'H:\\我的云端硬盘\\Voyage_财务系统自动备份',
   lastBackupTime: null,
   backupCount: 0,
   autoBackupDebounceTimer: null
@@ -14427,7 +18201,7 @@ function updateGdriveUI() {
   if (lastTimeEl) {
     lastTimeEl.textContent = `已同步 (最近: ${lastTime})`;
   }
-  const folderStr = `G:\\我的云端硬盘\\${gdriveBackupSettings.folderName || 'Voyage_财务系统自动备份'}`;
+  const folderStr = `H:\\我的云端硬盘\\${gdriveBackupSettings.folderName || 'Voyage_财务系统自动备份'}`;
   if (folderPathEl) folderPathEl.textContent = folderStr;
   if (modalPath) modalPath.textContent = folderStr;
 }
