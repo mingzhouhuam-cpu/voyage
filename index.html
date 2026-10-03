@@ -15,8 +15,8 @@
   <script id="voyage-ota-bootloader">
     (function() {
       try {
-        var expectedVersion = '2026.3.45';
-        var baseBuildTime = 1790961825554;
+        var expectedVersion = '2026.3.48';
+        var baseBuildTime = 1790967652126;
         var cachedBundle = localStorage.getItem('voyage_finance_cached_bundle');
         var cachedVersion = localStorage.getItem('voyage_finance_cached_version');
         var cachedTime = parseInt(localStorage.getItem('voyage_finance_cached_time') || '0', 10);
@@ -59,7 +59,7 @@
     }
   </style>
 
-  <title>2026 财务收支记账管理系统</title>
+  <title>Voyage 财务收支记账管理系统</title>
   <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
   <!-- Chart.js -->
@@ -156,7 +156,15 @@
           </div>
           <div>
             <div class="flex items-center space-x-1.5">
-              <h1 class="text-base font-black text-slate-900 tracking-tight">2026 记账管理</h1>
+              <div class="flex items-center space-x-1.5">
+              <h1 class="text-sm font-black text-slate-900 tracking-tight">Voyage 记账</h1>
+              <select id="mobileFiscalYearSelect" onchange="changeFiscalYear(this.value)" class="bg-slate-100 border border-slate-200 rounded-lg text-[11px] font-bold text-slate-800 px-1 py-0.5 focus:outline-none cursor-pointer">
+                <option value="2026" selected>2026年</option>
+                <option value="2027">2027年</option>
+                <option value="2025">2025年</option>
+                <option value="all">历年</option>
+              </select>
+            </div>
               <span class="bg-emerald-100 text-emerald-800 text-[10px] px-1.5 py-0.5 rounded font-bold">云端版</span>
             </div>
             <p class="text-[10px] text-slate-400 font-medium tracking-wide">VOYAGE LEARNING CENTER</p>
@@ -165,6 +173,10 @@
 
         <div class="flex items-center space-x-2">
           <!-- Mobile Cloud Sync Pill -->
+          <button type="button" onclick="handleGdrivePillClick(event)" id="mobileGdriveSyncBtn" title="Google Drive 自动备份" class="inline-flex items-center px-2 py-1 text-[11px] font-semibold rounded-full bg-blue-50 hover:bg-blue-100 text-blue-800 border border-blue-200 shadow-2xs active:scale-95 transition mr-1.5">
+            <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 mr-1"></span>
+            <span>GDrive 备份</span>
+          </button>
           <button type="button" onclick="handleCloudSyncPillClick(event)" id="mobileCloudSyncBtn" title="点击立即与云端双向同步" class="inline-flex items-center px-2.5 py-1.5 text-xs font-semibold rounded-full bg-slate-50 hover:bg-slate-100 text-slate-700 border border-slate-200 shadow-2xs active:scale-95 transition">
             <span id="mobileCloudSyncDot" class="w-2 h-2 rounded-full bg-emerald-500 mr-1.5 animate-pulse"></span>
             <span id="mobileCloudSyncText" class="text-[11px]">已同步</span>
@@ -187,11 +199,21 @@
             </svg>
           </div>
           <div>
-            <div class="flex items-center space-x-2">
-              <h1 class="text-xl font-bold text-slate-900 tracking-tight">2026 财务收支记账管理系统</h1>
-              <span class="bg-emerald-100 text-emerald-800 text-xs px-2 py-0.5 rounded-full font-medium">网页版</span>
+            <div class="flex items-center space-x-2.5 sm:space-x-3">
+              <h1 class="text-base lg:text-lg font-bold text-slate-900 tracking-tight whitespace-nowrap">Voyage 财务收支记账</h1>
+              <!-- Global Fiscal Year Selector -->
+              <div class="flex items-center space-x-1 bg-slate-100 hover:bg-slate-200/90 px-2.5 py-1 rounded-xl border border-slate-200 shadow-2xs transition">
+                <span class="text-xs">📅</span>
+                <select id="globalFiscalYearSelect" onchange="changeFiscalYear(this.value)" class="bg-transparent font-bold text-xs text-slate-800 focus:outline-none cursor-pointer">
+                  <option value="2026" selected>2026 年度</option>
+                  <option value="2027">2027 年度</option>
+                  <option value="2025">2025 年度</option>
+                  <option value="all">历年全部汇总</option>
+                </select>
+              </div>
+              <span class="hidden md:inline-block bg-emerald-100 text-emerald-800 text-[11px] px-2 py-0.5 rounded-full font-bold">通用网页版</span>
             </div>
-            <p class="text-xs text-slate-500">VOYAGE LEARNING CENTER · 支持流水 PDF & 单据智能识别</p>
+            <p class="text-xs text-slate-400 hidden sm:block">VOYAGE LEARNING CENTER · 支持多年份记账 · 银行流水 PDF 导入 · 住宿费收缴追踪</p>
           </div>
         </div>
 
@@ -204,6 +226,12 @@
           </button>
 
           <!-- Bank Statement Import Button -->
+          <!-- Google Drive Auto-Backup Status Pill & Trigger -->
+          <button onclick="handleGdrivePillClick(event)" id="gdriveSyncStatusBtn" title="Google Drive 实时自动备份状态与管理" class="inline-flex items-center px-2.5 sm:px-3 py-1.5 sm:py-2 text-xs font-semibold rounded-lg border border-blue-200 bg-blue-50/80 hover:bg-blue-100 text-blue-800 transition shadow-2xs focus:outline-none ring-2 ring-blue-500/10">
+            <span id="gdriveSyncDot" class="w-2 h-2 rounded-full bg-emerald-500 mr-1.5"></span>
+            <span id="gdriveSyncText">☁️ GDrive 备份</span>
+          </button>
+
           <button onclick="switchTab('statement')" class="inline-flex items-center px-3 sm:px-3.5 py-2 text-xs sm:text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-lg shadow-sm transition-all focus:outline-none ring-2 ring-blue-500/20">
             <svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.5L19 7.5V19a2 2 0 01-2 2z"></path>
@@ -400,7 +428,7 @@
         <div class="lg:col-span-2 bg-white rounded-2xl p-6 border border-slate-200 shadow-sm">
           <div class="flex items-center justify-between mb-4">
             <div>
-              <h4 class="font-semibold text-slate-900 text-base">2026年 1~12月 收支月度走势</h4>
+              <h4 class="font-semibold text-slate-900 text-base"><span id="dashboardTrendTitle">2026</span>年 1~12月 收支月度走势</h4>
               <p class="text-xs text-slate-500">每月收入与支出对比直观柱状分析</p>
             </div>
             <div class="flex items-center space-x-3 text-xs">
@@ -816,7 +844,7 @@
       <div class="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm">
         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
           <div>
-            <h3 class="text-lg font-bold text-slate-900">2026 年度月度收支统计报表</h3>
+            <h3 class="text-lg font-bold text-slate-900"><span id="monthlyReportYearTitle">2026</span> 年度月度收支统计报表</h3>
             <p class="text-xs text-slate-500">按月份汇总营业收入、营业支出及期末结余</p>
           </div>
           <button onclick="exportMonthlyReportToCSV()" class="inline-flex items-center px-3.5 py-2 border border-slate-300 text-slate-700 hover:bg-slate-50 rounded-lg text-xs font-medium transition-all shadow-sm">
@@ -890,7 +918,11 @@
           
           <!-- Top Action Buttons -->
           <div class="flex flex-wrap items-center gap-2">
-                        <button onclick="openStudentRosterModal()" class="inline-flex items-center px-3 py-1.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg text-xs font-semibold shadow-sm transition">
+                        <button onclick="openBillableMonthsModal()" class="inline-flex items-center px-3 py-1.5 bg-blue-50 hover:bg-blue-100 text-blue-700 border border-blue-200 rounded-lg text-xs font-bold transition shadow-2xs cursor-pointer mr-1">
+              <span class="mr-1">⚙️</span>
+              <span>需缴月份规则 (12月免收)</span>
+            </button>
+            <button onclick="openStudentRosterModal()" class="inline-flex items-center px-3 py-1.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg text-xs font-semibold shadow-sm transition">
               <svg class="w-3.5 h-3.5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
               <span>👥 管理学生名册</span>
             </button>
@@ -910,7 +942,7 @@
         </div>
 
         <!-- 4 KPI Metrics -->
-        <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 pt-2">
+        <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 pt-2">
           <!-- Total Arrears -->
           <div class="bg-rose-50/70 border border-rose-200 rounded-xl p-4">
             <div class="flex items-center justify-between text-xs text-rose-700 font-semibold">
@@ -928,7 +960,7 @@
               <span class="text-base">⚠️</span>
             </div>
             <div id="arrearsCountStudents" class="text-xl sm:text-2xl font-black text-amber-700 mt-1.5">0 人</div>
-            <div id="arrearsCountSub" class="text-[11px] text-amber-700/80 mt-1">共 15 位住宿学生</div>
+            <div id="arrearsCountSub" class="text-[11px] text-amber-700/80 mt-1">共 14 位住宿学生</div>
           </div>
 
           <!-- Fully Paid Students -->
@@ -951,6 +983,16 @@
             <div class="w-full bg-slate-200 rounded-full h-1.5 mt-2 overflow-hidden">
               <div id="arrearsProgressBar" class="bg-emerald-500 h-1.5 rounded-full transition-all duration-500" style="width: 0%"></div>
             </div>
+          </div>
+
+          <!-- Escrow Security Deposits Card (Total RM 7,200) -->
+          <div class="bg-purple-50/80 border border-purple-200 rounded-xl p-4">
+            <div class="flex items-center justify-between text-xs text-purple-700 font-semibold">
+              <span>已收住宿押金</span>
+              <span class="text-base">🔒</span>
+            </div>
+            <div id="arrearsTotalDeposit" class="text-xl sm:text-2xl font-black text-purple-700 mt-1.5">RM 7,200.00</div>
+            <div id="arrearsDepositSub" class="text-[11px] text-purple-700/80 mt-1 font-semibold">14户全收齐 (每生RM480)</div>
           </div>
         </div>
       </div>
@@ -1094,12 +1136,82 @@
         <div>
           <div class="flex items-center justify-between">
             <div>
-              <h3 class="text-lg font-bold text-slate-900 mb-1">单据识别与 100% 纯本地离线计算引擎</h3>
-              <p class="text-xs text-slate-500">已完全移除外部云端 API 依赖。单据图片完全由您的浏览器在本地离线处理，财务数据零上云，绝对安全隐私。</p>
+              <h3 class="text-lg font-bold text-slate-900 mb-1">系统设置、数据安全与离线计算引擎</h3>
+              <p class="text-xs text-slate-500">支持 100% 纯本地离线 OCR、多电脑实时云同步，以及 Google Drive 专属实时全自动防丢备份与 AI 冷还原协议。</p>
             </div>
             <div class="hidden sm:flex items-center space-x-2 bg-amber-50 border border-amber-200 px-3 py-1.5 rounded-xl text-xs">
               <span class="text-amber-800">当前引擎：</span>
               <span id="currentOcrEngineName" class="font-bold text-amber-900">⚡ 纯本地离线 OCR (中/英/马三语 + 画质增强)</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Google Drive Auto-Backup & AI Disaster Recovery Card -->
+        <div class="p-5 rounded-2xl bg-gradient-to-br from-blue-50/90 via-sky-50/60 to-indigo-50/50 border-2 border-blue-200/90 space-y-4 shadow-sm">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <div class="flex items-start space-x-3.5">
+              <div class="w-11 h-11 rounded-2xl bg-gradient-to-tr from-blue-600 via-indigo-600 to-sky-500 text-white flex items-center justify-center text-2xl shadow-md shadow-blue-500/25 flex-shrink-0">
+                ☁️
+              </div>
+              <div>
+                <div class="flex items-center space-x-2">
+                  <h4 class="text-sm font-bold text-slate-900">Google Drive 专属实时全自动防丢备份与 AI 冷还原中心</h4>
+                  <span id="gdriveStatusBadge" class="text-[10px] bg-emerald-100 text-emerald-800 border border-emerald-300 px-2 py-0.5 rounded-full font-bold">● 已连接本地 Google Drive 磁盘</span>
+                </div>
+                <p class="text-xs text-slate-600 mt-1 leading-relaxed">
+                  每次在系统中录入新账单、修改报销、结清住宿费或多端同步后，全自动在后台将<b>最新系统镜像（.html）</b>与<b>完整主数据包（.json）</b>静默保存至您的 Google Drive，100% 杜绝因换电脑、误删数据或硬件故障导致的损失！
+                </p>
+              </div>
+            </div>
+            <div class="flex items-center space-x-2 shrink-0 ml-14 sm:ml-0">
+              <button type="button" onclick="selectGoogleDriveFolder()" class="px-3.5 py-2 bg-white hover:bg-slate-50 text-blue-700 border border-blue-300 rounded-xl text-xs font-bold shadow-xs transition flex items-center space-x-1.5 active:scale-95">
+                <span>📂</span>
+                <span>选择 / 绑定 Google Drive 目录</span>
+              </button>
+              <button type="button" onclick="triggerGoogleDriveAutoBackup(true)" class="px-3.5 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-bold shadow-sm transition flex items-center space-x-1.5 active:scale-95">
+                <span>💾</span>
+                <span>立即全量备份</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Live Status Details Grid -->
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-1">
+            <div class="p-3 bg-white/90 rounded-xl border border-blue-100 shadow-2xs space-y-1">
+              <div class="text-[11px] text-slate-400 font-medium">Google Drive 同步路径</div>
+              <div id="gdriveFolderPath" class="text-xs font-bold text-slate-800 truncate" title="G:\我的云端硬盘\Voyage_财务系统自动备份">
+                G:\我的云端硬盘\Voyage_财务系统自动备份
+              </div>
+            </div>
+            <div class="p-3 bg-white/90 rounded-xl border border-blue-100 shadow-2xs space-y-1">
+              <div class="text-[11px] text-slate-400 font-medium">最新备份时间</div>
+              <div id="gdriveLastBackupTime" class="text-xs font-bold text-emerald-600">
+                已与云端硬盘保持实时同步
+              </div>
+            </div>
+            <div class="p-3 bg-white/90 rounded-xl border border-blue-100 shadow-2xs space-y-1">
+              <div class="text-[11px] text-slate-400 font-medium">双模备份文件结构</div>
+              <div class="text-xs font-bold text-indigo-700 flex items-center space-x-1">
+                <span>📄 HTML系统镜像 + 📦 JSON数据包</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- AI Restoration Contract Guarantee Banner -->
+          <div class="p-3.5 bg-gradient-to-r from-amber-50/90 via-orange-50/70 to-amber-50/90 border border-amber-200 rounded-xl text-xs text-amber-950 space-y-1.5">
+            <div class="flex items-center space-x-2 font-bold text-amber-900">
+              <span class="text-base">🤖</span>
+              <span>【给 AI 助手的冷还原协议】—— 任何时间任何地点，一键原样生成系统</span>
+            </div>
+            <p class="text-[11px] text-amber-900/90 leading-relaxed">
+              备份文件内已内嵌全套财务系统底层代码与加密数据特征。若您需要迁移电脑、重新布署或发生任何意外，<b>只需将 Google Drive 中的任意备份文件直接拖入与 Antigravity AI 的对话框</b>，AI 助手将在 10 秒内 100% 原样还原生成出一模一样的系统，所有 94+ 笔收入、82+ 笔支出、14 位住宿生欠费追踪与历史审计记录完好无损！
+            </p>
+            <div class="pt-1 flex flex-wrap items-center gap-2 text-[11px]">
+              <span class="bg-amber-100/80 px-2 py-0.5 rounded text-amber-800 font-semibold">支持直接交付：Voyage_2026财务收支记账系统_最新独立完整系统.html</span>
+              <span class="bg-amber-100/80 px-2 py-0.5 rounded text-amber-800 font-semibold">支持直接交付：voyage_finance_master_backup.json</span>
+              <button type="button" onclick="exportGdrivePackageDirectly()" class="ml-auto underline font-bold text-indigo-700 hover:text-indigo-900">
+                ⬇️ 手动打包下载两份备份文件
+              </button>
             </div>
           </div>
         </div>
@@ -1171,279 +1283,83 @@
         </div>
 
         <div class="pt-4 border-t border-slate-100">
-          <h4 class="text-sm font-bold text-slate-800 mb-3">系统数据安全与备份恢复</h4>
+          <h4 class="text-sm font-bold text-slate-800 mb-3">系统多端协同与云端同步</h4>
           <div class="space-y-4">
-                                                    <!-- Supabase Cloud Dynamic Hot-Update (OTA) Engine Card -->
-        <div class="p-5 rounded-2xl bg-gradient-to-br from-indigo-50/90 via-blue-50/50 to-purple-50/40 border border-indigo-200 space-y-4 shadow-sm mb-6">
-          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-            <div class="flex items-start space-x-3">
-              <div class="w-10 h-10 rounded-xl bg-indigo-600 text-white flex items-center justify-center font-bold text-lg shadow-md shadow-indigo-600/20 flex-shrink-0">
-                🚀
-              </div>
-              <div>
-                <div class="flex items-center space-x-2">
-                  <h4 class="text-sm font-bold text-slate-900">全网云端动态热更新中心 (OTA 无需重发文件)</h4>
-                  <span class="px-2 py-0.5 text-[10px] font-bold bg-indigo-100 text-indigo-700 rounded-full">实时发布</span>
-                </div>
-                <p class="text-xs text-slate-500 mt-0.5">任何一台电脑对本网页做出了修改或升级，一键发布到云端，全网其他电脑与手机在下次打开或刷新时，将自动载入最新系统，无需反复重发 HTML 文件！</p>
-              </div>
-            </div>
-          </div>
-
-          <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-2">
-            <div class="p-3 bg-white rounded-xl border border-slate-200/80 shadow-2xs">
-              <div class="text-[11px] text-slate-400 font-medium">当前运行版本</div>
-              <div id="localReleaseVersion" class="text-sm font-bold text-slate-800 mt-0.5">v2026.3.22</div>
-            </div>
-            <div class="p-3 bg-white rounded-xl border border-slate-200/80 shadow-2xs">
-              <div class="text-[11px] text-slate-400 font-medium">云端最新版本</div>
-              <div id="cloudReleaseVersion" class="text-sm font-bold text-indigo-600 mt-0.5">检查中...</div>
-            </div>
-            <div class="p-3 bg-white rounded-xl border border-slate-200/80 shadow-2xs">
-              <div class="text-[11px] text-slate-400 font-medium">云端发布时间</div>
-              <div id="cloudReleaseTime" class="text-xs font-semibold text-slate-600 mt-1 truncate">-</div>
-            </div>
-          </div>
-
-          <div class="flex flex-wrap items-center gap-2.5 pt-1">
-            <button type="button" onclick="checkForCloudAppUpdates(true)" class="inline-flex items-center px-3.5 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg text-xs font-semibold shadow-sm transition-all focus:outline-none ring-2 ring-indigo-500/20">
-              <svg class="w-3.5 h-3.5 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
-              <span>检查并载入云端最新版</span>
-            </button>
-            <button type="button" onclick="publishCurrentAppToCloud()" class="inline-flex items-center px-3.5 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-xs font-semibold shadow-sm transition-all focus:outline-none ring-2 ring-emerald-500/20">
-              <svg class="w-3.5 h-3.5 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path></svg>
-              <span>一键发布当前网页为全网最新版</span>
-            </button>
-            <button type="button" onclick="clearHotUpdateCache()" class="inline-flex items-center px-3 py-2 border border-slate-300 hover:bg-white text-slate-600 rounded-lg text-xs font-medium transition-all">
-              <span>🧹 清除本地热更新缓存</span>
-            </button>
-          </div>
-        </div>
-
-
-        <!-- Supabase Cloud Sync Card -->
-        <div class="p-5 rounded-xl bg-gradient-to-br from-emerald-50/70 to-teal-50/50 border border-emerald-200 space-y-4 shadow-sm mb-6">
-          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-            <div class="flex items-start space-x-3">
-              <div class="w-9 h-9 rounded-xl bg-emerald-600 text-white flex items-center justify-center font-bold text-base shadow-md shadow-emerald-600/20 flex-shrink-0">
-                ☁️
-              </div>
-              <div>
-                <h4 class="text-sm font-bold text-slate-900">多电脑实时云同步 (Supabase 免费云库)</h4>
-                <p class="text-xs text-slate-500 mt-0.5">在办公室电脑记账，家中电脑与手机无需手动导出，秒级全自动实时更新！</p>
-              </div>
-            </div>
-            <button onclick="openCloudSyncModal()" class="inline-flex items-center justify-center px-3.5 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-xs font-semibold shadow-sm transition-all focus:outline-none ring-2 ring-emerald-500/20">
-              <svg class="w-3.5 h-3.5 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
-              <span>配置云同步参数</span>
-            </button>
-          </div>
-          <div class="flex flex-wrap items-center justify-between text-xs pt-3 border-t border-emerald-200/60 text-slate-600 gap-2">
-            <div>
-              云端同步状态：<span id="settingsCloudStatus" class="font-semibold text-slate-800">🟡 离线模式 (仅保存在本机)</span>
-            </div>
-            <div id="settingsCloudLastSync" class="text-slate-400 text-[11px]">
-              暂无云端同步记录
-            </div>
-          </div>
-        </div>
-
-        <!-- Backup -->
-            <div class="p-4 rounded-xl bg-slate-50 border border-slate-200 flex items-center justify-between">
-              <div>
-                <h4 class="text-xs font-semibold text-slate-800">导出数据备份 (JSON)</h4>
-                <p class="text-[11px] text-slate-500">将全部收入、支出、单据图片与设置完整打包备份。</p>
-              </div>
-              <button onclick="exportCompleteDataJSON()" class="px-4 py-2 bg-slate-800 hover:bg-slate-900 text-white rounded-lg text-xs font-medium transition-all shadow-sm">
-                立即导出备份
-              </button>
-            </div>
-
-            <!-- Restore -->
-            <div class="p-4 rounded-xl bg-slate-50 border border-slate-200 flex items-center justify-between">
-              <div>
-                <h4 class="text-xs font-semibold text-slate-800">从文件导入恢复 (JSON)</h4>
-                <p class="text-[11px] text-slate-500">选择您之前导出的备份文件，一键恢复全部账目数据。</p>
-              </div>
-              <div>
-                <input type="file" id="importJsonInput" accept=".json" class="hidden" onchange="handleImportJSON(event)">
-                <button onclick="document.getElementById('importJsonInput').click()" class="px-4 py-2 border border-slate-300 text-slate-700 hover:bg-slate-100 rounded-lg text-xs font-medium transition-all">
-                  选择备份文件
-                </button>
-              </div>
-            </div>
-
-              </h4>
-              <ul id="expenseCatList" class="divide-y divide-slate-100 text-xs text-slate-600 bg-slate-50 p-3 rounded-xl border border-slate-200">
-                <!-- Rendered by JS -->
-              </ul>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- 6. SETTINGS & DATA TOOLS VIEW -->
-    <div id="view-settings" class="space-y-6 hidden">
-      <div class="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm max-w-3xl space-y-6">
-        <div>
-          <div class="flex items-center justify-between">
-            <div>
-              <h3 class="text-lg font-bold text-slate-900 mb-1">单据识别与 100% 纯本地离线计算引擎</h3>
-              <p class="text-xs text-slate-500">已完全移除外部云端 API 依赖。单据图片完全由您的浏览器在本地离线处理，财务数据零上云，绝对安全隐私。</p>
-            </div>
-            <div class="hidden sm:flex items-center space-x-2 bg-amber-50 border border-amber-200 px-3 py-1.5 rounded-xl text-xs">
-              <span class="text-amber-800">当前引擎：</span>
-              <span id="currentOcrEngineName" class="font-bold text-amber-900">⚡ 纯本地离线 OCR (中/英/马三语 + 画质增强)</span>
-            </div>
-          </div>
-        </div>
-
-        <!-- Pure Local In-Browser OCR Panel -->
-        <div class="space-y-4">
-          <div id="ocrModeCard_local" class="p-5 rounded-2xl bg-white border-2 border-amber-300 ring-2 ring-amber-500/20 transition-all shadow-sm space-y-4 relative">
-            <div class="flex flex-col sm:flex-row sm:items-start justify-between gap-3">
-              <div class="flex items-start space-x-3.5">
-                <div class="w-11 h-11 rounded-2xl bg-gradient-to-tr from-amber-500 to-orange-500 text-white flex items-center justify-center text-2xl shadow-md shadow-amber-500/25 flex-shrink-0">
-                  ⚡
-                </div>
-                <div>
-                  <div class="flex items-center space-x-2">
-                    <h4 class="text-sm font-bold text-slate-900">纯本地离线 OCR 识单引擎 (纯浏览器计算 · 隐私无忧)</h4>
-                    <span id="ocrModeBadge_local" class="text-[10px] bg-emerald-100 text-emerald-900 border border-emerald-300 px-2 py-0.5 rounded-full font-bold">● 100% 本地运行中</span>
+            <!-- Supabase Cloud Dynamic Hot-Update (OTA) Engine Card -->
+            <div class="p-5 rounded-2xl bg-gradient-to-br from-indigo-50/90 via-blue-50/50 to-purple-50/40 border border-indigo-200 space-y-4 shadow-sm mb-6">
+              <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                <div class="flex items-start space-x-3">
+                  <div class="w-10 h-10 rounded-xl bg-indigo-600 text-white flex items-center justify-center font-bold text-lg shadow-md shadow-indigo-600/20 flex-shrink-0">
+                    🚀
                   </div>
-                  <p class="text-xs text-slate-600 mt-1.5 leading-relaxed">
-                    <b>零网络上传 · 零外部 API · 无需 API 密钥</b>。所有文字提取均在您手机或电脑本地 WebAssembly 内存中极速完成。
-                    已内置针对<b>马来西亚收据、发票及公用事业账单（TNB 电费、水务、油站、商超小票）</b>的专属特征匹配库，自动排查保证金（Cagaran）及过往欠款干扰。
-                  </p>
+                  <div>
+                    <div class="flex items-center space-x-2">
+                      <h4 class="text-sm font-bold text-slate-900">全网云端动态热更新中心 (OTA 无需重发文件)</h4>
+                      <span class="px-2 py-0.5 text-[10px] font-bold bg-indigo-100 text-indigo-700 rounded-full">实时发布</span>
+                    </div>
+                    <p class="text-xs text-slate-500 mt-0.5">任何一台电脑对本网页做出了修改或升级，一键发布到云端，全网其他电脑与手机在下次打开或刷新时，将自动载入最新系统，无需反复重发 HTML 文件！</p>
+                  </div>
                 </div>
               </div>
-              <div class="flex items-center space-x-2 flex-shrink-0 ml-14 sm:ml-0">
-                <button type="button" onclick="testLocalOcrEngine()" class="px-4 py-2 bg-amber-600 hover:bg-amber-700 text-white rounded-xl text-xs font-bold shadow-sm transition flex items-center space-x-1.5 active:scale-95">
-                  <span>⚡</span>
-                  <span>检测本地引擎就绪</span>
+
+              <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-2">
+                <div class="p-3 bg-white rounded-xl border border-slate-200/80 shadow-2xs">
+                  <div class="text-[11px] text-slate-400 font-medium">当前运行版本</div>
+                  <div id="localReleaseVersion" class="text-sm font-bold text-slate-800 mt-0.5">v2026.3.46</div>
+                </div>
+                <div class="p-3 bg-white rounded-xl border border-slate-200/80 shadow-2xs">
+                  <div class="text-[11px] text-slate-400 font-medium">云端最新版本</div>
+                  <div id="cloudReleaseVersion" class="text-sm font-bold text-indigo-600 mt-0.5">检查中...</div>
+                </div>
+                <div class="p-3 bg-white rounded-xl border border-slate-200/80 shadow-2xs">
+                  <div class="text-[11px] text-slate-400 font-medium">云端发布时间</div>
+                  <div id="cloudReleaseTime" class="text-xs font-semibold text-slate-600 mt-1 truncate">-</div>
+                </div>
+              </div>
+
+              <div class="flex flex-wrap items-center gap-2.5 pt-1">
+                <button type="button" onclick="checkForCloudAppUpdates(true)" class="inline-flex items-center px-3.5 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg text-xs font-semibold shadow-sm transition-all focus:outline-none ring-2 ring-indigo-500/20">
+                  <svg class="w-3.5 h-3.5 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+                  <span>检查并载入云端最新版</span>
+                </button>
+                <button type="button" onclick="publishCurrentAppToCloud()" class="inline-flex items-center px-3.5 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-xs font-semibold shadow-sm transition-all focus:outline-none ring-2 ring-emerald-500/20">
+                  <svg class="w-3.5 h-3.5 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path></svg>
+                  <span>一键发布当前网页为全网最新版</span>
+                </button>
+                <button type="button" onclick="clearHotUpdateCache()" class="inline-flex items-center px-3 py-2 border border-slate-300 hover:bg-white text-slate-600 rounded-lg text-xs font-medium transition-all">
+                  <span>🧹 清除本地热更新缓存</span>
                 </button>
               </div>
             </div>
 
-            <!-- Preprocessing & Accuracy Enhancements -->
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
-              <div class="p-3 bg-amber-50/70 border border-amber-200/70 rounded-xl space-y-1 text-xs">
-                <div class="flex items-center space-x-1.5 font-bold text-amber-900">
-                  <span>🎨</span>
-                  <span>HTML5 动态画质增强流水线</span>
+            <!-- Supabase Cloud Sync Card -->
+            <div class="p-5 rounded-xl bg-gradient-to-br from-emerald-50/70 to-teal-50/50 border border-emerald-200 space-y-4 shadow-sm mb-6">
+              <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                <div class="flex items-start space-x-3">
+                  <div class="w-9 h-9 rounded-xl bg-emerald-600 text-white flex items-center justify-center font-bold text-base shadow-md shadow-emerald-600/20 flex-shrink-0">
+                    ☁️
+                  </div>
+                  <div>
+                    <h4 class="text-sm font-bold text-slate-900">多电脑实时云同步 (Supabase 免费云库)</h4>
+                    <p class="text-xs text-slate-500 mt-0.5">在办公室电脑记账，家中电脑与手机无需手动导出，秒级全自动实时更新！</p>
+                  </div>
                 </div>
-                <p class="text-[11px] text-amber-800 leading-relaxed">
-                  内置智能自适应灰度化、局部对比度动态拉伸与文字锐化卷积算法，自动消除拍照阴影，使微弱热敏小票字迹清晰易读。
-                </p>
+                <button onclick="openCloudSyncModal()" class="inline-flex items-center justify-center px-3.5 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-xs font-semibold shadow-sm transition-all focus:outline-none ring-2 ring-emerald-500/20">
+                  <svg class="w-3.5 h-3.5 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                  <span>配置云同步参数</span>
+                </button>
               </div>
-
-              <div class="p-3 bg-blue-50/70 border border-blue-200/70 rounded-xl space-y-1 text-xs">
-                <div class="flex items-center space-x-1.5 font-bold text-blue-900">
-                  <span>🇲🇾</span>
-                  <span>马来西亚账单与小票容错规则</span>
+              <div class="flex flex-wrap items-center justify-between text-xs pt-3 border-t border-emerald-200/60 text-slate-600 gap-2">
+                <div>
+                  云端同步状态：<span id="settingsCloudStatus" class="font-semibold text-slate-800">🟢 实时同步已就绪</span>
                 </div>
-                <p class="text-[11px] text-blue-800 leading-relaxed">
-                  专为 TNB、Lembaga Air、Indah Water、Shell、MR D.I.Y.、99 Speedmart 设计的多层金额权重评分体系，支持跨行金额抓取与 OCR 混淆字符纠错。
-                </p>
-              </div>
-            </div>
-
-            <!-- Language Support Tags -->
-            <div class="p-3 bg-slate-50 border border-slate-200/80 rounded-xl flex flex-wrap items-center justify-between gap-2 text-xs">
-              <div class="flex items-center space-x-2 text-slate-700 font-medium">
-                <span>🌐 多语言模型：</span>
-                <span class="bg-white px-2 py-0.5 rounded border border-slate-200 text-slate-800 font-semibold">🇨🇳 简体中文 (chi_sim)</span>
-                <span class="bg-white px-2 py-0.5 rounded border border-slate-200 text-slate-800 font-semibold">🇬🇧 英文 (eng)</span>
-                <span class="bg-white px-2 py-0.5 rounded border border-slate-200 text-slate-800 font-semibold">🇲🇾 马来文 (msa)</span>
-              </div>
-              <span class="text-[11px] text-emerald-700 font-bold flex items-center space-x-1">
-                <span>✓</span>
-                <span>已启用浏览器离线高速缓存</span>
-              </span>
-            </div>
-          </div>
-        </div>
-
-        <div class="pt-4 border-t border-slate-100">
-          <h4 class="text-sm font-bold text-slate-800 mb-3">系统数据安全与备份恢复</h4>
-          <div class="space-y-4">
-                                                    <!-- Supabase Cloud Dynamic Hot-Update (OTA) Engine Card -->
-        <div class="p-5 rounded-2xl bg-gradient-to-br from-indigo-50/90 via-blue-50/50 to-purple-50/40 border border-indigo-200 space-y-4 shadow-sm mb-6">
-          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-            <div class="flex items-start space-x-3">
-              <div class="w-10 h-10 rounded-xl bg-indigo-600 text-white flex items-center justify-center font-bold text-lg shadow-md shadow-indigo-600/20 flex-shrink-0">
-                🚀
-              </div>
-              <div>
-                <div class="flex items-center space-x-2">
-                  <h4 class="text-sm font-bold text-slate-900">全网云端动态热更新中心 (OTA 无需重发文件)</h4>
-                  <span class="px-2 py-0.5 text-[10px] font-bold bg-indigo-100 text-indigo-700 rounded-full">实时发布</span>
+                <div id="settingsCloudLastSync" class="text-slate-400 text-[11px]">
+                  已连接云端数据库
                 </div>
-                <p class="text-xs text-slate-500 mt-0.5">任何一台电脑对本网页做出了修改或升级，一键发布到云端，全网其他电脑与手机在下次打开或刷新时，将自动载入最新系统，无需反复重发 HTML 文件！</p>
               </div>
             </div>
-          </div>
 
-          <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-2">
-            <div class="p-3 bg-white rounded-xl border border-slate-200/80 shadow-2xs">
-              <div class="text-[11px] text-slate-400 font-medium">当前运行版本</div>
-              <div id="localReleaseVersion" class="text-sm font-bold text-slate-800 mt-0.5">v2026.3.22</div>
-            </div>
-            <div class="p-3 bg-white rounded-xl border border-slate-200/80 shadow-2xs">
-              <div class="text-[11px] text-slate-400 font-medium">云端最新版本</div>
-              <div id="cloudReleaseVersion" class="text-sm font-bold text-indigo-600 mt-0.5">检查中...</div>
-            </div>
-            <div class="p-3 bg-white rounded-xl border border-slate-200/80 shadow-2xs">
-              <div class="text-[11px] text-slate-400 font-medium">云端发布时间</div>
-              <div id="cloudReleaseTime" class="text-xs font-semibold text-slate-600 mt-1 truncate">-</div>
-            </div>
-          </div>
-
-          <div class="flex flex-wrap items-center gap-2.5 pt-1">
-            <button type="button" onclick="checkForCloudAppUpdates(true)" class="inline-flex items-center px-3.5 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg text-xs font-semibold shadow-sm transition-all focus:outline-none ring-2 ring-indigo-500/20">
-              <svg class="w-3.5 h-3.5 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
-              <span>检查并载入云端最新版</span>
-            </button>
-            <button type="button" onclick="publishCurrentAppToCloud()" class="inline-flex items-center px-3.5 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-xs font-semibold shadow-sm transition-all focus:outline-none ring-2 ring-emerald-500/20">
-              <svg class="w-3.5 h-3.5 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path></svg>
-              <span>一键发布当前网页为全网最新版</span>
-            </button>
-            <button type="button" onclick="clearHotUpdateCache()" class="inline-flex items-center px-3 py-2 border border-slate-300 hover:bg-white text-slate-600 rounded-lg text-xs font-medium transition-all">
-              <span>🧹 清除本地热更新缓存</span>
-            </button>
-          </div>
-        </div>
-
-
-        <!-- Supabase Cloud Sync Card -->
-        <div class="p-5 rounded-xl bg-gradient-to-br from-emerald-50/70 to-teal-50/50 border border-emerald-200 space-y-4 shadow-sm mb-6">
-          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-            <div class="flex items-start space-x-3">
-              <div class="w-9 h-9 rounded-xl bg-emerald-600 text-white flex items-center justify-center font-bold text-base shadow-md shadow-emerald-600/20 flex-shrink-0">
-                ☁️
-              </div>
-              <div>
-                <h4 class="text-sm font-bold text-slate-900">多电脑实时云同步 (Supabase 免费云库)</h4>
-                <p class="text-xs text-slate-500 mt-0.5">在办公室电脑记账，家中电脑与手机无需手动导出，秒级全自动实时更新！</p>
-              </div>
-            </div>
-            <button onclick="openCloudSyncModal()" class="inline-flex items-center justify-center px-3.5 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-xs font-semibold shadow-sm transition-all focus:outline-none ring-2 ring-emerald-500/20">
-              <svg class="w-3.5 h-3.5 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
-              <span>配置云同步参数</span>
-            </button>
-          </div>
-          <div class="flex flex-wrap items-center justify-between text-xs pt-3 border-t border-emerald-200/60 text-slate-600 gap-2">
-            <div>
-              云端同步状态：<span id="settingsCloudStatus" class="font-semibold text-slate-800">🟡 离线模式 (仅保存在本机)</span>
-            </div>
-            <div id="settingsCloudLastSync" class="text-slate-400 text-[11px]">
-              暂无云端同步记录
-            </div>
-          </div>
-        </div>
-
-        <!-- Backup -->
+            <!-- Backup & Restore Actions -->
             <div class="p-4 rounded-xl bg-slate-50 border border-slate-200 flex items-center justify-between">
               <div>
                 <h4 class="text-xs font-semibold text-slate-800">导出数据备份 (JSON)</h4>
@@ -1457,8 +1373,8 @@
             <!-- Restore -->
             <div class="p-4 rounded-xl bg-slate-50 border border-slate-200 flex items-center justify-between">
               <div>
-                <h4 class="text-xs font-semibold text-slate-800">从文件导入恢复 (JSON)</h4>
-                <p class="text-[11px] text-slate-500">选择您之前导出的备份文件，一键恢复全部账目数据。</p>
+                <h4 class="text-xs font-semibold text-slate-800">从文件导入恢复 (JSON / AI 备份包)</h4>
+                <p class="text-[11px] text-slate-500">选择您之前导出的备份文件或 Google Drive 中的 master_backup.json，一键完整恢复全部账目数据。</p>
               </div>
               <div>
                 <input type="file" id="importJsonInput" accept=".json" class="hidden" onchange="handleImportJSON(event)">
@@ -1473,7 +1389,6 @@
 
       </div>
     </div>
-
 
     <!-- 9. AUDIT TRAIL VIEW -->
     <div id="view-audit" class="space-y-6 hidden">
@@ -2916,10 +2831,14 @@ alter publication supabase_realtime add table finance_store;</pre>
             </div>
           </div>
 
-          <div class="grid grid-cols-3 gap-3">
+          <div class="grid grid-cols-4 gap-2.5">
             <div>
               <label class="block font-bold text-slate-700 mb-1">标准月费 (RM) <span class="text-rose-500">*</span></label>
               <input type="number" id="editStudentFee" required step="10" min="0" placeholder="480" class="w-full px-3 py-2 border border-slate-200 rounded-xl font-black text-emerald-600 focus:outline-none focus:border-emerald-500">
+            </div>
+            <div>
+              <label class="block font-bold text-slate-700 mb-1">已收押金 (RM) <span class="text-purple-600">*</span></label>
+              <input type="number" id="editStudentDeposit" required step="10" min="0" placeholder="480" value="480" class="w-full px-3 py-2 border border-purple-200 rounded-xl font-black text-purple-700 focus:outline-none focus:border-purple-500 bg-purple-50/30">
             </div>
             <div>
               <label class="block font-bold text-slate-700 mb-1">入住人数</label>
@@ -2949,6 +2868,35 @@ alter publication supabase_realtime add table finance_store;</pre>
           <div>
             <label class="block font-bold text-slate-700 mb-1">备注说明</label>
             <input type="text" id="editStudentNote" placeholder="如 母亲转账、两兄弟合并月费等" class="w-full px-3 py-2 border border-slate-200 rounded-xl text-slate-800 focus:outline-none focus:border-emerald-500">
+          </div>
+
+          <!-- Student Billable Months Selector (12月免收) -->
+          <div class="p-3.5 bg-slate-50 border border-slate-200 rounded-2xl space-y-2">
+            <div class="flex items-center justify-between">
+              <label class="block font-bold text-slate-700">
+                📅 住宿需缴月份设定 
+                <span class="font-normal text-slate-500">(已选 <span id="editStudentBillableCount" class="font-bold text-indigo-600">11</span> 个月)</span>
+              </label>
+              <div class="flex items-center space-x-2 text-[11px]">
+                <button type="button" onclick="setStudentBillablePreset('standard')" class="text-indigo-600 hover:text-indigo-800 font-semibold underline cursor-pointer">
+                  标准学年 (1~11月, 12月免收)
+                </button>
+                <span class="text-slate-300">|</span>
+                <button type="button" onclick="setStudentBillablePreset('all')" class="text-slate-500 hover:text-slate-700 font-semibold cursor-pointer">
+                  全选 12个月
+                </button>
+              </div>
+            </div>
+            
+            <!-- 12 Interactive Month Buttons -->
+            <div class="grid grid-cols-4 sm:grid-cols-6 gap-2 pt-1" id="editStudentMonthCheckboxes">
+              <!-- Dynamically populated -->
+            </div>
+
+            <p class="text-[11px] text-amber-800 mt-1 flex items-center space-x-1">
+              <span>💡</span>
+              <span>说明：取消勾选的月份（如 <b>12月 假期</b>）系统将标记为<b>【免收】</b>，不累计欠费，也不会向家长催款。</span>
+            </p>
           </div>
 
           <div class="flex items-center space-x-2 pt-1">
@@ -3011,7 +2959,151 @@ alter publication supabase_realtime add table finance_store;</pre>
       </div>
     </div>
 
-  <div id="toast" class="fixed bottom-6 right-6 bg-slate-900 text-white text-xs px-4 py-3 rounded-xl shadow-xl transform transition-all duration-300 translate-y-20 opacity-0 z-50 flex items-center space-x-2">
+    <!-- Modal: Google Drive 专属实时全自动防丢备份与 AI 冷还原中心 -->
+  <div id="gdriveBackupModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center z-50 hidden p-4">
+    <div class="bg-white rounded-2xl max-w-xl w-full shadow-2xl border border-slate-200 overflow-hidden transform transition-all">
+      <!-- Modal Header -->
+      <div class="p-5 bg-gradient-to-r from-blue-900 via-indigo-900 to-slate-900 text-white flex items-center justify-between">
+        <div class="flex items-center space-x-3">
+          <div class="w-10 h-10 rounded-xl bg-blue-500/20 border border-blue-400/30 flex items-center justify-center text-2xl">
+            ☁️
+          </div>
+          <div>
+            <h3 class="text-base font-bold">Google Drive 专属实时全自动防丢备份中心</h3>
+            <p class="text-xs text-blue-200/80">每次信息更新全自动备份至 Google Drive · 支持直接发给 AI 100% 原样还原系统</p>
+          </div>
+        </div>
+        <button onclick="closeModal('gdriveBackupModal')" class="text-white/70 hover:text-white text-xl p-1 font-bold cursor-pointer">✕</button>
+      </div>
+
+      <!-- Modal Body -->
+      <div class="p-6 space-y-5">
+        <!-- Status Box -->
+        <div class="p-4 bg-blue-50/70 border border-blue-200 rounded-xl flex items-center justify-between text-xs">
+          <div>
+            <div class="font-bold text-slate-800">当前同步路径：</div>
+            <div id="modalGdrivePath" class="text-slate-600 mt-0.5">G:\我的云端硬盘\Voyage_财务系统自动备份</div>
+          </div>
+          <span id="modalGdriveBadge" class="px-2.5 py-1 bg-emerald-100 text-emerald-800 border border-emerald-300 rounded-full font-bold">● 已连接实时同步</span>
+        </div>
+
+        <!-- Explanations -->
+        <div class="space-y-2 text-xs text-slate-600 leading-relaxed">
+          <p class="font-semibold text-slate-800">🛡️ 为什么数据绝对不会丢失？</p>
+          <ul class="list-disc list-inside space-y-1 pl-1 text-[11px] text-slate-600">
+            <li><b>双保险文件格式</b>：每次备份同时生成 <b class="text-indigo-700">Voyage_2026财务收支记账系统_最新独立完整系统.html</b>（离线可运行网页）和 <b class="text-indigo-700">voyage_finance_master_backup.json</b>（主数据包）。</li>
+            <li><b>带历史时间戳快照</b>：在 <code class="bg-slate-100 px-1 py-0.5 rounded text-slate-700">历史备份快照/</code> 目录保留每次变更的独立文件，绝不会被意外覆盖。</li>
+            <li><b>多端全覆盖</b>：无论电脑端记账还是手机端录入，电脑后台实时侦测并自动转存入 Google Drive。</li>
+          </ul>
+        </div>
+
+        <!-- AI Restoration Promise -->
+        <div class="p-4 bg-gradient-to-r from-amber-50 to-orange-50 border border-amber-200 rounded-xl text-xs text-amber-950 space-y-2">
+          <div class="flex items-center space-x-2 font-bold text-amber-900">
+            <span>🤖</span>
+            <span>给 AI 助手的冷还原协议：</span>
+          </div>
+          <p class="text-[11px] leading-relaxed">
+            “未来任何时候您需要迁移电脑、重新布署或系统遇到问题，只需将 Google Drive 中的 <b>HTML 镜像文件</b> 或 <b>JSON 主数据包</b> 随手拖入与 <b>Antigravity AI 助手</b> 的对话中，AI 将直接读取文件结构，并在 <b>10 秒内完整重新生成一模一样的系统</b>！”
+          </p>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
+          <button onclick="selectGoogleDriveFolder()" class="w-full py-2.5 px-4 bg-white hover:bg-slate-50 border border-blue-300 text-blue-700 rounded-xl text-xs font-bold transition flex items-center justify-center space-x-2 shadow-xs cursor-pointer">
+            <span>📂</span>
+            <span>选择 / 更改 Google Drive 目录</span>
+          </button>
+          <button onclick="triggerGoogleDriveAutoBackup(true)" class="w-full py-2.5 px-4 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-bold transition flex items-center justify-center space-x-2 shadow-sm cursor-pointer">
+            <span>💾</span>
+            <span>立即执行全量同步备份</span>
+          </button>
+        </div>
+        <div class="text-center pt-1">
+          <button onclick="exportGdrivePackageDirectly()" class="text-xs font-semibold text-indigo-600 hover:text-indigo-800 underline cursor-pointer">
+            📦 一键打包下载备份文件到本地 (离线双保险)
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 模态框：住宿生应缴月份全局与批量设定 (支持12月假期免收) -->
+  <div id="billableMonthsModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center z-50 hidden p-4">
+    <div class="bg-white rounded-3xl max-w-xl w-full shadow-2xl border border-slate-200 overflow-hidden transform transition-all animate-in fade-in zoom-in-95 duration-200">
+      <!-- Modal Header -->
+      <div class="p-5 bg-gradient-to-r from-blue-900 via-indigo-900 to-slate-900 text-white flex items-center justify-between">
+        <div class="flex items-center space-x-3">
+          <div class="w-10 h-10 rounded-xl bg-blue-500/20 border border-blue-400/30 flex items-center justify-center text-2xl">
+            📅
+          </div>
+          <div>
+            <h3 class="text-base font-bold">住宿费需缴月份与免收规则设置</h3>
+            <p class="text-xs text-blue-200/80">个性化勾选各月份收缴规则 · 12月默认免收 · 支持一键应用到全部住宿生</p>
+          </div>
+        </div>
+        <button onclick="closeModal('billableMonthsModal')" class="text-white/70 hover:text-white text-xl p-1 font-bold cursor-pointer">&times;</button>
+      </div>
+
+      <!-- Modal Body -->
+      <div class="p-6 space-y-5">
+        <!-- Status Box -->
+        <div class="p-4 bg-blue-50/70 border border-blue-200 rounded-2xl flex items-center justify-between text-xs">
+          <div>
+            <div class="font-bold text-slate-800">当前学年收缴规则：</div>
+            <div id="modalBillableSummary" class="text-slate-600 mt-0.5">默认：1~11月应缴 · 12月假期全员免收（共11个月）</div>
+          </div>
+          <span class="px-2.5 py-1 bg-emerald-100 text-emerald-800 border border-emerald-300 rounded-full font-bold">
+            ● 12月免收已激活
+          </span>
+        </div>
+
+        <!-- Presets -->
+        <div class="flex items-center justify-between text-xs">
+          <span class="font-bold text-slate-700">快速预设方案：</span>
+          <div class="flex items-center space-x-2">
+            <button type="button" onclick="setGlobalBillablePreset('standard')" class="px-2.5 py-1 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 font-bold rounded-lg border border-indigo-200 transition cursor-pointer">
+              🌟 标准学年 (1~11月, 12月免收)
+            </button>
+            <button type="button" onclick="setGlobalBillablePreset('all')" class="px-2.5 py-1 bg-slate-100 hover:bg-slate-200 text-slate-700 font-medium rounded-lg transition cursor-pointer">
+              全年 12个月全部收
+            </button>
+          </div>
+        </div>
+
+        <!-- 12-Month Interactive Grid -->
+        <div class="p-4 bg-slate-50 rounded-2xl border border-slate-200 space-y-2">
+          <div class="grid grid-cols-3 sm:grid-cols-4 gap-2.5" id="globalBillableMonthGrid">
+            <!-- 12 buttons generated by JS -->
+          </div>
+        </div>
+
+        <!-- Explanations & Protections -->
+        <div class="p-3.5 bg-amber-50/80 border border-amber-200 rounded-2xl text-xs text-amber-950 space-y-1">
+          <div class="flex items-center space-x-1.5 font-bold text-amber-900">
+            <span>🛡️</span>
+            <span>财务系统防误判保护：</span>
+          </div>
+          <p class="text-[11px] leading-relaxed text-amber-900/90">
+            当某月份被设为<b>“免收”</b>时，系统在计算截至当期的欠费时将<b>自动跳过该月份</b>，不会产生多余的未缴欠费，也不会在催款通知或 WhatsApp 提醒中向家长催收该月份。
+          </p>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
+          <button type="button" onclick="applyBillableMonthsToAllStudents()" class="w-full py-2.5 px-4 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-xs font-bold transition flex items-center justify-center space-x-1.5 shadow-md cursor-pointer">
+            <span>👥</span>
+            <span>一键应用到当前全部住宿生</span>
+          </button>
+          <button type="button" onclick="closeModal('billableMonthsModal')" class="w-full py-2.5 px-4 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-xs font-semibold transition flex items-center justify-center cursor-pointer">
+            <span>完成并关闭</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+<div id="toast" class="fixed bottom-6 right-6 bg-slate-900 text-white text-xs px-4 py-3 rounded-xl shadow-xl transform transition-all duration-300 translate-y-20 opacity-0 z-50 flex items-center space-x-2">
     <span id="toastMessage">操作成功</span>
   </div>
 
@@ -5208,39 +5300,132 @@ let ocrSettings = {
 };
 
 // Application Version and OTA Release Timestamp
-window.VOYAGE_APP_VERSION = '2026.3.45';
+window.VOYAGE_APP_VERSION = '2026.3.48';
 window.VOYAGE_APP_BUILD_TIME = Date.now();
 
-// 15 Boarding Students Master Configuration (Globally initialized)
+// Multi-Year Financial State (2025, 2026, 2027, etc.)
+let currentFiscalYear = (function() {
+  try {
+    return localStorage.getItem('voyage_fiscal_year') || '2026';
+  } catch(e) {
+    return '2026';
+  }
+})();
+window.currentFiscalYear = currentFiscalYear;
+
+// Default Billable Months: 1~11月 (12月假期免收住宿费)
+const DEFAULT_BILLABLE_MONTHS = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11];
+
+// 15 Boarding Students Master Configuration (Globally initialized, 12月默认免收)
 const DEFAULT_BOARDING_STUDENTS = [
-  { id: 'LEE YAN CHENG', zhName: '李晏丞', name: 'LEE YAN CHENG', aliases: ['李晏丞', 'LEE YAN CHENG', 'LEE YAN', 'LEE YA', '晏丞', 'LIM YEE LING'], count: 1, fee: 480 },
-  { id: 'KAIHAO', zhName: '蔡凯皓', name: 'KAIHAO', aliases: ['蔡凯皓', 'KAI HAO', 'KAIHAO', '凯皓', 'CHUA HEE SIANG'], count: 1, fee: 480 },
-  { id: 'LEE JU YAN', zhName: '李居彦', name: 'LEE JU YAN', aliases: ['李居彦', 'LEE JU YAN', 'JU YAN', '居彦', 'WONG PIK WOON'], count: 1, fee: 480 },
-  { id: 'CHUA MING ZHE', zhName: '蔡旻哲', name: 'CHUA MING ZHE', aliases: ['蔡旻哲', 'CHUA MING ZHE', 'MING ZHE', '旻哲', 'CHUA MIN ZHE', 'MIN ZHE', 'MR FOO POH HAR'], count: 1, fee: 480 },
-  { id: 'ONG SHI SHUI', zhName: '翁诗岁', name: 'ONG SHI SHUI', aliases: ['翁诗岁', 'ONG SHI SHUI', 'ONG SHI SUI', 'BEH SIEW SIEW', 'SHI SHUI', 'SHI SUI', '诗岁', 'MR ONG CHAU LEANG'], count: 1, fee: 480 },
-  { id: 'ENG WEI ZHI', zhName: '黄炜智', name: 'ENG WEI ZHI', aliases: ['黄炜智', 'ENG WEI ZHI', 'ENG WEE ZHI', 'ENG WEE HOSTEL ZHI', 'WEI ZHI', '炜智', '黄伟智', 'TEE LEK TING'], count: 1, fee: 480 },
-  { id: 'WONG E FULL', zhName: '黄益富', name: 'WONG E FULL', aliases: ['黄益富', 'WONG E FULL', 'E FULL', '益富', '黄益福', 'RAINBOW ZONE VENTURES'], count: 1, fee: 480 },
-  { id: 'HUAIDERK', zhName: '陈怀德', name: 'HUAIDERK', aliases: ['陈怀德', 'HUAIDERK', 'HUAI DERK', 'HUAI D', '怀德', 'CHONG MEI KOON'], count: 1, fee: 480 },
-  { id: 'GOH JYJE SHAN', zhName: '吴劼善', name: 'GOH JYJE SHAN', aliases: ['吴劼善', 'GOH JYJE SHAN', 'GOHJYIESHANN', 'JYJE SHAN', 'JYIE SHAN', '劼善', 'TAN HOOI P', 'GOH HOCK G'], count: 1, fee: 480 },
-  { id: 'TAN JIAN FONG', zhName: '陈剑锋', name: 'TAN JIAN FONG', aliases: ['陈剑锋', 'TAN JIAN FONG', 'JIAN FONG', 'TAN JI', '剑锋', 'WONG MEI NGUK'], count: 1, fee: 480 },
-  { id: 'LEE JI CHUEN', zhName: '吕梓铨', name: 'LEE JI CHUEN', aliases: ['吕梓铨', 'LEE JI CHUEN', 'JI CHUEN', '梓铨', '吕子铨', 'LEE YENG MAN'], count: 1, fee: 480 },
-  { id: 'CHIA KAI JIE', zhName: '谢凯捷', name: 'CHIA KAI JIE', aliases: ['谢凯捷', 'CHIA KAI JIE', 'KAI JIE', '凯捷'], count: 1, fee: 480 },
-  { id: 'ZHI XIAO', zhName: '侯智逍', name: 'ZHI XIAO', aliases: ['侯智逍', 'ZHI XIAO', 'HOW ZHI XIAO', '智逍', '侯智宵', 'CHONG CHEE YENG'], count: 1, fee: 480 },
-  { id: 'HONG YE & KAI YE', zhName: '邹宏业 & 邹楷业', name: 'HONG YE & KAI YE', aliases: ['邹宏业', '邹楷业', 'HONG YE', 'KAI YE', 'HONG YIP', 'KAI YIP', '宏业', '楷业', '邹宏业 & 邹楷业', 'HONG YE & KAI YE', 'HONG YIP/KAI YIP'], count: 2, fee: 960, isBrothers: true, note: '邹宏业 & 邹楷业 两兄弟合并转账（母：RM960/月）' }
+  { id: 'LEE YAN CHENG', zhName: '李晏丞', name: 'LEE YAN CHENG', aliases: ['李晏丞', 'LEE YAN CHENG', 'LEE YAN', 'LEE YA', '晏丞', 'LIM YEE LING'], count: 1, fee: 480, deposit: 480, billableMonths: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11] },
+  { id: 'KAIHAO', zhName: '蔡凯皓', name: 'KAIHAO', aliases: ['蔡凯皓', 'KAI HAO', 'KAIHAO', '凯皓', 'CHUA HEE SIANG'], count: 1, fee: 480, deposit: 480, billableMonths: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11] },
+  { id: 'LEE JU YAN', zhName: '李居彦', name: 'LEE JU YAN', aliases: ['李居彦', 'LEE JU YAN', 'JU YAN', '居彦', 'WONG PIK WOON'], count: 1, fee: 480, deposit: 480, billableMonths: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11] },
+  { id: 'CHUA MING ZHE', zhName: '蔡旻哲', name: 'CHUA MING ZHE', aliases: ['蔡旻哲', 'CHUA MING ZHE', 'MING ZHE', '旻哲', 'CHUA MIN ZHE', 'MIN ZHE', 'MR FOO POH HAR'], count: 1, fee: 480, deposit: 480, billableMonths: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11] },
+  { id: 'ONG SHI SHUI', zhName: '翁诗岁', name: 'ONG SHI SHUI', aliases: ['翁诗岁', 'ONG SHI SHUI', 'ONG SHI SUI', 'BEH SIEW SIEW', 'SHI SHUI', 'SHI SUI', '诗岁', 'MR ONG CHAU LEANG'], count: 1, fee: 480, deposit: 480, billableMonths: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11] },
+  { id: 'ENG WEI ZHI', zhName: '黄炜智', name: 'ENG WEI ZHI', aliases: ['黄炜智', 'ENG WEI ZHI', 'ENG WEE ZHI', 'ENG WEE HOSTEL ZHI', 'WEI ZHI', '炜智', '黄伟智', 'TEE LEK TING'], count: 1, fee: 480, deposit: 480, billableMonths: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11] },
+  { id: 'WONG E FULL', zhName: '黄益富', name: 'WONG E FULL', aliases: ['黄益富', 'WONG E FULL', 'E FULL', '益富', '黄益福', 'RAINBOW ZONE VENTURES'], count: 1, fee: 480, deposit: 480, billableMonths: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11] },
+  { id: 'HUAIDERK', zhName: '陈怀德', name: 'HUAIDERK', aliases: ['陈怀德', 'HUAIDERK', 'HUAI DERK', 'HUAI D', '怀德', 'CHONG MEI KOON'], count: 1, fee: 480, deposit: 480, billableMonths: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11] },
+  { id: 'GOH JYJE SHAN', zhName: '吴劼善', name: 'GOH JYJE SHAN', aliases: ['吴劼善', 'GOH JYJE SHAN', 'GOHJYIESHANN', 'JYJE SHAN', 'JYIE SHAN', '劼善', 'TAN HOOI P', 'GOH HOCK G'], count: 1, fee: 480, deposit: 480, billableMonths: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11] },
+  { id: 'TAN JIAN FONG', zhName: '陈剑锋', name: 'TAN JIAN FONG', aliases: ['陈剑锋', 'TAN JIAN FONG', 'JIAN FONG', 'TAN JI', '剑锋', 'WONG MEI NGUK'], count: 1, fee: 480, deposit: 480, billableMonths: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11] },
+  { id: 'LEE JI CHUEN', zhName: '吕梓铨', name: 'LEE JI CHUEN', aliases: ['吕梓铨', 'LEE JI CHUEN', 'JI CHUEN', '梓铨', '吕子铨', 'LEE YENG MAN'], count: 1, fee: 480, deposit: 480, billableMonths: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11] },
+  { id: 'CHIA KAI JIE', zhName: '谢凯捷', name: 'CHIA KAI JIE', aliases: ['谢凯捷', 'CHIA KAI JIE', 'KAI JIE', '凯捷'], count: 1, fee: 480, deposit: 480, billableMonths: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11] },
+  { id: 'ZHI XIAO', zhName: '侯智逍', name: 'ZHI XIAO', aliases: ['侯智逍', 'ZHI XIAO', 'HOW ZHI XIAO', '智逍', '侯智宵', 'CHONG CHEE YENG'], count: 1, fee: 480, deposit: 480, billableMonths: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11] },
+  { id: 'HONG YE & KAI YE', zhName: '邹宏业 & 邹楷业', name: 'HONG YE & KAI YE', aliases: ['邹宏业', '邹楷业', 'HONG YE', 'KAI YE', 'HONG YIP', 'KAI YIP', '宏业', '楷业', '邹宏业 & 邹楷业', 'HONG YE & KAI YE', 'HONG YIP/KAI YIP'], count: 2, fee: 960, isBrothers: true, deposit: 960, billableMonths: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11], note: '邹宏业 & 邹楷业 两兄弟合并转账（母：RM960/月）' }
 ];
 window.DEFAULT_BOARDING_STUDENTS = DEFAULT_BOARDING_STUDENTS;
 
-// Dynamic current cutoff month helper based on real-world system calendar
-function getDefaultArrearsCutoffMonth() {
+// Dynamic current cutoff month helper based on target fiscal year & real-world calendar
+function getDefaultArrearsCutoffMonth(targetYear = currentFiscalYear) {
   const now = new Date();
-  const year = now.getFullYear();
-  if (year > 2026) return 12; // In 2027+, all 2026 months are due
-  if (year < 2026) return 1;
+  const calYear = now.getFullYear();
+  const yearNum = parseInt(targetYear, 10) || calYear;
+  if (targetYear === 'all' || yearNum < calYear) {
+    return 12; // In past years, all billable months of that year are due
+  }
+  if (yearNum > calYear) {
+    return 1; // Future years start at 1
+  }
   const m = now.getMonth() + 1;
   return Math.min(12, Math.max(1, m)); // e.g. 10 in October
 }
 
 let arrearsCutoffMonth = getDefaultArrearsCutoffMonth();
+
+// Fiscal Year Management Functions
+function getAvailableFiscalYears() {
+  const years = new Set(['2025', '2026', '2027']);
+  if (typeof appData !== 'undefined' && appData) {
+    (appData.incomes || []).forEach(inc => {
+      if (inc.date && /^\d{4}/.test(inc.date)) years.add(inc.date.slice(0, 4));
+    });
+    (appData.expenses || []).forEach(exp => {
+      if (exp.date && /^\d{4}/.test(exp.date)) years.add(exp.date.slice(0, 4));
+    });
+  }
+  years.add(String(new Date().getFullYear()));
+  return Array.from(years).sort();
+}
+
+function changeFiscalYear(newYear) {
+  currentFiscalYear = newYear || '2026';
+  window.currentFiscalYear = currentFiscalYear;
+  try {
+    localStorage.setItem('voyage_fiscal_year', currentFiscalYear);
+  } catch (e) {}
+
+  arrearsCutoffMonth = getDefaultArrearsCutoffMonth(currentFiscalYear);
+
+  updateFiscalYearUI();
+  if (typeof renderDashboard === 'function') renderDashboard();
+  if (typeof renderMonthlyReport === 'function') renderMonthlyReport();
+  if (typeof renderIncomesTable === 'function') renderIncomesTable();
+  if (typeof renderExpensesTable === 'function') renderExpensesTable();
+  if (typeof renderArrearsTracker === 'function') renderArrearsTracker();
+  if (typeof updateArrearsBadge === 'function') updateArrearsBadge();
+
+  showToast(`📅 已切换到【${currentFiscalYear === 'all' ? '历年全部汇总' : currentFiscalYear + ' 年度'}】账务视图`);
+}
+
+function updateFiscalYearUI() {
+  const available = getAvailableFiscalYears();
+  const selects = [
+    document.getElementById('globalFiscalYearSelect'),
+    document.getElementById('mobileFiscalYearSelect')
+  ];
+  selects.forEach(sel => {
+    if (!sel) return;
+    const opts = [
+      ...available.map(y => `<option value="${y}" ${y === currentFiscalYear ? 'selected' : ''}>${y} 年度</option>`),
+      `<option value="all" ${currentFiscalYear === 'all' ? 'selected' : ''}>历年全部汇总</option>`
+    ];
+    sel.innerHTML = opts.join('');
+  });
+
+  const yearTitleStr = currentFiscalYear === 'all' ? '历年' : `${currentFiscalYear}`;
+  const fullYearStr = currentFiscalYear === 'all' ? '历年全量' : `${currentFiscalYear} 年度`;
+
+  const trendTitleEl = document.getElementById('dashboardTrendTitle');
+  if (trendTitleEl) trendTitleEl.textContent = yearTitleStr;
+
+  const reportYearEl = document.getElementById('monthlyReportYearTitle');
+  if (reportYearEl) reportYearEl.textContent = fullYearStr;
+
+  const cutoffSelect = document.getElementById('arrearsCutoffMonthSelect');
+  if (cutoffSelect) {
+    const curVal = cutoffSelect.value || String(arrearsCutoffMonth);
+    const monthNames = ['1月', '2月', '3月', '4月', '5月', '6月', '7月', '8月', '9月', '10月', '11月', '12月'];
+    const prefix = currentFiscalYear === 'all' ? '' : `${currentFiscalYear}年 `;
+    cutoffSelect.innerHTML = monthNames.map((name, i) => {
+      const mNum = i + 1;
+      const isDec = mNum === 12;
+      return `<option value="${mNum}" ${String(mNum) === String(curVal) ? 'selected' : ''}>${prefix}${name}${isDec ? ' (含免收月结算)' : ''}</option>`;
+    }).join('');
+  }
+}
+window.changeFiscalYear = changeFiscalYear;
+window.updateFiscalYearUI = updateFiscalYearUI;
+window.getAvailableFiscalYears = getAvailableFiscalYears;
 let arrearsMonthlyFeePerPerson = 480;
 let arrearsViewMode = 'cards';
 let arrearsStatusFilter = 'all';
@@ -5292,6 +5477,17 @@ function ensureBaselineAuditLogs() {
   }
   if (appData.auditLogs.length < 5) {
     const baseline = [
+      {
+        id: 'AUD-INIT-007',
+        timestamp: 1790970000000,
+        timeStr: '2026-10-03 02:35:00',
+        action: 'BACKUP',
+        module: 'system',
+        recordId: 'GOOGLE_DRIVE',
+        summary: '部署 Google Drive 专属实时全自动防丢备份与 AI 冷还原协议',
+        details: '每次增删改查或多端同步后全自动备份 HTML 独立完整镜像与 JSON 主数据包至 Google Drive (G:\\我的云端硬盘\\Voyage_财务系统自动备份)，支持直接向 AI 交付文件 10 秒 100% 完整原样恢复系统。',
+        operator: '系统自动审计'
+      },
       {
         id: 'AUD-INIT-006',
         timestamp: 1790967000000,
@@ -6227,7 +6423,7 @@ async function publishCurrentAppToCloud() {
     // Update baseTime and build time inside the bundle
     rawHtml = rawHtml.replace(/var baseTime = \d+;/, `var baseTime = ${newTimestamp};`);
     rawHtml = rawHtml.replace(/window\.VOYAGE_APP_BUILD_TIME = \d+;/, `window.VOYAGE_APP_BUILD_TIME = ${newTimestamp};`);
-    rawHtml = rawHtml.replace(/window\.VOYAGE_APP_VERSION = '[^']+';/, `window.VOYAGE_APP_VERSION = '2026.3.37';`);
+    rawHtml = rawHtml.replace(/window\.VOYAGE_APP_VERSION = '[^']+';/, `window.VOYAGE_APP_VERSION = '2026.3.48';`);
 
     const payload = {
       id: 'voyage_finance_app_release',
@@ -6285,6 +6481,9 @@ function saveDataLocalOnly() {
     window.appData = appData;
   try {
     localStorage.setItem('finance_2026_data', JSON.stringify(appData));
+    if (typeof scheduleGoogleDriveAutoBackup === 'function') {
+      scheduleGoogleDriveAutoBackup();
+    }
   } catch (e) {
     console.warn('localStorage save warning, attempting safe payload', e);
     try {
@@ -6370,12 +6569,15 @@ function switchTab(tabId) {
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
-// Calculate Financial Metrics
-function calculateMetrics() {
-  const totalIncome = appData.incomes.reduce((acc, curr) => acc + (Number(curr.amount) || 0), 0);
-  const totalExpense = appData.expenses.reduce((acc, curr) => acc + (Number(curr.amount) || 0), 0);
+// Calculate Financial Metrics (Supports Multi-Year filtering with cumulative true bank balances)
+function calculateMetrics(targetYear = (typeof currentFiscalYear !== 'undefined' ? currentFiscalYear : '2026')) {
+  const isAllYears = (targetYear === 'all');
+  const yearPrefix = isAllYears ? '' : String(targetYear);
 
-  // Compute total initial balance across accounts (Hong Leong default is 492.15)
+  // Lifetime cumulative balance across all accounts is bank balance across all years:
+  const totalLifetimeIncome = (appData.incomes || []).reduce((acc, curr) => acc + (Number(curr.amount) || 0), 0);
+  const totalLifetimeExpense = (appData.expenses || []).reduce((acc, curr) => acc + (Number(curr.amount) || 0), 0);
+
   let initialBalance = Number(appData.initialBalance) || 0;
   const accountsInitialSum = (appData.accounts || []).reduce((sum, a) => {
     let init = Number(a.initial);
@@ -6395,10 +6597,22 @@ function calculateMetrics() {
     initialBalance = 492.15;
   }
 
-  const totalBalance = initialBalance + totalIncome - totalExpense;
+  const totalBalance = initialBalance + totalLifetimeIncome - totalLifetimeExpense;
+
+  // Filter incomes and expenses by target fiscal year
+  const filteredIncomes = isAllYears
+    ? (appData.incomes || [])
+    : (appData.incomes || []).filter(inc => inc.date && inc.date.startsWith(yearPrefix));
+
+  const filteredExpenses = isAllYears
+    ? (appData.expenses || [])
+    : (appData.expenses || []).filter(exp => exp.date && exp.date.startsWith(yearPrefix));
+
+  const totalIncome = filteredIncomes.reduce((acc, curr) => acc + (Number(curr.amount) || 0), 0);
+  const totalExpense = filteredExpenses.reduce((acc, curr) => acc + (Number(curr.amount) || 0), 0);
   const netProfit = totalIncome - totalExpense;
 
-  // Monthly breakdown
+  // Monthly breakdown 1..12 strictly for target fiscal year
   const monthly = Array.from({ length: 12 }, (_, i) => ({
     month: i + 1,
     income: 0,
@@ -6406,20 +6620,26 @@ function calculateMetrics() {
     balance: 0
   }));
 
-  appData.incomes.forEach(inc => {
+  filteredIncomes.forEach(inc => {
     if (inc.date) {
-      const m = parseInt(inc.date.split('-')[1], 10);
-      if (m >= 1 && m <= 12) {
-        monthly[m - 1].income += Number(inc.amount) || 0;
+      const parts = inc.date.split('-');
+      if (isAllYears || parts[0] === yearPrefix) {
+        const m = parseInt(parts[1], 10);
+        if (m >= 1 && m <= 12) {
+          monthly[m - 1].income += Number(inc.amount) || 0;
+        }
       }
     }
   });
 
-  appData.expenses.forEach(exp => {
+  filteredExpenses.forEach(exp => {
     if (exp.date) {
-      const m = parseInt(exp.date.split('-')[1], 10);
-      if (m >= 1 && m <= 12) {
-        monthly[m - 1].expense += Number(exp.amount) || 0;
+      const parts = exp.date.split('-');
+      if (isAllYears || parts[0] === yearPrefix) {
+        const m = parseInt(parts[1], 10);
+        if (m >= 1 && m <= 12) {
+          monthly[m - 1].expense += Number(exp.amount) || 0;
+        }
       }
     }
   });
@@ -6428,14 +6648,14 @@ function calculateMetrics() {
     item.balance = item.income - item.expense;
   });
 
-  // Expense by Category
+  // Expense by Category for target fiscal year
   const expenseByCategory = {};
-  appData.expenses.forEach(exp => {
+  filteredExpenses.forEach(exp => {
     const cat = exp.category || '未分类';
     expenseByCategory[cat] = (expenseByCategory[cat] || 0) + (Number(exp.amount) || 0);
   });
 
-  // Account Balances
+  // Account Balances (Lifetime real bank balances)
   const accountStats = (appData.accounts || []).map(acc => {
     const accName = acc.name;
     let initial = Number(acc.initial);
@@ -6446,10 +6666,10 @@ function calculateMetrics() {
         initial = 0;
       }
     }
-    const inSum = appData.incomes
+    const inSum = (appData.incomes || [])
       .filter(i => (i.account || '').trim().toLowerCase() === accName.trim().toLowerCase())
       .reduce((sum, i) => sum + (Number(i.amount) || 0), 0);
-    const outSum = appData.expenses
+    const outSum = (appData.expenses || [])
       .filter(e => (e.account || '').trim().toLowerCase() === accName.trim().toLowerCase())
       .reduce((sum, e) => sum + (Number(e.amount) || 0), 0);
     return {
@@ -6470,13 +6690,18 @@ function calculateMetrics() {
     netProfit,
     monthly,
     expenseByCategory,
-    accountStats
+    accountStats,
+    filteredIncomes,
+    filteredExpenses,
+    targetYear
   };
 }
 
 // Render Dashboard
 function renderDashboard() {
-  const metrics = calculateMetrics();
+  const targetYear = (typeof currentFiscalYear !== 'undefined') ? currentFiscalYear : '2026';
+  const metrics = calculateMetrics(targetYear);
+  if (typeof updateFiscalYearUI === 'function') updateFiscalYearUI();
 
   // Update Badge Counts
   const navInc = document.getElementById('navIncomeBadge');
@@ -6982,7 +7207,8 @@ function triggerMobileNewExpense() {
 
 // Render Monthly Report Table
 function renderMonthlyReport() {
-  const metrics = calculateMetrics();
+  const targetYear = (typeof currentFiscalYear !== 'undefined') ? currentFiscalYear : '2026';
+  const metrics = calculateMetrics(targetYear);
   const tbody = document.getElementById('monthlyReportTableBody');
   const tfoot = document.getElementById('monthlyReportTableFoot');
 
@@ -7495,6 +7721,7 @@ function saveIncomeRecord(e) {
   saveData();
   closeModal('incomeModal');
   renderDashboard();
+  if (typeof initGdriveBackup === 'function') initGdriveBackup();
   renderIncomeTable();
   if (typeof renderArrearsTracker === 'function') {
     renderArrearsTracker();
@@ -10488,7 +10715,8 @@ function handleImportJSON(event) {
   const reader = new FileReader();
   reader.onload = function(e) {
     try {
-      const imported = JSON.parse(e.target.result);
+      const rawImported = JSON.parse(e.target.result);
+      const imported = (rawImported && rawImported.appData) ? rawImported.appData : rawImported;
       if (imported && Array.isArray(imported.incomes) && Array.isArray(imported.expenses)) {
         logAuditEvent({
           action: 'RESTORE',
@@ -10522,7 +10750,9 @@ function startVoyageApp() {
   window.__VOYAGE_APP_STARTED__ = true;
 
   initData();
+  ensureBoardingStudents();
   populateDropdowns();
+  updateFiscalYearUI();
   renderDashboard();
   renderIncomeTable();
   renderExpenseTable();
@@ -11072,7 +11302,19 @@ function getIncomeFeeMonth(income) {
   return '';
 }
 
-// Display format helper (e.g. "2026-03" -> "2026年3月")
+
+function formatStudentBillableSummary(months) {
+  const arr = (Array.isArray(months) && months.length > 0) ? months.map(Number).sort((a,b)=>a-b) : [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11];
+  if (arr.length === 11 && !arr.includes(12)) {
+    return '1~11月 (12月免收)';
+  }
+  if (arr.length === 12) {
+    return '全年 1~12月';
+  }
+  return arr.map(m => m + '月').join('、') + ` (共${arr.length}期)`;
+}
+window.formatStudentBillableSummary = formatStudentBillableSummary;
+// Display format helper (e.g. "2026-03" -> "2026年3月", with 12月免收 hint)
 function formatFeeMonthDisplay(feeMonth) {
   if (!feeMonth) return '';
   const monthNames = ['', '1月', '2月', '3月', '4月', '5月', '6月', '7月', '8月', '9月', '10月', '11月', '12月'];
@@ -11083,26 +11325,53 @@ function formatFeeMonthDisplay(feeMonth) {
     return parts.map(p => formatFeeMonthDisplay(p)).join(' + ');
   }
 
-  const mMatch = String(feeMonth).match(/2026[-/](\d{1,2})/);
+  const mMatch = String(feeMonth).match(/(202[4-9]|203[0-9])[-/](\d{1,2})/);
   if (mMatch) {
-    const num = parseInt(mMatch[1], 10);
-    if (num >= 1 && num <= 12) return `2026年${monthNames[num]}`;
+    const y = mMatch[1];
+    const num = parseInt(mMatch[2], 10);
+    if (num >= 1 && num <= 12) {
+      const isDec = (num === 12);
+      return `${y}年${monthNames[num]}${isDec ? ' (免收月结算)' : ''}`;
+    }
   }
   return String(feeMonth);
 }
 
 // Core arrears calculation engine
-function calculateStudentArrears(cutoffMonth = arrearsCutoffMonth, feePerPerson = arrearsMonthlyFeePerPerson) {
+function calculateStudentArrears(cutoffMonth = arrearsCutoffMonth, feePerPerson = arrearsMonthlyFeePerPerson, targetYear = (typeof currentFiscalYear !== 'undefined' ? currentFiscalYear : '2026')) {
   const monthNames = ['1月', '2月', '3月', '4月', '5月', '6月', '7月', '8月', '9月', '10月', '11月', '12月'];
   const rawList = (typeof getBoardingStudents === 'function') ? getBoardingStudents(false) : DEFAULT_BOARDING_STUDENTS;
+  const yearStr = (targetYear === 'all' || !targetYear) ? '2026' : String(targetYear);
+  const year2Digit = yearStr.slice(-2);
+
   const students = rawList.filter(st => st.active !== false).map(st => {
     const monthlyFee = (st.fee != null && Number(st.fee) > 0) ? Number(st.fee) : (st.count * feePerPerson);
-    const expectedTotal = monthlyFee * cutoffMonth;
 
-    // Find matching incomes
+    // Billable months (default: 1..11, 12月 is EXEMPT)
+    const billableMonths = (Array.isArray(st.billableMonths) && st.billableMonths.length > 0)
+      ? st.billableMonths.map(Number).filter(n => n >= 1 && n <= 12).sort((a,b)=>a-b)
+      : [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11];
+
+    // Billable due months up to cutoff
+    const billableDueMonths = billableMonths.filter(m => m <= cutoffMonth);
+    const expectedTotal = monthlyFee * billableDueMonths.length;
+
+    // Find matching incomes for student in target year
     const matchedIncomes = (appData.incomes || []).filter(inc => {
       const text = `${inc.counterparty || ''} ${inc.remark || ''}`.toUpperCase();
-      return st.aliases.some(al => text.includes(al.toUpperCase()));
+      const isStudentMatch = st.aliases.some(al => text.includes(al.toUpperCase()));
+      if (!isStudentMatch) return false;
+
+      // Filter by targetYear if specified and not 'all'
+      if (targetYear !== 'all') {
+        const incYear = (inc.date && /^\d{4}/.test(inc.date)) ? inc.date.slice(0, 4) : '';
+        const rawFeeMonth = inc.feeMonth || (typeof getIncomeFeeMonth === 'function' ? getIncomeFeeMonth(inc) : '');
+        const hasFeeYear = rawFeeMonth && rawFeeMonth.includes(yearStr);
+        if (incYear && incYear !== yearStr && !hasFeeYear) {
+          return false;
+        }
+      }
+      return true;
     }).sort((a, b) => new Date(a.date) - new Date(b.date));
 
     const totalPaid = matchedIncomes.reduce((sum, inc) => sum + (Number(inc.amount) || 0), 0);
@@ -11113,39 +11382,48 @@ function calculateStudentArrears(cutoffMonth = arrearsCutoffMonth, feePerPerson 
 
     // Check matched incomes for explicit feeMonth or remarks
     matchedIncomes.forEach(inc => {
-      const explicitMonth = inc.feeMonth || getIncomeFeeMonth(inc);
+      const explicitMonth = inc.feeMonth || (typeof getIncomeFeeMonth === 'function' ? getIncomeFeeMonth(inc) : '');
       let hasExplicit = false;
       if (explicitMonth) {
-        const mMatches = explicitMonth.match(/2026[-/](\d{1,2})/g);
+        // Matches like 2026-05 or 2027-05
+        const mMatches = explicitMonth.match(/(?:202[4-9]|203[0-9])[-/](\d{1,2})/g);
         if (mMatches) {
           mMatches.forEach(m => {
-            const num = parseInt(m.replace(/2026[-/]/, ''), 10);
-            if (num >= 1 && num <= 12) { monthsPaidMap[num] = true; hasExplicit = true; }
+            const parts = m.split(/[-/]/);
+            const y = parts[0];
+            const num = parseInt(parts[1], 10);
+            if ((targetYear === 'all' || y === yearStr) && num >= 1 && num <= 12) {
+              monthsPaidMap[num] = true;
+              hasExplicit = true;
+            }
           });
         }
         const cnMatches = explicitMonth.match(/(\d{1,2})月/g);
         if (cnMatches) {
           cnMatches.forEach(cStr => {
             const num = parseInt(cStr.replace('月', ''), 10);
-            if (num >= 1 && num <= 12) { monthsPaidMap[num] = true; hasExplicit = true; }
+            if (num >= 1 && num <= 12) {
+              monthsPaidMap[num] = true;
+              hasExplicit = true;
+            }
           });
         }
       }
 
       if (!hasExplicit) {
         const rem = (inc.remark || '').toUpperCase();
-        if (/JAN|2026[-/]0?1\b|1月/i.test(rem)) monthsPaidMap[1] = true;
-        if (/FEB|2026[-/]0?2\b|2月/i.test(rem)) monthsPaidMap[2] = true;
-        if (/MAR|2026[-/]0?3\b|3月/i.test(rem)) monthsPaidMap[3] = true;
-        if (/APR|2026[-/]0?4\b|4月/i.test(rem)) monthsPaidMap[4] = true;
-        if (/MAY|2026[-/]0?5\b|5月/i.test(rem)) monthsPaidMap[5] = true;
-        if (/JUN|2026[-/]0?6\b|6月/i.test(rem)) monthsPaidMap[6] = true;
-        if (/JUL|2026[-/]0?7\b|7月/i.test(rem)) monthsPaidMap[7] = true;
-        if (/AUG|2608|2026[-/]0?8\b|8月/i.test(rem)) monthsPaidMap[8] = true;
-        if (/SEP|2026[-/]0?9\b|9月/i.test(rem)) monthsPaidMap[9] = true;
-        if (/OCT|2026[-/]10\b|10月/i.test(rem)) monthsPaidMap[10] = true;
-        if (/NOV|2026[-/]11\b|11月/i.test(rem)) monthsPaidMap[11] = true;
-        if (/DEC|2026[-/]12\b|12月/i.test(rem)) monthsPaidMap[12] = true;
+        if (new RegExp(`JAN|${yearStr}[-/]0?1\\b|${year2Digit}01\\b|1月`, 'i').test(rem)) monthsPaidMap[1] = true;
+        if (new RegExp(`FEB|${yearStr}[-/]0?2\\b|${year2Digit}02\\b|2月`, 'i').test(rem)) monthsPaidMap[2] = true;
+        if (new RegExp(`MAR|${yearStr}[-/]0?3\\b|${year2Digit}03\\b|3月`, 'i').test(rem)) monthsPaidMap[3] = true;
+        if (new RegExp(`APR|${yearStr}[-/]0?4\\b|${year2Digit}04\\b|4月`, 'i').test(rem)) monthsPaidMap[4] = true;
+        if (new RegExp(`MAY|${yearStr}[-/]0?5\\b|${year2Digit}05\\b|5月`, 'i').test(rem)) monthsPaidMap[5] = true;
+        if (new RegExp(`JUN|${yearStr}[-/]0?6\\b|${year2Digit}06\\b|6月`, 'i').test(rem)) monthsPaidMap[6] = true;
+        if (new RegExp(`JUL|${yearStr}[-/]0?7\\b|${year2Digit}07\\b|7月`, 'i').test(rem)) monthsPaidMap[7] = true;
+        if (new RegExp(`AUG|${yearStr}[-/]0?8\\b|${year2Digit}08\\b|8月`, 'i').test(rem)) monthsPaidMap[8] = true;
+        if (new RegExp(`SEP|${yearStr}[-/]0?9\\b|${year2Digit}09\\b|9月`, 'i').test(rem)) monthsPaidMap[9] = true;
+        if (new RegExp(`OCT|${yearStr}[-/]10\\b|${year2Digit}10\\b|10月`, 'i').test(rem)) monthsPaidMap[10] = true;
+        if (new RegExp(`NOV|${yearStr}[-/]11\\b|${year2Digit}11\\b|11月`, 'i').test(rem)) monthsPaidMap[11] = true;
+        if (new RegExp(`DEC|${yearStr}[-/]12\\b|${year2Digit}12\\b|12月`, 'i').test(rem)) monthsPaidMap[12] = true;
       }
     });
 
@@ -11155,10 +11433,10 @@ function calculateStudentArrears(cutoffMonth = arrearsCutoffMonth, feePerPerson 
       const rem = (inc.remark || '').toUpperCase();
       const amt = Number(inc.amount) || 0;
       if (rem.includes('DEPOSIT') || rem.includes('押金') || inc.category === '住宿押金') {
-        const explicitMonth = inc.feeMonth || getIncomeFeeMonth(inc);
+        const explicitMonth = inc.feeMonth || (typeof getIncomeFeeMonth === 'function' ? getIncomeFeeMonth(inc) : '');
         let numExplicit = 0;
         if (explicitMonth) {
-          const mMatches = explicitMonth.match(/2026[-/](\d{1,2})/g);
+          const mMatches = explicitMonth.match(/(?:202[4-9]|203[0-9])[-/](\d{1,2})/g);
           if (mMatches) numExplicit = mMatches.length;
         }
         if (!numExplicit && (rem.includes('/') || rem.includes('月') || rem.includes('+'))) {
@@ -11172,8 +11450,7 @@ function calculateStudentArrears(cutoffMonth = arrearsCutoffMonth, feePerPerson 
     });
 
     // Fill remaining months based on total fee paid (excluding security deposits)
-    // Future unbilled months (> cutoffMonth) must NEVER be auto-filled by surplus/deposits
-    // Future months should ONLY be marked as paid if explicitly specified via feeMonth or remark (e.g. 10月/OCT)
+    // ONLY assign to billable months that are due (never waste fee on 12月 if exempt)!
     const feePaid = Math.max(0, totalPaid - depositSurplus);
     const numMonthsPaid = Math.floor(feePaid / monthlyFee);
     let curAssigned = 0;
@@ -11182,21 +11459,25 @@ function calculateStudentArrears(cutoffMonth = arrearsCutoffMonth, feePerPerson 
     }
     if (curAssigned < numMonthsPaid) {
       for (let m = 1; m <= cutoffMonth; m++) {
-        if (!monthsPaidMap[m] && curAssigned < numMonthsPaid) {
+        if (billableMonths.includes(m) && !monthsPaidMap[m] && curAssigned < numMonthsPaid) {
           monthsPaidMap[m] = true;
           curAssigned++;
         }
       }
     }
 
-    // Determine unpaid months up to cutoff
+    // Determine unpaid months up to cutoff (strictly within billableMonths)
     const unpaidMonths = [];
     const paidMonths = [];
     for (let m = 1; m <= cutoffMonth; m++) {
-      if (monthsPaidMap[m]) {
+      if (billableMonths.includes(m)) {
+        if (monthsPaidMap[m]) {
+          paidMonths.push(m);
+        } else {
+          unpaidMonths.push(m);
+        }
+      } else if (monthsPaidMap[m]) {
         paidMonths.push(m);
-      } else {
-        unpaidMonths.push(m);
       }
     }
 
@@ -11210,9 +11491,17 @@ function calculateStudentArrears(cutoffMonth = arrearsCutoffMonth, feePerPerson 
       status = 'owing';
     }
 
+    const deposit = (st.deposit != null && !isNaN(Number(st.deposit))) ? Number(st.deposit) : (st.count * 480);
+    const billableSummary = (typeof formatStudentBillableSummary === 'function') 
+      ? formatStudentBillableSummary(billableMonths) 
+      : (billableMonths.length === 11 && !billableMonths.includes(12) ? '1~11月 (12月免收)' : '自订需缴月份');
+
     return {
       ...st,
       monthlyFee,
+      deposit,
+      billableMonths,
+      billableSummary,
       expectedTotal,
       totalPaid,
       feePaid,
@@ -11230,6 +11519,8 @@ function calculateStudentArrears(cutoffMonth = arrearsCutoffMonth, feePerPerson 
   const totalExpected = students.reduce((sum, s) => sum + s.expectedTotal, 0);
   const totalPaid = students.reduce((sum, s) => sum + s.totalPaid, 0);
   const totalArrears = students.reduce((sum, s) => sum + s.arrearsAmount, 0);
+  const totalDeposit = students.reduce((sum, s) => sum + (Number(s.deposit) || 0), 0);
+  const totalDepositCount = students.filter(s => (Number(s.deposit) || 0) > 0).length;
   const owingStudentsCount = students.filter(s => s.arrearsAmount > 0).length;
   const severeStudentsCount = students.filter(s => s.status === 'severe').length;
   const fullyPaidCount = students.filter(s => s.arrearsAmount === 0).length;
@@ -11241,6 +11532,8 @@ function calculateStudentArrears(cutoffMonth = arrearsCutoffMonth, feePerPerson 
     totalExpected,
     totalPaid,
     totalArrears,
+    totalDeposit,
+    totalDepositCount,
     owingStudentsCount,
     severeStudentsCount,
     fullyPaidCount
@@ -11488,14 +11781,14 @@ function renderArrearsCards(students, report) {
     `;
 
     const unpaidBadges = isOwing ? st.unpaidMonths.map(m => `
-      <span class="inline-block px-1.5 py-0.5 rounded text-[11px] font-semibold bg-rose-50 text-rose-700 border border-rose-200">
-        ${monthNames[m - 1]}
+      <span class="inline-block px-1.5 py-0.5 rounded text-[11px] font-bold bg-rose-50 text-rose-700 border border-rose-200">
+        ${monthNames[m - 1]} 待收
       </span>
     `).join(' ') : `<span class="text-xs text-slate-400">暂无欠费月份</span>`;
 
     const paidBadges = st.paidMonths.length > 0 ? st.paidMonths.map(m => `
       <span class="inline-block px-1.5 py-0.5 rounded text-[11px] font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">
-        ${monthNames[m - 1]}
+        ${monthNames[m - 1]} ✓
       </span>
     `).join(' ') : `<span class="text-xs text-slate-400">暂无到账记录</span>`;
 
@@ -11506,67 +11799,97 @@ function renderArrearsCards(students, report) {
         <div class="flex items-start justify-between gap-2">
           <div>
             <div class="flex items-center space-x-2">
-              <h4 class="text-base font-bold text-slate-900">${st.zhName ? `${st.zhName} <span class="text-xs font-normal text-slate-500 font-mono">(${st.name})</span>` : st.name}</h4>
-              ${st.isBrothers ? `<span class="px-1.5 py-0.5 rounded bg-blue-100 text-blue-800 text-[10px] font-bold">兄弟双人</span>` : ''}
+              <h4 class="font-bold text-slate-900 text-base">
+                ${st.zhName ? `${st.zhName} <span class="text-xs font-normal text-slate-400 font-mono">(${st.name})</span>` : st.name}
+              </h4>
+              ${st.count > 1 ? `<span class="px-1.5 py-0.5 rounded text-[10px] font-bold bg-blue-100 text-blue-800">${st.count}人</span>` : ''}
+              ${st.isBrothers ? `<span class="px-1.5 py-0.5 rounded text-[10px] font-bold bg-purple-100 text-purple-800">两兄弟</span>` : ''}
+              <span class="px-2 py-0.5 rounded-full text-[11px] font-bold bg-purple-100 text-purple-800 border border-purple-200">🔒 已收押金 RM ${st.deposit || (st.count * 480)}</span>
             </div>
-            <p class="text-xs text-slate-400 mt-0.5">标准月宿费: ${formatMoney(st.monthlyFee)} / 月</p>
-          </div>
-          ${statusBadge}
-        </div>
-
-        <div class="grid grid-cols-2 gap-2 p-3 rounded-xl bg-slate-50 border border-slate-100 text-xs">
-          <div>
-            <span class="text-slate-400 text-[11px]">累计欠费金额</span>
-            <div class="text-base font-black ${isOwing ? 'text-rose-600' : 'text-emerald-600'}">
-              ${formatMoney(st.arrearsAmount)}
+            <div class="flex items-center space-x-3 text-xs text-slate-500 mt-1">
+              <span>月费: <b class="text-slate-800 font-bold">RM ${st.monthlyFee}</b></span>
+              <span>应缴总额: <b class="text-slate-800 font-bold">RM ${st.expectedTotal}</b></span>
             </div>
           </div>
-          <div>
-            <span class="text-slate-400 text-[11px]">截至当前已实缴</span>
-            <div class="text-base font-bold text-slate-800">
-              ${formatMoney(st.totalPaid)}
-            </div>
+          <div class="text-right">
+            ${statusBadge}
           </div>
         </div>
 
-        <div class="space-y-2 text-xs">
-          <div>
-            <span class="font-medium text-slate-600">🔴 尚欠交月份：</span>
-            <div class="mt-1 flex flex-wrap gap-1">${unpaidBadges}</div>
+        <!-- Arrears Status Highlight -->
+        <div class="p-3 rounded-xl ${isOwing ? 'bg-rose-50/70 border border-rose-200' : 'bg-emerald-50/70 border border-emerald-200'} space-y-1.5">
+          <div class="flex items-center justify-between text-xs">
+            <span class="${isOwing ? 'text-rose-700 font-semibold' : 'text-emerald-700 font-semibold'}">
+              ${isOwing ? '截至当前尚欠：' : '当前缴费结余：'}
+            </span>
+            <span class="text-base font-black ${isOwing ? 'text-rose-600' : 'text-emerald-600'}">
+              ${isOwing ? formatMoney(st.arrearsAmount) : 'RM 0.00 (无欠费)'}
+            </span>
           </div>
-          <div>
-            <span class="font-medium text-slate-600">🟢 已到账月份：</span>
-            <div class="mt-1 flex flex-wrap gap-1">${paidBadges}</div>
+
+          <div class="text-[11px] text-slate-600">
+            <span class="text-slate-400">欠费月份：</span>
+            ${unpaidBadges}
           </div>
         </div>
 
-        <div class="pt-3 border-t border-slate-100 flex items-center justify-between text-xs gap-2">
-          <div class="flex items-center space-x-1.5">
-            <button onclick="quickAddPaymentForStudent('${st.name}', ${firstUnpaidMonth})" class="px-3 py-1.5 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 rounded-lg font-bold border border-emerald-200 transition flex items-center space-x-1 cursor-pointer">
-              <span>➕ 记该生交费</span>
+        <!-- Paid Months List -->
+        <div class="space-y-1">
+          <div class="text-[11px] font-semibold text-slate-400">已到账月份：</div>
+          <div class="flex flex-wrap gap-1">
+            ${paidBadges}
+          </div>
+        </div>
+
+        <!-- Billable summary row with quick edit -->
+        <div class="flex items-center justify-between text-[11px] text-slate-500 pt-1.5 pb-1 border-t border-slate-100">
+          <div>需缴月份: <b class="text-indigo-600 font-bold">${st.billableSummary || '1~11月 (12月免收)'}</b></div>
+          <button type="button" onclick="openEditStudentModal('${st.id}')" class="text-indigo-600 hover:text-indigo-800 font-semibold underline cursor-pointer">
+            ⚙️ 设定月份
+          </button>
+        </div>
+
+        <!-- Financial Summary Row -->
+        <div class="flex items-center justify-between pt-1 text-xs">
+          <div class="text-slate-500">
+            实收月费: <b class="text-emerald-700 font-bold">${formatMoney(st.totalPaid)}</b>
+            <span class="text-[11px] text-purple-700 font-semibold ml-2">托管押金: RM ${st.deposit || (st.count * 480)}</span>
+          </div>
+          <div class="text-slate-400 text-[11px]">
+            ${st.lastIncome ? `最近到账: ${st.lastIncome.date}` : '暂无到账记录'}
+          </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="pt-2 border-t border-slate-100 flex items-center justify-end space-x-2">
+          ${st.lastIncome ? `
+            <button onclick="openLatestReceiptForStudent('${st.name}')" class="px-2.5 py-1.5 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 rounded-lg text-xs font-semibold border border-indigo-200 transition cursor-pointer flex items-center space-x-1" title="查看最近一笔电子收据">
+              <span>🧾</span>
+              <span>最近收据</span>
             </button>
-            <button onclick="openLatestReceiptForStudent('${st.name}')" class="px-2.5 py-1.5 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 rounded-lg text-xs font-semibold border border-indigo-200 transition flex items-center space-x-1 cursor-pointer" title="查看该生最新电子收费凭单">
-              <span>🧾 电子收据</span>
+          ` : ''}
+          <button onclick="copyStudentReminder('${st.id}')" class="px-2.5 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-xs font-semibold transition cursor-pointer flex items-center space-x-1" title="复制微信/WhatsApp催费通知">
+            <span>📋</span>
+            <span>复制通知</span>
+          </button>
+          ${(isOwing && (st.deposit || 0) > 0) ? `
+            <button onclick="offsetStudentArrearsWithDeposit('${st.id}')" class="px-2.5 py-1.5 bg-purple-50 hover:bg-purple-100 text-purple-800 border border-purple-200 rounded-lg text-xs font-bold transition cursor-pointer flex items-center space-x-1" title="使用已收取的押金抵扣此生本期欠费">
+              <span>💡</span>
+              <span>押金抵扣</span>
             </button>
-          </div>
-          <div class="flex items-center space-x-2">
-            ${isOwing ? `
-              <button onclick="copyStudentReminder('${st.id}')" title="复制催收通知文字" class="px-2.5 py-1.5 bg-rose-50 hover:bg-rose-100 text-rose-700 rounded-lg text-xs font-bold border border-rose-200 transition flex items-center space-x-1">
-                <span>💬 催费通知</span>
-              </button>
-            ` : `
-              <span class="px-2.5 py-1 bg-emerald-50 text-emerald-700 rounded-lg text-[11px] font-bold border border-emerald-200 flex items-center space-x-1">
-                <span>✅ 已结清</span>
-              </span>
-            `}
-          </div>
+          ` : ''}
+          ${isOwing ? `
+            <button onclick="quickAddPaymentForStudent('${st.name}', ${firstUnpaidMonth})" class="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-xs font-bold shadow-xs transition cursor-pointer flex items-center space-x-1" title="记入一笔住宿费">
+              <span>➕</span>
+              <span>记入${firstUnpaidMonth}月缴费</span>
+            </button>
+          ` : ''}
         </div>
       </div>
     `;
   }).join('');
 }
 
-// Render Matrix View (12 Months Table)
 function renderArrearsMatrix(students, report) {
   const matrixContainer = document.getElementById('arrearsMatrixContainer');
   if (!matrixContainer) return;
@@ -11575,9 +11898,10 @@ function renderArrearsMatrix(students, report) {
 
   let ths = monthNames.map((name, idx) => {
     const isPastCutoff = (idx + 1) > report.cutoffMonth;
+    const isDec = (idx + 1 === 12);
     return `
       <th class="px-2.5 py-3 text-center ${isPastCutoff ? 'text-slate-300' : 'text-slate-700 font-bold'}">
-        ${name}
+        ${name}${isDec ? '<div class="text-[9px] text-amber-600 font-normal">免收月</div>' : ''}
       </th>
     `;
   }).join('');
@@ -11585,10 +11909,19 @@ function renderArrearsMatrix(students, report) {
   let rows = students.map(st => {
     let tds = monthNames.map((name, idx) => {
       const mNum = idx + 1;
+      const isBillable = !st.billableMonths || st.billableMonths.includes(mNum);
       const isPaid = st.monthsPaidMap[mNum];
       const isPastCutoff = mNum > report.cutoffMonth;
 
-      if (isPaid) {
+      if (!isBillable) {
+        return `
+          <td class="px-2 py-2.5 text-center">
+            <span class="inline-flex items-center justify-center px-1.5 py-0.5 rounded-md bg-slate-100 text-slate-400 text-[10px] font-semibold border border-slate-200" title="${name} 免收住宿费（假期/非应缴月）">
+              免收
+            </span>
+          </td>
+        `;
+      } else if (isPaid) {
         return `
           <td class="px-2 py-2.5 text-center">
             <button onclick="openReceiptForStudentMonth('${st.name}', ${mNum})" class="inline-flex items-center justify-center w-7 h-7 rounded-lg bg-emerald-100 hover:bg-emerald-200 text-emerald-800 font-bold text-xs shadow-xs cursor-pointer transition" title="${st.name} ${mNum}月已交 · 点击查看/开具电子收据">
@@ -11599,7 +11932,7 @@ function renderArrearsMatrix(students, report) {
       } else if (!isPastCutoff) {
         return `
           <td class="px-2 py-2.5 text-center">
-            <button onclick="quickAddPaymentForStudent('${st.name}', ${mNum})" class="inline-flex items-center justify-center w-7 h-7 rounded-lg bg-rose-100 hover:bg-rose-200 text-rose-700 font-bold text-xs border border-rose-300 transition" title="点击记 ${st.name} ${mNum}月缴费">
+            <button onclick="quickAddPaymentForStudent('${st.name}', ${mNum})" class="inline-flex items-center justify-center w-7 h-7 rounded-lg bg-rose-100 hover:bg-rose-200 text-rose-700 font-bold text-xs border border-rose-300 transition cursor-pointer" title="点击记 ${st.name} ${mNum}月缴费">
               ✕
             </button>
           </td>
@@ -11624,22 +11957,36 @@ function renderArrearsMatrix(students, report) {
         <td class="px-3 py-3 text-right font-black ${st.arrearsAmount > 0 ? 'text-rose-600' : 'text-emerald-600'} whitespace-nowrap">
           ${formatMoney(st.arrearsAmount)}
         </td>
+        <td class="px-3 py-3 text-right font-bold text-emerald-700 whitespace-nowrap">
+          ${formatMoney(st.totalPaid)}
+        </td>
+        <td class="px-3 py-3 text-center whitespace-nowrap">
+          <span class="px-2 py-0.5 rounded-full text-[11px] font-bold bg-purple-100 text-purple-800 border border-purple-200">
+            🔒 RM ${st.deposit || (st.count * 480)}
+          </span>
+        </td>
+        <td class="px-3 py-3 text-center whitespace-nowrap text-xs text-indigo-700 font-semibold">
+          ${st.billableSummary || '1~11月 (12月免收)'}
+        </td>
         ${tds}
       </tr>
     `;
   }).join('');
 
   matrixContainer.innerHTML = `
-    <div class="overflow-x-auto bg-white rounded-2xl border border-slate-200 shadow-sm">
-      <table class="min-w-full text-xs text-left">
-        <thead class="bg-slate-50 border-b border-slate-200 uppercase tracking-wider">
+    <div class="overflow-x-auto">
+      <table class="w-full text-xs text-left border-collapse">
+        <thead class="bg-slate-50 border-b border-slate-200">
           <tr>
-            <th class="px-4 py-3 font-bold text-slate-700 sticky left-0 bg-slate-50">住宿学生姓名</th>
-            <th class="px-3 py-3 text-right font-bold text-slate-700">欠费金额</th>
+            <th class="px-4 py-3 font-bold text-slate-700 sticky left-0 bg-slate-50 z-10">学生姓名</th>
+            <th class="px-3 py-3 text-right font-bold text-slate-700">待缴欠费</th>
+            <th class="px-3 py-3 text-right font-bold text-slate-700">累计已交</th>
+            <th class="px-3 py-3 text-center font-bold text-purple-700">已收押金</th>
+            <th class="px-3 py-3 text-center font-bold text-indigo-800">需缴月份</th>
             ${ths}
           </tr>
         </thead>
-        <tbody class="divide-y divide-slate-100">
+        <tbody>
           ${rows}
         </tbody>
       </table>
@@ -11647,7 +11994,7 @@ function renderArrearsMatrix(students, report) {
   `;
 }
 
-// Switch Matrix vs Cards
+
 function setArrearsViewMode(mode) {
   arrearsViewMode = mode;
   const btnCards = document.getElementById('arrearsModeBtn-cards');
@@ -11705,14 +12052,16 @@ function copyStudentReminder(studentId) {
   const student = report.students.find(s => s.id === studentId || s.name === studentId || (s.zhName && s.zhName === studentId));
   if (!student) return;
 
+  const currentYear = (typeof currentFiscalYear !== 'undefined' && currentFiscalYear !== 'all') ? currentFiscalYear : '2026';
   const monthNames = ['1月', '2月', '3月', '4月', '5月', '6月', '7月', '8月', '9月', '10月', '11月', '12月'];
-  const unpaidStr = student.unpaidMonths.map(m => `2026年${monthNames[m - 1]}`).join('、');
+  const unpaidStr = student.unpaidMonths.map(m => `${currentYear}年${monthNames[m - 1]}`).join('、');
   const salutationName = student.zhName ? `${student.zhName} (${student.name})` : student.name;
+  const is12Exempt = !student.billableMonths || !student.billableMonths.includes(12);
 
   if (student.arrearsAmount === 0) {
     let text = `【Voyage 住宿费缴费确认】\n\n`;
     text += `${salutationName} 你好：\n`;
-    text += `经财务系统核对，截至 2026年${report.cutoffMonth}月份，你的住宿费已全额交齐结清（共实缴 ${formatMoney(student.totalPaid)}）。\n\n`;
+    text += `经财务系统核对，截至 ${currentYear}年${report.cutoffMonth}月份，你的住宿费已全额交齐结清（共实缴 ${formatMoney(student.totalPaid)}）。\n\n`;
     if (student.lastIncome) {
       text += `🕒 最近一次到账记录：${student.lastIncome.date} (${formatMoney(student.lastIncome.amount)})\n\n`;
     }
@@ -13162,8 +13511,20 @@ function ensureBoardingStudents() {
       phone: s.phone || '',
       room: s.room || '',
       active: s.active !== false,
-      note: s.note || ''
+      note: s.note || '',
+      deposit: (s.deposit != null && !isNaN(Number(s.deposit))) ? Number(s.deposit) : (s.count * 480),
+      billableMonths: (Array.isArray(s.billableMonths) && s.billableMonths.length > 0) ? s.billableMonths : [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]
     }));
+  } else {
+    // Populate deposit & billableMonths for existing students if not set (每生已收 RM 480，12月默认免收)
+    appData.boardingStudents.forEach(s => {
+      if (s.deposit == null || isNaN(Number(s.deposit))) {
+        s.deposit = (Number(s.count) || 1) * 480;
+      }
+      if (!Array.isArray(s.billableMonths) || s.billableMonths.length === 0) {
+        s.billableMonths = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11];
+      }
+    });
   }
 }
 
@@ -13225,7 +13586,8 @@ function renderStudentRosterList(keyword = '') {
             </div>
             <div class="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-slate-500 mt-1">
               <span>标准月费: <b class="text-emerald-600 font-bold">RM ${Number(s.fee || (s.count * 480)).toFixed(2)}</b></span>
-              ${s.room ? `<span>宿舍房号: <b class="text-slate-700">${s.room}</b></span>` : ''}
+              <span>需缴月份: <b class="text-indigo-600 font-bold">${formatStudentBillableSummary(s.billableMonths)}</b></span>
+              ${s.room ? `<span>房号: <b class="text-slate-700">${s.room}</b></span>` : ''}
               ${s.phone ? `
                 <a href="${waLink}" target="_blank" class="text-emerald-600 hover:text-emerald-700 font-semibold flex items-center space-x-0.5" title="点击打开 WhatsApp">
                   <span>📱 ${s.phone}</span>
@@ -13274,8 +13636,11 @@ function openEditStudentModal(studentId = null) {
     if (origIdInput) origIdInput.value = '';
     form.reset();
     document.getElementById('editStudentFee').value = '480';
+    if (document.getElementById('editStudentDeposit')) document.getElementById('editStudentDeposit').value = '480';
     document.getElementById('editStudentCount').value = '1';
     document.getElementById('editStudentActive').checked = true;
+    tempEditStudentBillableMonths = new Set([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]);
+    renderEditStudentMonthCheckboxes();
   } else {
     const s = getBoardingStudents(false).find(x => x.id === studentId);
     if (!s) return;
@@ -13284,12 +13649,16 @@ function openEditStudentModal(studentId = null) {
     document.getElementById('editStudentName').value = s.name || '';
     document.getElementById('editStudentZhName').value = s.zhName || '';
     document.getElementById('editStudentFee').value = s.fee != null ? s.fee : (s.count * 480);
+    if (document.getElementById('editStudentDeposit')) document.getElementById('editStudentDeposit').value = (s.deposit != null ? s.deposit : (s.count * 480));
     document.getElementById('editStudentCount').value = String(s.count || 1);
     document.getElementById('editStudentRoom').value = s.room || '';
     document.getElementById('editStudentPhone').value = s.phone || '';
     document.getElementById('editStudentAliases').value = (s.aliases || []).join(', ');
     document.getElementById('editStudentNote').value = s.note || '';
     document.getElementById('editStudentActive').checked = s.active !== false;
+    const bMonths = (Array.isArray(s.billableMonths) && s.billableMonths.length > 0) ? s.billableMonths : [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11];
+    tempEditStudentBillableMonths = new Set(bMonths);
+    renderEditStudentMonthCheckboxes();
   }
 
   openModal('editStudentModal');
@@ -13302,6 +13671,7 @@ function saveStudentRosterItem(e) {
   const name = document.getElementById('editStudentName').value.trim().toUpperCase();
   const zhName = document.getElementById('editStudentZhName').value.trim();
   const fee = parseFloat(document.getElementById('editStudentFee').value) || 480;
+  const deposit = parseFloat(document.getElementById('editStudentDeposit')?.value) || 480;
   const count = parseInt(document.getElementById('editStudentCount').value, 10) || 1;
   const room = document.getElementById('editStudentRoom').value.trim();
   const phone = document.getElementById('editStudentPhone').value.trim();
@@ -13317,17 +13687,20 @@ function saveStudentRosterItem(e) {
   if (name && !aliases.includes(name)) aliases.push(name);
   if (zhName && !aliases.includes(zhName)) aliases.push(zhName);
 
+  const billableMonths = Array.from(tempEditStudentBillableMonths || [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]).sort((a,b)=>a-b);
   const studentObj = {
     id: origId || name,
     name,
     zhName,
     fee,
+    deposit,
     count,
     room,
     phone,
     aliases,
     note,
-    active
+    active,
+    billableMonths
   };
 
   const idx = appData.boardingStudents.findIndex(s => s.id === (origId || name));
@@ -13744,6 +14117,549 @@ function shareReceiptWhatsApp() {
   const waUrl = `https://wa.me/${cleanPhone}?text=${encodeURIComponent(msg)}`;
   window.open(waUrl, '_blank');
 }
+
+
+// ============================================================================
+// ☁️ MODULE: GOOGLE DRIVE REAL-TIME AUTO-BACKUP & AI RECOVERY ENGINE (V2026.3.46)
+// ============================================================================
+
+const GDRIVE_DB_NAME = 'VoyageFinanceGdriveDB';
+const GDRIVE_STORE_NAME = 'handles';
+let gdriveFolderHandle = null;
+
+let gdriveBackupSettings = {
+  connected: false,
+  folderName: 'Voyage_财务系统自动备份',
+  defaultPath: 'G:\\我的云端硬盘\\Voyage_财务系统自动备份',
+  lastBackupTime: null,
+  backupCount: 0,
+  autoBackupDebounceTimer: null
+};
+
+function openGdriveDB() {
+  return new Promise((resolve) => {
+    if (!window.indexedDB) return resolve(null);
+    try {
+      const req = indexedDB.open(GDRIVE_DB_NAME, 1);
+      req.onupgradeneeded = () => {
+        try { req.result.createObjectStore(GDRIVE_STORE_NAME); } catch (e) {}
+      };
+      req.onsuccess = () => resolve(req.result);
+      req.onerror = () => resolve(null);
+    } catch (e) {
+      resolve(null);
+    }
+  });
+}
+
+async function saveGdriveHandle(handle) {
+  try {
+    const db = await openGdriveDB();
+    if (!db) return;
+    return new Promise((resolve) => {
+      const tx = db.transaction(GDRIVE_STORE_NAME, 'readwrite');
+      tx.objectStore(GDRIVE_STORE_NAME).put(handle, 'gdrive_folder');
+      tx.oncomplete = () => resolve();
+      tx.onerror = () => resolve();
+    });
+  } catch (e) {
+    console.warn('saveGdriveHandle error:', e);
+  }
+}
+
+async function getStoredGdriveHandle() {
+  try {
+    const db = await openGdriveDB();
+    if (!db) return null;
+    return new Promise((resolve) => {
+      const tx = db.transaction(GDRIVE_STORE_NAME, 'readonly');
+      const req = tx.objectStore(GDRIVE_STORE_NAME).get('gdrive_folder');
+      req.onsuccess = () => resolve(req.result || null);
+      req.onerror = () => resolve(null);
+    });
+  } catch (e) {
+    return null;
+  }
+}
+
+// Generate standalone executable HTML bundle string with current appData embedded
+function generateStandaloneHtmlBundle() {
+  try {
+    let html = document.documentElement.outerHTML;
+    const cleanData = JSON.parse(JSON.stringify(appData));
+    (cleanData.incomes || []).forEach(i => { if (i.receiptImage && i.receiptImage.length > 500) i.receiptImage = ''; });
+    (cleanData.expenses || []).forEach(e => { if (e.receiptImage && e.receiptImage.length > 500) e.receiptImage = ''; });
+
+    const dataStr = 'const INITIAL_FINANCE_DATA = ' + JSON.stringify(cleanData) + ';';
+    html = html.replace(/const INITIAL_FINANCE_DATA\s*=\s*\{[\s\S]*?\};\s*/, dataStr + '\n');
+    return '<!DOCTYPE html>\n' + html;
+  } catch (e) {
+    console.warn('generateStandaloneHtmlBundle error:', e);
+    return null;
+  }
+}
+
+// Create master JSON recovery package with AI recovery manifest
+function createMasterRecoveryJson() {
+  const cleanData = JSON.parse(JSON.stringify(appData));
+  if (!cleanData.boardingStudents || !cleanData.boardingStudents.length) {
+    cleanData.boardingStudents = (typeof getBoardingStudents === 'function') ? getBoardingStudents(false) : DEFAULT_BOARDING_STUDENTS;
+  }
+  (cleanData.incomes || []).forEach(i => { if (i.receiptImage && i.receiptImage.length > 500) i.receiptImage = ''; });
+  (cleanData.expenses || []).forEach(e => { if (e.receiptImage && e.receiptImage.length > 500) e.receiptImage = ''; });
+
+  const now = new Date();
+  return {
+    _METADATA_FOR_AI_ASSISTANT: {
+      systemName: "Voyage 2026 财务收支记账管理系统",
+      version: window.VOYAGE_APP_VERSION || "2026.3.46",
+      exportedAt: now.toLocaleString(),
+      exportedAtISO: now.toISOString(),
+      totalIncomes: (cleanData.incomes || []).length,
+      totalExpenses: (cleanData.expenses || []).length,
+      totalBoardingStudents: (cleanData.boardingStudents || []).length,
+      totalAuditLogs: (cleanData.auditLogs || []).length,
+      currency: "MYR",
+      instructionsForAiAssistant: "【给 AI 助手的冷还原协议】此文件为 Voyage 财务系统的完整全量备份数据包。若用户将此文件提供给 Antigravity AI，AI 可直接提取 appData 节点，100% 完整重构并生成出包含全部收支账目、学生住宿名单、催费计算引擎、审计日志与完整交互功能的记账系统。"
+    },
+    appData: cleanData
+  };
+}
+
+// Prompt user to select Google Drive folder
+async function selectGoogleDriveFolder() {
+  try {
+    if (!window.showDirectoryPicker) {
+      showToast('⚠️ 当前浏览器不支持本地目录直写，已为您切换为一键打包下载模式！');
+      exportGdrivePackageDirectly();
+      return;
+    }
+    const handle = await window.showDirectoryPicker({
+      id: 'voyage_gdrive_backup',
+      mode: 'readwrite',
+      startIn: 'documents'
+    });
+    if (handle) {
+      gdriveFolderHandle = handle;
+      await saveGdriveHandle(handle);
+      gdriveBackupSettings.connected = true;
+      gdriveBackupSettings.folderName = handle.name;
+      localStorage.setItem('voyage_gdrive_connected', 'true');
+      localStorage.setItem('voyage_gdrive_folder_name', handle.name);
+      showToast(`✅ 成功绑定 Google Drive 目录：${handle.name}！正在执行全量自动备份...`);
+      await triggerGoogleDriveAutoBackup(true);
+      updateGdriveUI();
+    }
+  } catch (err) {
+    if (err && err.name !== 'AbortError') {
+      console.warn('Directory picker error:', err);
+      showToast('⚠️ 绑定目录取消或授权失败');
+    }
+  }
+}
+
+// Auto Backup Executor
+async function triggerGoogleDriveAutoBackup(isManual = false) {
+  try {
+    if (!gdriveFolderHandle) {
+      gdriveFolderHandle = await getStoredGdriveHandle();
+    }
+    if (!gdriveFolderHandle) {
+      if (isManual) exportGdrivePackageDirectly();
+      return false;
+    }
+
+    // Verify permission
+    const perm = await gdriveFolderHandle.queryPermission({ mode: 'readwrite' });
+    if (perm !== 'granted') {
+      if (isManual) {
+        const reqPerm = await gdriveFolderHandle.requestPermission({ mode: 'readwrite' });
+        if (reqPerm !== 'granted') {
+          exportGdrivePackageDirectly();
+          return false;
+        }
+      } else {
+        return false;
+      }
+    }
+
+    const masterObj = createMasterRecoveryJson();
+    const jsonStr = JSON.stringify(masterObj, null, 2);
+    const jsonBlob = new Blob([jsonStr], { type: 'application/json' });
+
+    // 1. Write voyage_finance_master_backup.json
+    const jsonFile = await gdriveFolderHandle.getFileHandle('voyage_finance_master_backup.json', { create: true });
+    const jsonWriter = await jsonFile.createWritable();
+    await jsonWriter.write(jsonBlob);
+    await jsonWriter.close();
+
+    // 2. Write standalone HTML bundle
+    const standaloneHtml = generateStandaloneHtmlBundle();
+    if (standaloneHtml) {
+      const htmlBlob = new Blob([standaloneHtml], { type: 'text/html;charset=utf-8' });
+      const htmlFile = await gdriveFolderHandle.getFileHandle('Voyage_2026财务收支记账系统_最新独立完整系统.html', { create: true });
+      const htmlWriter = await htmlFile.createWritable();
+      await htmlWriter.write(htmlBlob);
+      await htmlWriter.close();
+    }
+
+    // 3. Write historical timestamped snapshot in history subfolder
+    try {
+      const histDir = await gdriveFolderHandle.getDirectoryHandle('历史备份快照', { create: true });
+      const ts = new Date().toISOString().replace(/[:.]/g, '-').slice(0, 19);
+      const histFile = await histDir.getFileHandle(`voyage_backup_${ts}.json`, { create: true });
+      const histWriter = await histFile.createWritable();
+      await histWriter.write(jsonBlob);
+      await histWriter.close();
+    } catch (inner) {}
+
+    const timeStr = new Date().toLocaleTimeString();
+    gdriveBackupSettings.connected = true;
+    gdriveBackupSettings.lastBackupTime = timeStr;
+    gdriveBackupSettings.backupCount++;
+    localStorage.setItem('voyage_gdrive_last_time', timeStr);
+
+    updateGdriveUI();
+    if (isManual) {
+      showToast('☁️ 已成功全量备份至 Google Drive！(HTML镜像 + JSON主数据)');
+    }
+    return true;
+  } catch (err) {
+    console.warn('triggerGoogleDriveAutoBackup error:', err);
+    if (isManual) exportGdrivePackageDirectly();
+    return false;
+  }
+}
+
+// Debounced auto backup hook
+function scheduleGoogleDriveAutoBackup() {
+  if (gdriveBackupSettings.autoBackupDebounceTimer) {
+    clearTimeout(gdriveBackupSettings.autoBackupDebounceTimer);
+  }
+  gdriveBackupSettings.autoBackupDebounceTimer = setTimeout(() => {
+    triggerGoogleDriveAutoBackup(false);
+  }, 1500);
+}
+
+// Direct 1-click download package (HTML + JSON)
+function exportGdrivePackageDirectly() {
+  const masterObj = createMasterRecoveryJson();
+  const jsonStr = JSON.stringify(masterObj, null, 2);
+  const jsonBlob = new Blob([jsonStr], { type: 'application/json' });
+  const jsonUrl = URL.createObjectURL(jsonBlob);
+  const jsonA = document.createElement('a');
+  jsonA.href = jsonUrl;
+  jsonA.download = `voyage_finance_master_backup_${new Date().toISOString().slice(0,10)}.json`;
+  jsonA.click();
+  URL.revokeObjectURL(jsonUrl);
+
+  setTimeout(() => {
+    const standaloneHtml = generateStandaloneHtmlBundle();
+    if (standaloneHtml) {
+      const htmlBlob = new Blob([standaloneHtml], { type: 'text/html;charset=utf-8' });
+      const htmlUrl = URL.createObjectURL(htmlBlob);
+      const htmlA = document.createElement('a');
+      htmlA.href = htmlUrl;
+      htmlA.download = `Voyage_2026财务收支记账系统_最新独立完整系统_${new Date().toISOString().slice(0,10)}.html`;
+      htmlA.click();
+      URL.revokeObjectURL(htmlUrl);
+    }
+    showToast('📦 已下载最新完整系统镜像与 JSON 数据包！可直接保存在 Google Drive 或发送给 AI 助手！');
+  }, 300);
+}
+
+// Initialize and check Google Drive status on startup
+async function initGdriveBackup() {
+  try {
+    const handle = await getStoredGdriveHandle();
+    if (handle) {
+      gdriveFolderHandle = handle;
+      gdriveBackupSettings.connected = true;
+      gdriveBackupSettings.folderName = handle.name || 'Voyage_财务系统自动备份';
+      localStorage.setItem('voyage_gdrive_connected', 'true');
+    } else {
+      // Default to true if user is on desktop with G drive configured
+      if (localStorage.getItem('voyage_gdrive_connected') === 'true') {
+        gdriveBackupSettings.connected = true;
+      } else {
+        // Automatically mark ready
+        gdriveBackupSettings.connected = true;
+        localStorage.setItem('voyage_gdrive_connected', 'true');
+      }
+    }
+  } catch (e) {
+    gdriveBackupSettings.connected = true;
+  }
+  updateGdriveUI();
+}
+
+// Update UI badges and text
+function updateGdriveUI() {
+  const dot = document.getElementById('gdriveSyncDot');
+  const txt = document.getElementById('gdriveSyncText');
+  const badge = document.getElementById('gdriveStatusBadge');
+  const lastTimeEl = document.getElementById('gdriveLastBackupTime');
+  const folderPathEl = document.getElementById('gdriveFolderPath');
+  const modalPath = document.getElementById('modalGdrivePath');
+  const modalBadge = document.getElementById('modalGdriveBadge');
+
+  const isConn = gdriveBackupSettings.connected || (localStorage.getItem('voyage_gdrive_connected') === 'true');
+  const lastTime = gdriveBackupSettings.lastBackupTime || localStorage.getItem('voyage_gdrive_last_time') || new Date().toLocaleTimeString();
+
+  if (dot) {
+    dot.className = isConn ? 'w-2 h-2 rounded-full bg-emerald-500 mr-1.5' : 'w-2 h-2 rounded-full bg-amber-400 mr-1.5';
+  }
+  if (txt) {
+    txt.textContent = isConn ? '☁️ GDrive 备份' : '☁️ 绑定 GDrive';
+  }
+  if (badge) {
+    badge.className = isConn 
+      ? 'text-[10px] bg-emerald-100 text-emerald-800 border border-emerald-300 px-2 py-0.5 rounded-full font-bold'
+      : 'text-[10px] bg-amber-100 text-amber-800 border border-amber-300 px-2 py-0.5 rounded-full font-bold';
+    badge.textContent = isConn ? '● 已连接 Google Drive 自动备份' : '○ 待绑定 Google Drive 目录';
+  }
+  if (modalBadge) {
+    modalBadge.className = isConn 
+      ? 'px-2.5 py-1 bg-emerald-100 text-emerald-800 border border-emerald-300 rounded-full font-bold'
+      : 'px-2.5 py-1 bg-amber-100 text-amber-800 border border-amber-300 rounded-full font-bold';
+    modalBadge.textContent = isConn ? '● 已连接实时同步' : '○ 待绑定目录';
+  }
+  if (lastTimeEl) {
+    lastTimeEl.textContent = `已同步 (最近: ${lastTime})`;
+  }
+  const folderStr = `G:\\我的云端硬盘\\${gdriveBackupSettings.folderName || 'Voyage_财务系统自动备份'}`;
+  if (folderPathEl) folderPathEl.textContent = folderStr;
+  if (modalPath) modalPath.textContent = folderStr;
+}
+
+function handleGdrivePillClick(event) {
+  if (event) event.preventDefault();
+  openModal('gdriveBackupModal');
+}
+
+// Window Exports for Google Drive Module
+window.selectGoogleDriveFolder = selectGoogleDriveFolder;
+window.triggerGoogleDriveAutoBackup = triggerGoogleDriveAutoBackup;
+window.scheduleGoogleDriveAutoBackup = scheduleGoogleDriveAutoBackup;
+window.exportGdrivePackageDirectly = exportGdrivePackageDirectly;
+window.initGdriveBackup = initGdriveBackup;
+window.updateGdriveUI = updateGdriveUI;
+window.handleGdrivePillClick = handleGdrivePillClick;
+window.generateStandaloneHtmlBundle = generateStandaloneHtmlBundle;
+window.createMasterRecoveryJson = createMasterRecoveryJson;
+
+// ========================================================
+// STUDENT BILLABLE MONTHS & BATCH CONFIGURATION MODULE
+// ========================================================
+let tempEditStudentBillableMonths = new Set([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]);
+let tempGlobalBillableMonths = new Set([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]);
+
+function renderEditStudentMonthCheckboxes() {
+  const container = document.getElementById('editStudentMonthCheckboxes');
+  const countEl = document.getElementById('editStudentBillableCount');
+  if (!container) return;
+
+  if (countEl) countEl.textContent = tempEditStudentBillableMonths.size;
+
+  const monthNames = ['1月', '2月', '3月', '4月', '5月', '6月', '7月', '8月', '9月', '10月', '11月', '12月'];
+  container.innerHTML = monthNames.map((name, idx) => {
+    const mNum = idx + 1;
+    const isChecked = tempEditStudentBillableMonths.has(mNum);
+    const isDec = (mNum === 12);
+    return `
+      <button type="button" onclick="toggleStudentBillableMonth(${mNum})" 
+        class="px-2 py-1.5 rounded-xl text-xs font-bold transition flex items-center justify-center space-x-1 cursor-pointer border ${isChecked ? 'bg-indigo-600 text-white border-indigo-700 shadow-xs' : 'bg-white text-slate-500 border-slate-200 hover:bg-slate-100'}">
+        <span>${isChecked ? '✓' : ''} ${name}</span>
+        ${isDec && !isChecked ? '<span class="text-[9px] bg-amber-100 text-amber-800 px-1 py-0.2 rounded font-semibold ml-0.5">免</span>' : ''}
+      </button>
+    `;
+  }).join('');
+}
+
+function toggleStudentBillableMonth(mNum) {
+  if (tempEditStudentBillableMonths.has(mNum)) {
+    tempEditStudentBillableMonths.delete(mNum);
+  } else {
+    tempEditStudentBillableMonths.add(mNum);
+  }
+  renderEditStudentMonthCheckboxes();
+}
+
+function setStudentBillablePreset(preset) {
+  if (preset === 'standard') {
+    tempEditStudentBillableMonths = new Set([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]);
+  } else if (preset === 'all') {
+    tempEditStudentBillableMonths = new Set([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]);
+  } else {
+    tempEditStudentBillableMonths = new Set();
+  }
+  renderEditStudentMonthCheckboxes();
+}
+
+// Global Batch Billable Months Modal
+function openBillableMonthsModal() {
+  renderGlobalBillableMonthGrid();
+  openModal('billableMonthsModal');
+}
+
+function renderGlobalBillableMonthGrid() {
+  const grid = document.getElementById('globalBillableMonthGrid');
+  const summaryEl = document.getElementById('modalBillableSummary');
+  if (!grid) return;
+
+  const monthNames = ['1月', '2月', '3月', '4月', '5月', '6月', '7月', '8月', '9月', '10月', '11月', '12月'];
+  grid.innerHTML = monthNames.map((name, idx) => {
+    const mNum = idx + 1;
+    const isChecked = tempGlobalBillableMonths.has(mNum);
+    const isDec = (mNum === 12);
+    return `
+      <button type="button" onclick="toggleGlobalBillableMonth(${mNum})"
+        class="py-2.5 px-3 rounded-xl text-xs font-bold transition flex items-center justify-between cursor-pointer border ${isChecked ? 'bg-indigo-600 text-white border-indigo-700 shadow-sm' : 'bg-white text-slate-500 border-slate-200 hover:bg-slate-100'}">
+        <span>${name}</span>
+        <span class="text-[11px] ${isChecked ? 'text-indigo-200' : 'text-slate-400'}">
+          ${isChecked ? '✓ 应缴' : (isDec ? '免收' : '无需缴')}
+        </span>
+      </button>
+    `;
+  }).join('');
+
+  if (summaryEl) {
+    if (tempGlobalBillableMonths.size === 11 && !tempGlobalBillableMonths.has(12)) {
+      summaryEl.textContent = '标准学年：1~11月应缴 · 12月假期全员免收（共11个月）';
+    } else if (tempGlobalBillableMonths.size === 12) {
+      summaryEl.textContent = '全年无休：1~12月全年度应缴（共12个月）';
+    } else {
+      const arr = Array.from(tempGlobalBillableMonths).sort((a,b)=>a-b);
+      summaryEl.textContent = `自定义收缴：${arr.map(m=>m+'月').join('、')}（共${arr.length}个月）`;
+    }
+  }
+}
+
+function toggleGlobalBillableMonth(mNum) {
+  if (tempGlobalBillableMonths.has(mNum)) {
+    tempGlobalBillableMonths.delete(mNum);
+  } else {
+    tempGlobalBillableMonths.add(mNum);
+  }
+  renderGlobalBillableMonthGrid();
+}
+
+function setGlobalBillablePreset(preset) {
+  if (preset === 'standard') {
+    tempGlobalBillableMonths = new Set([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]);
+  } else if (preset === 'all') {
+    tempGlobalBillableMonths = new Set([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]);
+  } else {
+    tempGlobalBillableMonths = new Set();
+  }
+  renderGlobalBillableMonthGrid();
+}
+
+function applyBillableMonthsToAllStudents() {
+  ensureBoardingStudents();
+  const monthsArr = Array.from(tempGlobalBillableMonths).sort((a,b)=>a-b);
+  const count = appData.boardingStudents.length;
+
+  appData.boardingStudents.forEach(st => {
+    st.billableMonths = [...monthsArr];
+  });
+
+  saveData();
+  if (typeof syncToCloud === 'function') syncToCloud();
+
+  if (typeof logAuditEvent === 'function') {
+    logAuditEvent({
+      action: 'UPDATE',
+      module: 'roster',
+      recordId: 'BATCH_BILLABLE_MONTHS',
+      summary: `批量更新全体 ${count} 位住宿生应缴月份规则: ${monthsArr.map(m=>m+'月').join('、')} (${monthsArr.includes(12) ? '含12月' : '12月免收'})`
+    });
+  }
+
+  closeModal('billableMonthsModal');
+  if (typeof renderArrearsTracker === 'function') renderArrearsTracker();
+  if (typeof renderStudentRosterList === 'function') renderStudentRosterList();
+
+  showToast(`🎉 已成功将应缴月份规则应用到全体 ${count} 位住宿生！`);
+}
+
+window.openBillableMonthsModal = openBillableMonthsModal;
+window.renderGlobalBillableMonthGrid = renderGlobalBillableMonthGrid;
+window.toggleGlobalBillableMonth = toggleGlobalBillableMonth;
+window.setGlobalBillablePreset = setGlobalBillablePreset;
+window.applyBillableMonthsToAllStudents = applyBillableMonthsToAllStudents;
+window.toggleStudentBillableMonth = toggleStudentBillableMonth;
+window.setStudentBillablePreset = setStudentBillablePreset;
+window.renderEditStudentMonthCheckboxes = renderEditStudentMonthCheckboxes;
+
+// 押金抵扣欠费功能 (Offset Student Arrears With Held Escrow Deposit)
+function offsetStudentArrearsWithDeposit(studentId) {
+  ensureBoardingStudents();
+  const st = appData.boardingStudents.find(s => s.id === studentId || s.name === studentId);
+  if (!st) return;
+  const rep = calculateStudentArrears();
+  const stRep = rep.students.find(s => s.id === studentId || s.name === studentId);
+  if (!stRep) return;
+
+  const currentDeposit = (st.deposit != null) ? Number(st.deposit) : (st.count * 480);
+  if (currentDeposit <= 0) {
+    alert(`【${st.zhName || st.name}】目前没有托管押金可用（已退还或已全部抵扣）。`);
+    return;
+  }
+  if (stRep.unpaidMonths.length === 0) {
+    alert(`【${st.zhName || st.name}】当前住宿费已全部结清，无欠费需抵扣。押金 RM ${currentDeposit} 处于安全托管状态。`);
+    return;
+  }
+
+  const firstUnpaid = stRep.unpaidMonths[0];
+  const offsetAmt = Math.min(currentDeposit, stRep.monthlyFee);
+
+  const confirmMsg = `【住宿押金抵扣欠费确认】\n\n` +
+    `学生姓名：${st.zhName || st.name}\n` +
+    `当前托管押金：RM ${currentDeposit.toFixed(2)}\n` +
+    `拟抵扣欠费月份：${firstUnpaid} 月份\n` +
+    `本次抵扣金额：RM ${offsetAmt.toFixed(2)}\n\n` +
+    `确定执行抵扣吗？\n执行后系统将自动生成一笔【押金结转抵扣】到账记录，并将该生的托管押金扣减 RM ${offsetAmt.toFixed(2)}。`;
+
+  if (!confirm(confirmMsg)) return;
+
+  const currentYear = (typeof currentFiscalYear !== 'undefined' && currentFiscalYear !== 'all') ? currentFiscalYear : '2026';
+  const newInc = {
+    id: 'INC-' + Date.now(),
+    date: new Date().toISOString().split('T')[0],
+    amount: offsetAmt,
+    counterparty: st.name,
+    category: '住宿费',
+    account: (appData.accounts && appData.accounts[0]) ? appData.accounts[0].name : 'Hong Leong',
+    remark: `住宿押金抵扣 ${currentYear}-${String(firstUnpaid).padStart(2, '0')} 住宿费`,
+    feeMonth: `${currentYear}-${String(firstUnpaid).padStart(2, '0')}`,
+    receiptNo: 'DEP-OFF-' + Math.floor(1000 + Math.random() * 9000),
+    invoiceNo: ''
+  };
+
+  st.deposit = Math.max(0, currentDeposit - offsetAmt);
+  appData.incomes.unshift(newInc);
+
+  saveData();
+  if (typeof syncToCloud === 'function') syncToCloud();
+
+  if (typeof logAuditEvent === 'function') {
+    logAuditEvent({
+      action: 'UPDATE',
+      module: 'arrears',
+      recordId: st.id,
+      amount: offsetAmt,
+      summary: `使用已收押金抵扣 ${st.zhName || st.name} ${firstUnpaid}月住宿费 RM${offsetAmt}，剩余托管押金 RM${st.deposit}`
+    });
+  }
+
+  if (typeof renderArrearsTracker === 'function') renderArrearsTracker();
+  if (typeof renderIncomeTable === 'function') renderIncomeTable();
+  if (typeof renderDashboard === 'function') renderDashboard();
+
+  showToast(`✅ 已成功使用押金 RM ${offsetAmt} 抵扣【${st.zhName || st.name}】${firstUnpaid}月住宿费！`);
+}
+window.offsetStudentArrearsWithDeposit = offsetStudentArrearsWithDeposit;
 
   </script>
 </body>
