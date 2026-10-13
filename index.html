@@ -3,20 +3,35 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="default">
-  <meta name="apple-mobile-web-app-title" content="Voyage记账">
+  <meta name="description" content="Voyage Learning Center 财务收支记账管理系统 · 支持多年份记账 · 银行流水导入 · 住宿费收缴追踪">
   <meta name="theme-color" content="#059669">
-  <meta name="mobile-web-app-capable" content="yes">
-  <meta name="application-name" content="Voyage记账">
+  <meta name="background-color" content="#f8fafc">
+
+  <!-- Web App Manifest (PWA) -->
   <link rel="manifest" href="manifest.json">
-  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%22100%22 height=%22100%22 rx=%2222%22 fill=%22%23059669%22/><text y=%2268%22 font-size=%2260%22 x=%2250%22 text-anchor=%22middle%22>💰</text></svg>">
-  <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%22100%22 height=%22100%22 rx=%2222%22 fill=%22%23059669%22/><text y=%2268%22 font-size=%2260%22 x=%2250%22 text-anchor=%22middle%22>💰</text></svg>">
+
+  <!-- Favicon & HD App Icons -->
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+  <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
+  <link rel="icon" type="image/png" sizes="512x512" href="icon-512.png">
+  <link rel="shortcut icon" href="favicon.ico">
+
+  <!-- Android & Samsung Internet Capabilities -->
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="application-name" content="Voyage 财务收支记账">
+
+  <!-- iOS & iPadOS Capabilities -->
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Voyage">
+  <link rel="apple-touch-icon" href="apple-touch-icon.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
+
   <script id="voyage-ota-bootloader">
     (function() {
       try {
-        var expectedVersion = '2026.3.50';
-        var baseBuildTime = 1790994457803;
+        var expectedVersion = '2026.3.52';
+        var baseBuildTime = 1791890000000;
         var cachedBundle = localStorage.getItem('voyage_finance_cached_bundle');
         var cachedVersion = localStorage.getItem('voyage_finance_cached_version');
         var cachedTime = parseInt(localStorage.getItem('voyage_finance_cached_time') || '0', 10);
@@ -47,6 +62,14 @@
     })();
   </script>
   <style>
+    html, body {
+      touch-action: manipulation;
+      -webkit-tap-highlight-color: transparent;
+      overscroll-behavior-y: none;
+    }
+    button, a, input, select, textarea {
+      touch-action: manipulation;
+    }
     .pt-safe-top {
       padding-top: max(16px, env(safe-area-inset-top, 16px));
     }
@@ -171,18 +194,23 @@
           </div>
         </div>
 
-        <div class="flex items-center space-x-2">
+        <div class="flex items-center space-x-1.5">
+          <!-- Mobile PWA Install Pill -->
+          <button type="button" onclick="triggerPwaInstallPrompt()" id="mobilePwaInstallBtn" title="安装为独立应用" class="inline-flex items-center px-2 py-1 text-[11px] font-semibold rounded-full bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-200 shadow-2xs active:scale-95 transition mr-0.5">
+            <span id="mobilePwaDot" class="w-1.5 h-1.5 rounded-full bg-emerald-500 mr-1 animate-pulse"></span>
+            <span id="mobilePwaText">📲 安装App</span>
+          </button>
           <!-- Mobile Cloud Sync Pill -->
-          <button type="button" onclick="handleGdrivePillClick(event)" id="mobileGdriveSyncBtn" title="Google Drive 自动备份" class="inline-flex items-center px-2 py-1 text-[11px] font-semibold rounded-full bg-blue-50 hover:bg-blue-100 text-blue-800 border border-blue-200 shadow-2xs active:scale-95 transition mr-1.5">
+          <button type="button" onclick="handleGdrivePillClick(event)" id="mobileGdriveSyncBtn" title="Google Drive 自动备份" class="inline-flex items-center px-2 py-1 text-[11px] font-semibold rounded-full bg-blue-50 hover:bg-blue-100 text-blue-800 border border-blue-200 shadow-2xs active:scale-95 transition">
             <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 mr-1"></span>
             <span>GDrive 备份</span>
           </button>
-          <button type="button" onclick="handleCloudSyncPillClick(event)" id="mobileCloudSyncBtn" title="点击立即与云端双向同步" class="inline-flex items-center px-2.5 py-1.5 text-xs font-semibold rounded-full bg-slate-50 hover:bg-slate-100 text-slate-700 border border-slate-200 shadow-2xs active:scale-95 transition">
-            <span id="mobileCloudSyncDot" class="w-2 h-2 rounded-full bg-emerald-500 mr-1.5 animate-pulse"></span>
-            <span id="mobileCloudSyncText" class="text-[11px]">已同步</span>
+          <button type="button" onclick="handleCloudSyncPillClick(event)" id="mobileCloudSyncBtn" title="点击立即与云端双向同步" class="inline-flex items-center px-2 py-1 text-[11px] font-semibold rounded-full bg-slate-50 hover:bg-slate-100 text-slate-700 border border-slate-200 shadow-2xs active:scale-95 transition">
+            <span id="mobileCloudSyncDot" class="w-1.5 h-1.5 rounded-full bg-emerald-500 mr-1 animate-pulse"></span>
+            <span id="mobileCloudSyncText">已同步</span>
           </button>
           <!-- Mobile Settings Button -->
-          <button type="button" onclick="openCloudSyncModal()" class="w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 flex items-center justify-center text-slate-600 active:scale-95 transition text-sm" title="云端多端同步设置">
+          <button type="button" onclick="openCloudSyncModal()" class="w-7 h-7 rounded-full bg-slate-100 hover:bg-slate-200 flex items-center justify-center text-slate-600 active:scale-95 transition text-xs" title="云端多端同步设置">
             ⚙️
           </button>
         </div>
@@ -211,58 +239,68 @@
                   <option value="all">历年全部汇总</option>
                 </select>
               </div>
-              <span class="hidden md:inline-block bg-emerald-100 text-emerald-800 text-[11px] px-2 py-0.5 rounded-full font-bold">通用网页版</span>
+              <span id="pwaBadge" class="hidden md:inline-block bg-emerald-100 text-emerald-800 text-[11px] px-2 py-0.5 rounded-full font-bold border border-emerald-300">📲 PWA 独立版</span>
             </div>
             <p class="text-xs text-slate-400 hidden sm:block">VOYAGE LEARNING CENTER · 支持多年份记账 · 银行流水 PDF 导入 · 住宿费收缴追踪</p>
           </div>
         </div>
 
         <!-- Quick Actions & Status -->
-        <div class="flex items-center space-x-2 sm:space-x-2.5">
+        <div class="flex items-center space-x-1.5 sm:space-x-2 lg:space-x-2.5 flex-nowrap flex-shrink-0">
+          <!-- Realtime Offline Warning Pill -->
+          <span id="globalOfflinePill" class="hidden inline-flex items-center px-2 py-1 text-xs font-bold rounded-lg bg-amber-100 text-amber-900 border border-amber-300 animate-pulse flex-shrink-0" title="当前处于断网/离线状态，所有记账保存在本地，恢复联网后自动同步云端">
+            📡 离线本地
+          </span>
+
           <!-- Cloud Sync Status Pill & Modal Trigger -->
-          <button onclick="handleCloudSyncPillClick(event)" id="cloudSyncStatusBtn" title="点击立即与云端同步最新数据" class="inline-flex items-center px-2.5 sm:px-3 py-1.5 sm:py-2 text-xs font-medium rounded-lg border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 transition shadow-sm focus:outline-none ring-2 ring-emerald-500/10">
+          <button onclick="handleCloudSyncPillClick(event)" id="cloudSyncStatusBtn" title="点击立即与云端同步最新数据" class="inline-flex items-center px-2 sm:px-2.5 lg:px-3 py-1.5 sm:py-2 text-xs font-medium rounded-lg border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 transition shadow-sm focus:outline-none ring-2 ring-emerald-500/10 flex-shrink-0">
             <span id="cloudSyncDot" class="w-2 h-2 rounded-full bg-amber-400 mr-1.5"></span>
             <span id="cloudSyncText">🟡 离线模式</span>
           </button>
 
-          <!-- Bank Statement Import Button -->
           <!-- Google Drive Auto-Backup Status Pill & Trigger -->
-          <button onclick="handleGdrivePillClick(event)" id="gdriveSyncStatusBtn" title="Google Drive 实时自动备份状态与管理" class="inline-flex items-center px-2.5 sm:px-3 py-1.5 sm:py-2 text-xs font-semibold rounded-lg border border-blue-200 bg-blue-50/80 hover:bg-blue-100 text-blue-800 transition shadow-2xs focus:outline-none ring-2 ring-blue-500/10">
+          <button onclick="handleGdrivePillClick(event)" id="gdriveSyncStatusBtn" title="Google Drive 实时自动备份状态与管理" class="inline-flex items-center px-2 sm:px-2.5 lg:px-3 py-1.5 sm:py-2 text-xs font-semibold rounded-lg border border-blue-200 bg-blue-50/80 hover:bg-blue-100 text-blue-800 transition shadow-2xs focus:outline-none ring-2 ring-blue-500/10 flex-shrink-0">
             <span id="gdriveSyncDot" class="w-2 h-2 rounded-full bg-emerald-500 mr-1.5"></span>
             <span id="gdriveSyncText">☁️ GDrive 备份</span>
           </button>
 
-          <button onclick="switchTab('statement')" class="inline-flex items-center px-3 sm:px-3.5 py-2 text-xs sm:text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-lg shadow-sm transition-all focus:outline-none ring-2 ring-blue-500/20">
-            <svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <!-- PWA Install / Standalone Status Pill -->
+          <button onclick="triggerPwaInstallPrompt()" id="pwaInstallBtn" title="安装为独立应用 (PWA) 到三星平板 / 手机 / 电脑" class="inline-flex items-center px-2 sm:px-2.5 lg:px-3 py-1.5 sm:py-2 text-xs font-semibold rounded-lg border border-emerald-200 bg-emerald-50 hover:bg-emerald-100 text-emerald-800 transition shadow-2xs focus:outline-none ring-2 ring-emerald-500/20 active:scale-95 flex-shrink-0">
+            <span id="pwaStatusDot" class="w-2 h-2 rounded-full bg-emerald-500 mr-1.5 animate-pulse"></span>
+            <span id="pwaInstallText">📲 <span class="hidden xl:inline">安装到</span>平板/应用</span>
+          </button>
+
+          <button onclick="switchTab('statement')" class="inline-flex items-center px-2.5 sm:px-3.5 py-1.5 sm:py-2 text-xs sm:text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-lg shadow-sm transition-all focus:outline-none ring-2 ring-blue-500/20 flex-shrink-0">
+            <svg class="w-4 h-4 mr-1 sm:mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.5L19 7.5V19a2 2 0 01-2 2z"></path>
             </svg>
-            <span>导入银行流水 PDF</span>
+            <span><span class="hidden sm:inline">导入</span>银行流水</span>
           </button>
 
           <!-- Batch Receipt Scan Button -->
-          <button onclick="triggerBatchReceiptUpload()" class="inline-flex items-center px-2.5 sm:px-3 py-2 text-xs sm:text-sm font-semibold text-white bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 rounded-lg shadow-sm transition-all focus:outline-none ring-2 ring-purple-500/20">
-            <svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <button onclick="triggerBatchReceiptUpload()" class="inline-flex items-center px-2 sm:px-3 py-1.5 sm:py-2 text-xs sm:text-sm font-semibold text-white bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 rounded-lg shadow-sm transition-all focus:outline-none ring-2 ring-purple-500/20 flex-shrink-0">
+            <svg class="w-4 h-4 mr-1 sm:mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
             </svg>
             <span>📸 批量识单</span>
           </button>
 
           <!-- OCR Scan Button -->
-          <button onclick="openScanReceiptModal()" class="inline-flex items-center px-3 sm:px-3 py-2 text-xs sm:text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 rounded-lg shadow-sm transition-all focus:outline-none ring-2 ring-indigo-500/20">
-            <svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <button onclick="openScanReceiptModal()" class="inline-flex items-center px-2 sm:px-3 py-1.5 sm:py-2 text-xs sm:text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 rounded-lg shadow-sm transition-all focus:outline-none ring-2 ring-indigo-500/20 flex-shrink-0">
+            <svg class="w-4 h-4 mr-1 sm:mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"></path>
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"></path>
             </svg>
-            <span>扫单记账</span>
+            <span>扫单<span class="hidden sm:inline">记账</span></span>
           </button>
 
-          <button onclick="openModal('incomeModal')" class="inline-flex items-center px-3 py-2 text-xs sm:text-sm font-medium text-white bg-emerald-600 hover:bg-emerald-700 rounded-lg shadow-sm transition-all focus:outline-none">
+          <button onclick="openModal('incomeModal')" class="inline-flex items-center px-2.5 sm:px-3 py-1.5 sm:py-2 text-xs sm:text-sm font-medium text-white bg-emerald-600 hover:bg-emerald-700 rounded-lg shadow-sm transition-all focus:outline-none flex-shrink-0">
             <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
             </svg>
             <span>记收入</span>
           </button>
-          <button onclick="openModal('expenseModal')" class="inline-flex items-center px-3 py-2 text-xs sm:text-sm font-medium text-white bg-rose-600 hover:bg-rose-700 rounded-lg shadow-sm transition-all focus:outline-none">
+          <button onclick="openModal('expenseModal')" class="inline-flex items-center px-2.5 sm:px-3 py-1.5 sm:py-2 text-xs sm:text-sm font-medium text-white bg-rose-600 hover:bg-rose-700 rounded-lg shadow-sm transition-all focus:outline-none flex-shrink-0">
             <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 12H4"></path>
             </svg>
@@ -272,37 +310,37 @@
       </div>
 
       <!-- Navigation Tabs -->
-      <nav class="hidden md:flex space-x-7 -mb-px overflow-x-auto text-sm">
-        <button onclick="switchTab('dashboard')" id="tab-dashboard" class="tab-link tab-active py-3 px-1 border-b-2 font-medium flex items-center space-x-2">
+      <nav class="hidden md:flex space-x-4 lg:space-x-7 -mb-px overflow-x-auto text-sm flex-nowrap whitespace-nowrap pb-0.5">
+        <button onclick="switchTab('dashboard')" id="tab-dashboard" class="tab-link tab-active py-3 px-1 border-b-2 font-medium flex items-center space-x-2 flex-shrink-0">
           <span>📊 财务看板</span>
         </button>
-        <button onclick="switchTab('statement')" id="tab-statement" class="tab-link text-slate-500 hover:text-slate-700 py-3 px-1 border-b-2 border-transparent font-medium flex items-center space-x-2">
+        <button onclick="switchTab('statement')" id="tab-statement" class="tab-link text-slate-500 hover:text-slate-700 py-3 px-1 border-b-2 border-transparent font-medium flex items-center space-x-2 flex-shrink-0">
           <span>📄 银行流水导入</span>
           <span class="bg-blue-100 text-blue-800 text-[10px] px-1.5 py-0.5 rounded-full font-bold">PDF</span>
         </button>
-        <button onclick="switchTab('income')" id="tab-income" class="tab-link text-slate-500 hover:text-slate-700 py-3 px-1 border-b-2 border-transparent font-medium flex items-center space-x-2">
+        <button onclick="switchTab('income')" id="tab-income" class="tab-link text-slate-500 hover:text-slate-700 py-3 px-1 border-b-2 border-transparent font-medium flex items-center space-x-2 flex-shrink-0">
           <span>💰 收入明细</span>
           <span id="navIncomeBadge" class="bg-emerald-100 text-emerald-800 text-xs px-2 py-0.5 rounded-full font-semibold">0</span>
         </button>
-        <button onclick="switchTab('expense')" id="tab-expense" class="tab-link text-slate-500 hover:text-slate-700 py-3 px-1 border-b-2 border-transparent font-medium flex items-center space-x-2">
+        <button onclick="switchTab('expense')" id="tab-expense" class="tab-link text-slate-500 hover:text-slate-700 py-3 px-1 border-b-2 border-transparent font-medium flex items-center space-x-2 flex-shrink-0">
           <span>🛒 支出明细</span>
           <span id="navExpenseBadge" class="bg-rose-100 text-rose-800 text-xs px-2 py-0.5 rounded-full font-semibold">0</span>
         </button>
                 
-        <button onclick="switchTab('arrears')" id="tab-arrears" class="tab-link text-slate-500 hover:text-slate-700 py-3 px-1 border-b-2 border-transparent font-medium flex items-center space-x-1.5 relative">
+        <button onclick="switchTab('arrears')" id="tab-arrears" class="tab-link text-slate-500 hover:text-slate-700 py-3 px-1 border-b-2 border-transparent font-medium flex items-center space-x-1.5 relative flex-shrink-0">
           <span>🏠 住宿欠费清查</span>
           <span id="navArrearsBadge" class="bg-rose-500 text-white text-[10px] px-1.5 py-0.5 rounded-full font-bold shadow-sm">0人欠费</span>
         </button>
-        <button onclick="switchTab('monthly')" id="tab-monthly" class="tab-link text-slate-500 hover:text-slate-700 py-3 px-1 border-b-2 border-transparent font-medium flex items-center space-x-2">
+        <button onclick="switchTab('monthly')" id="tab-monthly" class="tab-link text-slate-500 hover:text-slate-700 py-3 px-1 border-b-2 border-transparent font-medium flex items-center space-x-2 flex-shrink-0">
           <span>📅 月度收支统计</span>
         </button>
-        <button onclick="switchTab('accounts')" id="tab-accounts" class="tab-link text-slate-500 hover:text-slate-700 py-3 px-1 border-b-2 border-transparent font-medium flex items-center space-x-2">
+        <button onclick="switchTab('accounts')" id="tab-accounts" class="tab-link text-slate-500 hover:text-slate-700 py-3 px-1 border-b-2 border-transparent font-medium flex items-center space-x-2 flex-shrink-0">
           <span>🏦 账户与分类</span>
         </button>
-        <button onclick="switchTab('settings')" id="tab-settings" class="tab-link text-slate-500 hover:text-slate-700 py-3 px-1 border-b-2 border-transparent font-medium flex items-center space-x-2">
+        <button onclick="switchTab('settings')" id="tab-settings" class="tab-link text-slate-500 hover:text-slate-700 py-3 px-1 border-b-2 border-transparent font-medium flex items-center space-x-2 flex-shrink-0">
           <span>⚙️ 数据与 AI 设置</span>
         </button>
-        <button onclick="switchTab('audit')" id="tab-audit" class="tab-link text-slate-500 hover:text-slate-700 py-3 px-1 border-b-2 border-transparent font-medium flex items-center space-x-1.5 relative">
+        <button onclick="switchTab('audit')" id="tab-audit" class="tab-link text-slate-500 hover:text-slate-700 py-3 px-1 border-b-2 border-transparent font-medium flex items-center space-x-1.5 relative flex-shrink-0">
           <span>📋 审计追踪</span>
           <span id="navAuditBadge" class="bg-indigo-100 text-indigo-700 text-[10px] px-1.5 py-0.5 rounded-full font-bold">0</span>
         </button>
@@ -671,7 +709,12 @@
 
         <!-- Filter Summary stats -->
         <div class="flex items-center justify-between text-xs bg-slate-50 px-3 py-2 rounded-lg border border-slate-200/60">
-          <div>当前筛选符合：<span id="filteredIncomeCount" class="font-bold text-slate-900">0</span> 笔记录</div>
+          <div class="flex items-center space-x-3">
+            <div>当前筛选符合：<span id="filteredIncomeCount" class="font-bold text-slate-900">0</span> 笔记录</div>
+            <button onclick="resetIncomeFilters()" class="text-[11px] text-slate-500 hover:text-emerald-700 font-medium underline flex items-center space-x-1 cursor-pointer" title="清空日期、分类与搜索关键字并展示当前年度全部记录">
+              <span>🔄 清空重置</span>
+            </button>
+          </div>
           <div>当前筛选总金额：<span id="filteredIncomeSum" class="font-bold text-emerald-600 text-sm">RM 0.00</span></div>
         </div>
       </div>
@@ -764,7 +807,12 @@
 
         <!-- Filter Summary stats -->
         <div class="flex items-center justify-between text-xs bg-slate-50 px-3 py-2 rounded-lg border border-slate-200/60">
-          <div>当前筛选符合：<span id="filteredExpenseCount" class="font-bold text-slate-900">0</span> 笔记录</div>
+          <div class="flex items-center space-x-3">
+            <div>当前筛选符合：<span id="filteredExpenseCount" class="font-bold text-slate-900">0</span> 笔记录</div>
+            <button onclick="resetExpenseFilters()" class="text-[11px] text-slate-500 hover:text-rose-700 font-medium underline flex items-center space-x-1 cursor-pointer" title="清空日期、分类与搜索关键字并展示当前年度全部支出">
+              <span>🔄 清空重置</span>
+            </button>
+          </div>
           <div>当前筛选总金额：<span id="filteredExpenseSum" class="font-bold text-rose-600 text-sm">RM 0.00</span></div>
         </div>
       </div>
@@ -1380,6 +1428,54 @@
                 <input type="file" id="importJsonInput" accept=".json" class="hidden" onchange="handleImportJSON(event)">
                 <button onclick="document.getElementById('importJsonInput').click()" class="px-4 py-2 border border-slate-300 text-slate-700 hover:bg-slate-100 rounded-lg text-xs font-medium transition-all">
                   选择备份文件
+                </button>
+              </div>
+            </div>
+
+            <!-- PWA Application & Tablet Installation Section -->
+            <div class="p-5 rounded-2xl bg-gradient-to-r from-emerald-50/90 via-teal-50/80 to-slate-50 border-2 border-emerald-300 ring-2 ring-emerald-500/15 space-y-4">
+              <div class="flex flex-col sm:flex-row sm:items-start justify-between gap-3">
+                <div class="flex items-start space-x-3.5">
+                  <div class="w-11 h-11 rounded-2xl bg-gradient-to-tr from-emerald-600 to-teal-500 text-white flex items-center justify-center text-2xl shadow-md shadow-emerald-500/25 flex-shrink-0">
+                    📱
+                  </div>
+                  <div>
+                    <div class="flex items-center space-x-2">
+                      <h4 class="text-sm font-bold text-slate-900">PWA 独立渐进式应用 (三星平板 & 手机原生体验)</h4>
+                      <span id="settingsPwaBadge" class="text-[10px] bg-emerald-100 text-emerald-900 border border-emerald-300 px-2 py-0.5 rounded-full font-bold">● PWA 就绪</span>
+                    </div>
+                    <p class="text-xs text-slate-600 mt-1.5 leading-relaxed">
+                      已配置标准化 Web App Manifest 与 Service Worker 离线外壳。安装后享受<b>无浏览器地址栏、无标签页、全屏触控</b>的原生 App 沉浸体验，并深度适配三星 Galaxy Tab 横竖屏触控。
+                    </p>
+                  </div>
+                </div>
+                <div class="flex items-center space-x-2 flex-shrink-0 ml-14 sm:ml-0">
+                  <button type="button" onclick="triggerPwaInstallPrompt()" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold shadow-sm transition flex items-center space-x-1.5 active:scale-95 cursor-pointer">
+                    <span>📲</span>
+                    <span id="settingsPwaBtnText">安装为独立 App</span>
+                  </button>
+                </div>
+              </div>
+
+              <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5 pt-1 text-xs">
+                <div class="p-2.5 bg-white/90 border border-emerald-200/80 rounded-xl space-y-1">
+                  <div class="text-[10px] text-slate-400 font-bold uppercase">运行模式</div>
+                  <div id="settingsPwaModeText" class="font-bold text-emerald-800 text-[11px]">检测中...</div>
+                </div>
+                <div class="p-2.5 bg-white/90 border border-emerald-200/80 rounded-xl space-y-1">
+                  <div class="text-[10px] text-slate-400 font-bold uppercase">Service Worker</div>
+                  <div id="settingsPwaSwText" class="font-bold text-emerald-800 text-[11px]">🟢 v2026.3.52 运行中</div>
+                </div>
+                <div class="p-2.5 bg-white/90 border border-emerald-200/80 rounded-xl space-y-1">
+                  <div class="text-[10px] text-slate-400 font-bold uppercase">数据安全策略</div>
+                  <div class="font-bold text-slate-700 text-[11px]">🔒 核心流水严禁离线缓存</div>
+                </div>
+              </div>
+
+              <div class="pt-1 flex flex-col sm:flex-row sm:items-center justify-between text-xs text-slate-500 gap-2">
+                <span>提示：若此前主屏幕已有名为 Voyage 的旧网页快捷方式，长按将其删除后再重新安装即可。</span>
+                <button type="button" onclick="openPwaInstallGuideModal()" class="text-emerald-700 hover:text-emerald-800 font-bold underline flex-shrink-0 cursor-pointer">
+                  查看安装与排错详细指引 ➔
                 </button>
               </div>
             </div>
@@ -2430,12 +2526,28 @@
 
 
   <!-- Receipt Image Fullscreen Lightbox Modal -->
-  <div id="receiptImageLightbox" class="fixed inset-0 bg-slate-900/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden" onclick="closeLightbox()">
-    <div class="relative max-w-3xl w-full max-h-[90vh] flex flex-col items-center" onclick="event.stopPropagation()">
-      <div class="w-full flex justify-end pb-2">
-        <button onclick="closeLightbox()" class="text-white hover:text-slate-300 text-2xl font-bold bg-slate-800/80 rounded-full w-8 h-8 flex items-center justify-center">&times;</button>
+  <div id="receiptImageLightbox" class="fixed inset-0 bg-slate-950/85 backdrop-blur-md z-50 flex items-center justify-center p-3 sm:p-5 hidden" onclick="closeLightbox()" tabindex="-1">
+    <div class="relative max-w-4xl w-full max-h-[95vh] flex flex-col items-center" onclick="event.stopPropagation()">
+      <!-- Toolbar -->
+      <div class="w-full flex items-center justify-between pb-3 px-1">
+        <div class="flex items-center space-x-2 text-white/90 text-xs font-semibold">
+          <span class="w-2 h-2 rounded-full bg-emerald-400"></span>
+          <span>单据凭证照片预览</span>
+        </div>
+        <div class="flex items-center space-x-2">
+          <button onclick="rotateLightboxImage(90)" class="inline-flex items-center px-3 py-1.5 bg-slate-800/90 hover:bg-slate-700 text-white rounded-lg text-xs font-medium transition shadow border border-slate-700 cursor-pointer" title="向右顺时针旋转90度">
+            <span>🔄 旋转 90°</span>
+          </button>
+          <button onclick="downloadLightboxImage()" class="inline-flex items-center px-3 py-1.5 bg-indigo-600/90 hover:bg-indigo-500 text-white rounded-lg text-xs font-medium transition shadow border border-indigo-500 cursor-pointer" title="下载原图到本地">
+            <span>💾 保存原图</span>
+          </button>
+          <button onclick="closeLightbox()" class="text-white hover:text-slate-200 text-xl font-bold bg-slate-800/90 hover:bg-slate-700 rounded-lg w-8 h-8 flex items-center justify-center border border-slate-700 transition cursor-pointer" title="关闭预览 (ESC)">&times;</button>
+        </div>
       </div>
-      <img id="lightboxImg" src="" alt="凭证照片大图" class="max-w-full max-h-[80vh] object-contain rounded-xl shadow-2xl bg-white">
+      <!-- Image Display Area -->
+      <div class="w-full max-h-[82vh] overflow-hidden flex items-center justify-center rounded-2xl bg-slate-900/40 p-2 border border-slate-800/80 shadow-2xl">
+        <img id="lightboxImg" src="" alt="凭证照片大图" class="max-w-full max-h-[78vh] object-contain rounded-xl shadow-2xl bg-white/5 transition-transform duration-300">
+      </div>
     </div>
   </div>
 
@@ -3146,6 +3258,104 @@ alter publication supabase_realtime add table finance_store;</pre>
 
 
 
+
+  <!-- PWA Install Guide & Tablet Standalone Modal -->
+  <div id="pwaInstallModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+    <div class="bg-white rounded-3xl max-w-xl w-full p-6 sm:p-7 shadow-2xl border border-slate-100 space-y-5 animate-scaleIn max-h-[90vh] overflow-y-auto">
+      <!-- Modal Header -->
+      <div class="flex items-start justify-between pb-3 border-b border-slate-100">
+        <div class="flex items-center space-x-3.5">
+          <div class="w-12 h-12 rounded-2xl bg-gradient-to-tr from-emerald-600 to-teal-500 text-white flex items-center justify-center shadow-md shadow-emerald-500/25 text-2xl flex-shrink-0">
+            📲
+          </div>
+          <div>
+            <h3 class="text-lg font-bold text-slate-900 tracking-tight">安装 Voyage 为独立应用 (PWA)</h3>
+            <p class="text-xs text-slate-500">免去浏览器地址栏、标签页干扰，体验原生平板 / 手机 App 般流畅全屏操作</p>
+          </div>
+        </div>
+        <button onclick="closePwaInstallGuideModal()" class="w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-500 flex items-center justify-center font-bold text-sm transition cursor-pointer">
+          ✕
+        </button>
+      </div>
+
+      <!-- Current Mode Status Box -->
+      <div id="pwaModalCurrentStatusBox" class="p-4 rounded-2xl bg-slate-50 border border-slate-200 space-y-2">
+        <div class="flex items-center justify-between text-xs">
+          <span class="font-bold text-slate-700">当前运行模式：</span>
+          <span id="pwaModalModeBadge" class="px-2.5 py-1 rounded-full font-bold bg-amber-100 text-amber-800 border border-amber-300">🌐 网页浏览器模式</span>
+        </div>
+        <div class="flex items-center justify-between text-xs">
+          <span class="font-bold text-slate-700">Service Worker 离线引擎：</span>
+          <span class="px-2.5 py-1 rounded-full font-bold bg-emerald-100 text-emerald-800 border border-emerald-300">🟢 v2026.3.52 已激活就绪</span>
+        </div>
+        <div class="flex items-center justify-between text-xs">
+          <span class="font-bold text-slate-700">离线缓存安全等级：</span>
+          <span class="text-slate-600">严格安全隔离（财务记录与 Token 严禁缓存）</span>
+        </div>
+      </div>
+
+      <!-- One-Click Install Action Button -->
+      <div id="pwaModalActionSection" class="text-center pt-1">
+        <button id="pwaModalPromptBtn" onclick="triggerPwaInstallPrompt()" class="w-full py-3.5 px-6 rounded-2xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white font-bold text-sm shadow-lg shadow-emerald-600/25 active:scale-98 transition flex items-center justify-center space-x-2 cursor-pointer">
+          <span>📲</span>
+          <span id="pwaModalBtnText">一键安装到三星平板 / 手机 / 电脑</span>
+        </button>
+        <p class="text-[11px] text-slate-400 mt-2">支持 Samsung Galaxy Tab、Android Chrome、Samsung Internet、Windows 与 iPad</p>
+      </div>
+
+      <!-- Tablet Installation Guides -->
+      <div class="space-y-3 pt-2">
+        <h4 class="text-xs font-bold text-slate-700 uppercase tracking-wider flex items-center space-x-1.5">
+          <span>📋</span>
+          <span>三星平板 (Samsung Tablet) 安装与移除旧图标指南</span>
+        </h4>
+
+        <!-- Samsung Internet Guide -->
+        <div class="p-3.5 rounded-xl bg-purple-50/70 border border-purple-200/80 space-y-2 text-xs">
+          <div class="flex items-center space-x-2 font-bold text-purple-900">
+            <span>🌐</span>
+            <span>三星浏览器 (Samsung Internet)</span>
+          </div>
+          <ol class="list-decimal list-inside space-y-1 text-purple-800 text-[11px] leading-relaxed">
+            <li>在三星平板中打开本网址，点击地址栏最右侧的<b>「⬇️ 下载/安装图标」</b>（或点击右下角 <b>☰ 菜单</b>）。</li>
+            <li>选择<b>「添加网页到 (Add page to)」</b> ➔ <b>「应用屏幕 (App screen)」</b>或「主屏幕」。</li>
+            <li>确认安装后，三星 One UI 会自动构建专属 <b>WebAPK</b>，生成 Voyage 高清应用图标。</li>
+          </ol>
+        </div>
+
+        <!-- Google Chrome Guide -->
+        <div class="p-3.5 rounded-xl bg-blue-50/70 border border-blue-200/80 space-y-2 text-xs">
+          <div class="flex items-center space-x-2 font-bold text-blue-900">
+            <span>🌍</span>
+            <span>谷歌浏览器 (Google Chrome)</span>
+          </div>
+          <ol class="list-decimal list-inside space-y-1 text-blue-800 text-[11px] leading-relaxed">
+            <li>点击 Chrome 右上角的 <b>「⋮」菜单</b>。</li>
+            <li>在菜单中点击<b>「安装应用 (Install app)」</b>或「添加到主屏幕」。</li>
+            <li>点击「安装」，应用即被添加至三星平板应用抽屉，以独立无边框窗口启动！</li>
+          </ol>
+        </div>
+
+        <!-- Remove Old Shortcut Guide -->
+        <div class="p-3.5 rounded-xl bg-amber-50/70 border border-amber-200/80 space-y-2 text-xs">
+          <div class="flex items-center space-x-2 font-bold text-amber-900">
+            <span>🗑️</span>
+            <span>如何移除旧的书签快捷方式？</span>
+          </div>
+          <p class="text-amber-800 text-[11px] leading-relaxed">
+            若之前在桌面添加过普通书签（右下角带有小浏览器标志），请在三星平板桌面上<b>长按旧图标</b> ➔ 点击<b>「移除 (Remove)」</b>即可。新安装的 PWA 具有纯净的 Voyage 专属圆形/方形图标，不再带任何浏览器角标。
+          </p>
+        </div>
+      </div>
+
+      <!-- Close Button -->
+      <div class="pt-2">
+        <button type="button" onclick="closePwaInstallGuideModal()" class="w-full py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold rounded-xl text-xs transition cursor-pointer">
+          关闭窗口
+        </button>
+      </div>
+    </div>
+  </div>
 
   <!-- Scripts -->
   <script>
@@ -9102,7 +9312,7 @@ let ocrSettings = {
 };
 
 // Application Version and OTA Release Timestamp
-window.VOYAGE_APP_VERSION = '2026.3.50';
+window.VOYAGE_APP_VERSION = '2026.3.52';
 window.VOYAGE_APP_BUILD_TIME = Date.now();
 
 // Multi-Year Financial State (2025, 2026, 2027, etc.)
@@ -9185,6 +9395,7 @@ function changeFiscalYear(newYear) {
   if (typeof renderExpenseTable === 'function') renderExpenseTable();
   if (typeof renderArrearsTracker === 'function') renderArrearsTracker();
   if (typeof updateArrearsBadge === 'function') updateArrearsBadge();
+  if (typeof renderAccountsAndCategories === 'function') renderAccountsAndCategories();
 
   showToast(`📅 已切换到【${currentFiscalYear === 'all' ? '历年全部汇总' : currentFiscalYear + ' 年度'}】账务视图`);
 }
@@ -9791,6 +10002,10 @@ function smartMergeCloudAndLocal(localData, cloudData) {
         let itemUpdated = false;
         ['feeMonth', 'counterparty', 'remark', 'amount', 'category', 'account', 'date', 'receiptImage', 'receiptNo', 'invoiceNo'].forEach(k => {
           if (inc[k] !== undefined && inc[k] !== localInc[k]) {
+            if (k === 'receiptImage' && !inc[k] && localInc[k]) {
+              hasLocalUnpushed = true;
+              return;
+            }
             localInc[k] = inc[k];
             itemUpdated = true;
           }
@@ -9832,6 +10047,10 @@ function smartMergeCloudAndLocal(localData, cloudData) {
         let itemUpdated = false;
         ['feeMonth', 'counterparty', 'remark', 'amount', 'category', 'account', 'date', 'item', 'time', 'receiptImage', 'receiptNo', 'invoiceNo'].forEach(k => {
           if (exp[k] !== undefined && exp[k] !== localExp[k]) {
+            if (k === 'receiptImage' && !exp[k] && localExp[k]) {
+              hasLocalUnpushed = true;
+              return;
+            }
             localExp[k] = exp[k];
             itemUpdated = true;
           }
@@ -10060,6 +10279,9 @@ async function pullFromCloud(isStartup = false, isUserInitiated = false) {
         renderAccountsAndCategories();
         if (typeof renderArrearsTracker === 'function') renderArrearsTracker();
         if (typeof updateArrearsBadge === 'function') updateArrearsBadge();
+        if (typeof updateAuditBadges === 'function') updateAuditBadges();
+        if (typeof renderDashboardAuditPreview === 'function') renderDashboardAuditPreview();
+        if (typeof renderAuditLogs === 'function' && currentTab === 'audit') renderAuditLogs();
         if (hasNewItemsFromCloud) {
           showToast('☁️ 检测到新账目，已自动完成多端实时同步！');
         } else if (hasNewDeletionsFromCloud) {
@@ -11988,13 +12210,22 @@ function generateFixedExpensesForMonth(targetMonth, targetAccount) {
   });
 
   if (added.length > 0) {
+    const totalGenAmt = added.reduce((s, x) => s + x.amount, 0);
+    logAuditEvent({
+      action: 'CREATE',
+      module: 'expense',
+      recordId: `FIXED-${monthStr}`,
+      summary: `自动生成 ${monthStr} 固定支出: ${added.length} 笔 (合计 RM ${totalGenAmt.toFixed(2)})`,
+      amount: totalGenAmt,
+      details: added.map(x => `${x.item}: RM ${x.amount} (${x.account})`).join('; ')
+    });
     saveData();
     renderDashboard();
     renderExpenseTable();
     renderMonthlyReport();
     if (supabaseClient) pushToCloud(false);
     renderFixedExpensesList();
-    showToast(`✅ 已成功为 ${monthStr} 生成 ${added.length} 笔固定支出（共 ${formatMoney(added.reduce((s, x) => s + x.amount, 0))}）！`);
+    showToast(`✅ 已成功为 ${monthStr} 生成 ${added.length} 笔固定支出（共 ${formatMoney(totalGenAmt)}）！`);
   } else {
     showToast(`ℹ️ ${monthStr} 的固定支出已全部存在，无需重复生成。`);
   }
@@ -12041,6 +12272,13 @@ function catchUpAll2026FixedExpenses() {
   });
 
   if (totalAdded > 0) {
+    logAuditEvent({
+      action: 'CREATE',
+      module: 'expense',
+      recordId: 'FIXED-2026-ALL',
+      summary: `一键补齐 2026 固定支出: ${totalAdded} 笔 (合计 RM ${totalAmount.toFixed(2)})`,
+      amount: totalAmount
+    });
     saveData();
     renderDashboard();
     renderExpenseTable();
@@ -12736,7 +12974,17 @@ function renderParsedStatementTable() {
     return;
   }
 
-  const monthOptions = ['2026-01','2026-02','2026-03','2026-04','2026-05','2026-06','2026-07','2026-08','2026-09','2026-10','2026-11','2026-12'];
+  const targetYr = (typeof currentFiscalYear !== 'undefined' && currentFiscalYear !== 'all') ? currentFiscalYear : '2026';
+  const monthOptions = [];
+  for (let m = 1; m <= 12; m++) {
+    monthOptions.push(`${targetYr}-${String(m).padStart(2, '0')}`);
+  }
+  if (targetYr === '2026') {
+    monthOptions.unshift('2025-12');
+    monthOptions.push('2027-01');
+  } else if (targetYr === '2025') {
+    monthOptions.push('2026-01');
+  }
 
   tbody.innerHTML = displayList.map((t, idx) => {
     if (!t.account) t.account = globalAcc;
@@ -13822,20 +14070,55 @@ function applyParsedDataToForm(data) {
   checkExpenseFormDuplicate();
 }
 
+let currentLightboxRotation = 0;
+
 function openLightbox(src) {
   if (!src) return;
   const box = document.getElementById('receiptImageLightbox');
   const img = document.getElementById('lightboxImg');
   if (box && img) {
+    currentLightboxRotation = 0;
+    img.style.transform = 'rotate(0deg)';
     img.src = src;
     box.classList.remove('hidden');
+  }
+}
+
+function rotateLightboxImage(deg = 90) {
+  currentLightboxRotation = (currentLightboxRotation + deg) % 360;
+  const img = document.getElementById('lightboxImg');
+  if (img) {
+    img.style.transition = 'transform 0.3s ease';
+    img.style.transform = `rotate(${currentLightboxRotation}deg)`;
+  }
+}
+
+function downloadLightboxImage() {
+  const img = document.getElementById('lightboxImg');
+  if (!img || !img.src) return;
+  const a = document.createElement('a');
+  a.href = img.src;
+  a.download = `Voyage_凭证单据_${Date.now()}.png`;
+  a.click();
+  if (typeof showToast === 'function') {
+    showToast('💾 正在保存单据凭证图片至本地设备');
   }
 }
 
 function closeLightbox() {
   const box = document.getElementById('receiptImageLightbox');
   if (box) box.classList.add('hidden');
+  currentLightboxRotation = 0;
+  const img = document.getElementById('lightboxImg');
+  if (img) {
+    img.style.transition = 'none';
+    img.style.transform = 'rotate(0deg)';
+  }
 }
+window.openLightbox = openLightbox;
+window.closeLightbox = closeLightbox;
+window.rotateLightboxImage = rotateLightboxImage;
+window.downloadLightboxImage = downloadLightboxImage;
 
 // =========================================================================
 // BATCH RECEIPT PHOTO IMPORT & SEQUENTIAL ENTRY WORKFLOW (多图批量导入 + 一一核对录入)
@@ -14350,6 +14633,15 @@ function saveCurrentBatchAndNext() {
     item.savedRecordId = record.id;
   }
 
+  logAuditEvent({
+    action: item.savedRecordId ? 'UPDATE' : 'CREATE',
+    module: 'expense',
+    recordId: record.id,
+    summary: `${item.savedRecordId ? '批量修改单据支出' : '批量录入单据支出'}: ${record.date} ${record.item || '-'} RM ${record.amount} (${record.category} / ${record.account})`,
+    amount: record.amount,
+    snapshot: record
+  });
+
   item.status = 'saved';
   saveData();
   renderDashboard();
@@ -14476,26 +14768,49 @@ function closeBatchCompleteModalAndShowDashboard() {
   switchTab('dashboard');
 }
 
-// CSV Exporter with BOM for UTF-8 Excel Compatibility
+// CSV Exporter with BOM for UTF-8 Excel Compatibility (Supports Multi-Year filtering)
 function exportTableToCSV(type) {
   let headers = [];
   let rows = [];
+  const yearTag = (typeof currentFiscalYear !== 'undefined' && currentFiscalYear !== 'all') ? currentFiscalYear : '历年全量';
+  const todayStr = new Date().toISOString().slice(0, 10);
   let filename = '';
 
+  const activeIncomes = (appData.incomes || []).filter(item => {
+    if (typeof currentFiscalYear !== 'undefined' && currentFiscalYear !== 'all') {
+      return item.date && item.date.startsWith(currentFiscalYear + '-');
+    }
+    return true;
+  });
+
+  const activeExpenses = (appData.expenses || []).filter(item => {
+    if (typeof currentFiscalYear !== 'undefined' && currentFiscalYear !== 'all') {
+      return item.date && item.date.startsWith(currentFiscalYear + '-');
+    }
+    return true;
+  });
+
   if (type === 'income') {
-    headers = ['日期', '收入类别', '收款账户', '金额(RM)', '交款人', '备注', 'Receipt No', 'Invoice No'];
-    rows = appData.incomes.map(i => [
-      i.date, i.category, i.account, i.amount, `"${(i.counterparty || '').replace(/"/g, '""')}"`,
-      `"${(i.remark || '').replace(/"/g, '""')}"`, i.receiptNo, i.invoiceNo
+    headers = ['日期', '收入类别', '收款账户', '金额(RM)', '交款人/客户', '交费归属月份', '备注说明', '收据单号', '发票单号'];
+    rows = activeIncomes.map(i => [
+      i.date || '', i.category || '', i.account || '', (Number(i.amount) || 0).toFixed(2),
+      `"${(i.counterparty || '').replace(/"/g, '""')}"`,
+      `"${(i.feeMonth || '').replace(/"/g, '""')}"`,
+      `"${(i.remark || '').replace(/"/g, '""')}"`,
+      `"${(i.receiptNo || '').replace(/"/g, '""')}"`,
+      `"${(i.invoiceNo || '').replace(/"/g, '""')}"`
     ]);
-    filename = '2026收入明细表.csv';
+    filename = `Voyage_${yearTag}收入明细表_${todayStr}.csv`;
   } else if (type === 'expense') {
-    headers = ['日期', '时间', '支出科目', '支付账户', '项目内容', '金额(RM)', '对方商家', '单号/备注'];
-    rows = appData.expenses.map(e => [
-      e.date, e.time || '', e.category, e.account, `"${(e.item || '').replace(/"/g, '""')}"`, e.amount,
-      `"${(e.counterparty || '').replace(/"/g, '""')}"`, `"${(e.remark || '').replace(/"/g, '""')}"`
+    headers = ['日期', '时间', '支出科目', '支付账户', '项目内容', '金额(RM)', '对方商家/收款方', '单据凭证', '单号/备注'];
+    rows = activeExpenses.map(e => [
+      e.date || '', e.time || '', e.category || '', e.account || '',
+      `"${(e.item || '').replace(/"/g, '""')}"`, (Number(e.amount) || 0).toFixed(2),
+      `"${(e.counterparty || '').replace(/"/g, '""')}"`,
+      e.receiptImage ? '有凭证照片' : '无凭证',
+      `"${(e.remark || '').replace(/"/g, '""')}"`
     ]);
-    filename = '2026支出明细表.csv';
+    filename = `Voyage_${yearTag}支出明细表_${todayStr}.csv`;
   }
 
   const csvContent = '\uFEFF' + [headers.join(','), ...rows.map(r => r.join(','))].join('\r\n');
@@ -14511,6 +14826,8 @@ function exportTableToCSV(type) {
 
 // Export Monthly Report CSV
 function exportMonthlyReportToCSV() {
+  const yearTag = (typeof currentFiscalYear !== 'undefined' && currentFiscalYear !== 'all') ? currentFiscalYear : '历年全量';
+  const todayStr = new Date().toISOString().slice(0, 10);
   const metrics = calculateMetrics();
   const headers = ['月份', '月度收入(RM)', '月度支出(RM)', '当月净差额(RM)'];
   const rows = metrics.monthly.map(m => [
@@ -14518,15 +14835,16 @@ function exportMonthlyReportToCSV() {
   ]);
   rows.push(['全年度合计', metrics.totalIncome.toFixed(2), metrics.totalExpense.toFixed(2), metrics.netProfit.toFixed(2)]);
 
+  const filename = `Voyage_${yearTag}月度收支统计表_${todayStr}.csv`;
   const csvContent = '\uFEFF' + [headers.join(','), ...rows.map(r => r.join(','))].join('\r\n');
   const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
   a.href = url;
-  a.download = '2026月度收支统计表.csv';
+  a.download = filename;
   a.click();
   URL.revokeObjectURL(url);
-  showToast('已导出 2026月度收支统计表.csv');
+  showToast(`已导出 ${filename}`);
 }
 
 // Export Complete JSON Backup
@@ -14536,11 +14854,40 @@ function exportCompleteDataJSON() {
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
   a.href = url;
-  a.download = `2026财务收支数据备份_${new Date().toISOString().slice(0, 10)}.json`;
+  a.download = `Voyage_财务系统全量备份_${new Date().toISOString().slice(0, 10)}.json`;
   a.click();
   URL.revokeObjectURL(url);
   showToast('已生成完整数据备份文件');
 }
+
+// Quick Reset Filter Helpers for Income & Expense
+function resetIncomeFilters() {
+  const s = document.getElementById('filterIncomeStartDate');
+  const e = document.getElementById('filterIncomeEndDate');
+  const c = document.getElementById('filterIncomeCategory');
+  const k = document.getElementById('filterIncomeKeyword');
+  if (s) s.value = '';
+  if (e) e.value = '';
+  if (c) c.value = '';
+  if (k) k.value = '';
+  if (typeof renderIncomeTable === 'function') renderIncomeTable();
+  if (typeof showToast === 'function') showToast('🔄 已清空收入筛选条件');
+}
+
+function resetExpenseFilters() {
+  const s = document.getElementById('filterExpenseStartDate');
+  const e = document.getElementById('filterExpenseEndDate');
+  const c = document.getElementById('filterExpenseCategory');
+  const k = document.getElementById('filterExpenseKeyword');
+  if (s) s.value = '';
+  if (e) e.value = '';
+  if (c) c.value = '';
+  if (k) k.value = '';
+  if (typeof renderExpenseTable === 'function') renderExpenseTable();
+  if (typeof showToast === 'function') showToast('🔄 已清空支出筛选条件');
+}
+window.resetIncomeFilters = resetIncomeFilters;
+window.resetExpenseFilters = resetExpenseFilters;
 
 // Import JSON Backup
 function handleImportJSON(event) {
@@ -15179,7 +15526,11 @@ function calculateStudentArrears(cutoffMonth = arrearsCutoffMonth, feePerPerson 
   const yearStr = (targetYear === 'all' || !targetYear) ? '2026' : String(targetYear);
   const year2Digit = yearStr.slice(-2);
 
-  const students = rawList.filter(st => st.active !== false).map(st => {
+  const students = rawList.filter(st => {
+    if (st.active !== false) return true;
+    if (yearStr === '2025' && (st.note || '').includes('2025')) return true;
+    return false;
+  }).map(st => {
     const monthlyFee = (st.fee != null && Number(st.fee) > 0) ? Number(st.fee) : (st.count * feePerPerson);
 
     // Billable months (default: 1..11, 12月 is EXEMPT)
@@ -16797,6 +17148,12 @@ function logAuditEvent({
   }
 
   updateAuditBadges();
+  if (typeof renderDashboardAuditPreview === 'function') {
+    try { renderDashboardAuditPreview(); } catch (e) {}
+  }
+  if (typeof renderAuditLogs === 'function') {
+    try { renderAuditLogs(); } catch (e) {}
+  }
   return entry;
 }
 
@@ -16806,6 +17163,8 @@ function updateAuditBadges() {
   if (navBadge) navBadge.textContent = count;
   const mobileBadge = document.getElementById('mobileMoreAuditBadge');
   if (mobileBadge) mobileBadge.textContent = count + '条日志';
+  const statBadge = document.getElementById('auditStatTotalCount');
+  if (statBadge) statBadge.textContent = count;
 }
 
 function setAuditTimeRange(range) {
@@ -16854,6 +17213,8 @@ function getModuleBadgeInfo(module) {
       return { label: '银行流水', icon: '📄', color: 'text-blue-700' };
     case 'arrears':
       return { label: '住宿欠费', icon: '🏠', color: 'text-amber-700' };
+    case 'roster':
+      return { label: '住宿名册与押金', icon: '🎓', color: 'text-indigo-700' };
     case 'system':
       return { label: '系统设置', icon: '⚙️', color: 'text-slate-700' };
     default:
@@ -18022,8 +18383,6 @@ function generateStandaloneHtmlBundle() {
   try {
     let html = document.documentElement.outerHTML;
     const cleanData = JSON.parse(JSON.stringify(appData));
-    (cleanData.incomes || []).forEach(i => { if (i.receiptImage && i.receiptImage.length > 500) i.receiptImage = ''; });
-    (cleanData.expenses || []).forEach(e => { if (e.receiptImage && e.receiptImage.length > 500) e.receiptImage = ''; });
 
     const dataStr = 'const INITIAL_FINANCE_DATA = ' + JSON.stringify(cleanData) + ';';
     html = html.replace(/const INITIAL_FINANCE_DATA\s*=\s*\{[\s\S]*?\};\s*/, dataStr + '\n');
@@ -18040,8 +18399,6 @@ function createMasterRecoveryJson() {
   if (!cleanData.boardingStudents || !cleanData.boardingStudents.length) {
     cleanData.boardingStudents = (typeof getBoardingStudents === 'function') ? getBoardingStudents(false) : DEFAULT_BOARDING_STUDENTS;
   }
-  (cleanData.incomes || []).forEach(i => { if (i.receiptImage && i.receiptImage.length > 500) i.receiptImage = ''; });
-  (cleanData.expenses || []).forEach(e => { if (e.receiptImage && e.receiptImage.length > 500) e.receiptImage = ''; });
 
   const now = new Date();
   return {
@@ -18496,6 +18853,342 @@ function offsetStudentArrearsWithDeposit(studentId) {
 }
 window.offsetStudentArrearsWithDeposit = offsetStudentArrearsWithDeposit;
 
-  </script>
+// =========================================================================
+// PROGRESSIVE WEB APP (PWA) & TABLET RUNTIME CONTROLLER (V2026.3.52)
+// Built for Samsung Galaxy Tablets, Android Chrome, and Samsung Internet
+// =========================================================================
+
+let deferredPwaInstallPrompt = null;
+window.deferredPwaInstallPrompt = null;
+
+function isAppInStandaloneMode() {
+  return window.matchMedia('(display-mode: standalone)').matches ||
+         window.matchMedia('(display-mode: minimal-ui)').matches ||
+         window.matchMedia('(display-mode: window-controls-overlay)').matches ||
+         window.navigator.standalone === true ||
+         document.referrer.includes('android-app://');
+}
+window.isAppInStandaloneMode = isAppInStandaloneMode;
+
+function registerVoyageServiceWorker() {
+  if ('serviceWorker' in navigator) {
+    if (window.location.protocol !== 'http:' && window.location.protocol !== 'https:') {
+      // Local file:// protocol does not support Service Workers in W3C spec
+      const swText = document.getElementById('settingsPwaSwText');
+      if (swText) swText.textContent = 'ℹ️ 本地静态模式 (部署至 GitHub Pages/服务器启用离线引擎)';
+      return;
+    }
+    window.addEventListener('load', () => {
+      // Relative path so it works seamlessly on GitHub Pages (/voyage/) and local/subpaths
+      navigator.serviceWorker.register('./sw.js', { scope: './' })
+        .then((reg) => {
+          console.log('[Voyage PWA] Service Worker registered successfully! Scope:', reg.scope);
+          
+          const swText = document.getElementById('settingsPwaSwText');
+          if (swText) swText.textContent = '🟢 v2026.3.52 激活运行中';
+
+          // Detect new waiting worker
+          if (reg.waiting) {
+            showPwaUpdateToast(reg);
+          }
+
+          reg.addEventListener('updatefound', () => {
+            const newWorker = reg.installing;
+            if (newWorker) {
+              newWorker.addEventListener('statechange', () => {
+                if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                  console.log('[Voyage PWA] New update ready');
+                  showPwaUpdateToast(reg);
+                }
+              });
+            }
+          });
+        })
+        .catch((err) => {
+          console.warn('[Voyage PWA] Service Worker registration failed:', err);
+          const swText = document.getElementById('settingsPwaSwText');
+          if (swText) swText.textContent = '⚠️ 未激活 (本地/非安全域)';
+        });
+    });
+
+    let swRefreshing = false;
+    navigator.serviceWorker.addEventListener('controllerchange', () => {
+      if (!swRefreshing) {
+        swRefreshing = true;
+        window.location.reload();
+      }
+    });
+  }
+}
+window.registerVoyageServiceWorker = registerVoyageServiceWorker;
+
+function initNetworkStatusMonitoring() {
+  const updateOnlineStatus = () => {
+    const isOnline = navigator.onLine;
+    const offlinePill = document.getElementById('globalOfflinePill');
+    const cloudSyncText = document.getElementById('cloudSyncText');
+    const cloudSyncDot = document.getElementById('cloudSyncDot');
+    
+    if (!isOnline) {
+      if (offlinePill) offlinePill.classList.remove('hidden');
+      if (cloudSyncText) cloudSyncText.textContent = '📡 离线本地模式';
+      if (cloudSyncDot) cloudSyncDot.className = 'w-2 h-2 rounded-full bg-amber-400 mr-1.5 animate-pulse';
+      if (typeof showToast === 'function') {
+        showToast('📡 当前处于离线状态，所有记账数据已完整保存在平板本地');
+      }
+    } else {
+      if (offlinePill) offlinePill.classList.add('hidden');
+      if (cloudSyncDot) cloudSyncDot.className = 'w-2 h-2 rounded-full bg-emerald-500 mr-1.5';
+      if (cloudSyncText) cloudSyncText.textContent = '☁️ 云端双向同步';
+      // Reconnected! Auto sync with Supabase
+      if (typeof pullFromCloud === 'function' && cloudSettings && cloudSettings.url && cloudSettings.key) {
+        pullFromCloud(false, false);
+      }
+    }
+  };
+
+  window.addEventListener('online', updateOnlineStatus);
+  window.addEventListener('offline', updateOnlineStatus);
+
+  // Keyboard shortcut: Escape to close modals and lightbox
+  window.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+      if (typeof closeLightbox === 'function') closeLightbox();
+      ['incomeModal', 'expenseModal', 'cloudSyncModal', 'gdriveSyncModal', 'pwaInstallModal', 'billableMonthsModal', 'scanReceiptModal', 'addStudentModal'].forEach(m => {
+        if (typeof closeModal === 'function') closeModal(m);
+      });
+    }
+  });
+
+  // Initial check
+  if (!navigator.onLine) {
+    setTimeout(updateOnlineStatus, 500);
+  }
+}
+window.initNetworkStatusMonitoring = initNetworkStatusMonitoring;
+
+function showPwaUpdateToast(registration) {
+  const existing = document.getElementById('pwaUpdateToast');
+  if (existing) existing.remove();
+
+  const toast = document.createElement('div');
+  toast.id = 'pwaUpdateToast';
+  toast.className = 'fixed bottom-20 md:bottom-6 right-4 sm:right-6 z-50 bg-slate-900 text-white px-5 py-3.5 rounded-2xl shadow-2xl border border-emerald-500/40 flex items-center space-x-3.5 animate-slideUp';
+  toast.innerHTML = `
+    <div class="w-8 h-8 rounded-xl bg-emerald-500/20 text-emerald-400 flex items-center justify-center font-bold text-base flex-shrink-0">
+      🚀
+    </div>
+    <div>
+      <div class="text-xs font-bold text-white">Voyage 系统有新版本可用</div>
+      <div class="text-[11px] text-slate-300">点击立即刷新载入最新功能与修复</div>
+    </div>
+    <div class="flex items-center space-x-1.5 flex-shrink-0 ml-2">
+      <button id="pwaReloadBtn" class="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg text-xs font-bold shadow transition cursor-pointer">
+        立即更新
+      </button>
+      <button onclick="this.parentElement.parentElement.remove()" class="p-1 text-slate-400 hover:text-white text-xs cursor-pointer">
+        ✕
+      </button>
+    </div>
+  `;
+  document.body.appendChild(toast);
+
+  const btn = document.getElementById('pwaReloadBtn');
+  if (btn) {
+    btn.onclick = () => {
+      if (registration && registration.waiting) {
+        registration.waiting.postMessage({ type: 'SKIP_WAITING' });
+      } else {
+        window.location.reload();
+      }
+    };
+  }
+}
+
+function initPwaInstallHandlers() {
+  // Capture native install prompt
+  window.addEventListener('beforeinstallprompt', (e) => {
+    e.preventDefault();
+    deferredPwaInstallPrompt = e;
+    window.deferredPwaInstallPrompt = e;
+    console.log('[Voyage PWA] beforeinstallprompt event captured');
+    updatePwaInstallUi(true);
+  });
+
+  // Native installation completed
+  window.addEventListener('appinstalled', () => {
+    console.log('[Voyage PWA] App installed successfully');
+    deferredPwaInstallPrompt = null;
+    window.deferredPwaInstallPrompt = null;
+    updatePwaInstallUi(false, true);
+    if (typeof showToast === 'function') {
+      showToast('🎉 Voyage 已成功安装为独立应用！可在主屏幕或应用抽屉直接启动。');
+    }
+  });
+
+  // Check state on load
+  updatePwaInstallUi(false, isAppInStandaloneMode());
+}
+window.initPwaInstallHandlers = initPwaInstallHandlers;
+
+function updatePwaInstallUi(hasPromptAvailable = false, isStandalone = false) {
+  const inStandalone = isStandalone || isAppInStandaloneMode();
+
+  const pwaBadge = document.getElementById('pwaBadge');
+  const pwaInstallBtn = document.getElementById('pwaInstallBtn');
+  const pwaStatusDot = document.getElementById('pwaStatusDot');
+  const pwaInstallText = document.getElementById('pwaInstallText');
+  const mobilePwaBtn = document.getElementById('mobilePwaInstallBtn');
+  const mobilePwaDot = document.getElementById('mobilePwaDot');
+  const mobilePwaText = document.getElementById('mobilePwaText');
+  
+  const settingsPwaBadge = document.getElementById('settingsPwaBadge');
+  const settingsPwaBtnText = document.getElementById('settingsPwaBtnText');
+  const settingsPwaModeText = document.getElementById('settingsPwaModeText');
+
+  const pwaModalModeBadge = document.getElementById('pwaModalModeBadge');
+  const pwaModalBtnText = document.getElementById('pwaModalBtnText');
+
+  if (inStandalone) {
+    if (pwaBadge) {
+      pwaBadge.textContent = '🟢 PWA 原生独立版';
+      pwaBadge.className = 'hidden md:inline-block bg-emerald-100 text-emerald-800 text-[11px] px-2 py-0.5 rounded-full font-bold border border-emerald-300';
+    }
+    if (pwaInstallBtn) {
+      pwaInstallBtn.title = '当前已作为原生独立应用运行 (无浏览器地址栏)';
+      if (pwaInstallText) pwaInstallText.textContent = '🟢 独立 App';
+      if (pwaStatusDot) pwaStatusDot.className = 'w-2 h-2 rounded-full bg-emerald-500 mr-1.5';
+    }
+    if (mobilePwaBtn) {
+      if (mobilePwaText) mobilePwaText.textContent = '🟢 独立App';
+      if (mobilePwaDot) mobilePwaDot.className = 'w-1.5 h-1.5 rounded-full bg-emerald-500 mr-1';
+    }
+    if (settingsPwaBadge) {
+      settingsPwaBadge.textContent = '● 原生独立模式运行';
+      settingsPwaBadge.className = 'text-[10px] bg-emerald-100 text-emerald-900 border border-emerald-300 px-2 py-0.5 rounded-full font-bold';
+    }
+    if (settingsPwaBtnText) settingsPwaBtnText.textContent = '✅ 已安装为独立 App';
+    if (settingsPwaModeText) settingsPwaModeText.textContent = '🟢 原生独立窗口 (无地址栏)';
+    if (pwaModalModeBadge) {
+      pwaModalModeBadge.textContent = '🟢 原生独立应用运行中 (沉浸无边框)';
+      pwaModalModeBadge.className = 'px-2.5 py-1 rounded-full font-bold bg-emerald-100 text-emerald-800 border border-emerald-300';
+    }
+    if (pwaModalBtnText) pwaModalBtnText.textContent = '✅ 已在独立模式下运行';
+  } else {
+    if (pwaBadge) {
+      pwaBadge.textContent = '📲 支持安装 PWA';
+    }
+    if (pwaInstallBtn) {
+      if (pwaInstallText) pwaInstallText.textContent = '📲 安装到平板/应用';
+      if (pwaStatusDot) pwaStatusDot.className = 'w-2 h-2 rounded-full bg-emerald-500 mr-1.5 animate-pulse';
+    }
+    if (mobilePwaBtn) {
+      if (mobilePwaText) mobilePwaText.textContent = '📲 安装App';
+      if (mobilePwaDot) mobilePwaDot.className = 'w-1.5 h-1.5 rounded-full bg-emerald-500 mr-1 animate-pulse';
+    }
+    if (settingsPwaBadge) {
+      settingsPwaBadge.textContent = '● 可一键安装为独立应用';
+      settingsPwaBadge.className = 'text-[10px] bg-amber-100 text-amber-900 border border-amber-300 px-2 py-0.5 rounded-full font-bold';
+    }
+    if (settingsPwaBtnText) settingsPwaBtnText.textContent = '📲 立即安装到主屏幕';
+    if (settingsPwaModeText) settingsPwaModeText.textContent = '🌐 浏览器网页模式 (支持安装)';
+    if (pwaModalModeBadge) {
+      pwaModalModeBadge.textContent = '🌐 浏览器网页模式 (可安装为独立 App)';
+      pwaModalModeBadge.className = 'px-2.5 py-1 rounded-full font-bold bg-amber-100 text-amber-800 border border-amber-300';
+    }
+    if (pwaModalBtnText) pwaModalBtnText.textContent = '一键安装到三星平板 / 手机 / 电脑';
+  }
+}
+window.updatePwaInstallUi = updatePwaInstallUi;
+
+function triggerPwaInstallPrompt() {
+  if (isAppInStandaloneMode()) {
+    if (typeof showToast === 'function') {
+      showToast('✅ Voyage 当前已在独立应用模式下运行，享受无浏览器边框的沉浸体验！');
+    }
+    return;
+  }
+
+  const promptEvent = deferredPwaInstallPrompt || window.deferredPwaInstallPrompt;
+  if (promptEvent) {
+    promptEvent.prompt();
+    promptEvent.userChoice.then((choiceResult) => {
+      if (choiceResult && choiceResult.outcome === 'accepted') {
+        console.log('[Voyage PWA] User accepted the install prompt');
+        if (typeof showToast === 'function') showToast('🚀 正在将 Voyage 安装至您的平板应用列表...');
+      } else {
+        console.log('[Voyage PWA] User dismissed the install prompt');
+      }
+      deferredPwaInstallPrompt = null;
+      window.deferredPwaInstallPrompt = null;
+      updatePwaInstallUi(false);
+    });
+  } else {
+    // Open the visual manual installation guide modal
+    openPwaInstallGuideModal();
+  }
+}
+window.triggerPwaInstallPrompt = triggerPwaInstallPrompt;
+
+function openPwaInstallGuideModal() {
+  const modal = document.getElementById('pwaInstallModal');
+  if (modal) {
+    updatePwaInstallUi();
+    modal.classList.remove('hidden');
+  }
+}
+window.openPwaInstallGuideModal = openPwaInstallGuideModal;
+
+function closePwaInstallGuideModal() {
+  const modal = document.getElementById('pwaInstallModal');
+  if (modal) modal.classList.add('hidden');
+}
+window.closePwaInstallGuideModal = closePwaInstallGuideModal;
+
+function initTabletOptimizations() {
+  // 1. Prevent double-tap zoom delay on interactive touch elements
+  document.addEventListener('touchstart', (e) => {
+    if (e.target && e.target.closest && e.target.closest('button, a, input, select, textarea, [onclick]')) {
+      e.target.style.touchAction = 'manipulation';
+    }
+  }, { passive: true });
+
+  // 2. Handle screen rotation between portrait and landscape
+  window.addEventListener('orientationchange', () => {
+    setTimeout(() => {
+      console.log('[Tablet Optimization] Orientation changed, adjusting layout');
+      if (typeof renderDashboard === 'function') renderDashboard();
+      if (typeof renderMonthlyReport === 'function') renderMonthlyReport();
+      updatePwaInstallUi();
+    }, 250);
+  });
+
+  // 3. Handle PWA Action Shortcuts (?action=new-income, ?action=new-expense, ?tab=arrears)
+  try {
+    const params = new URLSearchParams(window.location.search);
+    const action = params.get('action');
+    const targetTab = params.get('tab');
+
+    if (action === 'new-income') {
+      setTimeout(() => { if (typeof openModal === 'function') openModal('incomeModal'); }, 400);
+    } else if (action === 'new-expense') {
+      setTimeout(() => { if (typeof openModal === 'function') openModal('expenseModal'); }, 400);
+    } else if (targetTab) {
+      setTimeout(() => { if (typeof switchTab === 'function') switchTab(targetTab); }, 300);
+    }
+  } catch(e) {
+    console.warn('[PWA] URL action parsing error:', e);
+  }
+}
+window.initTabletOptimizations = initTabletOptimizations;
+
+// Automatically execute PWA registration on script boot
+registerVoyageServiceWorker();
+initPwaInstallHandlers();
+initTabletOptimizations();
+initNetworkStatusMonitoring();
+
+
+</script>
 </body>
 </html>
