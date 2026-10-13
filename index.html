@@ -4,11 +4,12 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
   <meta name="description" content="Voyage Learning Center 财务收支记账管理系统 · 支持多年份记账 · 银行流水导入 · 住宿费收缴追踪">
-  <meta name="theme-color" content="#059669">
+  <meta name="theme-color" content="#0f172a">
   <meta name="background-color" content="#f8fafc">
 
   <!-- Web App Manifest (PWA) -->
-  <link rel="manifest" href="manifest.json">
+  <link rel="manifest" id="pwaManifestLink" href="manifest.json">
+  <link rel="manifest" href="manifest.webmanifest">
 
   <!-- Favicon & HD App Icons -->
   <link rel="icon" type="image/svg+xml" href="favicon.svg">
@@ -22,12 +23,18 @@
 
   <!-- iOS & iPadOS Capabilities -->
   <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="Voyage">
   <link rel="apple-touch-icon" href="apple-touch-icon.png">
   <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
 
   <script>
+    // Canonical path fix for GitHub Pages /voyage without trailing slash
+    if (window.location.hostname.includes('github.io') && window.location.pathname === '/voyage') {
+      try {
+        window.history.replaceState(null, '', '/voyage/' + window.location.search + window.location.hash);
+      } catch (e) {}
+    }
     // Early capture of W3C beforeinstallprompt before any heavy external scripts load
     window.deferredPwaInstallPrompt = null;
     window.addEventListener('beforeinstallprompt', function(e) {
@@ -43,8 +50,8 @@
   <script id="voyage-ota-bootloader">
     (function() {
       try {
-        var expectedVersion = '2026.3.53';
-        var baseBuildTime = 1791899900000;
+        var expectedVersion = '2026.3.55';
+        var baseBuildTime = 1791904500000;
         var cachedBundle = localStorage.getItem('voyage_finance_cached_bundle');
         var cachedVersion = localStorage.getItem('voyage_finance_cached_version');
         var cachedTime = parseInt(localStorage.getItem('voyage_finance_cached_time') || '0', 10);
@@ -82,14 +89,14 @@
       touch-action: manipulation;
     }
     .pt-safe-top {
-      padding-top: max(16px, env(safe-area-inset-top, 16px));
+      padding-top: max(44px, env(safe-area-inset-top, 44px));
     }
     .pb-safe {
-      padding-bottom: max(16px, env(safe-area-inset-bottom, 16px));
+      padding-bottom: max(20px, env(safe-area-inset-bottom, 20px));
     }
     @supports (padding-top: max(0px)) {
-      .pt-safe-top { padding-top: max(16px, env(safe-area-inset-top, 16px)); }
-      .pb-safe { padding-bottom: max(16px, env(safe-area-inset-bottom, 16px)); }
+      .pt-safe-top { padding-top: max(44px, env(safe-area-inset-top, 44px)); }
+      .pb-safe { padding-bottom: max(20px, env(safe-area-inset-bottom, 20px)); }
     }
   </style>
 
@@ -361,6 +368,12 @@
           <span id="desktopGdriveSyncText">☁️ GDrive</span>
         </button>
 
+        <!-- PWA Install / Standalone Badge Button -->
+        <button onclick="triggerPwaInstallPrompt()" id="desktopPwaInstallBtn" title="安装为独立应用 (PWA) 到平板 / 电脑" class="inline-flex items-center px-2.5 py-1.5 text-xs font-semibold rounded-xl border border-emerald-200 bg-emerald-50 hover:bg-emerald-100 text-emerald-800 transition shadow-2xs cursor-pointer">
+          <span class="w-2 h-2 rounded-full bg-emerald-500 mr-1.5 animate-pulse"></span>
+          <span id="desktopPwaBadge">📲 PWA 独立版</span>
+        </button>
+
         <!-- OCR Scan Button -->
         <button onclick="switchTab('ocr')" class="inline-flex items-center px-2.5 py-1.5 text-xs font-bold text-purple-700 bg-purple-50 hover:bg-purple-100 border border-purple-200 rounded-xl shadow-2xs transition active:scale-95 cursor-pointer">
           <span class="mr-1">📸</span>
@@ -394,10 +407,10 @@
 
 
   <!-- Top Header Navigation -->
-  <header class="bg-white/95 backdrop-blur-md border-b border-slate-200 sticky top-0 z-30 shadow-xs overflow-x-clip">
+  <header class="bg-slate-900 md:bg-white/95 backdrop-blur-md border-b border-slate-800 md:border-slate-200 sticky top-0 z-30 shadow-xs overflow-x-clip">
     <!-- 1. Mobile Top Bar (< md) with Safe-Area Notch Inset -->
     <!-- 1. Mobile Top Bar (< md) with Immersive Dark Navy App Styling -->
-    <div id="mobileAppHeader" class="md:hidden bg-slate-900 text-white pt-safe-top px-4 py-3 border-b border-slate-800">
+    <div id="mobileAppHeader" class="md:hidden bg-slate-900 text-white pt-safe-top px-4 pb-2 border-b border-slate-800">
       <!-- State 1: Dashboard Top Bar -->
       <div id="mHead-dashboard" class="flex items-center justify-between w-full">
         <div>
@@ -475,6 +488,40 @@
           <h1 id="mHeadSubpageTitle" class="text-base font-bold text-white tracking-tight">返回更多</h1>
         </div>
       </div>
+
+      <!-- Mobile Top Navigation Tabs (顶部滑动菜单栏) - 确保手机端顶部随时可见各功能模块 -->
+      <nav id="mobileTopNavMenu" class="flex items-center space-x-1.5 overflow-x-auto scrollbar-none pt-2.5 pb-1 text-xs whitespace-nowrap border-t border-slate-800/80 -mx-4 px-4 mt-2.5">
+        <button onclick="switchTab('dashboard')" id="mTab-dashboard" class="mobile-top-tab px-3 py-1.5 rounded-lg font-bold bg-blue-600 text-white shadow-xs transition active:scale-95 flex-shrink-0 cursor-pointer">
+          📊 财务看板
+        </button>
+        <button onclick="switchTab('income')" id="mTab-income" class="mobile-top-tab px-3 py-1.5 rounded-lg font-medium text-slate-300 hover:text-white hover:bg-slate-800 transition active:scale-95 flex-shrink-0 cursor-pointer">
+          💰 收入明细
+        </button>
+        <button onclick="switchTab('expense')" id="mTab-expense" class="mobile-top-tab px-3 py-1.5 rounded-lg font-medium text-slate-300 hover:text-white hover:bg-slate-800 transition active:scale-95 flex-shrink-0 cursor-pointer">
+          🛒 支出明细
+        </button>
+        <button onclick="switchTab('arrears')" id="mTab-arrears" class="mobile-top-tab px-3 py-1.5 rounded-lg font-medium text-slate-300 hover:text-white hover:bg-slate-800 transition active:scale-95 flex-shrink-0 cursor-pointer">
+          🏠 住宿欠费
+        </button>
+        <button onclick="switchTab('ocr')" id="mTab-ocr" class="mobile-top-tab px-3 py-1.5 rounded-lg font-medium text-slate-300 hover:text-white hover:bg-slate-800 transition active:scale-95 flex-shrink-0 cursor-pointer">
+          📸 智能识单
+        </button>
+        <button onclick="switchTab('statement')" id="mTab-statement" class="mobile-top-tab px-3 py-1.5 rounded-lg font-medium text-slate-300 hover:text-white hover:bg-slate-800 transition active:scale-95 flex-shrink-0 cursor-pointer">
+          📄 银行流水
+        </button>
+        <button onclick="switchTab('monthly')" id="mTab-monthly" class="mobile-top-tab px-3 py-1.5 rounded-lg font-medium text-slate-300 hover:text-white hover:bg-slate-800 transition active:scale-95 flex-shrink-0 cursor-pointer">
+          📈 月度报表
+        </button>
+        <button onclick="switchTab('accounts')" id="mTab-accounts" class="mobile-top-tab px-3 py-1.5 rounded-lg font-medium text-slate-300 hover:text-white hover:bg-slate-800 transition active:scale-95 flex-shrink-0 cursor-pointer">
+          🏦 账户科目
+        </button>
+        <button onclick="switchTab('audit')" id="mTab-audit" class="mobile-top-tab px-3 py-1.5 rounded-lg font-medium text-slate-300 hover:text-white hover:bg-slate-800 transition active:scale-95 flex-shrink-0 cursor-pointer">
+          📋 审计追踪
+        </button>
+        <button onclick="switchTab('settings')" id="mTab-settings" class="mobile-top-tab px-3 py-1.5 rounded-lg font-medium text-slate-300 hover:text-white hover:bg-slate-800 transition active:scale-95 flex-shrink-0 cursor-pointer">
+          ⚙️ 系统设置
+        </button>
+      </nav>
     </div>
 
     <!-- 2. Tablet Top Bar (768px <= width < 1024px) -->
@@ -11691,9 +11738,10 @@ async function pullFromCloud(isStartup = false, isUserInitiated = false) {
         renderAccountsAndCategories();
         if (typeof renderArrearsTracker === 'function') renderArrearsTracker();
         if (typeof updateArrearsBadge === 'function') updateArrearsBadge();
-        if (typeof updateAuditBadges === 'function') updateAuditBadges();
         if (typeof renderDashboardAuditPreview === 'function') renderDashboardAuditPreview();
-  if (typeof renderMobileDashboard === 'function') renderMobileDashboard(metrics);
+        if (typeof renderMobileDashboard === 'function' && typeof calculateMetrics === 'function') {
+          renderMobileDashboard(calculateMetrics());
+        }
         if (typeof renderAuditLogs === 'function' && currentTab === 'audit') renderAuditLogs();
         if (hasNewItemsFromCloud) {
           showToast('☁️ 检测到新账目，已自动完成多端实时同步！');
@@ -12010,6 +12058,23 @@ function switchTab(tabId) {
   if (typeof updateMobileHeader === 'function') {
     updateMobileHeader(tabId);
   }
+
+  // Update Mobile Top Navigation Menu active styles & auto-scroll
+  const allMobileTabs = ['dashboard', 'income', 'expense', 'arrears', 'ocr', 'statement', 'monthly', 'accounts', 'audit', 'settings'];
+  allMobileTabs.forEach(t => {
+    const tBtn = document.getElementById(`mTab-${t}`);
+    if (tBtn) {
+      if (t === tabId) {
+        tBtn.className = 'mobile-top-tab px-3 py-1.5 rounded-lg font-bold bg-blue-600 text-white shadow-xs transition active:scale-95 flex-shrink-0 cursor-pointer';
+        try {
+          tBtn.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+        } catch(e) {}
+      } else {
+        tBtn.className = 'mobile-top-tab px-3 py-1.5 rounded-lg font-medium text-slate-300 hover:text-white hover:bg-slate-800 transition active:scale-95 flex-shrink-0 cursor-pointer';
+      }
+    }
+  });
+
   const mobileNavTabs = ['dashboard', 'income', 'expense', 'more'];
   mobileNavTabs.forEach(t => {
     const mBtn = document.getElementById(`mobileNav-${t}`);
@@ -18633,11 +18698,9 @@ function logAuditEvent({
   if (appData.auditLogs.length > 1500) {
     appData.auditLogs = appData.auditLogs.slice(0, 1500);
   }
-
-  updateAuditBadges();
+  if (typeof updateAuditBadges === 'function') updateAuditBadges();
   if (typeof renderDashboardAuditPreview === 'function') {
-    try { renderDashboardAuditPreview();
-  if (typeof renderMobileDashboard === 'function') renderMobileDashboard(metrics); } catch (e) {}
+    try { renderDashboardAuditPreview(); } catch (e) {}
   }
   if (typeof renderAuditLogs === 'function') {
     try { renderAuditLogs(); } catch (e) {}
@@ -20367,13 +20430,21 @@ function registerVoyageServiceWorker() {
       return;
     }
     window.addEventListener('load', () => {
-      // Relative path so it works seamlessly on GitHub Pages (/voyage/) and local/subpaths
-      navigator.serviceWorker.register('./sw.js', { scope: './' })
+      // Robust path detection for subpath deployments like GitHub Pages (/voyage/)
+      let basePath = window.location.pathname;
+      if (!basePath.endsWith('/')) {
+        basePath = basePath.substring(0, basePath.lastIndexOf('/') + 1) || '/';
+      }
+      if (!basePath.endsWith('/')) basePath += '/';
+      const swUrl = basePath + 'sw.js';
+      const swScope = basePath;
+      console.log('[Voyage PWA] Registering Service Worker with URL:', swUrl, 'Scope:', swScope);
+      navigator.serviceWorker.register(swUrl, { scope: swScope })
         .then((reg) => {
           console.log('[Voyage PWA] Service Worker registered successfully! Scope:', reg.scope);
           
           const swText = document.getElementById('settingsPwaSwText');
-          if (swText) swText.textContent = '🟢 v2026.3.52 激活运行中';
+          if (swText) swText.textContent = '🟢 v2026.3.55 激活运行中';
 
           // Detect new waiting worker
           if (reg.waiting) {
