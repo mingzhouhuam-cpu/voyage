@@ -2,7 +2,7 @@
 <html lang="zh-CN">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <meta name="description" content="Voyage Learning Center 财务收支记账管理系统 · 支持多年份记账 · 银行流水导入 · 住宿费收缴追踪">
   <meta name="theme-color" content="#059669">
   <meta name="background-color" content="#f8fafc">
@@ -64,10 +64,19 @@
         }
         
         if (cachedBundle && cachedBundle.length > 50000 && !window.__VOYAGE_BOOTED_FROM_CACHE__) {
-          window.__VOYAGE_BOOTED_FROM_CACHE__ = true;
-          document.open();
-          document.write(cachedBundle);
-          document.close();
+          var trimmed = cachedBundle.trimStart();
+          var isValidHtml = trimmed.startsWith('<!DOCTYPE') || trimmed.startsWith('<html') || trimmed.startsWith('<!doctype');
+          if (!isValidHtml) {
+            localStorage.removeItem('voyage_finance_cached_bundle');
+            localStorage.removeItem('voyage_finance_cached_time');
+            localStorage.removeItem('voyage_finance_cached_version');
+            console.warn('OTA: Cached bundle failed HTML sanity check, purged.');
+          } else {
+            window.__VOYAGE_BOOTED_FROM_CACHE__ = true;
+            document.open();
+            document.write(cachedBundle);
+            document.close();
+          }
         }
       } catch (e) {
         console.warn('OTA Bootloader error:', e);
@@ -99,16 +108,15 @@
   <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
   <!-- Chart.js -->
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
   <!-- PDF.js for Bank Statement Parsing -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
   <!-- Supabase JS Client for Real-time Cloud Sync -->
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
   <!-- Tesseract.js for Local In-Browser OCR (支持 简体中文 + 英文 + 马来文) -->
   <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
   <script>
     tailwind.config = {
-      darkMode: 'class',
       theme: {
         extend: {
           colors: {
@@ -175,7 +183,28 @@
       .no-print {
         display: none !important;
       }
+      @page { margin: 15mm; }
     }
+  </style>
+
+  <!-- Mobile Bottom Navigation & Search Debounce Styles -->
+  <style>
+    #mobileBottomNav {
+      position: fixed; bottom: 0; left: 0; right: 0; z-index: 40;
+      background: rgba(255,255,255,0.97); backdrop-filter: blur(12px);
+      border-top: 1px solid #e2e8f0;
+      padding-bottom: max(6px, env(safe-area-inset-bottom, 6px));
+      box-shadow: 0 -2px 12px rgba(0,0,0,0.08);
+    }
+    #mobileBottomNav .mnav-btn {
+      flex: 1; display: flex; flex-direction: column; align-items: center;
+      justify-content: center; padding: 6px 2px; gap: 2px;
+      font-size: 9px; font-weight: 600; color: #64748b;
+      border: none; background: transparent; cursor: pointer;
+      transition: color 0.15s; -webkit-tap-highlight-color: transparent;
+    }
+    #mobileBottomNav .mnav-btn.mnav-active { color: #059669; }
+    #mobileBottomNav .mnav-btn svg { width: 21px; height: 21px; }
   </style>
 
 </head>
@@ -261,7 +290,7 @@
         <!-- Quick Actions & Status -->
         <div class="flex items-center space-x-1.5 sm:space-x-2 lg:space-x-2.5 flex-nowrap flex-shrink-0">
           <!-- Realtime Offline Warning Pill -->
-          <span id="globalOfflinePill" class="hidden inline-flex items-center px-2 py-1 text-xs font-bold rounded-lg bg-amber-100 text-amber-900 border border-amber-300 animate-pulse flex-shrink-0" title="当前处于断网/离线状态，所有记账保存在本地，恢复联网后自动同步云端">
+          <span id="globalOfflinePill" class="hidden items-center px-2 py-1 text-xs font-bold rounded-lg bg-amber-100 text-amber-900 border border-amber-300 animate-pulse flex-shrink-0" title="当前处于断网/离线状态，所有记账保存在本地，恢复联网后自动同步云端">
             📡 离线本地
           </span>
 
@@ -607,7 +636,7 @@
             </div>
             <div>
               <span class="text-slate-400 block">银行账号</span>
-              <span id="parsedStatementAccount" class="font-bold text-slate-900">15200056062</span>
+              <span id="parsedStatementAccount" class="font-bold text-slate-900">-</span>
             </div>
             <div>
               <span class="text-slate-400 block">对账单入账存入 (Deposit)</span>
@@ -716,7 +745,7 @@
           </div>
           <div>
             <label class="block text-xs font-medium text-slate-600 mb-1">关键字搜索</label>
-            <input type="text" id="filterIncomeKeyword" placeholder="交款人 / 备注 / 账号..." class="w-full text-xs px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg focus:ring-1 focus:ring-emerald-500 focus:bg-white transition-all">
+            <input type="text" id="filterIncomeKeyword" oninput="debouncedRender(renderIncomeTable)" placeholder="交款人 / 备注 / 流水单号..." class="w-full text-xs px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg focus:ring-1 focus:ring-emerald-500 focus:bg-white transition-all">
           </div>
         </div>
 
@@ -814,7 +843,7 @@
           </div>
           <div>
             <label class="block text-xs font-medium text-slate-600 mb-1">关键字搜索</label>
-            <input type="text" id="filterExpenseKeyword" placeholder="项目 / 对方公司 / 备注..." class="w-full text-xs px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg focus:ring-1 focus:ring-rose-500 focus:bg-white transition-all">
+            <input type="text" id="filterExpenseKeyword" oninput="debouncedRender(renderExpenseTable)" placeholder="项目 / 对方公司 / 备注..." class="w-full text-xs px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg focus:ring-1 focus:ring-rose-500 focus:bg-white transition-all">
           </div>
         </div>
 
@@ -921,7 +950,7 @@
             </div>
             <div>
               <div class="text-xs font-bold text-amber-950 flex items-center space-x-2">
-                <span>每月固定支出预设 (共 4 项 · RM 474.00/月)</span>
+                <span id="fixedExpensesSummaryText">每月固定支出预设 (共 4 项 · RM 474.00/月)</span>
                 <span class="text-[10px] bg-amber-200/80 text-amber-900 px-1.5 py-0.2 rounded font-semibold">自动防重</span>
               </div>
               <div class="text-[11px] text-amber-800/80 mt-0.5">
@@ -1021,7 +1050,7 @@
               <span class="text-base">⚠️</span>
             </div>
             <div id="arrearsCountStudents" class="text-xl sm:text-2xl font-black text-amber-700 mt-1.5">0 人</div>
-            <div id="arrearsCountSub" class="text-[11px] text-amber-700/80 mt-1">共 14 位住宿学生</div>
+            <div id="arrearsCountSub" class="text-[11px] text-amber-700/80 mt-1">共 15 位住宿学生</div>
           </div>
 
           <!-- Fully Paid Students -->
@@ -19313,5 +19342,104 @@ initNetworkStatusMonitoring();
 
 
 </script>
+  <!-- Mobile Bottom Navigation Bar (visible only on < md) -->
+  <nav id="mobileBottomNav" class="md:hidden">
+    <div style="display:flex;align-items:stretch;padding:0 4px;">
+      <button class="mnav-btn" id="mnavBtn-dashboard" onclick="switchTab('dashboard');setMobileNav('dashboard');">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
+        <span>看板</span>
+      </button>
+      <button class="mnav-btn" id="mnavBtn-income" onclick="switchTab('income');setMobileNav('income');">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/></svg>
+        <span>收入</span>
+      </button>
+      <button class="mnav-btn" id="mnavBtn-expense" onclick="switchTab('expense');setMobileNav('expense');">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 17h8m0 0V9m0 8l-8-8-4 4-6-6"/></svg>
+        <span>支出</span>
+      </button>
+      <button class="mnav-btn" id="mnavBtn-arrears" onclick="switchTab('arrears');setMobileNav('arrears');">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
+        <span>欠费</span>
+      </button>
+      <button class="mnav-btn" id="mnavBtn-scan" onclick="openScanReceiptModal();">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+        <span>扫单</span>
+      </button>
+      <button class="mnav-btn" id="mnavBtn-more" onclick="toggleMnavMore(event);" style="position:relative;">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
+        <span>更多</span>
+        <div id="mnavMoreMenu" style="position:absolute;bottom:calc(100% + 4px);right:0;background:white;border:1px solid #e2e8f0;border-radius:12px;padding:8px;box-shadow:0 -4px 24px rgba(0,0,0,0.13);z-index:200;min-width:152px;display:none;">
+          <button onclick="switchTab('statement');setMobileNav('statement');closeMnavMore();" style="display:flex;align-items:center;gap:8px;width:100%;padding:8px 10px;font-size:12px;font-weight:600;color:#374151;background:transparent;border:none;border-radius:8px;cursor:pointer;text-align:left;">📄 银行流水导入</button>
+          <button onclick="switchTab('monthly');setMobileNav('monthly');closeMnavMore();" style="display:flex;align-items:center;gap:8px;width:100%;padding:8px 10px;font-size:12px;font-weight:600;color:#374151;background:transparent;border:none;border-radius:8px;cursor:pointer;text-align:left;">📅 月度报表</button>
+          <button onclick="switchTab('audit');setMobileNav('audit');closeMnavMore();" style="display:flex;align-items:center;gap:8px;width:100%;padding:8px 10px;font-size:12px;font-weight:600;color:#374151;background:transparent;border:none;border-radius:8px;cursor:pointer;text-align:left;">📋 审计追踪</button>
+          <button onclick="switchTab('accounts');setMobileNav('accounts');closeMnavMore();" style="display:flex;align-items:center;gap:8px;width:100%;padding:8px 10px;font-size:12px;font-weight:600;color:#374151;background:transparent;border:none;border-radius:8px;cursor:pointer;text-align:left;">🏦 账户分类</button>
+          <button onclick="switchTab('settings');setMobileNav('settings');closeMnavMore();" style="display:flex;align-items:center;gap:8px;width:100%;padding:8px 10px;font-size:12px;font-weight:600;color:#374151;background:transparent;border:none;border-radius:8px;cursor:pointer;text-align:left;">⚙️ 设置</button>
+          <hr style="margin:6px 0;border:none;border-top:1px solid #f1f5f9;">
+          <button onclick="openModal('incomeModal');closeMnavMore();" style="display:flex;align-items:center;gap:8px;width:100%;padding:8px 10px;font-size:12px;font-weight:700;color:#059669;background:#f0fdf4;border:1px solid #bbf7d0;border-radius:8px;cursor:pointer;margin-bottom:4px;">➕ 记收入</button>
+          <button onclick="openModal('expenseModal');closeMnavMore();" style="display:flex;align-items:center;gap:8px;width:100%;padding:8px 10px;font-size:12px;font-weight:700;color:#be123c;background:#fff1f2;border:1px solid #fecdd3;border-radius:8px;cursor:pointer;">➖ 记支出</button>
+        </div>
+      </button>
+    </div>
+  </nav>
+
+  <script>
+    /* ── Search debounce helper ── */
+    var _dbTimers = {};
+    function debouncedRender(fn, delay) {
+      var key = fn ? (fn.name || 'fn') : 'default';
+      clearTimeout(_dbTimers[key]);
+      _dbTimers[key] = setTimeout(function(){ if(fn) fn(); }, delay || 260);
+    }
+
+    /* ── Mobile bottom nav helpers ── */
+    function setMobileNav(tab) {
+      document.querySelectorAll('#mobileBottomNav .mnav-btn').forEach(function(b){ b.classList.remove('mnav-active'); });
+      var btn = document.getElementById('mnavBtn-' + tab);
+      if (btn) btn.classList.add('mnav-active');
+    }
+    function toggleMnavMore(e) {
+      e.stopPropagation();
+      var m = document.getElementById('mnavMoreMenu');
+      var isOpen = m.style.display === 'block';
+      m.style.display = isOpen ? 'none' : 'block';
+      if (!isOpen) { setTimeout(function(){ document.addEventListener('click', _mnavMoreOutside, {once:true}); }, 20); }
+    }
+    function closeMnavMore() {
+      var m = document.getElementById('mnavMoreMenu');
+      if (m) m.style.display = 'none';
+    }
+    function _mnavMoreOutside(e) {
+      if (!e.target.closest('#mnavBtn-more')) closeMnavMore();
+    }
+    /* Init mobile nav on load */
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', function(){ setMobileNav('dashboard'); });
+    } else {
+      setMobileNav('dashboard');
+    }
+
+    /* ── Dynamic fiscal year selector ── */
+    (function(){
+      var currentYear = new Date().getFullYear();
+      var years = [currentYear+1, currentYear, currentYear-1, currentYear-2];
+      ['globalFiscalYearSelect','mobileFiscalYearSelect'].forEach(function(id){
+        var sel = document.getElementById(id);
+        if (!sel) return;
+        var isMobile = id === 'mobileFiscalYearSelect';
+        sel.innerHTML = '';
+        years.forEach(function(y){
+          var o = document.createElement('option');
+          o.value = String(y);
+          o.textContent = isMobile ? (y+'年') : (y+' 年度');
+          if (y === currentYear) o.selected = true;
+          sel.appendChild(o);
+        });
+        var all = document.createElement('option');
+        all.value = 'all';
+        all.textContent = isMobile ? '历年' : '历年全部汇总';
+        sel.appendChild(all);
+      });
+    })();
+  </script>
 </body>
 </html>
