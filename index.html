@@ -27,6 +27,19 @@
   <link rel="apple-touch-icon" href="apple-touch-icon.png">
   <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
 
+  <script>
+    // Early capture of W3C beforeinstallprompt before any heavy external scripts load
+    window.deferredPwaInstallPrompt = null;
+    window.addEventListener('beforeinstallprompt', function(e) {
+      e.preventDefault();
+      window.deferredPwaInstallPrompt = e;
+      console.log('[Early Head PWA] beforeinstallprompt captured!');
+      if (typeof updatePwaInstallUi === 'function') {
+        updatePwaInstallUi(true);
+      }
+    });
+  </script>
+
   <script id="voyage-ota-bootloader">
     (function() {
       try {
@@ -3295,55 +3308,95 @@ alter publication supabase_realtime add table finance_store;</pre>
       </div>
 
       <!-- One-Click Install Action Button -->
-      <div id="pwaModalActionSection" class="text-center pt-1">
+      <div id="pwaModalActionSection" class="text-center pt-1 space-y-2">
         <button id="pwaModalPromptBtn" onclick="triggerPwaInstallPrompt()" class="w-full py-3.5 px-6 rounded-2xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white font-bold text-sm shadow-lg shadow-emerald-600/25 active:scale-98 transition flex items-center justify-center space-x-2 cursor-pointer">
-          <span>📲</span>
+          <span class="text-base">📲</span>
           <span id="pwaModalBtnText">一键安装到三星平板 / 手机 / 电脑</span>
         </button>
-        <p class="text-[11px] text-slate-400 mt-2">支持 Samsung Galaxy Tab、Android Chrome、Samsung Internet、Windows 与 iPad</p>
+        <p class="text-[11px] text-slate-400">支持 Samsung Galaxy Tab、Android Chrome、Samsung Internet、Windows 与 iPad</p>
+
+        <!-- Interactive Guidance Banner (Revealed when browser requires manual installation) -->
+        <div id="pwaInteractiveGuideBanner" class="hidden p-3.5 rounded-2xl bg-amber-50 border-2 border-amber-300 text-left text-xs space-y-2 transition-all">
+          <div class="font-bold flex items-center space-x-1.5 text-amber-900 text-xs">
+            <span class="text-base animate-bounce">👇</span>
+            <span>请按照下方提示完成安装（现代浏览器安全沙箱限制）：</span>
+          </div>
+          <div id="pwaInteractiveGuideText" class="text-xs leading-relaxed font-semibold text-amber-950 bg-white/80 p-2.5 rounded-xl border border-amber-200">
+            <!-- Dynamically populated based on device -->
+          </div>
+        </div>
       </div>
 
-      <!-- Tablet Installation Guides -->
+      <!-- Installation Guides -->
       <div class="space-y-3 pt-2">
         <h4 class="text-xs font-bold text-slate-700 uppercase tracking-wider flex items-center space-x-1.5">
           <span>📋</span>
-          <span>三星平板 (Samsung Tablet) 安装与移除旧图标指南</span>
+          <span>各设备专属安装指南 (根据您的设备查看)</span>
         </h4>
 
         <!-- Samsung Internet Guide -->
-        <div class="p-3.5 rounded-xl bg-purple-50/70 border border-purple-200/80 space-y-2 text-xs">
+        <div id="guideSamsungInternet" class="p-3.5 rounded-xl bg-purple-50/70 border border-purple-200/80 space-y-2 text-xs transition-all">
           <div class="flex items-center space-x-2 font-bold text-purple-900">
             <span>🌐</span>
-            <span>三星浏览器 (Samsung Internet)</span>
+            <span>三星平板 / 三星浏览器 (Samsung Internet)</span>
+            <span class="text-[10px] bg-purple-200 text-purple-800 px-1.5 py-0.5 rounded font-normal">推荐</span>
           </div>
-          <ol class="list-decimal list-inside space-y-1 text-purple-800 text-[11px] leading-relaxed">
-            <li>在三星平板中打开本网址，点击地址栏最右侧的<b>「⬇️ 下载/安装图标」</b>（或点击右下角 <b>☰ 菜单</b>）。</li>
-            <li>选择<b>「添加网页到 (Add page to)」</b> ➔ <b>「应用屏幕 (App screen)」</b>或「主屏幕」。</li>
-            <li>确认安装后，三星 One UI 会自动构建专属 <b>WebAPK</b>，生成 Voyage 高清应用图标。</li>
+          <ol class="list-decimal list-inside space-y-1.5 text-purple-800 text-[11px] leading-relaxed">
+            <li>查看三星平板屏幕最上方<b>地址栏最右侧</b>，点击<b>「⬇️ 下载/安装图标」</b>（一个带圆圈的下箭头）。</li>
+            <li>或点击屏幕右下角 <b>☰ 菜单</b>（三条杠）。</li>
+            <li>在弹出菜单中点击<b>「添加网页到 (Add page to)」</b> ➔ <b>「应用屏幕 (App screen)」</b>或「主屏幕」。</li>
+            <li>点击确认，三星 One UI 会自动构建专属 <b>WebAPK</b>，生成真正的 Voyage 独立原生应用！</li>
           </ol>
         </div>
 
         <!-- Google Chrome Guide -->
-        <div class="p-3.5 rounded-xl bg-blue-50/70 border border-blue-200/80 space-y-2 text-xs">
+        <div id="guideChrome" class="p-3.5 rounded-xl bg-blue-50/70 border border-blue-200/80 space-y-2 text-xs transition-all">
           <div class="flex items-center space-x-2 font-bold text-blue-900">
             <span>🌍</span>
-            <span>谷歌浏览器 (Google Chrome)</span>
+            <span>安卓平板 / 谷歌浏览器 (Google Chrome)</span>
           </div>
-          <ol class="list-decimal list-inside space-y-1 text-blue-800 text-[11px] leading-relaxed">
-            <li>点击 Chrome 右上角的 <b>「⋮」菜单</b>。</li>
-            <li>在菜单中点击<b>「安装应用 (Install app)」</b>或「添加到主屏幕」。</li>
-            <li>点击「安装」，应用即被添加至三星平板应用抽屉，以独立无边框窗口启动！</li>
+          <ol class="list-decimal list-inside space-y-1.5 text-blue-800 text-[11px] leading-relaxed">
+            <li>点击 Chrome 右上角的 <b>「⋮」菜单</b>（三个小竖点）。</li>
+            <li>在菜单列表中点击<b>「安装应用 (Install app)」</b>或「添加到主屏幕」。</li>
+            <li>点击「安装」，Voyage 即被添加至三星平板应用抽屉，以独立无浏览器地址栏的窗口全屏启动！</li>
+          </ol>
+        </div>
+
+        <!-- Desktop PC Guide -->
+        <div id="guideDesktop" class="p-3.5 rounded-xl bg-indigo-50/70 border border-indigo-200/80 space-y-2 text-xs transition-all">
+          <div class="flex items-center space-x-2 font-bold text-indigo-900">
+            <span>💻</span>
+            <span>电脑端 (Windows / Mac - Edge 与 Chrome 浏览器)</span>
+          </div>
+          <ol class="list-decimal list-inside space-y-1.5 text-indigo-800 text-[11px] leading-relaxed">
+            <li>请查看<b>浏览器最顶部网址输入框（地址栏）的最右侧</b>（在收藏夹星星图标旁边）。</li>
+            <li>找到并点击<b>【安装 Voyage 图标 ⊕】</b>或显示“应用可用”的<b>【小电脑监视器图标 💻】</b>。</li>
+            <li>或点击浏览器右上角 <b>【… 菜单】➔【应用 (Apps)】➔【将此站点作为应用安装】</b>。</li>
+            <li>安装后即成为无浏览器标签页、无地址栏的纯净 Windows 独立软件，支持固定到任务栏！</li>
+          </ol>
+        </div>
+
+        <!-- Apple iPad Guide -->
+        <div id="guideApple" class="p-3.5 rounded-xl bg-slate-50 border border-slate-200 space-y-2 text-xs transition-all">
+          <div class="flex items-center space-x-2 font-bold text-slate-800">
+            <span>🍏</span>
+            <span>苹果 iPad / iPhone (Safari 浏览器)</span>
+          </div>
+          <ol class="list-decimal list-inside space-y-1.5 text-slate-700 text-[11px] leading-relaxed">
+            <li>点击 Safari 顶部或底部的<b>「分享按钮 ⎋」</b>（方形带向上的箭头）。</li>
+            <li>在弹出的分享菜单中向下滑动，选择<b>「添加到主屏幕 (Add to Home Screen)」</b>。</li>
+            <li>点击右上角「添加」，即可从平板桌面直接全屏运行！</li>
           </ol>
         </div>
 
         <!-- Remove Old Shortcut Guide -->
-        <div class="p-3.5 rounded-xl bg-amber-50/70 border border-amber-200/80 space-y-2 text-xs">
+        <div id="guideRemoveOld" class="p-3.5 rounded-xl bg-amber-50/70 border border-amber-200/80 space-y-2 text-xs transition-all">
           <div class="flex items-center space-x-2 font-bold text-amber-900">
             <span>🗑️</span>
-            <span>如何移除旧的书签快捷方式？</span>
+            <span>如何清理旧的书签快捷方式？</span>
           </div>
           <p class="text-amber-800 text-[11px] leading-relaxed">
-            若之前在桌面添加过普通书签（右下角带有小浏览器标志），请在三星平板桌面上<b>长按旧图标</b> ➔ 点击<b>「移除 (Remove)」</b>即可。新安装的 PWA 具有纯净的 Voyage 专属圆形/方形图标，不再带任何浏览器角标。
+            若之前在桌面上添加过旧的普通书签（右下角带有小浏览器标志），请在桌面上<b>长按旧图标</b> ➔ 点击<b>「移除 (Remove)」</b>。新安装的 PWA 具有纯净的高清 Voyage 专属圆形/方形图标，不再带任何浏览器小角标。
           </p>
         </div>
       </div>
@@ -19096,7 +19149,19 @@ function updatePwaInstallUi(hasPromptAvailable = false, isStandalone = false) {
       pwaModalModeBadge.textContent = '🌐 浏览器网页模式 (可安装为独立 App)';
       pwaModalModeBadge.className = 'px-2.5 py-1 rounded-full font-bold bg-amber-100 text-amber-800 border border-amber-300';
     }
-    if (pwaModalBtnText) pwaModalBtnText.textContent = '一键安装到三星平板 / 手机 / 电脑';
+    if (pwaModalBtnText) {
+      const hasPrompt = hasPromptAvailable || !!(deferredPwaInstallPrompt || window.deferredPwaInstallPrompt);
+      if (hasPrompt) {
+        pwaModalBtnText.textContent = '📲 立即安装 Voyage (点击弹出系统安装框)';
+      } else {
+        const isSamsung = /SamsungBrowser/i.test(navigator.userAgent);
+        if (isSamsung) {
+          pwaModalBtnText.textContent = '👉 点击查看三星平板安装指引 (地址栏 ⬇️ 或 ☰ 菜单)';
+        } else {
+          pwaModalBtnText.textContent = '👉 点击查看本设备安装指引 (浏览器地址栏 / 菜单)';
+        }
+      }
+    }
   }
 }
 window.updatePwaInstallUi = updatePwaInstallUi;
@@ -19111,22 +19176,80 @@ function triggerPwaInstallPrompt() {
 
   const promptEvent = deferredPwaInstallPrompt || window.deferredPwaInstallPrompt;
   if (promptEvent) {
-    promptEvent.prompt();
-    promptEvent.userChoice.then((choiceResult) => {
-      if (choiceResult && choiceResult.outcome === 'accepted') {
-        console.log('[Voyage PWA] User accepted the install prompt');
-        if (typeof showToast === 'function') showToast('🚀 正在将 Voyage 安装至您的平板应用列表...');
-      } else {
-        console.log('[Voyage PWA] User dismissed the install prompt');
-      }
-      deferredPwaInstallPrompt = null;
-      window.deferredPwaInstallPrompt = null;
-      updatePwaInstallUi(false);
-    });
-  } else {
-    // Open the visual manual installation guide modal
-    openPwaInstallGuideModal();
+    try {
+      promptEvent.prompt();
+      promptEvent.userChoice.then((choiceResult) => {
+        if (choiceResult && choiceResult.outcome === 'accepted') {
+          console.log('[Voyage PWA] User accepted the install prompt');
+          if (typeof showToast === 'function') showToast('🚀 正在将 Voyage 安装至您的设备应用列表...');
+        } else {
+          console.log('[Voyage PWA] User dismissed the install prompt');
+        }
+        deferredPwaInstallPrompt = null;
+        window.deferredPwaInstallPrompt = null;
+        updatePwaInstallUi(false);
+      });
+      return;
+    } catch(e) {
+      console.warn('[Voyage PWA] prompt() failed, falling back to guided install:', e);
+    }
   }
+
+  // If promptEvent is null (standard in Samsung Internet, Desktop Edge/Chrome, iOS Safari):
+  openPwaInstallGuideModal();
+
+  // Detect current platform and browser
+  const ua = navigator.userAgent || '';
+  const isSamsung = /SamsungBrowser/i.test(ua);
+  const isAndroid = /Android/i.test(ua);
+  const isIOS = /iPad|iPhone|iPod/.test(ua) || (navigator.maxTouchPoints > 1 && /Macintosh/.test(ua));
+
+  let guideId = 'guideSamsungInternet';
+  let tipMsg = '';
+
+  if (isSamsung) {
+    guideId = 'guideSamsungInternet';
+    tipMsg = '👉 三星平板安装指引：请点击屏幕顶部【地址栏右侧 ⬇️ 下载图标】或右下角【☰ 菜单】➔【添加网页到】➔【应用屏幕】即可！';
+  } else if (isAndroid) {
+    guideId = 'guideChrome';
+    tipMsg = '👉 安卓浏览器指引：请点击右上角【⋮ 菜单】➔【安装应用 (Install app)】或【添加到主屏幕】！';
+  } else if (isIOS) {
+    guideId = 'guideApple';
+    tipMsg = '👉 iPad / iPhone 指引：请点击浏览器顶部/底部【分享按钮 ⎋】➔【添加到主屏幕】！';
+  } else {
+    guideId = 'guideDesktop';
+    tipMsg = '👉 电脑端指引：请查看浏览器最顶部【地址栏最右侧 ⊕ 安装图标】（网址右边）或菜单【应用】➔【安装 Voyage】！';
+  }
+
+  // Update guided banner inside modal
+  const banner = document.getElementById('pwaInteractiveGuideBanner');
+  const bannerText = document.getElementById('pwaInteractiveGuideText');
+  if (banner && bannerText) {
+    bannerText.innerHTML = tipMsg;
+    banner.classList.remove('hidden');
+  }
+
+  // Show prominent toast feedback
+  if (typeof showToast === 'function') {
+    showToast(tipMsg, 6000);
+  }
+
+  // Haptic feedback
+  if (navigator.vibrate) {
+    try { navigator.vibrate([40, 60, 40]); } catch(e) {}
+  }
+
+  // Smooth scroll down to the targeted guide card and highlight it
+  setTimeout(() => {
+    const targetGuide = document.getElementById(guideId);
+    if (targetGuide) {
+      targetGuide.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      targetGuide.classList.add('ring-4', 'ring-emerald-400', 'bg-emerald-50');
+      setTimeout(() => {
+        targetGuide.classList.remove('ring-4', 'ring-emerald-400', 'bg-emerald-50');
+      }, 2500);
+    }
+  }, 120);
 }
 window.triggerPwaInstallPrompt = triggerPwaInstallPrompt;
 
