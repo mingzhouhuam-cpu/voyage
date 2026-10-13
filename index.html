@@ -82,6 +82,12 @@
     })();
   </script>
   <style>
+    html {
+      background-color: #0f172a;
+    }
+    body {
+      background-color: #f8fafc;
+    }
     html, body {
       -webkit-tap-highlight-color: transparent;
     }
@@ -89,14 +95,14 @@
       touch-action: manipulation;
     }
     .pt-safe-top {
-      padding-top: max(44px, env(safe-area-inset-top, 44px));
+      padding-top: env(safe-area-inset-top, 0px);
     }
     .pb-safe {
-      padding-bottom: max(20px, env(safe-area-inset-bottom, 20px));
+      padding-bottom: env(safe-area-inset-bottom, 0px);
     }
     @supports (padding-top: max(0px)) {
-      .pt-safe-top { padding-top: max(44px, env(safe-area-inset-top, 44px)); }
-      .pb-safe { padding-bottom: max(20px, env(safe-area-inset-bottom, 20px)); }
+      .pt-safe-top { padding-top: max(0px, env(safe-area-inset-top, 0px)); }
+      .pb-safe { padding-bottom: max(0px, env(safe-area-inset-bottom, 0px)); }
     }
   </style>
 
@@ -406,122 +412,28 @@
     </header>
 
 
-  <!-- Top Header Navigation -->
-  <header class="bg-slate-900 md:bg-white/95 backdrop-blur-md border-b border-slate-800 md:border-slate-200 sticky top-0 z-30 shadow-xs overflow-x-clip">
-    <!-- 1. Mobile Top Bar (< md) with Safe-Area Notch Inset -->
-    <!-- 1. Mobile Top Bar (< md) with Immersive Dark Navy App Styling -->
-    <div id="mobileAppHeader" class="md:hidden bg-slate-900 text-white pt-safe-top px-4 pb-2 border-b border-slate-800">
-      <!-- State 1: Dashboard Top Bar -->
-      <div id="mHead-dashboard" class="flex items-center justify-between w-full">
-        <div>
-          <div class="flex items-center space-x-2">
-            <h1 class="text-xl font-black text-white tracking-tight">Voyage</h1>
-            <select id="mobileFiscalYearSelect" onchange="changeFiscalYear(this.value)" class="bg-slate-800 border border-slate-700 rounded-lg text-[10px] font-bold text-slate-200 px-1.5 py-0.5 focus:outline-none cursor-pointer">
-              <option value="2026" selected>2026年</option>
-              <option value="2027">2027年</option>
-              <option value="2025">2025年</option>
-              <option value="all">历年</option>
-            </select>
-          </div>
-          <div class="text-[11px] font-bold text-slate-300 leading-tight">财务收支记账</div>
-          <div class="text-[8px] tracking-wider text-slate-400 font-medium">VOYAGE LEARNING CENTER</div>
-        </div>
-        <div class="flex flex-col items-end space-y-1">
-          <button type="button" onclick="handleCloudSyncPillClick(event)" id="mobileCloudSyncBtn" class="inline-flex items-center px-2 py-0.5 text-[10px] font-bold rounded-full bg-emerald-950/90 text-emerald-300 border border-emerald-600/50 shadow-xs active:scale-95 transition">
-            <span id="mobileCloudSyncDot" class="w-1.5 h-1.5 rounded-full bg-emerald-400 mr-1 animate-pulse"></span>
-            <span id="mobileCloudSyncText">已同步</span>
-          </button>
-          <div class="text-[9px] text-slate-400">最后更新: 今天</div>
-        </div>
+  <!-- Top Header Navigation (Fixed on Mobile < md, Sticky on Tablet, Hidden on Desktop) -->
+  <header id="mainAppHeader" class="lg:hidden fixed md:sticky top-0 left-0 right-0 z-40 bg-slate-900 md:bg-white/95 border-b border-slate-800 md:border-slate-200 shadow-xs">
+    <!-- 1. Mobile Top Bar (< md) with Safe-Area Notch Inset: Solid Dark Navy, NO Menus, NO Whitish Haze -->
+    <div id="mobileAppHeader" class="md:hidden bg-slate-900 text-white pt-safe-top px-4 h-14 flex items-center justify-between border-b border-slate-800/90 shadow-xs">
+      <div class="flex items-center space-x-2 min-w-0">
+        <span class="text-base font-black text-white tracking-tight flex-shrink-0">Voyage</span>
+        <span class="text-slate-600 font-bold flex-shrink-0">/</span>
+        <span id="mobileCurrentViewTitle" class="text-xs font-bold text-blue-400 truncate max-w-[120px]">财务看板</span>
+        <!-- Global Mobile Fiscal Year Selector -->
+        <select id="mobileFiscalYearSelect" onchange="changeFiscalYear(this.value)" class="bg-slate-800 border border-slate-700 rounded-lg text-[10px] font-bold text-slate-200 px-1.5 py-0.5 focus:outline-none cursor-pointer flex-shrink-0">
+          <option value="2026" selected>2026年</option>
+          <option value="2027">2027年</option>
+          <option value="2025">2025年</option>
+          <option value="all">历年</option>
+        </select>
       </div>
-
-      <!-- State 2: Income Top Bar -->
-      <div id="mHead-income" class="hidden items-center justify-between w-full">
-        <div class="flex items-center space-x-2.5">
-          <span class="text-xl">📊</span>
-          <h1 class="text-base font-bold text-white tracking-tight">收入明细</h1>
-        </div>
-        <button type="button" onclick="toggleMobileSearch('income')" class="w-8 h-8 rounded-full bg-slate-800 hover:bg-slate-700 flex items-center justify-center text-slate-200 text-xs active:scale-95 transition">
-          🔍
+      <div class="flex items-center space-x-1.5 flex-shrink-0">
+        <button type="button" onclick="handleCloudSyncPillClick(event)" id="mobileCloudSyncBtn" class="inline-flex items-center px-2 py-0.5 text-[10px] font-bold rounded-full bg-emerald-950/90 text-emerald-300 border border-emerald-600/50 shadow-xs active:scale-95 transition cursor-pointer">
+          <span id="mobileCloudSyncDot" class="w-1.5 h-1.5 rounded-full bg-emerald-400 mr-1 animate-pulse"></span>
+          <span id="mobileCloudSyncText">已同步</span>
         </button>
       </div>
-
-      <!-- State 3: Expense Top Bar -->
-      <div id="mHead-expense" class="hidden items-center justify-between w-full">
-        <div class="flex items-center space-x-2.5">
-          <span class="text-xl">⏱️</span>
-          <h1 class="text-base font-bold text-white tracking-tight">支出管理</h1>
-        </div>
-        <button type="button" onclick="toggleMobileSearch('expense')" class="w-8 h-8 rounded-full bg-slate-800 hover:bg-slate-700 flex items-center justify-center text-slate-200 text-xs active:scale-95 transition">
-          🔍
-        </button>
-      </div>
-
-      <!-- State 4: Arrears Top Bar -->
-      <div id="mHead-arrears" class="hidden items-center justify-between w-full">
-        <div class="flex items-center space-x-2.5">
-          <span class="text-xl">🏠</span>
-          <h1 class="text-base font-bold text-white tracking-tight">住宿欠费</h1>
-        </div>
-        <button type="button" onclick="openStudentRosterModal()" class="text-xs text-blue-400 font-medium px-2 py-1 bg-slate-800 rounded-lg">
-          名册
-        </button>
-      </div>
-
-      <!-- State 5: More Top Bar -->
-      <div id="mHead-more" class="hidden items-center justify-between w-full">
-        <div class="flex items-center space-x-2.5">
-          <span class="text-xl">▦</span>
-          <h1 class="text-base font-bold text-white tracking-tight">更多功能</h1>
-        </div>
-        <button type="button" onclick="openCloudSyncModal()" class="w-8 h-8 rounded-full bg-slate-800 hover:bg-slate-700 flex items-center justify-center text-slate-200 text-xs active:scale-95 transition">
-          ⚙️
-        </button>
-      </div>
-
-      <!-- State 6: Subpage Top Bar (Statement, Monthly, Accounts, Settings, Audit) -->
-      <div id="mHead-subpage" class="hidden items-center justify-between w-full">
-        <div class="flex items-center space-x-2">
-          <button type="button" onclick="switchTab('more')" class="text-white text-lg font-bold pr-1 hover:text-slate-300">
-            ←
-          </button>
-          <h1 id="mHeadSubpageTitle" class="text-base font-bold text-white tracking-tight">返回更多</h1>
-        </div>
-      </div>
-
-      <!-- Mobile Top Navigation Tabs (顶部滑动菜单栏) - 确保手机端顶部随时可见各功能模块 -->
-      <nav id="mobileTopNavMenu" class="flex items-center space-x-1.5 overflow-x-auto scrollbar-none pt-2.5 pb-1 text-xs whitespace-nowrap border-t border-slate-800/80 -mx-4 px-4 mt-2.5">
-        <button onclick="switchTab('dashboard')" id="mTab-dashboard" class="mobile-top-tab px-3 py-1.5 rounded-lg font-bold bg-blue-600 text-white shadow-xs transition active:scale-95 flex-shrink-0 cursor-pointer">
-          📊 财务看板
-        </button>
-        <button onclick="switchTab('income')" id="mTab-income" class="mobile-top-tab px-3 py-1.5 rounded-lg font-medium text-slate-300 hover:text-white hover:bg-slate-800 transition active:scale-95 flex-shrink-0 cursor-pointer">
-          💰 收入明细
-        </button>
-        <button onclick="switchTab('expense')" id="mTab-expense" class="mobile-top-tab px-3 py-1.5 rounded-lg font-medium text-slate-300 hover:text-white hover:bg-slate-800 transition active:scale-95 flex-shrink-0 cursor-pointer">
-          🛒 支出明细
-        </button>
-        <button onclick="switchTab('arrears')" id="mTab-arrears" class="mobile-top-tab px-3 py-1.5 rounded-lg font-medium text-slate-300 hover:text-white hover:bg-slate-800 transition active:scale-95 flex-shrink-0 cursor-pointer">
-          🏠 住宿欠费
-        </button>
-        <button onclick="switchTab('ocr')" id="mTab-ocr" class="mobile-top-tab px-3 py-1.5 rounded-lg font-medium text-slate-300 hover:text-white hover:bg-slate-800 transition active:scale-95 flex-shrink-0 cursor-pointer">
-          📸 智能识单
-        </button>
-        <button onclick="switchTab('statement')" id="mTab-statement" class="mobile-top-tab px-3 py-1.5 rounded-lg font-medium text-slate-300 hover:text-white hover:bg-slate-800 transition active:scale-95 flex-shrink-0 cursor-pointer">
-          📄 银行流水
-        </button>
-        <button onclick="switchTab('monthly')" id="mTab-monthly" class="mobile-top-tab px-3 py-1.5 rounded-lg font-medium text-slate-300 hover:text-white hover:bg-slate-800 transition active:scale-95 flex-shrink-0 cursor-pointer">
-          📈 月度报表
-        </button>
-        <button onclick="switchTab('accounts')" id="mTab-accounts" class="mobile-top-tab px-3 py-1.5 rounded-lg font-medium text-slate-300 hover:text-white hover:bg-slate-800 transition active:scale-95 flex-shrink-0 cursor-pointer">
-          🏦 账户科目
-        </button>
-        <button onclick="switchTab('audit')" id="mTab-audit" class="mobile-top-tab px-3 py-1.5 rounded-lg font-medium text-slate-300 hover:text-white hover:bg-slate-800 transition active:scale-95 flex-shrink-0 cursor-pointer">
-          📋 审计追踪
-        </button>
-        <button onclick="switchTab('settings')" id="mTab-settings" class="mobile-top-tab px-3 py-1.5 rounded-lg font-medium text-slate-300 hover:text-white hover:bg-slate-800 transition active:scale-95 flex-shrink-0 cursor-pointer">
-          ⚙️ 系统设置
-        </button>
-      </nav>
     </div>
 
     <!-- 2. Tablet Top Bar (768px <= width < 1024px) -->
@@ -655,8 +567,8 @@
     </div>
   </header>
 
-  <!-- Main Content Container -->
-  <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 pb-28 md:pb-6">
+  <!-- Main Content Container (Properly offset for mobile fixed header) -->
+  <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 pt-[calc(env(safe-area-inset-top,0px)+4rem)] md:pt-6 pb-28 md:pb-6">
 
     <!-- 1. DASHBOARD VIEW -->
     <div id="view-dashboard" class="space-y-6">
@@ -1171,7 +1083,7 @@
             📅
           </div>
           <div>
-            <div class="text-[11px] font-bold text-slate-500">本月收入总额</div>
+            <div id="mobileIncomeTotalTitle" class="text-[11px] font-bold text-slate-500">收入总额</div>
             <div class="text-xl font-black text-blue-900 tracking-tight"><span id="mobileIncomeTotalAmount">RM 0.00</span></div>
             <div id="mobileIncomeTotalCount" class="text-[10px] text-slate-400 font-medium">共 0 笔记录</div>
           </div>
@@ -1217,7 +1129,7 @@
         <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
           <div class="bg-white rounded-2xl p-4 border border-slate-200 shadow-sm">
             <div class="flex items-center justify-between text-xs font-semibold text-slate-500">
-              <span>本月累计收入</span>
+              <span id="desktopIncomeStatTitle">累计收入总额</span>
               <span class="p-1.5 rounded-lg bg-emerald-50 text-emerald-600">📈</span>
             </div>
             <div class="mt-2 flex items-baseline justify-between">
@@ -1418,7 +1330,7 @@
             ⏱️
           </div>
           <div>
-            <div class="text-[11px] font-bold text-slate-500">本月支出总额</div>
+            <div id="mobileExpenseTotalTitle" class="text-[11px] font-bold text-slate-500">支出总额</div>
             <div class="text-xl font-black text-rose-600 tracking-tight"><span id="mobileExpenseTotalAmount">RM 0.00</span></div>
             <div id="mobileExpenseTotalCount" class="text-[10px] text-slate-400 font-medium">共 0 笔记录</div>
           </div>
@@ -1485,7 +1397,7 @@
         <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
           <div class="bg-white rounded-2xl p-4 border border-slate-200 shadow-sm">
             <div class="flex items-center justify-between text-xs font-semibold text-slate-500">
-              <span>本月累计支出</span>
+              <span id="desktopExpenseStatTitle">累计支出总额</span>
               <span class="p-1.5 rounded-lg bg-rose-50 text-rose-600">📉</span>
             </div>
             <div class="mt-2 flex items-baseline justify-between">
@@ -1780,7 +1692,7 @@
 
             <!-- Image Viewport -->
             <div id="workbenchOcrImageContainer" class="relative w-full h-[400px] xl:h-[460px] bg-slate-900 rounded-xl overflow-hidden flex items-center justify-center border border-slate-800">
-              <img id="workbenchOcrPreviewImg" src="" alt="收据凭证" class="max-w-full max-h-full object-contain transition-transform duration-200" style="transform: scale(1) rotate(0deg);">
+              <img id="workbenchOcrPreviewImg" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1 1'%3E%3C/svg%3E" alt="收据凭证" class="max-w-full max-h-full object-contain transition-transform duration-200" style="transform: scale(1) rotate(0deg);">
               <div id="workbenchOcrEmptyState" class="absolute inset-0 flex flex-col items-center justify-center text-slate-400 p-6 text-center space-y-3">
                 <div class="w-16 h-16 rounded-2xl bg-slate-800 flex items-center justify-center text-3xl">🧾</div>
                 <div class="text-xs font-bold text-slate-300">尚未选择单据图片</div>
@@ -3713,7 +3625,7 @@
       </div>
       <!-- Image Display Area -->
       <div class="w-full max-h-[82vh] overflow-hidden flex items-center justify-center rounded-2xl bg-slate-900/40 p-2 border border-slate-800/80 shadow-2xl">
-        <img id="lightboxImg" src="" alt="凭证照片大图" class="max-w-full max-h-[78vh] object-contain rounded-xl shadow-2xl bg-white/5 transition-transform duration-300">
+        <img id="lightboxImg" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1 1'%3E%3C/svg%3E" alt="凭证照片大图" class="max-w-full max-h-[78vh] object-contain rounded-xl shadow-2xl bg-white/5 transition-transform duration-300">
       </div>
     </div>
   </div>
@@ -3810,7 +3722,7 @@ alter publication supabase_realtime add table finance_store;</pre>
   <input type="file" id="batchReceiptFileInput" accept="image/*" multiple class="hidden" onchange="handleBatchReceiptUpload(event)">
 
   <!-- Mobile Bottom Navigation Bar (Visible only on mobile devices < 768px) -->
-  <div class="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-white/95 backdrop-blur-md border-t border-slate-200/90 shadow-[0_-4px_16px_rgba(0,0,0,0.06)] pb-safe">
+  <div id="mobileBottomNav" class="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-white/95 backdrop-blur-md border-t border-slate-200/90 shadow-[0_-4px_16px_rgba(0,0,0,0.06)] pb-safe">
     <div class="grid grid-cols-5 h-16 items-center px-1">
       <button onclick="switchTab('dashboard')" id="mobileNav-dashboard" class="flex flex-col items-center justify-center py-1 text-blue-600 font-bold transition">
         <span class="text-xl">🏠</span>
@@ -4596,7 +4508,7 @@ alter publication supabase_realtime add table finance_store;</pre>
     <div class="flex-1 bg-slate-900 p-4 space-y-4">
       <!-- Framed Receipt Photo Preview (Screen 5) -->
       <div class="bg-slate-800/80 rounded-3xl p-4 border border-slate-700/80 relative flex flex-col items-center justify-center min-h-[220px] max-h-[300px] overflow-hidden">
-        <img id="mobileOcrImagePreview" src="" alt="单据照片" class="hidden max-h-[260px] w-auto rounded-xl object-contain shadow-md">
+        <img id="mobileOcrImagePreview" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1 1'%3E%3C/svg%3E" alt="单据照片" class="hidden max-h-[260px] w-auto rounded-xl object-contain shadow-md">
         
         <!-- Camera Viewfinder Guide (Visible when no image) -->
         <div id="mobileOcrPlaceholder" class="text-center space-y-2 py-6">
@@ -4739,7 +4651,7 @@ alter publication supabase_realtime add table finance_store;</pre>
 
       <!-- Receipt Preview Box if exists -->
       <div id="mExpSheetReceiptBox" class="hidden bg-slate-50 p-2 rounded-2xl border border-slate-200/80 text-center">
-        <img id="mExpSheetReceiptImg" src="" alt="单据照片" class="max-h-48 mx-auto rounded-xl object-contain cursor-pointer shadow-xs" onclick="openLightbox(this.src)">
+        <img id="mExpSheetReceiptImg" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1 1'%3E%3C/svg%3E" alt="单据照片" class="max-h-48 mx-auto rounded-xl object-contain cursor-pointer shadow-xs" onclick="openLightbox(this.src)">
         <p class="text-[10px] text-slate-400 mt-1">点击可放大查看票据凭证</p>
       </div>
 
@@ -12007,6 +11919,8 @@ function saveData() {
 // Tab Switching (Multi-Platform: Mobile 5-Tab + Desktop 10-Module SaaS)
 function switchTab(tabId) {
   currentTab = tabId;
+  window.currentTab = tabId;
+  window.switchTab = switchTab;
   const views = ['dashboard', 'statement', 'income', 'expense', 'monthly', 'arrears', 'accounts', 'settings', 'audit', 'more', 'ocr'];
   views.forEach(v => {
     const el = document.getElementById(`view-${v}`);
@@ -12054,26 +11968,29 @@ function switchTab(tabId) {
   if (tEl) tEl.textContent = tInfo[0];
   if (subEl) subEl.textContent = tInfo[1];
 
+  // Update mobile current view title in header
+  const mobileTitles = {
+    'dashboard': '财务看板',
+    'income': '收入明细',
+    'expense': '支出明细',
+    'arrears': '住宿欠费',
+    'ocr': '智能识单',
+    'statement': '银行流水',
+    'monthly': '月度报表',
+    'accounts': '账户科目',
+    'audit': '审计追踪',
+    'settings': '系统设置',
+    'more': '更多功能'
+  };
+  const mTitleEl = document.getElementById('mobileCurrentViewTitle');
+  if (mTitleEl) {
+    mTitleEl.textContent = mobileTitles[tabId] || '财务看板';
+  }
+
   // Update mobile bottom nav active styles matching Design Blueprint
   if (typeof updateMobileHeader === 'function') {
     updateMobileHeader(tabId);
   }
-
-  // Update Mobile Top Navigation Menu active styles & auto-scroll
-  const allMobileTabs = ['dashboard', 'income', 'expense', 'arrears', 'ocr', 'statement', 'monthly', 'accounts', 'audit', 'settings'];
-  allMobileTabs.forEach(t => {
-    const tBtn = document.getElementById(`mTab-${t}`);
-    if (tBtn) {
-      if (t === tabId) {
-        tBtn.className = 'mobile-top-tab px-3 py-1.5 rounded-lg font-bold bg-blue-600 text-white shadow-xs transition active:scale-95 flex-shrink-0 cursor-pointer';
-        try {
-          tBtn.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
-        } catch(e) {}
-      } else {
-        tBtn.className = 'mobile-top-tab px-3 py-1.5 rounded-lg font-medium text-slate-300 hover:text-white hover:bg-slate-800 transition active:scale-95 flex-shrink-0 cursor-pointer';
-      }
-    }
-  });
 
   const mobileNavTabs = ['dashboard', 'income', 'expense', 'more'];
   mobileNavTabs.forEach(t => {
@@ -12113,8 +12030,8 @@ function switchTab(tabId) {
   // Update all badges across desktop
   updateAllDesktopBadges();
 
-  // Auto scroll to top smoothly
-  window.scrollTo({ top: 0, behavior: 'smooth' });
+  // Reset scroll position to top instantly on tab switch
+  window.scrollTo({ top: 0, behavior: 'instant' });
 }
 
 // Calculate Financial Metrics (Supports Multi-Year filtering with cumulative true bank balances)
@@ -20841,51 +20758,22 @@ let mobileArrearsFilter = 'all'; // 'all' | 'paid' | 'owing'
 
 // 1. Update Mobile App Header
 function updateMobileHeader(tabId) {
-  const mHeadDash = document.getElementById('mHead-dashboard');
-  const mHeadInc = document.getElementById('mHead-income');
-  const mHeadExp = document.getElementById('mHead-expense');
-  const mHeadArr = document.getElementById('mHead-arrears');
-  const mHeadMore = document.getElementById('mHead-more');
-  const mHeadSub = document.getElementById('mHead-subpage');
-  const mHeadSubTitle = document.getElementById('mHeadSubpageTitle');
-
-  const allHeads = [mHeadDash, mHeadInc, mHeadExp, mHeadArr, mHeadMore, mHeadSub];
-  allHeads.forEach(el => {
-    if (el) {
-      el.classList.add('hidden');
-      el.classList.remove('flex');
-    }
-  });
-
-  const showEl = (el) => {
-    if (el) {
-      el.classList.remove('hidden');
-      el.classList.add('flex');
-    }
+  const mTitleEl = document.getElementById('mobileCurrentViewTitle');
+  const mobileTitles = {
+    'dashboard': '财务看板',
+    'income': '收入明细',
+    'expense': '支出明细',
+    'arrears': '住宿欠费',
+    'ocr': '智能识单',
+    'statement': '银行流水',
+    'monthly': '月度报表',
+    'accounts': '账户科目',
+    'audit': '审计追踪',
+    'settings': '系统设置',
+    'more': '更多功能'
   };
-
-  if (tabId === 'dashboard') {
-    showEl(mHeadDash);
-  } else if (tabId === 'income') {
-    showEl(mHeadInc);
-  } else if (tabId === 'expense') {
-    showEl(mHeadExp);
-  } else if (tabId === 'arrears') {
-    showEl(mHeadArr);
-  } else if (tabId === 'more') {
-    showEl(mHeadMore);
-  } else {
-    showEl(mHeadSub);
-    if (mHeadSubTitle) {
-      const titles = {
-        statement: '银行流水 PDF 导入',
-        monthly: '月度收支走势报表',
-        accounts: '账户与收支科目配置',
-        settings: '数据与 AI 设置',
-        audit: '财务操作审计追踪'
-      };
-      mHeadSubTitle.textContent = titles[tabId] || '返回更多';
-    }
+  if (mTitleEl) {
+    mTitleEl.textContent = mobileTitles[tabId] || '财务看板';
   }
 }
 window.updateMobileHeader = updateMobileHeader;
