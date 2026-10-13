@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
   <meta name="description" content="Voyage Learning Center 财务收支记账管理系统 · 支持多年份记账 · 银行流水导入 · 住宿费收缴追踪">
-  <meta name="theme-color" content="#0f172a">
+  <meta name="theme-color" content="#0b1120">
   <meta name="background-color" content="#f8fafc">
 
   <!-- Web App Manifest (PWA) -->
@@ -83,7 +83,7 @@
   </script>
   <style>
     html {
-      background-color: #0f172a;
+      background-color: #0b1120;
     }
     body {
       background-color: #f8fafc;
@@ -413,13 +413,13 @@
 
 
   <!-- Top Header Navigation (Fixed on Mobile < md, Sticky on Tablet, Hidden on Desktop) -->
-  <header id="mainAppHeader" class="lg:hidden fixed md:sticky top-0 left-0 right-0 z-40 bg-slate-900 md:bg-white/95 border-b border-slate-800 md:border-slate-200 shadow-xs">
+  <header id="mainAppHeader" class="lg:hidden fixed md:sticky top-0 left-0 right-0 z-40 bg-slate-900 border-b border-slate-800 shadow-sm" style="background-color: #0b1120; padding-top: max(48px, env(safe-area-inset-top, 48px));">
     <!-- 1. Mobile Top Bar (< md) with Safe-Area Notch Inset: Solid Dark Navy, NO Menus, NO Whitish Haze -->
-    <div id="mobileAppHeader" class="md:hidden bg-slate-900 text-white pt-safe-top px-4 h-14 flex items-center justify-between border-b border-slate-800/90 shadow-xs">
+    <div id="mobileAppHeader" class="md:hidden text-white px-4 h-12 flex items-center justify-between" style="background-color: #0b1120;">
       <div class="flex items-center space-x-2 min-w-0">
         <span class="text-base font-black text-white tracking-tight flex-shrink-0">Voyage</span>
         <span class="text-slate-600 font-bold flex-shrink-0">/</span>
-        <span id="mobileCurrentViewTitle" class="text-xs font-bold text-blue-400 truncate max-w-[120px]">财务看板</span>
+        <span id="mobileCurrentViewTitle" class="text-xs font-bold text-sky-400 truncate max-w-[120px]">财务看板</span>
         <!-- Global Mobile Fiscal Year Selector -->
         <select id="mobileFiscalYearSelect" onchange="changeFiscalYear(this.value)" class="bg-slate-800 border border-slate-700 rounded-lg text-[10px] font-bold text-slate-200 px-1.5 py-0.5 focus:outline-none cursor-pointer flex-shrink-0">
           <option value="2026" selected>2026年</option>
@@ -568,7 +568,7 @@
   </header>
 
   <!-- Main Content Container (Properly offset for mobile fixed header) -->
-  <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 pt-[calc(env(safe-area-inset-top,0px)+4rem)] md:pt-6 pb-28 md:pb-6">
+  <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 md:pt-6 pb-28 md:pb-6" style="padding-top: calc(max(48px, env(safe-area-inset-top, 48px)) + 52px);">
 
     <!-- 1. DASHBOARD VIEW -->
     <div id="view-dashboard" class="space-y-6">
@@ -18054,7 +18054,7 @@ function setIncomeFeeMonth(mStr) {
 }
 
 // Get detailed payment history for each month (1~12) for a given student
-function getStudentMonthPaymentDetails(studentName, excludeIncomeId = '') {
+function getStudentMonthPaymentDetails(studentName, excludeIncomeId = '', targetYear = (typeof currentFiscalYear !== 'undefined' ? currentFiscalYear : '2026')) {
   const result = {};
   for (let m = 1; m <= 12; m++) {
     result[m] = {
@@ -18079,25 +18079,66 @@ function getStudentMonthPaymentDetails(studentName, excludeIncomeId = '') {
 
   const student = studentsList.find(s => 
     s.name.toUpperCase().includes(sUpper) || 
-    (s.zhName && (s.zhName.toUpperCase() === sUpper || sUpper.includes(s.zhName.toUpperCase()) || s.zhName.toUpperCase().includes(sUpper))) || s.aliases.some(al => sUpper.includes(al.toUpperCase()) || al.toUpperCase().includes(sUpper))
+    (s.zhName && (s.zhName.toUpperCase() === sUpper || sUpper.includes(s.zhName.toUpperCase()) || s.zhName.toUpperCase().includes(sUpper))) || 
+    s.aliases.some(al => sUpper.includes(al.toUpperCase()) || al.toUpperCase().includes(sUpper))
   );
 
-  // Match all income records for this student
+  const yearStr = (targetYear === 'all' || !targetYear) ? '2026' : String(targetYear);
+  const year2Digit = yearStr.slice(-2);
+
+  // Match income records for this student belonging to targetYear
   const matched = (dataStore.incomes || []).filter(inc => {
     if (excludeIncomeId && inc.id === excludeIncomeId) return false;
     const text = `${inc.counterparty || ''} ${inc.remark || ''}`.toUpperCase();
-    if (student) {
-      return student.aliases.some(al => text.includes(al.toUpperCase()));
+    const isStudentMatch = student ? student.aliases.some(al => text.includes(al.toUpperCase())) : text.includes(sUpper);
+    if (!isStudentMatch) return false;
+
+    if (targetYear !== 'all') {
+      const incYear = (inc.date && /^\d{4}/.test(inc.date)) ? inc.date.slice(0, 4) : '';
+      const rawFeeMonth = inc.feeMonth || (typeof getIncomeFeeMonth === 'function' ? getIncomeFeeMonth(inc) : '');
+      const hasFeeYear = rawFeeMonth && rawFeeMonth.includes(yearStr);
+      if (incYear && incYear !== yearStr && !hasFeeYear) {
+        return false;
+      }
     }
-    return text.includes(sUpper);
+    return true;
   });
 
-  // 1. Check matched incomes for explicit feeMonth
+  // Helper to detect month mentions in remark strictly for targetYear
+  const detectRemarkMonths = (rem) => {
+    const rUpper = String(rem || '').toUpperCase();
+    const list = [];
+    const otherYearMatch = rUpper.match(/202[4-9]/);
+    if (otherYearMatch && otherYearMatch[0] !== yearStr) return list;
+
+    if (new RegExp(`JAN|${yearStr}[-/]0?1\\b|${year2Digit}01\\b|1月`, 'i').test(rUpper)) list.push(1);
+    if (new RegExp(`FEB|${yearStr}[-/]0?2\\b|${year2Digit}02\\b|2月`, 'i').test(rUpper)) list.push(2);
+    if (new RegExp(`MAR|MAC|${yearStr}[-/]0?3\\b|${year2Digit}03\\b|3月`, 'i').test(rUpper)) list.push(3);
+    if (new RegExp(`APR|${yearStr}[-/]0?4\\b|${year2Digit}04\\b|4月`, 'i').test(rUpper)) list.push(4);
+    if (new RegExp(`MAY|${yearStr}[-/]0?5\\b|${year2Digit}05\\b|5月`, 'i').test(rUpper)) list.push(5);
+    if (new RegExp(`JUN|${yearStr}[-/]0?6\\b|${year2Digit}06\\b|6月`, 'i').test(rUpper)) list.push(6);
+    if (new RegExp(`JUL|${yearStr}[-/]0?7\\b|${year2Digit}07\\b|7月`, 'i').test(rUpper)) list.push(7);
+    if (new RegExp(`AUG|2608|${yearStr}[-/]0?8\\b|${year2Digit}08\\b|8月`, 'i').test(rUpper)) list.push(8);
+    if (new RegExp(`SEP|SEPT|${yearStr}[-/]0?9\\b|${year2Digit}09\\b|9月`, 'i').test(rUpper)) list.push(9);
+    if (new RegExp(`OCT|${yearStr}[-/]10\\b|${year2Digit}10\\b|10月`, 'i').test(rUpper)) list.push(10);
+    if (new RegExp(`NOV|${yearStr}[-/]11\\b|${year2Digit}11\\b|11月`, 'i').test(rUpper)) list.push(11);
+    if (new RegExp(`DEC|${yearStr}[-/]12\\b|${year2Digit}12\\b|12月`, 'i').test(rUpper)) list.push(12);
+    return list;
+  };
+
+  // 1. Process explicit feeMonth or remark-based month assignments
   matched.forEach(inc => {
     const rawMonth = inc.feeMonth || (typeof getIncomeFeeMonth === 'function' ? getIncomeFeeMonth(inc) : '');
-    const months = parseFeeMonthList(rawMonth);
-    const amt = Number(inc.amount) || 0;
+    let months = parseFeeMonthList(rawMonth).filter(mStr => mStr.startsWith(`${yearStr}-`));
 
+    if (months.length === 0) {
+      const remMonths = detectRemarkMonths(inc.remark || '');
+      if (remMonths.length > 0) {
+        months = remMonths.map(m => `${yearStr}-${String(m).padStart(2, '0')}`);
+      }
+    }
+
+    const amt = Number(inc.amount) || 0;
     if (months.length > 0) {
       const perMonthAmt = Math.round((amt / months.length) * 100) / 100;
       months.forEach(mStr => {
@@ -18116,63 +18157,60 @@ function getStudentMonthPaymentDetails(studentName, excludeIncomeId = '') {
     }
   });
 
-  // 2. Helper to detect month mentions in remark
-  const detectRemarkMonths = (rem) => {
-    const rUpper = String(rem || '').toUpperCase();
-    const list = [];
-    if (/JAN|2026[-/]0?1\b|1月/i.test(rUpper)) list.push(1);
-    if (/FEB|2026[-/]0?2\b|2月/i.test(rUpper)) list.push(2);
-    if (/MAR|2026[-/]0?3\b|3月/i.test(rUpper)) list.push(3);
-    if (/APR|2026[-/]0?4\b|4月/i.test(rUpper)) list.push(4);
-    if (/MAY|2026[-/]0?5\b|5月/i.test(rUpper)) list.push(5);
-    if (/JUN|2026[-/]0?6\b|6月/i.test(rUpper)) list.push(6);
-    if (/JUL|2026[-/]0?7\b|7月/i.test(rUpper)) list.push(7);
-    if (/AUG|2608|2026[-/]0?8\b|8月/i.test(rUpper)) list.push(8);
-    if (/SEP|2026[-/]0?9\b|9月/i.test(rUpper)) list.push(9);
-    if (/OCT|2026[-/]10\b|10月/i.test(rUpper)) list.push(10);
-    if (/NOV|2026[-/]11\b|11月/i.test(rUpper)) list.push(11);
-    if (/DEC|2026[-/]12\b|12月/i.test(rUpper)) list.push(12);
-    return list;
-  };
-
-  matched.forEach(inc => {
-    const explicitMonths = parseFeeMonthList(inc.feeMonth || (typeof getIncomeFeeMonth === 'function' ? getIncomeFeeMonth(inc) : ''));
-    if (explicitMonths.length === 0) {
-      const remMonths = detectRemarkMonths(inc.remark || '');
-      const amt = Number(inc.amount) || 0;
-      if (remMonths.length > 0) {
-        const perMonthAmt = Math.round((amt / remMonths.length) * 100) / 100;
-        remMonths.forEach(mNum => {
-          if (!result[mNum].isPaid) {
-            result[mNum].isPaid = true;
-            result[mNum].paidAmount = perMonthAmt;
-            result[mNum].incomes.push({
-              id: inc.id,
-              date: inc.date,
-              amount: amt,
-              remark: inc.remark || ''
-            });
-          }
-        });
-      }
-    }
-  });
-
-  // 3. Sequential fill based on total paid amount if any months are still unassigned
+  // 2. Sequential fill based on total paid amount MINUS security deposits
   if (student) {
     const feeRate = (typeof arrearsMonthlyFeePerPerson !== 'undefined') ? arrearsMonthlyFeePerPerson : 480;
-    const monthlyFee = (student.count || 1) * feeRate;
+    const monthlyFee = (student.fee != null && Number(student.fee) > 0) ? Number(student.fee) : ((student.count || 1) * feeRate);
+    const billableMonths = (Array.isArray(student.billableMonths) && student.billableMonths.length > 0)
+      ? student.billableMonths.map(Number).filter(n => n >= 1 && n <= 12).sort((a,b)=>a-b)
+      : [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11];
+
+    let depositSurplus = 0;
+    matched.forEach(inc => {
+      const rem = (inc.remark || '').toUpperCase();
+      const amt = Number(inc.amount) || 0;
+      if (rem.includes('DEPOSIT') || rem.includes('押金') || inc.category === '住宿押金') {
+        const rawMonth = inc.feeMonth || (typeof getIncomeFeeMonth === 'function' ? getIncomeFeeMonth(inc) : '');
+        let months = parseFeeMonthList(rawMonth).filter(mStr => mStr.startsWith(`${yearStr}-`));
+        if (months.length === 0) {
+          const remMonths = detectRemarkMonths(inc.remark || '');
+          if (remMonths.length > 0) months = remMonths;
+        }
+        const numExplicit = months.length;
+        if (numExplicit > 0 && amt > (numExplicit * monthlyFee)) {
+          depositSurplus += (amt - (numExplicit * monthlyFee));
+        } else if (numExplicit === 0) {
+          depositSurplus += amt;
+        }
+      }
+    });
+
     const totalPaid = matched.reduce((sum, inc) => sum + (Number(inc.amount) || 0), 0);
-    const numMonthsPaid = Math.floor(totalPaid / (monthlyFee || 480));
+    const feePaid = Math.max(0, totalPaid - depositSurplus);
+    const numMonthsPaid = Math.floor(feePaid / (monthlyFee || 480));
+
     let curAssigned = 0;
     for (let m = 1; m <= 12; m++) {
       if (result[m].isPaid) curAssigned++;
     }
+
     if (curAssigned < numMonthsPaid) {
       for (let m = 1; m <= 12; m++) {
-        if (!result[m].isPaid && curAssigned < numMonthsPaid) {
+        if (billableMonths.includes(m) && !result[m].isPaid && curAssigned < numMonthsPaid) {
           result[m].isPaid = true;
           result[m].paidAmount = monthlyFee || 480;
+          const unassignedInc = matched.find(inc => {
+            const raw = inc.feeMonth || '';
+            return !raw && !detectRemarkMonths(inc.remark || '').length;
+          });
+          if (unassignedInc) {
+            result[m].incomes.push({
+              id: unassignedInc.id,
+              date: unassignedInc.date,
+              amount: monthlyFee,
+              remark: unassignedInc.remark || '金额顺位核算'
+            });
+          }
           curAssigned++;
         }
       }
