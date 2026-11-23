@@ -54,8 +54,8 @@
       if (window.__VOYAGE_BOOTED_FROM_CACHE__) return;
       try {
         // Both values are stamped by build_pwa_and_bundle.py: this page's version and build time (ms).
-        var expectedVersion = '2026.11.23';
-        var baseBuildTime = 1795412977025;
+        var expectedVersion = '2026.11.23.3';
+        var baseBuildTime = 1795416261010;
         var cachedBundle = localStorage.getItem('voyage_finance_cached_bundle');
         var cachedTime = parseInt(localStorage.getItem('voyage_finance_cached_time') || '0', 10);
         // Escape hatch: open the page with ?ota-off to drop any downloaded cloud version.
@@ -420,7 +420,7 @@
         <span class="v-count">Supabase</span>
       </button>
       <div class="flex items-center justify-between px-2.5 text-[11px] text-slate-500">
-        <span>v2026.11.23</span>
+        <span>v2026.11.23.3</span>
         <button onclick="exportGdrivePackageDirectly()" class="hover:text-slate-300 underline cursor-pointer">备份数据</button>
       </div>
     </div>
@@ -1525,6 +1525,17 @@
               </div>
               <button onclick="openCloudSyncModal()" class="v-btn v-btn-secondary flex-shrink-0"><svg class="v-icon" style="width:16px;height:16px"><use href="#i-settings"/></svg><span>同步设置</span></button>
             </div>
+            <div class="px-5 py-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+              <div class="min-w-0">
+                <div class="text-[14px] font-medium text-slate-900">云端账号</div>
+                <div class="text-[13px] text-slate-500 mt-0.5">不登录也能查看最新账目；修改要登录后才会上传，谁改了什么会记在审计日志里。</div>
+                <div class="text-[13px] mt-2"><span class="text-slate-500">当前账号：</span><span data-cloud-account-email class="font-medium text-slate-800">未登录</span></div>
+              </div>
+              <div class="flex gap-2 flex-shrink-0">
+                <button type="button" data-cloud-signin onclick="openCloudLoginModal()" class="v-btn v-btn-primary">登录</button>
+                <button type="button" data-cloud-signout onclick="cloudSignOut()" class="v-btn v-btn-secondary hidden">退出登录</button>
+              </div>
+            </div>
           </div>
         </section>
 
@@ -1607,7 +1618,7 @@
           <h3 class="text-[15px] font-semibold text-slate-900 mb-2">版本与更新</h3>
           <div class="v-panel divide-y divide-slate-100">
             <dl class="grid grid-cols-3">
-              <div class="px-5 py-4 border-r border-slate-100"><dt class="v-label">本机版本</dt><dd id="localReleaseVersion" class="mt-1 text-[15px] font-semibold text-slate-900">v2026.11.23</dd></div>
+              <div class="px-5 py-4 border-r border-slate-100"><dt class="v-label">本机版本</dt><dd id="localReleaseVersion" class="mt-1 text-[15px] font-semibold text-slate-900">v2026.11.23.3</dd></div>
               <div class="px-5 py-4 border-r border-slate-100"><dt class="v-label">云端最新版本</dt><dd id="cloudReleaseVersion" class="mt-1 text-[15px] font-semibold text-slate-900">检查中…</dd></div>
               <div class="px-5 py-4 min-w-0"><dt class="v-label">云端发布时间</dt><dd id="cloudReleaseTime" class="mt-1 text-[13px] text-slate-700 truncate">-</dd></div>
             </dl>
@@ -1641,7 +1652,7 @@
             </div>
             <dl class="px-5 py-3 text-[13px] divide-y divide-slate-100">
               <div class="py-2 flex gap-4"><dt class="w-24 flex-shrink-0 text-slate-500">运行模式</dt><dd id="settingsPwaModeText" class="text-slate-800">检测中…</dd></div>
-              <div class="py-2 flex gap-4"><dt class="w-24 flex-shrink-0 text-slate-500">Service Worker</dt><dd id="settingsPwaSwText" class="text-slate-800">v2026.11.23 运行中</dd></div>
+              <div class="py-2 flex gap-4"><dt class="w-24 flex-shrink-0 text-slate-500">Service Worker</dt><dd id="settingsPwaSwText" class="text-slate-800">v2026.11.23.3 运行中</dd></div>
               <div class="py-2 flex gap-4"><dt class="w-24 flex-shrink-0 text-slate-500">数据安全</dt><dd class="text-slate-800">账目流水不做离线缓存</dd></div>
             </dl>
             <div class="px-5 py-3 flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-[13px] text-slate-500">
@@ -2685,6 +2696,34 @@
     </div>
   </div>
 
+
+  <!-- Cloud sign-in -->
+  <div id="cloudLoginModal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-[60] flex items-center justify-center p-4 hidden" role="dialog" aria-modal="true" aria-labelledby="cloudLoginTitle">
+    <form onsubmit="handleCloudLogin(event)" class="v-panel bg-white w-full max-w-sm p-6 space-y-4 shadow-2xl" autocomplete="on">
+      <div class="flex items-start justify-between gap-3">
+        <div>
+          <h4 id="cloudLoginTitle" class="text-[16px] font-semibold text-slate-900">登录云端账本</h4>
+          <p class="text-[13px] text-slate-500 mt-1">查看账目不需要登录。要修改账目并同步到其他设备，请先登录。</p>
+        </div>
+        <button type="button" onclick="closeCloudLoginModal()" class="v-btn v-btn-ghost" style="height:32px;padding:0 8px" aria-label="关闭">&times;</button>
+      </div>
+      <div class="space-y-1.5">
+        <label for="cloudLoginEmail" class="block text-[13px] font-medium text-slate-700">邮箱</label>
+        <input id="cloudLoginEmail" type="email" autocomplete="username" required class="v-input w-full" placeholder="name@example.com">
+      </div>
+      <div class="space-y-1.5">
+        <label for="cloudLoginPassword" class="block text-[13px] font-medium text-slate-700">密码</label>
+        <input id="cloudLoginPassword" type="password" autocomplete="current-password" required class="v-input w-full">
+      </div>
+      <p id="cloudLoginError" class="hidden text-[13px] text-rose-700 bg-rose-50 border border-rose-200 rounded-lg px-3 py-2" role="alert"></p>
+      <div class="flex items-center justify-end gap-2 pt-1">
+        <button type="button" onclick="closeCloudLoginModal()" class="v-btn v-btn-secondary">先不登录</button>
+        <button id="cloudLoginSubmit" type="submit" class="v-btn v-btn-primary">登录</button>
+      </div>
+      <p class="text-[12px] text-slate-400">账号由管理员在 Supabase 后台创建。忘记密码请联系管理员重设。</p>
+    </form>
+  </div>
+
         <!-- Cloud Sync Configuration Modal -->
   <div id="cloudSyncModal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden overflow-y-auto">
     <div class="bg-white rounded-2xl max-w-xl w-full p-6 shadow-2xl border border-slate-100 space-y-5 my-8 transition-all">
@@ -2728,7 +2767,7 @@
   updated_at timestamp with time zone default now()
 );
 alter table finance_store enable row level security;
-create policy "Allow public access" on finance_store for all using (true) with check (true);
+-- 权限：不要开放公开读写。运行项目里的 supabase_rls_setup.sql，只让登录的成员读写账本。
 alter publication supabase_realtime add table finance_store;</pre>
           </div>
           <p>4. 进入左侧 <b>Project Settings -> API</b> 或 <b>Data API</b>，把 <b>Project URL</b> 和 <b>Publishable key</b> 复制并填入下方输入框中，点击【保存并连接】！在其他电脑上打开网页填入相同的配置即可实现全自动双向实时同步。</p>
@@ -3353,7 +3392,7 @@ alter publication supabase_realtime add table finance_store;</pre>
         </div>
         <div class="flex items-center justify-between text-xs">
           <span class="font-bold text-slate-700">Service Worker 离线引擎：</span>
-          <span class="px-2.5 py-1 rounded-full font-bold bg-emerald-100 text-emerald-800 border border-emerald-300">v2026.11.23 已激活就绪</span>
+          <span class="px-2.5 py-1 rounded-full font-bold bg-emerald-100 text-emerald-800 border border-emerald-300">v2026.11.23.3 已激活就绪</span>
         </div>
         <div class="flex items-center justify-between text-xs">
           <span class="font-bold text-slate-700">离线缓存安全等级：</span>
@@ -9655,10 +9694,10 @@ let ocrSettings = {
 };
 
 // Application Version and OTA Release Timestamp
-window.VOYAGE_APP_VERSION = '2026.11.23';
+window.VOYAGE_APP_VERSION = '2026.11.23.3';
 // Fixed build time (ms) stamped by build_pwa_and_bundle.py. A cloud release is "newer" only if its
 // updatedAt is later than this, and a published bundle carries its own release time here.
-window.VOYAGE_APP_BUILD_TIME = 1795412977025;
+window.VOYAGE_APP_BUILD_TIME = 1795416261010;
 
 // Multi-Year Financial State (2025, 2026, 2027, etc.)
 let currentFiscalYear = (function() {
@@ -10182,6 +10221,10 @@ async function handleCloudSyncPillClick(event) {
     openCloudSyncModal();
     return;
   }
+  if (!cloudSignedIn() && pushPending) {
+    openCloudLoginModal();
+    return;
+  }
   showToast('正在同步云端最新账目...');
   const dot = document.getElementById('cloudSyncDot');
   const mDot = document.getElementById('mobileCloudSyncDot');
@@ -10204,6 +10247,9 @@ function updateCloudSyncUI() {
   if (inputId && !inputId.value) inputId.value = cloudSettings.syncId || 'voyage_learning_2026';
 
   let st = (typeof syncState !== 'undefined') ? syncState.status : 'ok';
+  if (supabaseClient && typeof cloudSignedIn === 'function' && !cloudSignedIn() && ['ok', 'pending', 'signedout'].includes(st)) {
+    st = (typeof pushPending !== 'undefined' && pushPending) ? 'loginneeded' : 'readonly';
+  }
   if (!supabaseClient) st = 'local';
   else if (typeof navigator !== 'undefined' && navigator.onLine === false) st = (typeof pushPending !== 'undefined' && pushPending) ? 'offline-pending' : 'offline';
 
@@ -10218,7 +10264,11 @@ function updateCloudSyncUI() {
     error:            { short: '同步失败', long: '同步失败，点击重试', color: 'rose', detail: '上次同步失败，修改已保存在本机' },
     offline:          { short: '离线', long: '离线（仅本机）', color: 'amber', detail: '网络断开，修改保存在本机' },
     'offline-pending':{ short: '离线待传', long: '离线，有修改待上传', color: 'amber', detail: '网络断开，恢复后自动上传' },
-    local:            { short: '未连云端', long: '未连接云端', color: 'slate', detail: '仅保存在本机' }
+    local:            { short: '未连云端', long: '未连接云端', color: 'slate', detail: '仅保存在本机' },
+    signedout:        { short: '未登录', long: '未登录云端，点此登录', color: 'amber', detail: '登录后才会同步，修改先保存在本机' },
+    readonly:         { short: '只读', long: timeStr ? `只读 · 已更新 ${timeStr}` : '只读（未登录）', color: 'emerald', detail: '可以查看最新账目；要修改并上传请登录' },
+    loginneeded:      { short: '待登录', long: '有修改未上传，点此登录', color: 'amber', detail: '修改已存在本机，登录后自动上传' },
+    denied:           { short: '无权限', long: '没有云端权限', color: 'rose', detail: '这个账号不能读写账本，请联系管理员' }
   }[st] || { short: '同步中', long: '同步中', color: 'sky', detail: '' };
   const errText = (st === 'error' && syncState.error) ? `（${syncState.error}）` : '';
   const dotCls = {
@@ -10320,20 +10370,18 @@ async function connectToSupabase(showNotification = true) {
       if (showNotification) alert('Supabase SDK 尚未加载，请确认电脑网络连接正常后再试。');
       return;
     }
-    supabaseClient = supabase.createClient(cloudSettings.url, cloudSettings.key);
+    cloudAuthListening = false;
+    cloudSessionStarted = '';
+    supabaseClient = supabase.createClient(cloudSettings.url, cloudSettings.key, {
+      auth: { persistSession: true, autoRefreshToken: true, storageKey: 'voyage-cloud-auth' }
+    });
     updateCloudSyncUI();
 
-    // Pull or Push data
-    await pullFromCloud(true);
-
-    // Subscribe to Realtime changes
-    subscribeToCloudRealtime();
-
-    // Start background sync heartbeat
-    startCloudSyncHeartbeat();
-
-    // Check for Cloud App Releases / Hot Updates
+    // App updates can be checked without signing in (the release record is public).
     checkForCloudAppUpdates(false);
+
+    // The ledger only syncs after sign-in (pull, realtime and heartbeat start from there).
+    await afterCloudClientReady();
 
     if (showNotification) {
       showToast('云端连接成功！多台电脑实时同步已激活');
@@ -10369,6 +10417,42 @@ let cloudPulledOnce = false;      // no push until the cloud copy has been read 
 let pushPending = false;          // local changes waiting for the cloud
 let pushInFlight = null;          // serialises pushes
 let lastCloudUpdatedAt = '';      // updated_at of the cloud row last seen
+const SYNC_META_KEY = 'voyage_sync_meta';
+
+// Saved together with the local copy: "this local copy already includes cloud version X",
+// plus whether local edits still wait for upload. Lets the app skip re-downloading an unchanged ledger.
+function saveSyncMeta() {
+  try {
+    if (!lastCloudUpdatedAt) {
+      // Not synced in this session yet (starting up, signed out, offline): keep the saved marker,
+      // only remember that local edits are waiting.
+      const old = JSON.parse(localStorage.getItem(SYNC_META_KEY) || 'null');
+      if (old && pushPending && !old.pending) {
+        old.pending = true;
+        localStorage.setItem(SYNC_META_KEY, JSON.stringify(old));
+      }
+      return;
+    }
+    localStorage.setItem(SYNC_META_KEY, JSON.stringify({
+      at: lastCloudUpdatedAt || '',
+      pending: !!pushPending,
+      id: cloudSettings.syncId || 'voyage_learning_2026',
+      user: (typeof cloudUserEmail === 'function') ? cloudUserEmail() : ''
+    }));
+  } catch (e) {}
+}
+
+function loadSyncMeta() {
+  try {
+    const m = JSON.parse(localStorage.getItem(SYNC_META_KEY) || 'null');
+    if (!m || !m.at) return null;
+    if (m.id !== (cloudSettings.syncId || 'voyage_learning_2026')) return null;
+    if (m.user !== ((typeof cloudUserEmail === 'function') ? cloudUserEmail() : '')) return null;
+    return m;
+  } catch (e) {
+    return null;
+  }
+}
 const syncState = { status: 'connecting', lastOk: 0, error: '' };
 
 function syncHashString(str) {
@@ -10622,7 +10706,7 @@ async function fetchCloudRow() {
 }
 
 function syncCanPush() {
-  return !!supabaseClient && cloudPulledOnce && (typeof receiptImagesReady === 'undefined' || receiptImagesReady);
+  return !!supabaseClient && cloudSignedIn() && cloudPulledOnce && (typeof receiptImagesReady === 'undefined' || receiptImagesReady);
 }
 
 // Push local changes: read the cloud copy, merge, then write the merged result.
@@ -10633,6 +10717,12 @@ async function pushToCloud(isManual = false) {
   }
   if (isManual) pushPending = true;
   if (!pushPending) return pushInFlight; // nothing new to upload
+  if (!cloudSignedIn()) {
+    // Kept on this device until someone signs in.
+    updateCloudSyncUI();
+    if (isManual) openCloudLoginModal(); else askLoginForEdit();
+    return;
+  }
   if (!syncCanPush()) {
     // Not safe yet (cloud never read, or photos still loading): keep it pending.
     setSyncState(syncState.status === 'error' ? 'error' : 'pending');
@@ -10653,7 +10743,8 @@ async function pushToCloud(isManual = false) {
         pushPending = false;
         appData.ocrSettings = ocrSettings;
 
-        const row = await fetchCloudRow();
+        // Read the whole cloud copy only if someone else changed it since we last saw it
+        const row = (await cloudRowChanged()) ? await fetchCloudRow() : null;
         stampLocalChanges(); // include edits made while the request was in flight
         let toWrite = appData;
         if (row && row.data) {
@@ -10680,7 +10771,7 @@ async function pushToCloud(isManual = false) {
     } catch (err) {
       pushPending = true;
       console.error('Push to cloud error', err);
-      setSyncState('error', err && (err.message || err));
+      setSyncState(isCloudPermissionError(err) ? 'denied' : 'error', err && (err.message || err));
       if (isManual) {
         let errMsg = '推送到云端失败：' + (err.message || err);
         if (errMsg.includes('relation') || errMsg.includes('does not exist')) {
@@ -10745,8 +10836,25 @@ async function pullFromCloud(isStartup = false, isUserInitiated = false) {
   if (pullInFlight) return pullInFlight;
   pullInFlight = (async () => {
     try {
-      if (!isStartup && !isUserInitiated && cloudPulledOnce && !pushPending && !(await cloudRowChanged())) {
-        if (syncState.status !== 'ok') setSyncState('ok');
+      if (!cloudPulledOnce && !appData._fromSeed) {
+        // Opening the app: trust the saved marker if it belongs to this account and ledger
+        const meta = loadSyncMeta();
+        if (meta) {
+          lastCloudUpdatedAt = meta.at;
+          if (meta.pending) pushPending = true;
+        }
+      }
+      if (lastCloudUpdatedAt && !(await cloudRowChanged())) {
+        // Cloud copy unchanged since this device last saw it: nothing to download
+        cloudPulledOnce = true;
+        delete appData._fromSeed;
+        if (pushPending) {
+          setSyncState('pending');
+          setTimeout(() => pushToCloud(false), 0); // upload local edits; no merge needed
+        } else {
+          setSyncState('ok');
+          if (isUserInitiated) showToast('本机与云端账目一致');
+        }
         return;
       }
       if (isUserInitiated || !cloudPulledOnce) setSyncState('syncing');
@@ -10760,6 +10868,7 @@ async function pullFromCloud(isStartup = false, isUserInitiated = false) {
       }
       cloudPulledOnce = true;
       delete appData._fromSeed;
+      if (lastLocalSaveOk) saveSyncMeta();
       cloudSettings.lastSyncTime = new Date().toLocaleTimeString();
       try { localStorage.setItem('finance_cloud_settings', JSON.stringify(cloudSettings)); } catch (e) {}
       setSyncState(needPush ? 'pending' : 'ok');
@@ -10769,7 +10878,7 @@ async function pullFromCloud(isStartup = false, isUserInitiated = false) {
       }
     } catch (err) {
       console.warn('Pull from cloud error', err);
-      setSyncState('error', err && (err.message || err));
+      setSyncState(isCloudPermissionError(err) ? 'denied' : 'error', err && (err.message || err));
       if (isUserInitiated) showToast('同步失败：' + (err.message || err));
     } finally {
       pullInFlight = null;
@@ -10819,6 +10928,179 @@ function subscribeToCloudRealtime() {
   }
 }
 
+// ==========================================
+// CLOUD LOGIN (Supabase Auth, email + password)
+// The ledger only syncs while signed in. Row Level Security on the server decides who may
+// read or write; this code just signs in and reacts to "not allowed".
+// ==========================================
+let cloudSession = null;
+let cloudSessionStarted = '';   // email of the account whose sync is running
+let cloudAuthListening = false;
+let loginPromptShown = false;
+
+function cloudSignedIn() {
+  return !!(cloudSession && cloudSession.user);
+}
+
+function cloudUserEmail() {
+  return (cloudSession && cloudSession.user && cloudSession.user.email) || '';
+}
+
+function isCloudPermissionError(err) {
+  if (!err) return false;
+  const code = String(err.code || '');
+  const status = Number(err.status || 0);
+  const msg = String(err.message || err || '');
+  return code === '42501' || code === 'PGRST301' || code === 'PGRST302' || status === 401 || status === 403 ||
+    /row-level security|permission denied|JWT|not authorized/i.test(msg);
+}
+
+async function initCloudAuth() {
+  try {
+    const { data } = await supabaseClient.auth.getSession();
+    cloudSession = (data && data.session) || null;
+  } catch (e) {
+    cloudSession = null;
+  }
+  if (!cloudAuthListening) {
+    cloudAuthListening = true;
+    supabaseClient.auth.onAuthStateChange((event, session) => {
+      const wasIn = cloudSignedIn();
+      const prevEmail = cloudUserEmail();
+      cloudSession = session || null;
+      // Supabase calls must not run inside this callback; defer them.
+      setTimeout(() => {
+        updateCloudAccountUI();
+        if (cloudSignedIn() && (!wasIn || prevEmail !== cloudUserEmail())) startCloudSession();
+        if (wasIn && !cloudSignedIn()) stopCloudSession(); // falls back to read-only
+      }, 0);
+    });
+  }
+  updateCloudAccountUI();
+}
+
+// Signed in: read and upload. Signed out: read only (edits stay on this device until someone signs in).
+function startCloudSession() {
+  if (!supabaseClient) return;
+  const who = cloudSignedIn() ? cloudUserEmail() : 'anon';
+  if (cloudSessionStarted && cloudSessionStarted === who) return; // already running for this account
+  cloudSessionStarted = who;
+  lastCloudUpdatedAt = '';
+  cloudPulledOnce = false;
+  pullFromCloud(true);
+  subscribeToCloudRealtime();
+  startCloudSyncHeartbeat();
+}
+
+function stopCloudSession() {
+  cloudSessionStarted = '';
+  cloudPulledOnce = false;
+  lastCloudUpdatedAt = '';
+  try { if (realtimeChannel) supabaseClient.removeChannel(realtimeChannel); } catch (e) {}
+  realtimeChannel = null;
+  startCloudSession(); // keep showing the latest ledger, read-only
+}
+
+// Ask for sign-in when someone edits while signed out (not on automatic saves, at most every 30 s).
+let lastLoginAskAt = 0;
+function askLoginForEdit() {
+  if (!supabaseClient || cloudSignedIn()) return;
+  const userActed = !navigator.userActivation || navigator.userActivation.hasBeenActive;
+  if (!userActed || Date.now() - lastLoginAskAt < 30000) return;
+  lastLoginAskAt = Date.now();
+  openCloudLoginModal();
+  const err = document.getElementById('cloudLoginError');
+  if (err) {
+    err.textContent = '修改已保存在本机。登录后才会上传到云端、让其他设备看到。';
+    err.className = 'text-[13px] text-amber-800 bg-amber-50 border border-amber-200 rounded-lg px-3 py-2';
+  }
+}
+
+function openCloudLoginModal() {
+  const m = document.getElementById('cloudLoginModal');
+  if (!m) return;
+  const err = document.getElementById('cloudLoginError');
+  if (err) { err.textContent = ''; err.className = 'hidden text-[13px] text-rose-700 bg-rose-50 border border-rose-200 rounded-lg px-3 py-2'; }
+  const email = document.getElementById('cloudLoginEmail');
+  if (email && !email.value) email.value = localStorage.getItem('voyage_last_login_email') || '';
+  m.classList.remove('hidden');
+  setTimeout(() => {
+    const target = email && email.value ? document.getElementById('cloudLoginPassword') : email;
+    if (target) target.focus();
+  }, 50);
+}
+
+function closeCloudLoginModal() {
+  const m = document.getElementById('cloudLoginModal');
+  if (m) m.classList.add('hidden');
+  const pw = document.getElementById('cloudLoginPassword');
+  if (pw) pw.value = '';
+}
+
+async function handleCloudLogin(event) {
+  if (event) event.preventDefault();
+  const emailEl = document.getElementById('cloudLoginEmail');
+  const pwEl = document.getElementById('cloudLoginPassword');
+  const btn = document.getElementById('cloudLoginSubmit');
+  const errEl = document.getElementById('cloudLoginError');
+  const showErr = msg => { if (errEl) { errEl.textContent = msg; errEl.className = 'text-[13px] text-rose-700 bg-rose-50 border border-rose-200 rounded-lg px-3 py-2'; } };
+  const email = (emailEl && emailEl.value || '').trim();
+  const password = pwEl && pwEl.value || '';
+  if (!email || !password) { showErr('请填写邮箱和密码'); return; }
+  if (!supabaseClient) {
+    if (cloudSettings.url && cloudSettings.key) await connectToSupabase(false);
+    if (!supabaseClient) { showErr('连不上云端，请检查网络后再试'); return; }
+  }
+  if (btn) { btn.disabled = true; btn.textContent = '正在登录…'; }
+  try {
+    const { data, error } = await supabaseClient.auth.signInWithPassword({ email, password });
+    if (error) throw error;
+    cloudSession = data && data.session || cloudSession;
+    try { localStorage.setItem('voyage_last_login_email', email); } catch (e) {}
+    closeCloudLoginModal();
+    updateCloudAccountUI();
+    startCloudSession();
+    showToast('已登录：' + email);
+  } catch (err) {
+    const msg = String(err && err.message || err);
+    if (/invalid login credentials/i.test(msg)) showErr('邮箱或密码不正确');
+    else if (/email not confirmed/i.test(msg)) showErr('这个账号还没有确认，请在 Supabase 里把它设为已确认');
+    else if (/fetch|network/i.test(msg)) showErr('连不上云端，请检查网络后再试');
+    else showErr('登录失败：' + msg);
+  } finally {
+    if (btn) { btn.disabled = false; btn.textContent = '登录'; }
+  }
+}
+
+async function cloudSignOut() {
+  if (!supabaseClient || !cloudSignedIn()) return;
+  const pendingNote = pushPending ? '\n\n注意：本机还有修改没有上传，退出后会留在本机，下次登录时再上传。' : '';
+  if (!confirm('确定退出云端登录吗？\n退出后本机账目仍然保留，但不再与其他设备同步。' + pendingNote)) return;
+  try { await supabaseClient.auth.signOut(); } catch (e) {}
+  cloudSession = null;
+  stopCloudSession();
+  updateCloudAccountUI();
+  showToast('已退出云端登录');
+}
+
+function updateCloudAccountUI() {
+  const signedIn = cloudSignedIn();
+  const email = cloudUserEmail();
+  document.querySelectorAll('[data-cloud-account-email]').forEach(el => { el.textContent = signedIn ? email : '未登录'; });
+  document.querySelectorAll('[data-cloud-signin]').forEach(el => el.classList.toggle('hidden', signedIn));
+  document.querySelectorAll('[data-cloud-signout]').forEach(el => el.classList.toggle('hidden', !signedIn));
+}
+
+// Called once the client exists: sign-in state decides whether syncing starts.
+async function afterCloudClientReady() {
+  await initCloudAuth();
+  if (cloudSignedIn()) {
+    startCloudSession();
+  } else {
+    startCloudSession(); // read-only; sign-in is asked for only when editing
+  }
+}
+
 function disconnectCloud() {
   if (confirm('确定要断开云端数据库连接吗？断开后账目仅保存在本机，不再与其他设备同步。')) {
     supabaseClient = null;
@@ -10843,19 +11125,37 @@ async function checkForCloudAppUpdates(isManual = false) {
   if (localVerEl) localVerEl.textContent = 'v' + (window.VOYAGE_APP_VERSION || '2026.3.5');
 
   try {
-    const { data, error } = await supabaseClient
+    // Small read first (version and time only); the page itself is only downloaded when newer.
+    const { data: meta, error } = await supabaseClient
       .from('finance_store')
-      .select('*')
+      .select('version:data->>version,updatedAt:data->>updatedAt,releaseTime:data->>releaseTime,changelog:data->>changelog')
       .eq('id', 'voyage_finance_app_release')
       .single();
 
-    if (error || !data || !data.data) {
+    if (error || !meta || !meta.updatedAt) {
       if (verEl) verEl.textContent = '暂无发布记录';
       if (isManual) alert('云端数据库中暂未发现发布版本。当前运行为标准版本。');
       return;
     }
 
-    const cloudRelease = data.data;
+    const cloudRelease = {
+      version: meta.version,
+      updatedAt: Number(meta.updatedAt),
+      releaseTime: meta.releaseTime,
+      changelog: meta.changelog,
+      bundle: null
+    };
+    const alreadyCached = String(localStorage.getItem('voyage_finance_cached_time') || '') === String(cloudRelease.updatedAt);
+    if (cloudRelease.updatedAt > (window.VOYAGE_APP_BUILD_TIME || 0) && !alreadyCached) {
+      const { data: full, error: fullErr } = await supabaseClient
+        .from('finance_store')
+        .select('bundle:data->>bundle')
+        .eq('id', 'voyage_finance_app_release')
+        .single();
+      if (!fullErr && full) cloudRelease.bundle = full.bundle;
+    } else if (alreadyCached) {
+      cloudRelease.bundle = localStorage.getItem('voyage_finance_cached_bundle');
+    }
     if (verEl) verEl.textContent = 'v' + cloudRelease.version;
     if (timeEl) timeEl.textContent = cloudRelease.releaseTime || new Date(cloudRelease.updatedAt).toLocaleString();
 
@@ -10921,6 +11221,11 @@ function applyAndReloadOta(explicitBundle) {
 async function publishCurrentAppToCloud() {
   if (!supabaseClient) {
     alert('请先连接 Supabase 云端数据库后再进行全网发布！');
+    return;
+  }
+  if (!cloudSignedIn()) {
+    alert('请先用管理员账号登录云端，再发布新版本。');
+    openCloudLoginModal();
     return;
   }
   const note = prompt('请输入本次发布更新说明（如：优化手机版界面、调整收支分类）：', '系统常规优化与界面升级');
@@ -10999,7 +11304,9 @@ async function publishCurrentAppToCloud() {
     alert(`恭喜！版本 v${newVersion} 已成功发布到云端！\n\n其他所有电脑和手机在下次打开或刷新时，将自动切换为最新系统，无需重新发送任何文件！`);
   } catch (err) {
     console.error('Publish OTA error', err);
-    alert('发布到云端失败：' + (err.message || err));
+    alert(isCloudPermissionError(err)
+      ? '发布失败：当前账号不是管理员，不能发布新版本。'
+      : '发布到云端失败：' + (err.message || err));
   }
 }
 
@@ -11026,6 +11333,7 @@ const receiptPendingKeys = new Set();   // records whose photo is still being lo
 const receiptSavedSig = new Map();      // key -> signature of the photo saved in IndexedDB
 let receiptDbPromise = null;
 let localSaveWarned = false;
+let lastLocalSaveOk = true;
 
 function receiptKey(kind, id) { return kind + ':' + id; }
 function receiptSig(img) {
@@ -11168,8 +11476,11 @@ function writeLocalSnapshot() {
   try {
     localStorage.setItem('finance_2026_data', buildLocalSnapshot());
     localSaveWarned = false;
+    lastLocalSaveOk = true;
+    if (typeof saveSyncMeta === 'function') saveSyncMeta();
     return true;
   } catch (e) {
+    lastLocalSaveOk = false;
     warnLocalSaveFailed(e);
     return false;
   }
@@ -17834,7 +18145,9 @@ function logAuditEvent({
     appData.auditLogs = [];
   }
   const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-  const operator = isMobile ? '移动手机端' : '电脑端 (Web)';
+  const device = isMobile ? '移动手机端' : '电脑端 (Web)';
+  const who = (typeof cloudUserEmail === 'function') ? cloudUserEmail() : '';
+  const operator = who ? `${who} · ${device}` : device;
 
   const now = new Date();
   const timeStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')} ${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}:${String(now.getSeconds()).padStart(2, '0')}`;
@@ -19546,7 +19859,7 @@ function registerVoyageServiceWorker() {
           console.log('[Voyage PWA] Service Worker registered successfully! Scope:', reg.scope);
           
           const swText = document.getElementById('settingsPwaSwText');
-          if (swText) swText.textContent = 'v2026.11.23 激活运行中';
+          if (swText) swText.textContent = 'v2026.11.23.3 激活运行中';
 
           // Detect new waiting worker
           if (reg.waiting) {
