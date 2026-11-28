@@ -54,8 +54,8 @@
       if (window.__VOYAGE_BOOTED_FROM_CACHE__) return;
       try {
         // Both values are stamped by build_pwa_and_bundle.py: this page's version and build time (ms).
-        var expectedVersion = '2026.11.28.1';
-        var baseBuildTime = 1795860742558;
+        var expectedVersion = '2026.11.28.2';
+        var baseBuildTime = 1795862093859;
         var cachedBundle = localStorage.getItem('voyage_finance_cached_bundle');
         var cachedTime = parseInt(localStorage.getItem('voyage_finance_cached_time') || '0', 10);
         // Escape hatch: open the page with ?ota-off to drop any downloaded cloud version.
@@ -420,7 +420,7 @@
         <span class="v-count">Supabase</span>
       </button>
       <div class="flex items-center justify-between px-2.5 text-[11px] text-slate-500">
-        <span>v2026.11.28.1</span>
+        <span>v2026.11.28.2</span>
         <button onclick="exportGdrivePackageDirectly()" class="hover:text-slate-300 underline cursor-pointer">备份数据</button>
       </div>
     </div>
@@ -1640,7 +1640,7 @@
           <h3 class="text-[15px] font-semibold text-slate-900 mb-2">版本与更新</h3>
           <div class="v-panel divide-y divide-slate-100">
             <dl class="grid grid-cols-3">
-              <div class="px-5 py-4 border-r border-slate-100"><dt class="v-label">本机版本</dt><dd id="localReleaseVersion" class="mt-1 text-[15px] font-semibold text-slate-900">v2026.11.28.1</dd></div>
+              <div class="px-5 py-4 border-r border-slate-100"><dt class="v-label">本机版本</dt><dd id="localReleaseVersion" class="mt-1 text-[15px] font-semibold text-slate-900">v2026.11.28.2</dd></div>
               <div class="px-5 py-4 border-r border-slate-100"><dt class="v-label">云端最新版本</dt><dd id="cloudReleaseVersion" class="mt-1 text-[15px] font-semibold text-slate-900">检查中…</dd></div>
               <div class="px-5 py-4 min-w-0"><dt class="v-label">云端发布时间</dt><dd id="cloudReleaseTime" class="mt-1 text-[13px] text-slate-700 truncate">-</dd></div>
             </dl>
@@ -1674,7 +1674,7 @@
             </div>
             <dl class="px-5 py-3 text-[13px] divide-y divide-slate-100">
               <div class="py-2 flex gap-4"><dt class="w-24 flex-shrink-0 text-slate-500">运行模式</dt><dd id="settingsPwaModeText" class="text-slate-800">检测中…</dd></div>
-              <div class="py-2 flex gap-4"><dt class="w-24 flex-shrink-0 text-slate-500">Service Worker</dt><dd id="settingsPwaSwText" class="text-slate-800">v2026.11.28.1 运行中</dd></div>
+              <div class="py-2 flex gap-4"><dt class="w-24 flex-shrink-0 text-slate-500">Service Worker</dt><dd id="settingsPwaSwText" class="text-slate-800">v2026.11.28.2 运行中</dd></div>
               <div class="py-2 flex gap-4"><dt class="w-24 flex-shrink-0 text-slate-500">数据安全</dt><dd class="text-slate-800">账目流水不做离线缓存</dd></div>
             </dl>
             <div class="px-5 py-3 flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-[13px] text-slate-500">
@@ -3414,7 +3414,7 @@ alter publication supabase_realtime add table finance_store;</pre>
         </div>
         <div class="flex items-center justify-between text-xs">
           <span class="font-bold text-slate-700">Service Worker 离线引擎：</span>
-          <span class="px-2.5 py-1 rounded-full font-bold bg-emerald-100 text-emerald-800 border border-emerald-300">v2026.11.28.1 已激活就绪</span>
+          <span class="px-2.5 py-1 rounded-full font-bold bg-emerald-100 text-emerald-800 border border-emerald-300">v2026.11.28.2 已激活就绪</span>
         </div>
         <div class="flex items-center justify-between text-xs">
           <span class="font-bold text-slate-700">离线缓存安全等级：</span>
@@ -9716,10 +9716,10 @@ let ocrSettings = {
 };
 
 // Application Version and OTA Release Timestamp
-window.VOYAGE_APP_VERSION = '2026.11.28.1';
+window.VOYAGE_APP_VERSION = '2026.11.28.2';
 // Fixed build time (ms) stamped by build_pwa_and_bundle.py. A cloud release is "newer" only if its
 // updatedAt is later than this, and a published bundle carries its own release time here.
-window.VOYAGE_APP_BUILD_TIME = 1795860742558;
+window.VOYAGE_APP_BUILD_TIME = 1795862093859;
 
 // Multi-Year Financial State (2025, 2026, 2027, etc.)
 let currentFiscalYear = (function() {
@@ -11706,7 +11706,8 @@ function calculateMetrics(targetYear = (typeof currentFiscalYear !== 'undefined'
   const yearPrefix = isAllYears ? '' : String(targetYear);
 
   // Lifetime cumulative balance across all accounts is bank balance across all years:
-  const totalLifetimeIncome = (appData.incomes || []).reduce((acc, curr) => acc + (Number(curr.amount) || 0), 0);
+  const allCashIncomes = cashIncomes(appData.incomes); // deposit offsets are not new money
+  const totalLifetimeIncome = allCashIncomes.reduce((acc, curr) => acc + (Number(curr.amount) || 0), 0);
   const totalLifetimeExpense = (appData.expenses || []).reduce((acc, curr) => acc + (Number(curr.amount) || 0), 0);
 
   // Baseline initial balance at 2025-01-01 is RM 1,363.91
@@ -11715,7 +11716,7 @@ function calculateMetrics(targetYear = (typeof currentFiscalYear !== 'undefined'
   let yearClosingBalance = 0;
 
   // 2025 annual sums
-  const inc2025 = (appData.incomes || []).filter(i => i.date && i.date.startsWith('2025-')).reduce((s, i) => s + (Number(i.amount) || 0), 0);
+  const inc2025 = allCashIncomes.filter(i => i.date && i.date.startsWith('2025-')).reduce((s, i) => s + (Number(i.amount) || 0), 0);
   const exp2025 = (appData.expenses || []).filter(e => e.date && e.date.startsWith('2025-')).reduce((s, e) => s + (Number(e.amount) || 0), 0);
   const closing2025 = BASE_2025_INITIAL + inc2025 - exp2025; // exactly RM 492.15
 
@@ -11729,16 +11730,16 @@ function calculateMetrics(targetYear = (typeof currentFiscalYear !== 'undefined'
     const y = String(targetYear);
     const sumBefore = list => (list || []).filter(r => r.date && r.date.slice(0, 4) < y).reduce((s, r) => s + (Number(r.amount) || 0), 0);
     const sumIn = list => (list || []).filter(r => r.date && r.date.startsWith(y + '-')).reduce((s, r) => s + (Number(r.amount) || 0), 0);
-    initialBalance = BASE_2025_INITIAL + sumBefore(appData.incomes) - sumBefore(appData.expenses);
-    yearClosingBalance = initialBalance + sumIn(appData.incomes) - sumIn(appData.expenses);
+    initialBalance = BASE_2025_INITIAL + sumBefore(allCashIncomes) - sumBefore(appData.expenses);
+    yearClosingBalance = initialBalance + sumIn(allCashIncomes) - sumIn(appData.expenses);
   }
 
   const totalBalance = (targetYear === '2025') ? yearClosingBalance : (BASE_2025_INITIAL + totalLifetimeIncome - totalLifetimeExpense);
 
   // Filter incomes and expenses by target fiscal year
   const filteredIncomes = isAllYears
-    ? (appData.incomes || [])
-    : (appData.incomes || []).filter(inc => inc.date && inc.date.startsWith(yearPrefix + '-'));
+    ? allCashIncomes
+    : allCashIncomes.filter(inc => inc.date && inc.date.startsWith(yearPrefix + '-'));
 
   const filteredExpenses = isAllYears
     ? (appData.expenses || [])
@@ -12080,7 +12081,7 @@ function renderIncomeTable() {
 
   filtered.sort((a, b) => new Date(b.date) - new Date(a.date));
 
-  const totalSum = filtered.reduce((s, i) => s + (Number(i.amount) || 0), 0);
+  const totalSum = cashIncomes(filtered).reduce((s, i) => s + (Number(i.amount) || 0), 0);
   document.getElementById('filteredIncomeCount').textContent = filtered.length;
   document.getElementById('filteredIncomeSum').textContent = formatMoney(totalSum);
   if (typeof renderMobileIncomeList === 'function') renderMobileIncomeList(filtered, totalSum);
@@ -12115,7 +12116,7 @@ function renderIncomeTable() {
           <div class="truncate text-slate-600" title="${escHtml(i.remark || '')}">${escHtml(i.remark || '-')}</div>
           ${refNo ? `<div class="truncate text-[12px] text-slate-400">${escHtml(refNo)}</div>` : ''}
         </td>
-        <td class="v-td whitespace-nowrap text-right v-amount font-semibold text-emerald-600">${formatMoney(i.amount)}</td>
+        <td class="v-td whitespace-nowrap text-right v-amount font-semibold ${isDepositOffsetIncome(i) ? 'text-slate-400' : 'text-emerald-600'}" ${isDepositOffsetIncome(i) ? 'title="押金抵扣：钱已在账户里，不计入收入和账户余额"' : ''}>${formatMoney(i.amount)}${isDepositOffsetIncome(i) ? '<div class="text-[11px] font-normal text-slate-500">押金抵扣·不计入余额</div>' : ''}</td>
         <td class="v-td whitespace-nowrap text-right">
           <button onclick="openOfficialReceipt(${jsArg(i.id)})" class="v-link" title="生成电子收据">收据</button>
           <button onclick="editIncome(${jsArg(i.id)})" class="v-link">编辑</button>
@@ -16872,6 +16873,17 @@ function monthsMentionedInText(text, yearStr) {
 // A payment that is only a security deposit: marked DEPOSIT / 押金 / 住宿押金 and naming no fee
 // month (no YYYY-MM fee month recorded, no month in the remark). README rule: deposits never pay
 // for a month. (Previously such a payment was given its payment-date month and filled it.)
+// A deposit offset moves money that is already in the account from "deposit" to "boarding fee".
+// It pays the month in the arrears check, but it is not new money: balances and income totals skip it.
+function isDepositOffsetIncome(inc) {
+  if (!inc) return false;
+  return inc.nonCash === true || /^DEP-OFF-/i.test(inc.receiptNo || '') || /押金抵扣/.test(inc.remark || '');
+}
+
+function cashIncomes(list) {
+  return (list || []).filter(i => !isDepositOffsetIncome(i));
+}
+
 function isPureDepositIncome(inc) {
   if (!inc) return false;
   const rem = String(inc.remark || '').toUpperCase();
@@ -16994,11 +17006,17 @@ function calculateStudentArrears(cutoffMonth = arrearsCutoffMonth, feePerPerson 
     const monthsPaidMap = {};
     for (let m = 1; m <= 12; m++) monthsPaidMap[m] = false;
 
+    // Amount paid per explicitly tagged month (a payment tagged with several months is split evenly),
+    // and which months include a deposit offset
+    const monthTaggedAmount = {};
+    const monthHasDepositOffset = {};
+
     // Check matched incomes for explicit feeMonth or remarks
     matchedIncomes.forEach(inc => {
       if (isPureDepositIncome(inc)) return; // a deposit never marks a month as paid
       const explicitMonth = inc.feeMonth || (typeof getIncomeFeeMonth === 'function' ? getIncomeFeeMonth(inc) : '');
       let hasExplicit = false;
+      const taggedHere = new Set();
       if (explicitMonth) {
         // Matches like 2026-05 or 2027-05
         const mMatches = explicitMonth.match(/(?:202[4-9]|203[0-9])[-/](\d{1,2})/g);
@@ -17010,6 +17028,7 @@ function calculateStudentArrears(cutoffMonth = arrearsCutoffMonth, feePerPerson 
             if ((targetYear === 'all' || y === yearStr) && num >= 1 && num <= 12) {
               monthsPaidMap[num] = true;
               hasExplicit = true;
+              taggedHere.add(num);
             }
           });
         }
@@ -17020,6 +17039,7 @@ function calculateStudentArrears(cutoffMonth = arrearsCutoffMonth, feePerPerson 
             if (num >= 1 && num <= 12) {
               monthsPaidMap[num] = true;
               hasExplicit = true;
+              taggedHere.add(num);
             }
           });
         }
@@ -17027,6 +17047,27 @@ function calculateStudentArrears(cutoffMonth = arrearsCutoffMonth, feePerPerson 
 
       if (!hasExplicit) {
         monthsMentionedInText(inc.remark, yearStr).forEach(m => { monthsPaidMap[m] = true; });
+      }
+      if (taggedHere.size) {
+        const share = (Number(inc.amount) || 0) / taggedHere.size;
+        const isOffset = /押金抵扣/.test(inc.remark || '');
+        taggedHere.forEach(m => {
+          monthTaggedAmount[m] = (monthTaggedAmount[m] || 0) + share;
+          if (isOffset) monthHasDepositOffset[m] = true;
+        });
+      }
+    });
+
+    // A month covered by a deposit offset for less than the monthly fee (one of two siblings) is not
+    // fully paid: it stays owing, for the difference only. Limited to months with a deposit offset so
+    // older records keep exactly the results they had before.
+    const monthsPartial = {};
+    Object.keys(monthTaggedAmount).forEach(k => {
+      const m = Number(k);
+      const amt = monthTaggedAmount[m];
+      if (monthHasDepositOffset[m] && monthsPaidMap[m] && amt > 0 && amt < monthlyFee - 0.5) {
+        monthsPaidMap[m] = false;
+        monthsPartial[m] = Math.round(amt * 100) / 100;
       }
     });
 
@@ -17090,7 +17131,7 @@ function calculateStudentArrears(cutoffMonth = arrearsCutoffMonth, feePerPerson 
       }
     }
 
-    const arrearsAmount = Math.max(0, unpaidMonths.length * monthlyFee);
+    const arrearsAmount = Math.max(0, unpaidMonths.reduce((sum, m) => sum + monthlyFee - (monthsPartial[m] || 0), 0));
     const lastIncome = matchedIncomes.length > 0 ? matchedIncomes[matchedIncomes.length - 1] : null;
 
     let status = 'paid';
@@ -17117,6 +17158,7 @@ function calculateStudentArrears(cutoffMonth = arrearsCutoffMonth, feePerPerson 
       depositSurplus,
       arrearsAmount,
       monthsPaidMap,
+      monthsPartial,
       paidMonths,
       unpaidMonths,
       status,
@@ -17345,6 +17387,11 @@ function renderFeeMonthCell(st, mNum, report, size) {
   if (isPaid) {
     return `<button type="button" onclick="openReceiptForStudentMonth(${jsArg(st.name)}, ${mNum})" class="v-cell v-cell-paid ${dim}" title="${escHtml(st.name)} ${label}已缴 · 查看/开具收据" aria-label="${label}已缴"><svg class="v-icon" style="width:14px;height:14px;stroke-width:2.25"><use href="#i-check"/></svg></button>`;
   }
+  const partPaid = st.monthsPartial && st.monthsPartial[mNum];
+  if (!isPastCutoff && partPaid) {
+    const owe = Math.max(0, (st.monthlyFee || 0) - partPaid);
+    return `<button type="button" onclick="quickAddPaymentForStudent(${jsArg(st.name)}, ${mNum})" class="v-cell v-cell-owed ${dim}" style="font-size:10px" title="${escHtml(st.name)} ${label}已付 RM${partPaid}，尚欠 RM${owe} · 点击记入补缴" aria-label="${label}尚欠 RM${owe}">欠${Math.round(owe)}</button>`;
+  }
   if (!isPastCutoff) {
     return `<button type="button" onclick="quickAddPaymentForStudent(${jsArg(st.name)}, ${mNum})" class="v-cell v-cell-owed ${dim}" title="${escHtml(st.name)} ${label}未缴 · 点击记入缴费" aria-label="${label}未缴">欠</button>`;
   }
@@ -17510,6 +17557,17 @@ function quickAddPaymentForStudent(studentName, suggestedMonth) {
   if (suggestedMonth) {
     const mStr = `${getFeeYear()}-${String(suggestedMonth).padStart(2, '0')}`;
     setIncomeFeeMonth(mStr);
+    try {
+      const stRep = calculateStudentArrears().students.find(s => s.name === studentName);
+      const partPaid = stRep && stRep.monthsPartial && stRep.monthsPartial[suggestedMonth];
+      const amountInput = document.getElementById('incomeAmount');
+      if (partPaid && amountInput) {
+        const owe = Math.max(0, stRep.monthlyFee - partPaid);
+        amountInput.value = owe.toFixed(2);
+        showToast(`${suggestedMonth}月已付 RM${partPaid}，已填入尚欠的 RM${owe.toFixed(2)}`);
+        return;
+      }
+    } catch (e) {}
   }
   showToast(`已为您自动填充 ${studentName} 缴费参数！`);
 }
@@ -20055,14 +20113,36 @@ function offsetStudentArrearsWithDeposit(studentId) {
   }
 
   const firstUnpaid = stRep.unpaidMonths[0];
-  const offsetAmt = Math.min(currentDeposit, stRep.monthlyFee);
+  const owedThisMonth = stRep.monthlyFee - ((stRep.monthsPartial && stRep.monthsPartial[firstUnpaid]) || 0);
+  let offsetAmt = Math.min(currentDeposit, owedThisMonth);
+  let whoLabel = st.zhName || st.name;
+
+  // Siblings sharing one record: offset for one child only, or for all of them
+  const kids = Number(st.count) || 1;
+  if (kids > 1) {
+    const perChild = Math.round(stRep.monthlyFee / kids * 100) / 100;
+    const names = String(st.zhName || st.name).split(/\s*(?:&|、|,|，|和)\s*/).filter(Boolean);
+    const options = names.length === kids ? names : Array.from({ length: kids }, (_, i) => `第 ${i + 1} 位`);
+    const lines = options.map((n, i) => `${i + 1} = 只抵扣 ${n}（RM ${perChild.toFixed(2)}）`);
+    lines.push(`${kids + 1} = 全部抵扣（RM ${Math.min(currentDeposit, owedThisMonth).toFixed(2)}）`);
+    const pick = prompt(`【${st.zhName || st.name}】${firstUnpaid} 月份要用谁的押金抵扣？\n\n${lines.join('\n')}\n\n请输入数字：`, '1');
+    if (pick === null) return;
+    const n = parseInt(pick, 10);
+    if (n >= 1 && n <= kids) {
+      offsetAmt = Math.min(currentDeposit, perChild, owedThisMonth);
+      whoLabel = options[n - 1];
+    } else if (n !== kids + 1) {
+      alert('输入的数字不对，已取消。');
+      return;
+    }
+  }
 
   const confirmMsg = `【住宿押金抵扣欠费确认】\n\n` +
-    `学生姓名：${st.zhName || st.name}\n` +
+    `学生姓名：${whoLabel}${whoLabel !== (st.zhName || st.name) ? `（${st.zhName || st.name}）` : ''}\n` +
     `当前托管押金：RM ${currentDeposit.toFixed(2)}\n` +
     `拟抵扣欠费月份：${firstUnpaid} 月份\n` +
     `本次抵扣金额：RM ${offsetAmt.toFixed(2)}\n\n` +
-    `确定执行抵扣吗？\n执行后系统将自动生成一笔【押金结转抵扣】到账记录，并将该生的托管押金扣减 RM ${offsetAmt.toFixed(2)}。`;
+    `确定执行抵扣吗？\n执行后会记一笔【押金抵扣】（只用来标记该月已缴，不计入收入和账户余额，因为押金本来就在账户里），并将该生的托管押金扣减 RM ${offsetAmt.toFixed(2)}。`;
 
   if (!confirm(confirmMsg)) return;
 
@@ -20073,8 +20153,9 @@ function offsetStudentArrearsWithDeposit(studentId) {
     amount: offsetAmt,
     counterparty: st.name,
     category: '住宿费',
-    account: (appData.accounts && appData.accounts[0]) ? appData.accounts[0].name : 'Hong Leong',
-    remark: `住宿押金抵扣 ${currentYear}-${String(firstUnpaid).padStart(2, '0')} 住宿费`,
+    account: '',
+    nonCash: true, // the deposit is already in the account: this only marks the month as paid
+    remark: `${whoLabel !== (st.zhName || st.name) ? whoLabel + ' ' : ''}住宿押金抵扣 ${currentYear}-${String(firstUnpaid).padStart(2, '0')} 住宿费`,
     feeMonth: `${currentYear}-${String(firstUnpaid).padStart(2, '0')}`,
     receiptNo: 'DEP-OFF-' + Math.floor(1000 + Math.random() * 9000),
     invoiceNo: ''
@@ -20092,7 +20173,7 @@ function offsetStudentArrearsWithDeposit(studentId) {
       module: 'arrears',
       recordId: st.id,
       amount: offsetAmt,
-      summary: `使用已收押金抵扣 ${st.zhName || st.name} ${firstUnpaid}月住宿费 RM${offsetAmt}，剩余托管押金 RM${st.deposit}`
+      summary: `使用已收押金抵扣 ${whoLabel} ${firstUnpaid}月住宿费 RM${offsetAmt}，剩余托管押金 RM${st.deposit}`
     });
   }
 
@@ -20100,7 +20181,7 @@ function offsetStudentArrearsWithDeposit(studentId) {
   if (typeof renderIncomeTable === 'function') renderIncomeTable();
   if (typeof renderDashboard === 'function') renderDashboard();
 
-  showToast(`已成功使用押金 RM ${offsetAmt} 抵扣【${st.zhName || st.name}】${firstUnpaid}月住宿费！`);
+  showToast(`已成功使用押金 RM ${offsetAmt} 抵扣【${whoLabel}】${firstUnpaid}月住宿费！`);
 }
 window.offsetStudentArrearsWithDeposit = offsetStudentArrearsWithDeposit;
 
@@ -20144,7 +20225,7 @@ function registerVoyageServiceWorker() {
           console.log('[Voyage PWA] Service Worker registered successfully! Scope:', reg.scope);
           
           const swText = document.getElementById('settingsPwaSwText');
-          if (swText) swText.textContent = 'v2026.11.28.1 激活运行中';
+          if (swText) swText.textContent = 'v2026.11.28.2 激活运行中';
 
           // Detect new waiting worker
           if (reg.waiting) {
@@ -21253,7 +21334,7 @@ window.updateAllDesktopBadges = updateAllDesktopBadges;
 
 function updateDesktopIncomeStats() {
   const targetYear = (typeof currentFiscalYear !== 'undefined') ? currentFiscalYear : '2026';
-  const incomes = (appData && appData.incomes) ? appData.incomes : [];
+  const incomes = cashIncomes(appData && appData.incomes);
   const yIncomes = targetYear === 'all' ? incomes : incomes.filter(i => (i.date || '').startsWith(String(targetYear)));
   const yTotal = yIncomes.reduce((acc, curr) => acc + (Number(curr.amount) || 0), 0);
 

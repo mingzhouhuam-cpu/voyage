@@ -1,9 +1,9 @@
 // =========================================================================
-// Voyage Financial Management System - PWA Service Worker (V2026.11.28.1)
+// Voyage Financial Management System - PWA Service Worker (V2026.11.28.2)
 // Designed for Samsung Android Tablets, Chrome, Edge, and Samsung Internet
 // =========================================================================
 
-const CACHE_VERSION = 'voyage-pwa-v2026.11.28.1';
+const CACHE_VERSION = 'voyage-pwa-v2026.11.28.2';
 const STATIC_CACHE = `${CACHE_VERSION}-static`;
 const RUNTIME_CACHE = `${CACHE_VERSION}-runtime`;
 
