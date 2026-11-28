@@ -54,8 +54,8 @@
       if (window.__VOYAGE_BOOTED_FROM_CACHE__) return;
       try {
         // Both values are stamped by build_pwa_and_bundle.py: this page's version and build time (ms).
-        var expectedVersion = '2026.11.23.3';
-        var baseBuildTime = 1795416261010;
+        var expectedVersion = '2026.11.28';
+        var baseBuildTime = 1795853427978;
         var cachedBundle = localStorage.getItem('voyage_finance_cached_bundle');
         var cachedTime = parseInt(localStorage.getItem('voyage_finance_cached_time') || '0', 10);
         // Escape hatch: open the page with ?ota-off to drop any downloaded cloud version.
@@ -420,7 +420,7 @@
         <span class="v-count">Supabase</span>
       </button>
       <div class="flex items-center justify-between px-2.5 text-[11px] text-slate-500">
-        <span>v2026.11.23.3</span>
+        <span>v2026.11.28</span>
         <button onclick="exportGdrivePackageDirectly()" class="hover:text-slate-300 underline cursor-pointer">备份数据</button>
       </div>
     </div>
@@ -1045,6 +1045,9 @@
           <select id="mobileExpenseCategorySelect" onchange="syncMobileExpenseFilters()" class="v-input" aria-label="分类">
             <option value="">全部分类</option>
           </select>
+          <select id="mobileExpenseAccountSelect" onchange="syncMobileExpenseFilters()" class="v-input col-span-2" aria-label="支付账户">
+            <option value="">全部账户</option>
+          </select>
         </div>
 
         <div class="v-seg w-full">
@@ -1099,7 +1102,7 @@
               </div>
             </div>
 
-            <div class="px-5 pb-4 grid grid-cols-2 lg:grid-cols-4 gap-3">
+            <div class="px-5 pb-4 grid grid-cols-2 lg:grid-cols-5 gap-3">
               <div>
                 <label for="filterExpenseStartDate" class="v-field-label">开始日期</label>
                 <input type="date" id="filterExpenseStartDate" onchange="renderExpenseTable()" class="v-input">
@@ -1112,6 +1115,12 @@
                 <label for="filterExpenseCategory" class="v-field-label">科目</label>
                 <select id="filterExpenseCategory" onchange="renderExpenseTable()" class="v-input">
                   <option value="">全部科目</option>
+                </select>
+              </div>
+              <div>
+                <label for="filterExpenseAccount" class="v-field-label">支付账户</label>
+                <select id="filterExpenseAccount" onchange="renderExpenseTable()" class="v-input">
+                  <option value="">全部账户</option>
                 </select>
               </div>
               <div>
@@ -1592,6 +1601,19 @@
         <!-- Receipt recognition -->
         <section>
           <h3 class="text-[15px] font-semibold text-slate-900 mb-2">单据识别</h3>
+          <div id="ocrModeCard_ai" class="v-panel mb-3">
+            <div class="px-5 py-4 flex flex-col sm:flex-row sm:items-start justify-between gap-3">
+              <div class="min-w-0">
+                <div class="flex items-center gap-2 flex-wrap">
+                  <span class="text-[14px] font-medium text-slate-900">Claude 智能识单</span>
+                  <span id="aiOcrBadge" class="v-chip">登录后可用</span>
+                </div>
+                <div class="text-[13px] text-slate-500 mt-0.5">登录后，单据照片会发送到 Claude 识别日期、金额、商家和科目，比本机识别准确。API 密钥只保存在服务器上，网页里没有；只有登录的成员能用，每人每天有次数上限。</div>
+                <div class="text-[13px] text-slate-500 mt-1">没登录、没网络、次数用完或识别失败时，自动改用下面的本机识别。</div>
+              </div>
+              <button type="button" id="aiOcrToggleBtn" onclick="setAiOcrEnabled(!aiOcrEnabled())" class="v-btn v-btn-secondary flex-shrink-0">关闭</button>
+            </div>
+          </div>
           <div id="ocrModeCard_local" class="v-panel divide-y divide-slate-100">
             <div class="px-5 py-4 flex flex-col sm:flex-row sm:items-start justify-between gap-3">
               <div class="min-w-0">
@@ -1618,7 +1640,7 @@
           <h3 class="text-[15px] font-semibold text-slate-900 mb-2">版本与更新</h3>
           <div class="v-panel divide-y divide-slate-100">
             <dl class="grid grid-cols-3">
-              <div class="px-5 py-4 border-r border-slate-100"><dt class="v-label">本机版本</dt><dd id="localReleaseVersion" class="mt-1 text-[15px] font-semibold text-slate-900">v2026.11.23.3</dd></div>
+              <div class="px-5 py-4 border-r border-slate-100"><dt class="v-label">本机版本</dt><dd id="localReleaseVersion" class="mt-1 text-[15px] font-semibold text-slate-900">v2026.11.28</dd></div>
               <div class="px-5 py-4 border-r border-slate-100"><dt class="v-label">云端最新版本</dt><dd id="cloudReleaseVersion" class="mt-1 text-[15px] font-semibold text-slate-900">检查中…</dd></div>
               <div class="px-5 py-4 min-w-0"><dt class="v-label">云端发布时间</dt><dd id="cloudReleaseTime" class="mt-1 text-[13px] text-slate-700 truncate">-</dd></div>
             </dl>
@@ -1652,7 +1674,7 @@
             </div>
             <dl class="px-5 py-3 text-[13px] divide-y divide-slate-100">
               <div class="py-2 flex gap-4"><dt class="w-24 flex-shrink-0 text-slate-500">运行模式</dt><dd id="settingsPwaModeText" class="text-slate-800">检测中…</dd></div>
-              <div class="py-2 flex gap-4"><dt class="w-24 flex-shrink-0 text-slate-500">Service Worker</dt><dd id="settingsPwaSwText" class="text-slate-800">v2026.11.23.3 运行中</dd></div>
+              <div class="py-2 flex gap-4"><dt class="w-24 flex-shrink-0 text-slate-500">Service Worker</dt><dd id="settingsPwaSwText" class="text-slate-800">v2026.11.28 运行中</dd></div>
               <div class="py-2 flex gap-4"><dt class="w-24 flex-shrink-0 text-slate-500">数据安全</dt><dd class="text-slate-800">账目流水不做离线缓存</dd></div>
             </dl>
             <div class="px-5 py-3 flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-[13px] text-slate-500">
@@ -3392,7 +3414,7 @@ alter publication supabase_realtime add table finance_store;</pre>
         </div>
         <div class="flex items-center justify-between text-xs">
           <span class="font-bold text-slate-700">Service Worker 离线引擎：</span>
-          <span class="px-2.5 py-1 rounded-full font-bold bg-emerald-100 text-emerald-800 border border-emerald-300">v2026.11.23.3 已激活就绪</span>
+          <span class="px-2.5 py-1 rounded-full font-bold bg-emerald-100 text-emerald-800 border border-emerald-300">v2026.11.28 已激活就绪</span>
         </div>
         <div class="flex items-center justify-between text-xs">
           <span class="font-bold text-slate-700">离线缓存安全等级：</span>
@@ -9694,10 +9716,10 @@ let ocrSettings = {
 };
 
 // Application Version and OTA Release Timestamp
-window.VOYAGE_APP_VERSION = '2026.11.23.3';
+window.VOYAGE_APP_VERSION = '2026.11.28';
 // Fixed build time (ms) stamped by build_pwa_and_bundle.py. A cloud release is "newer" only if its
 // updatedAt is later than this, and a published bundle carries its own release time here.
-window.VOYAGE_APP_BUILD_TIME = 1795416261010;
+window.VOYAGE_APP_BUILD_TIME = 1795853427978;
 
 // Multi-Year Financial State (2025, 2026, 2027, etc.)
 let currentFiscalYear = (function() {
@@ -10084,6 +10106,17 @@ function applyOcrSettingsUI() {
   if (currentEngineText) {
     currentEngineText.textContent = '纯本地离线 OCR 智能识单引擎 (中/英/马三语 + 图像画质增强)';
   }
+  const badge = document.getElementById('aiOcrBadge');
+  const btn = document.getElementById('aiOcrToggleBtn');
+  const on = typeof aiOcrEnabled === 'function' && aiOcrEnabled();
+  const ready = typeof aiOcrAvailable === 'function' && aiOcrAvailable();
+  if (badge) {
+    badge.textContent = !on ? '已关闭' : (ready ? '使用中' : '登录后可用');
+    badge.className = 'v-chip ' + (!on ? '' : (ready ? 'v-chip-in' : 'v-chip-warn'));
+  }
+  if (btn) btn.textContent = on ? '关闭' : '开启';
+  const localBadge = document.getElementById('ocrModeBadge_local');
+  if (localBadge) localBadge.textContent = ready ? '备用' : '本地运行中';
   updateModalOcrEnginePills();
 }
 
@@ -10110,8 +10143,9 @@ function updateModalOcrEnginePills() {
   pills.forEach(pill => {
     if (!pill) return;
     pill.className = 'text-[11px] px-2.5 py-1 rounded-full font-bold bg-amber-100 text-amber-900 border border-amber-300 flex items-center space-x-1 shadow-xs transition';
-    pill.innerHTML = '<span>纯本地离线 OCR (中英马)</span>';
-    pill.title = '当前为 100% 本地浏览器离线计算，无需网络与外部 API，绝对保护财务隐私';
+    const ai = typeof aiOcrAvailable === 'function' && aiOcrAvailable();
+    pill.innerHTML = ai ? '<span>Claude 智能识单</span>' : '<span>本机 OCR (中英马)</span>';
+    pill.title = ai ? '照片会发送到 Claude 识别；失败时自动改用本机识别' : '在本机浏览器内识别，照片不会上传';
   });
 }
 
@@ -11089,6 +11123,7 @@ function updateCloudAccountUI() {
   document.querySelectorAll('[data-cloud-account-email]').forEach(el => { el.textContent = signedIn ? email : '未登录'; });
   document.querySelectorAll('[data-cloud-signin]').forEach(el => el.classList.toggle('hidden', signedIn));
   document.querySelectorAll('[data-cloud-signout]').forEach(el => el.classList.toggle('hidden', !signedIn));
+  if (typeof applyOcrSettingsUI === 'function') applyOcrSettingsUI();
 }
 
 // Called once the client exists: sign-in state decides whether syncing starts.
@@ -12098,6 +12133,8 @@ function renderExpenseTable() {
   const startDate = document.getElementById('filterExpenseStartDate').value;
   const endDate = document.getElementById('filterExpenseEndDate').value;
   const category = document.getElementById('filterExpenseCategory').value;
+  const accountEl = document.getElementById('filterExpenseAccount');
+  const account = accountEl ? accountEl.value : '';
   const keyword = (document.getElementById('filterExpenseKeyword').value || '').trim().toLowerCase();
 
   let filtered = appData.expenses.filter(item => {
@@ -12109,6 +12146,8 @@ function renderExpenseTable() {
     if (startDate && item.date < startDate) return false;
     if (endDate && item.date > endDate) return false;
     if (category && item.category !== category) return false;
+    if (account === '__none__' && (item.account || '').trim()) return false;
+    if (account && account !== '__none__' && (item.account || '') !== account) return false;
     if (keyword) {
       const match = (item.item || '').toLowerCase().includes(keyword) ||
                     (item.counterparty || '').toLowerCase().includes(keyword) ||
@@ -12379,6 +12418,21 @@ function populateDropdowns() {
   if (expCatSelect) expCatSelect.innerHTML = expOptions;
   if (filterExpCat) filterExpCat.innerHTML = '<option value="">全部科目</option>' + expOptions;
   if (expAccSelect) expAccSelect.innerHTML = accOptions;
+
+  // Payment-account filters on the expense list (desktop + mobile)
+  const usedExpAccounts = (appData.expenses || []).map(e => (e && e.account || '').trim());
+  const filterAccNames = Array.from(new Set([...accList.map(a => a.name), ...usedExpAccounts.filter(Boolean)]));
+  const hasNoAccount = usedExpAccounts.some(a => !a);
+  const filterAccOptions = '<option value="">全部账户</option>' +
+    filterAccNames.map(n => `<option value="${escHtml(n)}">${escHtml(n)}</option>`).join('') +
+    (hasNoAccount ? '<option value="__none__">未填账户</option>' : '');
+  ['filterExpenseAccount', 'mobileExpenseAccountSelect'].forEach(id => {
+    const el = document.getElementById(id);
+    if (!el) return;
+    const prev = el.value;
+    el.innerHTML = filterAccOptions;
+    if (prev && Array.from(el.options).some(o => o.value === prev)) el.value = prev;
+  });
 
   const batchExpCatSelect = document.getElementById('batchExpenseCategorySelect');
   const batchExpAccSelect = document.getElementById('batchExpenseAccountSelect');
@@ -15030,10 +15084,149 @@ async function runLocalTesseractOCR(dataUrl, onProgress = null, source = null) {
   return parsed;
 }
 
-// Unified OCR Dispatcher: 100% Pure Local In-Browser Computation
-// Unified OCR Dispatcher: 100% local in-browser computation.
+// ==========================================
+// CLAUDE 单据识别
+// The photo goes to the Supabase Edge Function "receipt-ocr", which holds the Claude API key
+// and only answers signed-in members. The page itself never contains the key.
+// Any failure (signed out, offline, daily limit, unreadable) falls back to local OCR.
+// ==========================================
+const AI_OCR_PREF_KEY = 'voyage_ai_ocr';
+let aiOcrNotDeployed = false; // the receipt-ocr function does not exist yet: skip it quietly this session
+
+function aiOcrEnabled() {
+  try { return localStorage.getItem(AI_OCR_PREF_KEY) !== 'off'; } catch (e) { return true; }
+}
+
+function aiOcrAvailable() {
+  return aiOcrEnabled() && !aiOcrNotDeployed && !!supabaseClient && typeof cloudSignedIn === 'function' && cloudSignedIn() &&
+    !(typeof navigator !== 'undefined' && navigator.onLine === false);
+}
+
+function setAiOcrEnabled(on) {
+  try { localStorage.setItem(AI_OCR_PREF_KEY, on ? 'on' : 'off'); } catch (e) {}
+  applyOcrSettingsUI();
+  showToast(on ? '已开启 Claude 智能识单（登录后使用）' : '已关闭 Claude 智能识单，只用本机识别');
+}
+
+function loadImageElement(src) {
+  return new Promise((resolve, reject) => {
+    const im = new Image();
+    im.onload = () => resolve(im);
+    im.onerror = () => reject(new Error('图片无法读取'));
+    im.src = src;
+  });
+}
+
+// Colour JPEG, longest side at most maxSide: enough for Claude to read, small to upload.
+async function shrinkImageForCloud(input, maxSide = 1600) {
+  let src = input;
+  let objectUrl = null;
+  if (input && typeof input !== 'string') {
+    objectUrl = URL.createObjectURL(input);
+    src = objectUrl;
+  }
+  try {
+    const img = await loadImageElement(src);
+    const w0 = img.naturalWidth || img.width;
+    const h0 = img.naturalHeight || img.height;
+    const scale = Math.min(1, maxSide / Math.max(w0, h0));
+    const w = Math.max(1, Math.round(w0 * scale));
+    const h = Math.max(1, Math.round(h0 * scale));
+    const canvas = document.createElement('canvas');
+    canvas.width = w;
+    canvas.height = h;
+    const ctx = canvas.getContext('2d');
+    ctx.fillStyle = '#ffffff';
+    ctx.fillRect(0, 0, w, h);
+    ctx.drawImage(img, 0, 0, w, h);
+    return canvas.toDataURL('image/jpeg', 0.85);
+  } finally {
+    if (objectUrl) URL.revokeObjectURL(objectUrl);
+  }
+}
+
+async function recognizeReceiptWithClaude(dataUrl, onProgress = null, source = null) {
+  if (onProgress) onProgress('正在准备照片…', 15);
+  const input = (source && source.type && source.type.startsWith('image/')) ? source : dataUrl;
+  const image = await shrinkImageForCloud(input);
+  if (onProgress) onProgress('Claude 正在读取单据…', 45);
+
+  const { data, error } = await supabaseClient.functions.invoke('receipt-ocr', {
+    body: { image, categories: appData.expenseCategories || [] }
+  });
+  if (error) {
+    let code = '';
+    try {
+      if (error.context && typeof error.context.json === 'function') code = (await error.context.json()).error || '';
+    } catch (e) {}
+    const err = new Error(code || error.message || 'receipt_ocr_failed');
+    err.code = code;
+    err.status = error.context && error.context.status;
+    throw err;
+  }
+  if (!data || !data.ok || !data.receipt) {
+    const err = new Error('unreadable');
+    err.code = 'unreadable';
+    throw err;
+  }
+  const r = data.receipt;
+  if (!r.is_receipt) {
+    const err = new Error('not_receipt');
+    err.code = 'not_receipt';
+    throw err;
+  }
+
+  const validDate = /^\d{4}-\d{2}-\d{2}$/.test(r.date || '');
+  const validTime = /^\d{2}:\d{2}$/.test(r.time || '');
+  const amount = Number(r.total_amount) > 0 ? Math.round(Number(r.total_amount) * 100) / 100 : '';
+  const parsed = {
+    date: validDate ? r.date : localDateStr(),
+    dateGuessed: !validDate,
+    time: validTime ? r.time : '',
+    amount,
+    counterparty: r.merchant || '',
+    item: r.item_summary || '',
+    category: r.category || '',
+    invoiceNo: r.invoice_no || '',
+    remark: r.invoice_no || r.notes || '',
+    confidence: ({ high: 95, medium: 75, low: 45 })[r.confidence] || 60,
+    engine: 'claude',
+    aiNotes: r.notes || ''
+  };
+  if (onProgress) onProgress('已读取', 100);
+
+  const rawEl = document.getElementById('rawOcrText');
+  if (rawEl) rawEl.textContent = `=== Claude 智能识单（把握：${r.confidence}）===\n\n${JSON.stringify(r, null, 2)}`;
+  return parsed;
+}
+
+function aiOcrFailureText(err) {
+  const code = err && err.code;
+  return ({
+    not_receipt: '这张照片看起来不是单据',
+    not_allowed_or_daily_limit: '今天的智能识单次数已用完（或账号没有权限）',
+    unreadable: '智能识单没能读出内容',
+    image_too_large: '照片太大',
+    not_signed_in: '登录已过期'
+  })[code] || '智能识单暂时不可用';
+}
+
+// OCR dispatcher: Claude when signed in and switched on, otherwise (or on any failure) local OCR.
 // `source` = original full-resolution photo when available (better accuracy than the stored copy).
 async function recognizeReceiptData(dataUrl, onProgress = null, source = null) {
+  if (aiOcrAvailable()) {
+    try {
+      return await recognizeReceiptWithClaude(dataUrl, onProgress, source);
+    } catch (err) {
+      console.warn('Claude receipt recognition failed; using local OCR', err);
+      if (err && err.status === 404 && !err.code) {
+        aiOcrNotDeployed = true; // not set up on the server yet: use local OCR without a message
+        applyOcrSettingsUI();
+      } else {
+        showToast(aiOcrFailureText(err) + '，改用本机识别');
+      }
+    }
+  }
   return await runLocalTesseractOCR(dataUrl, onProgress, source);
 }
 
@@ -15047,7 +15240,7 @@ async function startReceiptRecognition(dataUrl, source = null) {
   if (ocrBar) ocrBar.classList.remove('hidden');
   if (badge) badge.classList.add('hidden');
 
-  if (statusText) statusText.textContent = '正在通过纯本地浏览器 OCR 智能识单 (图像锐化 + 中英马三语)...';
+  if (statusText) statusText.textContent = aiOcrAvailable() ? '正在用 Claude 智能识单…' : '正在用本机 OCR 识单（中英马三语）…';
   if (progressText) progressText.textContent = '识别中';
 
   try {
@@ -15995,6 +16188,10 @@ function resetExpenseFilters() {
   if (e) e.value = '';
   if (c) c.value = '';
   if (k) k.value = '';
+  ['filterExpenseAccount', 'mobileExpenseAccountSelect'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.value = '';
+  });
   if (typeof renderExpenseTable === 'function') renderExpenseTable();
   if (typeof showToast === 'function') showToast('已清空支出筛选条件');
 }
@@ -16054,7 +16251,7 @@ function startVoyageApp() {
   // Filter input listeners
   const filterInputs = [
     'filterIncomeStartDate', 'filterIncomeEndDate', 'filterIncomeCategory', 'filterIncomeKeyword',
-    'filterExpenseStartDate', 'filterExpenseEndDate', 'filterExpenseCategory', 'filterExpenseKeyword'
+    'filterExpenseStartDate', 'filterExpenseEndDate', 'filterExpenseCategory', 'filterExpenseAccount', 'filterExpenseKeyword'
   ];
   filterInputs.forEach(id => {
     const el = document.getElementById(id);
@@ -19859,7 +20056,7 @@ function registerVoyageServiceWorker() {
           console.log('[Voyage PWA] Service Worker registered successfully! Scope:', reg.scope);
           
           const swText = document.getElementById('settingsPwaSwText');
-          if (swText) swText.textContent = 'v2026.11.23.3 激活运行中';
+          if (swText) swText.textContent = 'v2026.11.28 激活运行中';
 
           // Detect new waiting worker
           if (reg.waiting) {
@@ -20588,6 +20785,11 @@ function syncMobileExpenseFilters() {
 
   if (catSelect && deskCat) {
     deskCat.value = catSelect.value;
+  }
+  const mAcc = document.getElementById('mobileExpenseAccountSelect');
+  const deskAcc = document.getElementById('filterExpenseAccount');
+  if (mAcc && deskAcc) {
+    deskAcc.value = mAcc.value;
   }
   if (sInput && deskKw) {
     deskKw.value = sInput.value;
