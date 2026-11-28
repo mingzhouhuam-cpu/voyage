@@ -54,8 +54,8 @@
       if (window.__VOYAGE_BOOTED_FROM_CACHE__) return;
       try {
         // Both values are stamped by build_pwa_and_bundle.py: this page's version and build time (ms).
-        var expectedVersion = '2026.11.28';
-        var baseBuildTime = 1795853427978;
+        var expectedVersion = '2026.11.28.1';
+        var baseBuildTime = 1795860742558;
         var cachedBundle = localStorage.getItem('voyage_finance_cached_bundle');
         var cachedTime = parseInt(localStorage.getItem('voyage_finance_cached_time') || '0', 10);
         // Escape hatch: open the page with ?ota-off to drop any downloaded cloud version.
@@ -420,7 +420,7 @@
         <span class="v-count">Supabase</span>
       </button>
       <div class="flex items-center justify-between px-2.5 text-[11px] text-slate-500">
-        <span>v2026.11.28</span>
+        <span>v2026.11.28.1</span>
         <button onclick="exportGdrivePackageDirectly()" class="hover:text-slate-300 underline cursor-pointer">备份数据</button>
       </div>
     </div>
@@ -1640,7 +1640,7 @@
           <h3 class="text-[15px] font-semibold text-slate-900 mb-2">版本与更新</h3>
           <div class="v-panel divide-y divide-slate-100">
             <dl class="grid grid-cols-3">
-              <div class="px-5 py-4 border-r border-slate-100"><dt class="v-label">本机版本</dt><dd id="localReleaseVersion" class="mt-1 text-[15px] font-semibold text-slate-900">v2026.11.28</dd></div>
+              <div class="px-5 py-4 border-r border-slate-100"><dt class="v-label">本机版本</dt><dd id="localReleaseVersion" class="mt-1 text-[15px] font-semibold text-slate-900">v2026.11.28.1</dd></div>
               <div class="px-5 py-4 border-r border-slate-100"><dt class="v-label">云端最新版本</dt><dd id="cloudReleaseVersion" class="mt-1 text-[15px] font-semibold text-slate-900">检查中…</dd></div>
               <div class="px-5 py-4 min-w-0"><dt class="v-label">云端发布时间</dt><dd id="cloudReleaseTime" class="mt-1 text-[13px] text-slate-700 truncate">-</dd></div>
             </dl>
@@ -1674,7 +1674,7 @@
             </div>
             <dl class="px-5 py-3 text-[13px] divide-y divide-slate-100">
               <div class="py-2 flex gap-4"><dt class="w-24 flex-shrink-0 text-slate-500">运行模式</dt><dd id="settingsPwaModeText" class="text-slate-800">检测中…</dd></div>
-              <div class="py-2 flex gap-4"><dt class="w-24 flex-shrink-0 text-slate-500">Service Worker</dt><dd id="settingsPwaSwText" class="text-slate-800">v2026.11.28 运行中</dd></div>
+              <div class="py-2 flex gap-4"><dt class="w-24 flex-shrink-0 text-slate-500">Service Worker</dt><dd id="settingsPwaSwText" class="text-slate-800">v2026.11.28.1 运行中</dd></div>
               <div class="py-2 flex gap-4"><dt class="w-24 flex-shrink-0 text-slate-500">数据安全</dt><dd class="text-slate-800">账目流水不做离线缓存</dd></div>
             </dl>
             <div class="px-5 py-3 flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-[13px] text-slate-500">
@@ -3414,7 +3414,7 @@ alter publication supabase_realtime add table finance_store;</pre>
         </div>
         <div class="flex items-center justify-between text-xs">
           <span class="font-bold text-slate-700">Service Worker 离线引擎：</span>
-          <span class="px-2.5 py-1 rounded-full font-bold bg-emerald-100 text-emerald-800 border border-emerald-300">v2026.11.28 已激活就绪</span>
+          <span class="px-2.5 py-1 rounded-full font-bold bg-emerald-100 text-emerald-800 border border-emerald-300">v2026.11.28.1 已激活就绪</span>
         </div>
         <div class="flex items-center justify-between text-xs">
           <span class="font-bold text-slate-700">离线缓存安全等级：</span>
@@ -9716,10 +9716,10 @@ let ocrSettings = {
 };
 
 // Application Version and OTA Release Timestamp
-window.VOYAGE_APP_VERSION = '2026.11.28';
+window.VOYAGE_APP_VERSION = '2026.11.28.1';
 // Fixed build time (ms) stamped by build_pwa_and_bundle.py. A cloud release is "newer" only if its
 // updatedAt is later than this, and a published bundle carries its own release time here.
-window.VOYAGE_APP_BUILD_TIME = 1795853427978;
+window.VOYAGE_APP_BUILD_TIME = 1795860742558;
 
 // Multi-Year Financial State (2025, 2026, 2027, etc.)
 let currentFiscalYear = (function() {
@@ -15213,7 +15213,94 @@ function aiOcrFailureText(err) {
 
 // OCR dispatcher: Claude when signed in and switched on, otherwise (or on any failure) local OCR.
 // `source` = original full-resolution photo when available (better accuracy than the stored copy).
+// ==========================================
+// 科目沿用: same merchant as before -> same category as before
+// ==========================================
+const MERCHANT_STOPWORDS = new Set([
+  'SDN', 'BHD', 'BERHAD', 'ENTERPRISE', 'ENTERPRISES', 'TRADING', 'COMPANY', 'MALAYSIA', 'HOLDINGS', 'GROUP',
+  'JALAN', 'JLN', 'LORONG', 'TAMAN', 'PERAK', 'TELUK', 'INTAN', 'STORE', 'SHOP', 'CENTRE', 'CENTER', 'MART',
+  'PLT', 'RESOURCES', 'SERVICES', 'SERVICE', 'INDUSTRIES', 'MARKETING', 'DISTRIBUTOR', 'BRANCH', 'CAWANGAN'
+]);
+
+function merchantTokens(text) {
+  const up = String(text || '').toUpperCase();
+  const tokens = new Set();
+  (up.match(/[A-Z0-9]+/g) || []).forEach(t => {
+    if (t.length >= 4 && !MERCHANT_STOPWORDS.has(t) && !/^\d+$/.test(t)) tokens.add(t);
+  });
+  (up.match(/[一-鿿]{2,}/g) || []).forEach(t => tokens.add(t));
+  return tokens;
+}
+
+// Same word, or a one-letter typo of a longer word (VEGETARIAN / VEGETERIAN)
+function merchantTokenMatch(a, b) {
+  if (a === b) return true;
+  if (a.length < 6 || b.length < 6 || Math.abs(a.length - b.length) > 1) return false;
+  let i = 0, j = 0, edits = 0;
+  while (i < a.length && j < b.length) {
+    if (a[i] === b[j]) { i++; j++; continue; }
+    if (++edits > 1) return false;
+    if (a.length > b.length) i++;
+    else if (b.length > a.length) j++;
+    else { i++; j++; }
+  }
+  return edits + (a.length - i) + (b.length - j) <= 1;
+}
+
+// Distinctive words two merchant names share. One shared word is enough only when the receipt's
+// name has a single distinctive word (99 SPEEDMART, LEMBAGA AIR PERAK); otherwise at least two
+// must match, so a common word like SMART alone does not link two different shops.
+function merchantMatchStrength(want, have) {
+  let shared = 0;
+  want.forEach(t => { for (const h of have) { if (merchantTokenMatch(t, h)) { shared++; break; } } });
+  return (shared >= 2 || (shared >= 1 && want.size === 1)) ? shared : 0;
+}
+
+// Returns { category, count, total, sample } when earlier expenses from the same merchant agree
+// clearly on a category, otherwise null. excludeId leaves one record out (used for testing).
+function learnCategoryFromHistory(merchant, excludeId = null) {
+  const want = merchantTokens(merchant);
+  if (!want.size) return null;
+  const validCats = new Set([...(appData.expenseCategories || []), ...(appData.expenses || []).map(e => e && e.category).filter(Boolean)]);
+  const tally = new Map();
+  let total = 0;
+  let sample = '';
+  (appData.expenses || []).forEach(e => {
+    if (!e || !e.category || (excludeId && e.id === excludeId)) return;
+    const have = merchantTokens(`${e.counterparty || ''} ${e.item || ''}`);
+    const shared = merchantMatchStrength(want, have);
+    if (!shared) return;
+    // recent records count a little more
+    const ageDays = Math.max(0, (Date.now() - new Date(e.date || 0).getTime()) / 86400000);
+    const weight = shared * (ageDays < 180 ? 1.5 : 1);
+    tally.set(e.category, (tally.get(e.category) || 0) + weight);
+    total += weight;
+    if (!sample) sample = e.counterparty || e.item || '';
+  });
+  if (!total) return null;
+  const [category, score] = [...tally.entries()].sort((a, b) => b[1] - a[1])[0];
+  if (!validCats.has(category) || score / total < 0.6) return null; // past records disagree: don't guess
+  const count = (appData.expenses || []).filter(e => e && e.category === category && (!excludeId || e.id !== excludeId) &&
+    merchantMatchStrength(want, merchantTokens(`${e.counterparty || ''} ${e.item || ''}`)) > 0).length;
+  return { category, count, total: Math.round(total), sample };
+}
+
+function applyLearnedCategory(parsed) {
+  if (!parsed) return parsed;
+  const learned = learnCategoryFromHistory(parsed.counterparty || '') || learnCategoryFromHistory(parsed.item || '');
+  if (learned && learned.category !== parsed.category) {
+    parsed.categoryFromReceipt = parsed.category || '';
+    parsed.category = learned.category;
+  }
+  if (learned) parsed.categoryNote = `科目按以往记录：${learned.category}（同一商家记过 ${learned.count} 次）`;
+  return parsed;
+}
+
 async function recognizeReceiptData(dataUrl, onProgress = null, source = null) {
+  return applyLearnedCategory(await recognizeReceiptRaw(dataUrl, onProgress, source));
+}
+
+async function recognizeReceiptRaw(dataUrl, onProgress = null, source = null) {
   if (aiOcrAvailable()) {
     try {
       return await recognizeReceiptWithClaude(dataUrl, onProgress, source);
@@ -15253,7 +15340,8 @@ async function startReceiptRecognition(dataUrl, source = null) {
     if (badge) badge.classList.remove('hidden');
 
     const missing = [parsedData.dateGuessed && '日期（已先填今天）', !parsedData.amount && '金额'].filter(Boolean);
-    showToast(missing.length ? `已识别，但没有找到${missing.join('和')}，请核对` : '已识别，请核对金额和日期后保存');
+    const baseMsg = missing.length ? `已识别，但没有找到${missing.join('和')}，请核对` : '已识别，请核对金额和日期后保存';
+    showToast(parsedData.categoryNote ? `${baseMsg}；${parsedData.categoryNote}` : baseMsg);
   } catch (e) {
     console.error('Receipt recognition failed:', e);
     if (statusText) statusText.textContent = '识单未就绪，您可直接对照左侧照片核对录入';
@@ -20056,7 +20144,7 @@ function registerVoyageServiceWorker() {
           console.log('[Voyage PWA] Service Worker registered successfully! Scope:', reg.scope);
           
           const swText = document.getElementById('settingsPwaSwText');
-          if (swText) swText.textContent = 'v2026.11.28 激活运行中';
+          if (swText) swText.textContent = 'v2026.11.28.1 激活运行中';
 
           // Detect new waiting worker
           if (reg.waiting) {
